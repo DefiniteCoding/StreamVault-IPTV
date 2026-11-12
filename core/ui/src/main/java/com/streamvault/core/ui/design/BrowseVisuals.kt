@@ -6,15 +6,24 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
+import com.streamvault.core.ui.accessibility.LocalReducedEffects
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
@@ -240,3 +249,80 @@ fun Modifier.browsePanel(shape: RoundedCornerShape = BrowseShapes.Panel): Modifi
     clip(shape)
         .background(Brush.verticalGradient(listOf(BrowseColors.SurfaceElevated, BrowseColors.Surface)))
         .border(1.dp, BrowseColors.Outline, shape)
+
+enum class GlassTier { Bar, Panel, OverVideo }
+
+/** What one glass surface draws, already resolved for the theme, tier and reduced-effects setting. */
+@Immutable
+internal data class GlassLayers(
+    val fill: Color,
+    val sheen: Color?,
+    val stroke: Color,
+    val highlight: Color,
+)
+
+// The dark tier looks the same in every theme, so its edge lines are fixed rather than taken from light palettes,
+// whose dark stroke and bright highlight are meant for light glass. Over video only (rule 2).
+private val OverVideoStroke = Color(0x1AFFFFFF)
+private val OverVideoHighlight = Color(0x29FFFFFF)
+
+private const val SHEEN_EXTENT = 0.4f
+private val GlassLineWidth = 1.dp
+
+internal fun glassLayersFor(palette: AppPalette, tier: GlassTier, reducedEffects: Boolean): GlassLayers {
+    val translucentFill = when (tier) {
+        // An opaque base is folded into the fill here, so the base costs no extra draw over the same pixels.
+        GlassTier.Bar -> palette.glassBar.compositeOver(palette.glassBase)
+        GlassTier.Panel -> palette.glassPanel.compositeOver(palette.glassBase)
+        GlassTier.OverVideo -> palette.glassOverVideo
+    }
+    val overVideo = tier == GlassTier.OverVideo
+    return GlassLayers(
+        fill = if (reducedEffects) translucentFill.copy(alpha = 1f) else translucentFill,
+        // A sheen on the dark tier lets bright artwork push the selected pill under 3:1 (GlassPaletteContrastTest).
+        sheen = palette.glassSheen.takeUnless { reducedEffects || overVideo },
+        stroke = if (overVideo) OverVideoStroke else palette.glassStroke,
+        highlight = if (overVideo) OverVideoHighlight else palette.glassHighlight,
+    )
+}
+
+/**
+ * Layered glass in one draw pass behind the content: tier fill, a sheen over the top 40%, a 1dp hairline and a 1dp
+ * highlight fading down from the top edge. No blur, no graphicsLayer, no offscreen alpha (P3).
+ */
+@Composable
+fun Modifier.glassSurface(tier: GlassTier, shape: Shape): Modifier {
+    val reducedEffects = LocalReducedEffects.current
+    return drawWithCache {
+        val layers = glassLayersFor(BrowseColors.current, tier, reducedEffects)
+        val outline = shape.createOutline(size, layoutDirection, this)
+        val lineWidth = GlassLineWidth.toPx()
+        // Strokes straddle their path, so inset the outline by half a line to keep the lines inside the bounds.
+        val lineOutline = shape.createOutline(
+            Size(size.width - lineWidth, size.height - lineWidth),
+            layoutDirection,
+            this,
+        )
+        val lineStroke = Stroke(width = lineWidth)
+        val sheenBottom = size.height * SHEEN_EXTENT
+        val sheenBrush = layers.sheen?.let {
+            Brush.verticalGradient(listOf(it, it.copy(alpha = 0f)), startY = 0f, endY = sheenBottom)
+        }
+        val highlightBrush = Brush.verticalGradient(
+            listOf(layers.highlight, layers.highlight.copy(alpha = 0f)),
+            startY = 0f,
+            endY = size.height / 2f,
+        )
+        onDrawBehind {
+            drawOutline(outline, layers.fill)
+            if (sheenBrush != null) {
+                // Scissor to the sheen band so the transparent part of the gradient is never rasterised.
+                clipRect(bottom = sheenBottom) { drawOutline(outline, sheenBrush) }
+            }
+            translate(lineWidth / 2f, lineWidth / 2f) {
+                drawOutline(lineOutline, layers.stroke, style = lineStroke)
+                clipRect(bottom = size.height / 2f) { drawOutline(lineOutline, highlightBrush, style = lineStroke) }
+            }
+        }
+    }
+}

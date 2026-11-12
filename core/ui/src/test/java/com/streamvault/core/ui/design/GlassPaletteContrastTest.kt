@@ -76,9 +76,11 @@ class GlassPaletteContrastTest {
         "saturated mid-tone" to SaturatedMidTone,
     )
 
-    private fun barStack(palette: AppPalette) = glassStack(palette, palette.glassBar)
+    private fun barStack(palette: AppPalette) =
+        glassStack(palette, palette.glassBar) + reducedEffectsFill(palette, GlassTier.Bar)
 
-    private fun panelStack(palette: AppPalette) = glassStack(palette, palette.glassPanel)
+    private fun panelStack(palette: AppPalette) =
+        glassStack(palette, palette.glassPanel) + reducedEffectsFill(palette, GlassTier.Panel)
 
     private fun glassStack(palette: AppPalette, tier: Color) = backdrops(palette).flatMap { (where, backdrop) ->
         val fill = tier.compositeOver(palette.glassBase.compositeOver(backdrop))
@@ -88,7 +90,10 @@ class GlassPaletteContrastTest {
     // The dark tier is drawn without a sheen: any white lift over it breaks the selected pill's 3:1.
     private fun darkTierStack(palette: AppPalette) = backdrops(palette).map { (where, backdrop) ->
         where to palette.glassOverVideo.compositeOver(backdrop)
-    }
+    } + reducedEffectsFill(palette, GlassTier.OverVideo)
+
+    private fun reducedEffectsFill(palette: AppPalette, tier: GlassTier) =
+        "reduced effects (opaque)" to glassLayersFor(palette, tier, reducedEffects = true).fill
 
     private fun checkEveryTheme(checks: ContrastChecks.(AppPalette) -> Unit) {
         val failures = THEME_IDS.flatMap { themeId ->
