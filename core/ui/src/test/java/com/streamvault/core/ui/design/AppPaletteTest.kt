@@ -45,6 +45,35 @@ class AppPaletteTest {
     }
 
     @Test
+    fun `dark glass tier is a black scrim of at least 55 percent in every theme`() {
+        ALL_THEME_IDS.forEach { themeId ->
+            val overVideo = AppPalette.forTheme(themeId).glassOverVideo
+
+            assertThat(overVideo.copy(alpha = 1f)).isEqualTo(Color.Black)
+            assertThat(overVideo.alpha).isAtLeast(0.55f)
+        }
+    }
+
+    @Test
+    fun `only light themes draw an opaque base under glass`() {
+        ALL_THEME_IDS.forEach { themeId ->
+            val palette = AppPalette.forTheme(themeId)
+
+            assertThat(palette.glassBase.alpha).isEqualTo(if (palette.isLight) 1f else 0f)
+        }
+    }
+
+    @Test
+    fun `nav selected and dark tier focus fills are opaque`() {
+        ALL_THEME_IDS.forEach { themeId ->
+            val palette = AppPalette.forTheme(themeId)
+
+            assertThat(palette.navSelected.alpha).isEqualTo(1f)
+            assertThat(palette.focusOverVideo.alpha).isEqualTo(1f)
+        }
+    }
+
+    @Test
     fun `standard material controls receive the same semantic palette`() {
         listOf("classic_blue", "m3_purple", "light").forEach { themeId ->
             val palette = AppPalette.forTheme(themeId)
@@ -56,5 +85,19 @@ class AppPaletteTest {
             assertThat(scheme.surfaceVariant).isEqualTo(palette.surfaceElevated)
             assertThat(scheme.onSurfaceVariant).isEqualTo(palette.textSecondary)
         }
+    }
+
+    private companion object {
+        val ALL_THEME_IDS = listOf(
+            AppPalette.CLASSIC_BLUE_ID,
+            AppPalette.M3_PURPLE_ID,
+            AppPalette.LIGHT_ID,
+            AppPalette.FOREST_ID,
+            AppPalette.SUNSET_ID,
+            AppPalette.OCEAN_ID,
+            AppPalette.ROSE_ID,
+            AppPalette.AMOLED_BLACK_ID,
+            AppPalette.VINTAGE_ID,
+        )
     }
 }

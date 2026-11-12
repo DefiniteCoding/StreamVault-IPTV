@@ -142,6 +142,20 @@ object BrowseColors {
     val Outline get() = current.outline
     val HeroTop get() = current.heroTop
     val HeroBottom get() = current.heroBottom
+    val GlassBase get() = current.glassBase
+    val GlassBar get() = current.glassBar
+    val GlassPanel get() = current.glassPanel
+    val GlassOverVideo get() = current.glassOverVideo
+    val GlassStroke get() = current.glassStroke
+    val GlassHighlight get() = current.glassHighlight
+    val GlassSheen get() = current.glassSheen
+    val NavSelected get() = current.navSelected
+    val OnNavSelected get() = current.onNavSelected
+    val OnFocus get() = current.onFocus
+    val FocusOverVideo get() = current.focusOverVideo
+    val OnFocusOverVideo get() = current.onFocusOverVideo
+    val OnGlassOverVideo get() = current.onGlassOverVideo
+    val AccentSoft get() = current.accentSoft
 }
 
 object BrowseShapes {

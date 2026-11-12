@@ -49,4 +49,19 @@ object AppColors {
 
     val HeroTop: Color get() = current.heroTop
     val HeroBottom: Color get() = current.heroBottom
+
+    val GlassBase: Color get() = current.glassBase
+    val GlassBar: Color get() = current.glassBar
+    val GlassPanel: Color get() = current.glassPanel
+    val GlassOverVideo: Color get() = current.glassOverVideo
+    val GlassStroke: Color get() = current.glassStroke
+    val GlassHighlight: Color get() = current.glassHighlight
+    val GlassSheen: Color get() = current.glassSheen
+    val NavSelected: Color get() = current.navSelected
+    val OnNavSelected: Color get() = current.onNavSelected
+    val OnFocus: Color get() = current.onFocus
+    val FocusOverVideo: Color get() = current.focusOverVideo
+    val OnFocusOverVideo: Color get() = current.onFocusOverVideo
+    val OnGlassOverVideo: Color get() = current.onGlassOverVideo
+    val AccentSoft: Color get() = current.accentSoft
 }
