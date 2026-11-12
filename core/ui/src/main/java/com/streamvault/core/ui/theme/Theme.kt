@@ -5,6 +5,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.tv.material3.MaterialTheme
+import com.streamvault.core.ui.accessibility.LocalReducedEffects
+import com.streamvault.core.ui.accessibility.rememberReducedMotionEnabled
 import androidx.tv.material3.darkColorScheme
 import androidx.tv.material3.lightColorScheme
 import androidx.compose.material3.MaterialTheme as StandardMaterialTheme
@@ -81,7 +83,8 @@ fun StreamVaultTheme(
             safeTop = 12.dp, safeBottom = 12.dp, safeHoriz = 12.dp
         ) else AppSpacing(),
         LocalAppShapes provides AppShapes(),
-        LocalAppTypeTokens provides typeTokens
+        LocalAppTypeTokens provides typeTokens,
+        LocalReducedEffects provides rememberReducedMotionEnabled()
     ) {
         MaterialTheme(
             colorScheme = tvColorScheme,

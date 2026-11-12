@@ -7,11 +7,18 @@ import android.os.Looper
 import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+
+/**
+ * True when the system animator scale is off. Glass then draws opaque without its sheen, and focus scale snaps.
+ * Provided once at the theme root; not static because the user can flip the setting while the app runs.
+ */
+val LocalReducedEffects = compositionLocalOf { false }
 
 fun isReducedMotionEnabled(context: Context): Boolean {
     val animatorScale = runCatching {
