@@ -15,6 +15,9 @@ import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.AppShapes
 import com.streamvault.core.ui.design.LocalAppShapes
 import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
+import com.streamvault.core.ui.design.rememberAppLocale
+import com.streamvault.core.ui.design.rememberAppTypeTokens
 import com.streamvault.core.ui.design.rememberAppTypography
 import com.streamvault.core.ui.layout.isPortraitLayout
 import com.streamvault.core.ui.design.AppSpacing
@@ -26,7 +29,9 @@ fun StreamVaultTheme(
     content: @Composable () -> Unit
 ) {
     val palette = AppPalette.forTheme(themeId)
-    val typography = rememberAppTypography()
+    val locale = rememberAppLocale()
+    val typography = rememberAppTypography(locale)
+    val typeTokens = rememberAppTypeTokens(locale)
     val tvColorScheme = if (palette.isLight) {
         lightColorScheme(
             primary = palette.brand,
@@ -75,7 +80,8 @@ fun StreamVaultTheme(
             lg = 16.dp, xl = 24.dp, screenGutter = 12.dp, sectionGap = 20.dp,
             safeTop = 12.dp, safeBottom = 12.dp, safeHoriz = 12.dp
         ) else AppSpacing(),
-        LocalAppShapes provides AppShapes()
+        LocalAppShapes provides AppShapes(),
+        LocalAppTypeTokens provides typeTokens
     ) {
         MaterialTheme(
             colorScheme = tvColorScheme,
