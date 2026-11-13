@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">Žádná aplikace nemohla přijmout záložní soubor.</string>
     <string name="settings_catalog_count_pending">Čeká</string>
     <string name="settings_live_timeshift_backend_value">Automaticky</string>
-    <string name="nav_close_app">Zavřít aplikaci</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_downloads">Stahování</string>
     <string name="dashboard_customize_home">Přizpůsobit domovskou obrazovku</string>

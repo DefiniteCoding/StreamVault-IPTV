@@ -5,6 +5,25 @@ import com.streamvault.core.ui.layout.AdaptiveRow
 import androidx.compose.foundation.layout.FlowRow
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import com.streamvault.core.ui.accessibility.LocalReducedEffects
+import com.streamvault.core.ui.design.AppPalette
+import com.streamvault.core.ui.design.GlassTier
+import com.streamvault.core.ui.design.glassSurface
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -25,7 +44,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -62,7 +80,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -114,6 +131,9 @@ fun CoreAppScreenScaffold(
     showScreenHeader: Boolean = true,
     header: (@Composable ColumnScope.() -> Unit)? = null,
     topBarActions: (@Composable RowScope.() -> Unit)? = null,
+    topBarOverlaysContent: Boolean = false,
+    topBarTier: GlassTier = GlassTier.Bar,
+    brand: (@Composable () -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -185,47 +205,72 @@ fun CoreAppScreenScaffold(
                 }
             }
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 14.dp, vertical = 10.dp)
-            ) {
-                if (topBarVisible) {
-                    TopNavigationBar(
-                        currentDestinationId = currentDestinationId,
-                        destinations = destinations,
-                        onDestinationSelected = onDestinationSelected,
-                        actions = topBarActions,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(10.dp))
-                }
-                if (showScreenHeader) {
-                    AppScreenHeader(
-                        title = title,
-                        subtitle = subtitle,
-                        modifier = Modifier.fillMaxWidth(),
-                        compact = true
-                    )
-                    if (header != null) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        header()
+            val barTop = spacing.md
+            val contentInset = if (topBarVisible) barTop + TopBarHeight + spacing.sm else barTop
+            CompositionLocalProvider(LocalTopBarContentInset provides contentInset) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    // Composed before the content so default focus order is unchanged; zIndex only lifts its drawing.
+                    if (topBarVisible) {
+                        TopNavigationBar(
+                            currentDestinationId = currentDestinationId,
+                            destinations = destinations,
+                            onDestinationSelected = onDestinationSelected,
+                            tier = topBarTier,
+                            brand = brand,
+                            actions = topBarActions,
+                            modifier = Modifier
+                                .zIndex(1f)
+                                .fillMaxWidth()
+                                .padding(start = spacing.md, end = spacing.md, top = barTop)
+                        )
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                } else if (header != null) {
-                    header()
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(contentPadding)
-                ) {
-                    content()
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                start = spacing.md,
+                                end = spacing.md,
+                                top = if (topBarOverlaysContent) 0.dp else contentInset,
+                                bottom = spacing.sm
+                            )
+                    ) {
+                        if (showScreenHeader) {
+                            AppScreenHeader(
+                                title = title,
+                                subtitle = subtitle,
+                                modifier = Modifier.fillMaxWidth(),
+                                compact = true
+                            )
+                            if (header != null) {
+                                Spacer(modifier = Modifier.height(spacing.xs))
+                                header()
+                            }
+                            Spacer(modifier = Modifier.height(spacing.xs))
+                        } else if (header != null) {
+                            header()
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(contentPadding)
+                        ) {
+                            content()
+                        }
+                    }
                 }
             }
         }
     }
 }
+
+/**
+ * Distance from the top of a top-bar screen to the first row that must stay clear of the floating bar. Screens that
+ * pass `topBarOverlaysContent = true` apply it as list content padding so rows scroll under the glass.
+ */
+val LocalTopBarContentInset = compositionLocalOf { 0.dp }
+
+private val TopBarHeight = 48.dp
+private val TopNavIconSize = 18.dp
 
 @Composable
 fun AppScreenHeader(
@@ -271,69 +316,114 @@ private fun TopNavigationBar(
     currentDestinationId: String,
     destinations: List<UiDestination>,
     onDestinationSelected: (String) -> Unit,
-    actions: (@Composable RowScope.() -> Unit)? = null,
+    tier: GlassTier,
+    brand: (@Composable () -> Unit)?,
+    actions: (@Composable RowScope.() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
+    val spacing = LocalAppSpacing.current
     val scrollState = rememberScrollState()
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
+    val pillColors = topNavPillColors(BrowseColors.current, tier)
 
-    Surface(
-        modifier = modifier
-            .focusProperties {
-                // onEnter returns Unit: a returned requester is discarded, so focus is redirected explicitly.
-                onEnter = {
-                    val activeItem = findActiveDestination(destinations, currentDestinationId)
-                    focusRequesters[activeItem?.id]?.requestFocus()
-                }
-            }
-            .focusGroup(),
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = BrowseColors.Surface.copy(alpha = 0.94f)),
-        border = Border(BorderStroke(1.dp, BrowseColors.Outline), shape = BrowseShapes.Panel)
+    Row(
+        modifier = modifier.height(TopBarHeight),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm)
     ) {
+        brand?.invoke()
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .padding(horizontal = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "StreamVault",
-                style = MaterialTheme.typography.titleSmall.copy(letterSpacing = (-0.4).sp),
-                color = BrowseColors.TextPrimary,
-                modifier = Modifier.wrapContentWidth(Alignment.Start)
-            )
-            Spacer(modifier = Modifier.width(24.dp))
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .horizontalScroll(scrollState)
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                destinations.forEach { destination ->
-                    val requester = focusRequesters.getOrPut(destination.id) { FocusRequester() }
-                    TopNavigationButton(
-                        destination = destination,
-                        selected = currentDestinationId.startsWith(destination.id),
-                        focusRequester = requester,
-                        onClick = {
-                            if (!currentDestinationId.startsWith(destination.id)) {
-                                onDestinationSelected(destination.id)
-                            }
-                        }
-                    )
+                .weight(1f)
+                .fillMaxHeight()
+                .glassSurface(tier, CircleShape)
+                .focusProperties {
+                    // onEnter returns Unit: a returned requester is discarded, so focus is redirected explicitly.
+                    onEnter = {
+                        val activeItem = findActiveDestination(destinations, currentDestinationId)
+                        focusRequesters[activeItem?.id]?.requestFocus()
+                    }
                 }
-            }
-            if (actions != null) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    content = actions
+                .focusGroup()
+                .horizontalScroll(scrollState)
+                // Inside the scroll so the first and last pills keep room for their focus scale and ring.
+                .padding(horizontal = spacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(spacing.xs)
+        ) {
+            destinations.forEach { destination ->
+                val requester = focusRequesters.getOrPut(destination.id) { FocusRequester() }
+                TopNavigationButton(
+                    destination = destination,
+                    selected = currentDestinationId.startsWith(destination.id),
+                    colors = pillColors,
+                    focusRequester = requester,
+                    onClick = {
+                        if (!currentDestinationId.startsWith(destination.id)) {
+                            onDestinationSelected(destination.id)
+                        }
+                    }
                 )
             }
+        }
+        if (actions != null) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                verticalAlignment = Alignment.CenterVertically,
+                content = actions
+            )
+        }
+    }
+}
+
+/** Nav pill colors for one glass tier. Pairs are covered by GlassPaletteContrastTest in every theme. */
+@Immutable
+internal data class TopNavPillColors(
+    val restContent: Color,
+    val selectedContainer: Color,
+    val selectedContent: Color,
+    val focusedContainer: Color,
+    val focusedContent: Color,
+    val ring: Color
+)
+
+internal fun topNavPillColors(palette: AppPalette, tier: GlassTier): TopNavPillColors =
+    if (tier == GlassTier.OverVideo) {
+        TopNavPillColors(
+            restContent = palette.onGlassOverVideo,
+            selectedContainer = palette.navSelected,
+            selectedContent = palette.onNavSelected,
+            focusedContainer = palette.focusOverVideo,
+            focusedContent = palette.onFocusOverVideo,
+            ring = palette.focusOverVideo
+        )
+    } else {
+        TopNavPillColors(
+            restContent = palette.textSecondary,
+            selectedContainer = palette.navSelected,
+            selectedContent = palette.onNavSelected,
+            focusedContainer = palette.focus,
+            focusedContent = palette.onFocus,
+            ring = palette.focus
+        )
+    }
+
+// Drawn outside the pill: tv-material's Border paints inside the shape and cannot stand off it.
+private fun Modifier.navFocusRing(color: Color, isFocused: () -> Boolean): Modifier = drawWithCache {
+    val ringWidth = FocusSpec.NavRingWidth.toPx()
+    val outset = FocusSpec.NavRingGap.toPx() + ringWidth / 2f
+    val ringSize = Size(size.width + outset * 2f, size.height + outset * 2f)
+    val cornerRadius = CornerRadius(ringSize.height / 2f)
+    val stroke = Stroke(width = ringWidth)
+    onDrawBehind {
+        if (isFocused()) {
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(-outset, -outset),
+                size = ringSize,
+                cornerRadius = cornerRadius,
+                style = stroke
+            )
         }
     }
 }
@@ -372,15 +462,24 @@ fun AppTopBarCloseAction(
 private fun TopNavigationButton(
     destination: UiDestination,
     selected: Boolean,
+    colors: TopNavPillColors,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val spacing = LocalAppSpacing.current
     var isFocused by remember { mutableStateOf(false) }
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
     val sounds = rememberTvInteractionSounds()
+    val reducedEffects = LocalReducedEffects.current
     val scale by animateFloatAsState(
-        targetValue = if (isFocused) FocusSpec.FocusedScale else 1f,
-        animationSpec = AppMotion.FocusSpec,
+        targetValue = when {
+            isPressed -> FocusSpec.PressedScale
+            isFocused -> FocusSpec.NavFocusedScale
+            else -> 1f
+        },
+        animationSpec = if (reducedEffects) snap() else AppMotion.FocusSpec,
         label = "topNavScale"
     )
 
@@ -403,29 +502,44 @@ private fun TopNavigationButton(
                 scaleY = scale
             }
             .zIndex(if (isFocused) 1f else 0f)
+            .navFocusRing(colors.ring) { isFocused }
             .onFocusChanged {
                 if (it.isFocused && !isFocused) sounds.playNavigate()
                 isFocused = it.isFocused
+            }
+            .semantics {
+                role = Role.Tab
+                this.selected = selected
             },
-        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
+        shape = ClickableSurfaceDefaults.shape(CircleShape),
+        // Scale is applied above so the ring, drawn outside the Surface, scales with the pill.
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        colors = selectableSurfaceColors(selected),
-        border = selectableFocusBorder(BrowseShapes.Control)
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = if (selected) colors.selectedContainer else Color.Transparent,
+            contentColor = if (selected) colors.selectedContent else colors.restContent,
+            focusedContainerColor = colors.focusedContainer,
+            focusedContentColor = colors.focusedContent,
+            pressedContainerColor = colors.focusedContainer,
+            pressedContentColor = colors.focusedContent
+        ),
+        interactionSource = interactionSource
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(spacing.xs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = if (selected) destination.selectedIcon else destination.icon,
-                contentDescription = destination.label,
-                modifier = Modifier.size(14.dp)
+                // The visible label already names the tab.
+                contentDescription = null,
+                modifier = Modifier.size(TopNavIconSize)
             )
             Text(
                 text = destination.label,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = if (selected) FontWeight.SemiBold else null
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = if (selected) FontWeight.SemiBold else null,
+                maxLines = 1
             )
         }
     }

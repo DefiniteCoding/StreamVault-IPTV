@@ -48,6 +48,18 @@ class GlassPaletteContrastTest {
         expect("NavSelected against FocusOverVideo", palette.navSelected, palette.focusOverVideo, NON_TEXT)
     }
 
+    // The brand mark sits beside the bar with no glass behind it, so it is checked against the browse backdrop:
+    // both gradient ends, each under the brand-tinted ambient light at its strongest.
+    @Test
+    fun `brand wordmark is readable on the browse backdrop`() = checkEveryTheme { palette ->
+        val browse = palette.forBrowsing()
+        val ambient = browse.brand.copy(alpha = if (browse.isLight) 0.07f else 0.10f)
+        listOf("CanvasElevated" to browse.canvasElevated, "Canvas" to browse.canvas).forEach { (where, backdrop) ->
+            expect("TextPrimary on browse $where", browse.textPrimary, backdrop, TEXT)
+            expect("TextPrimary on browse $where under ambient", browse.textPrimary, ambient.compositeOver(backdrop), TEXT)
+        }
+    }
+
     @Test
     fun `glass panels keep text and focus readable`() = checkEveryTheme { palette ->
         panelStack(palette).forEach { (where, panel) ->

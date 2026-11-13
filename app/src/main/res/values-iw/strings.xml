@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">אף אפליקציה לא יכלה לקבל את קובץ הגיבוי.</string>
     <string name="settings_catalog_count_pending">ממתין</string>
     <string name="settings_live_timeshift_backend_value">אוטומטי</string>
-    <string name="nav_close_app">סגור אפליקציה</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_downloads">הורדות</string>
     <string name="hidden_categories_dialog_title">קטגוריות מוסתרות</string>

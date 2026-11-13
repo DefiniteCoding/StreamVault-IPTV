@@ -8,7 +8,6 @@
     <string name="nav_series">劇集</string>
     <string name="nav_epg">節目表</string>
     <string name="nav_settings">設定</string>
-    <string name="nav_close_app">關閉應用程式</string>
 
     <string name="welcome_enter_app">進入應用程式</string>
     <string name="welcome_manage_providers">管理供應商</string>

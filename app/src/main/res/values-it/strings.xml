@@ -269,7 +269,6 @@
     <string name="downloads_empty">Nessun download presente</string>
     <string name="downloads_delete_confirm">Eliminare questo download?</string>
     <string name="download_play_local">Riproduci</string>
-    <string name="nav_close_app">Chiudi app</string>
     <string name="m3u_organize_items">Organizza elementi M3U</string>
     <string name="m3u_move_to_movies">Sposta in Film</string>
     <string name="m3u_move_to_series">Sposta in Serie</string>

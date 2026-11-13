@@ -242,7 +242,6 @@
     <string name="settings_live_timeshift_backend_value">Automatisch</string>
     <!-- M2: Google Drive backup sync -->
     <string name="settings_drive_cancel_backup_choice_subtitle">Terug naar de Drive-back-upacties.</string>
-    <string name="nav_close_app">App sluiten</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_downloads">Downloads</string>
     <string name="hidden_categories_dialog_title">Verborgen categorieën</string>

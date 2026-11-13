@@ -262,7 +262,6 @@
 
     <!-- M2 : sauvegarde Google Drive -->
 
-    <string name="nav_close_app">Fermer l’application</string>
     <string name="m3u_organize_items">Organiser les éléments M3U</string>
     <string name="m3u_move_to_movies">Déplacer vers Films</string>
     <string name="m3u_move_to_series">Déplacer vers Séries</string>

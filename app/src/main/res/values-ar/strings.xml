@@ -243,7 +243,6 @@
     <!-- M2: Google Drive backup sync -->
     <string name="settings_drive_cancel_backup_choice_subtitle">العودة إلى إجراءات النسخ الاحتياطي على Drive.</string>
 
-    <string name="nav_close_app">إغلاق التطبيق</string>
     <string name="nav_vod">VOD</string>
     <string name="m3u_organize_items">تنظيم عناصر M3U</string>
     <string name="m3u_move_to_movies">نقل إلى الأفلام</string>

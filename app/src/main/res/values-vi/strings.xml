@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">Không có ứng dụng nào có thể nhận tệp sao lưu.</string>
     <string name="settings_catalog_count_pending">Đang chờ</string>
     <string name="settings_live_timeshift_backend_value">Tự động</string>
-    <string name="nav_close_app">Đóng ứng dụng</string>
     <string name="hidden_categories_dialog_title">Danh mục đã ẩn</string>
     <string name="hidden_categories_dialog_subtitle">Chọn những mục để khôi phục.</string>
     <string name="hidden_categories_dialog_unhide_all">Bỏ ẩn tất cả</string>

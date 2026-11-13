@@ -252,7 +252,6 @@
     <string name="channel_action_hide">Приховати цей канал</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_downloads">Завантаження</string>
-    <string name="nav_close_app">Закрити додаток</string>
     <string name="dashboard_customize_home">Налаштувати головний екран</string>
     <string name="dashboard_customize_home_subtitle">Виберіть, які полиці відображаються тут, додавайте рядки та змінюйте їхній порядок будь-коли.</string>
     <string name="dashboard_customize_home_action">Налаштувати</string>
