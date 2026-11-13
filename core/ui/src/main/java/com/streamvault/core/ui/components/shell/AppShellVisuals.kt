@@ -53,6 +53,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,6 +71,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
@@ -101,10 +103,12 @@ import com.streamvault.core.ui.design.AppMotion
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
 import com.streamvault.core.ui.design.LocalAppShapes
 import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
 import com.streamvault.core.ui.interaction.TvIconButton
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.interaction.rememberTvInteractionSounds
 import com.streamvault.core.ui.layout.isPortraitLayout
+import java.util.Locale
 
 enum class NavigationChrome {
     Rail,
@@ -761,6 +765,110 @@ fun StatusPill(
     ) {
         Text(text = label, style = MaterialTheme.typography.labelSmall, color = resolvedContentColor)
     }
+}
+
+/** What a badge is drawn on. Over artwork the ink stays bright in every theme; on a surface it follows the palette. */
+enum class BadgeTone { OverArtwork, OnSurface }
+
+// Over pure white artwork this keeps white text above 4.5:1 and the amber star above 3:1 with room to spare;
+// BadgePaletteContrastTest holds both. Alpha does not change the fill cost, so the margin is free on the TV GPU.
+internal const val BadgeScrimAlpha = 0.6f
+
+// Sized to the 14sp badge text.
+private val BadgeIconSize = 14.dp
+
+internal data class BadgeColors(val container: Color, val content: Color, val star: Color)
+
+/** Rules 2 and 9: white ink on a black scrim only over artwork; palette roles everywhere else. */
+internal fun badgeColors(tone: BadgeTone, palette: AppPalette): BadgeColors = when (tone) {
+    BadgeTone.OverArtwork -> BadgeColors(
+        container = Color.Black.copy(alpha = BadgeScrimAlpha),
+        content = Color.White,
+        star = BrowseColors.MediaWarning
+    )
+    BadgeTone.OnSurface -> BadgeColors(
+        container = palette.controlContainer,
+        content = palette.textPrimary,
+        star = palette.warning
+    )
+}
+
+/** Stream quality such as "4K" or "HD". The label is announced as written. */
+@Composable
+fun QualityBadge(
+    text: String,
+    modifier: Modifier = Modifier,
+    tone: BadgeTone = BadgeTone.OverArtwork
+) {
+    // Quality labels are provider tokens, not translated copy, so they uppercase the same way in every locale
+    // (kicker() would turn "imax" into "İMAX" in Turkish and leave it lowercase in caseless-script locales).
+    BadgeBody(tone = tone, contentDescription = text, modifier = modifier) { colors ->
+        BadgeText(
+            text = text.uppercase(Locale.ROOT),
+            style = LocalAppTypeTokens.current.labelKicker,
+            color = colors.content
+        )
+    }
+}
+
+/** A rating the caller has already formatted for the locale. The star is decoration; [contentDescription] is read. */
+@Composable
+fun RatingBadge(
+    value: String,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tone: BadgeTone = BadgeTone.OverArtwork
+) {
+    BadgeBody(tone = tone, contentDescription = contentDescription, modifier = modifier) { colors ->
+        Icon(
+            imageVector = Icons.Filled.Star,
+            contentDescription = null,
+            tint = colors.star,
+            modifier = Modifier.size(BadgeIconSize)
+        )
+        BadgeText(text = value, style = LocalAppTypeTokens.current.labelNumeric, color = colors.content)
+    }
+}
+
+/** Season and episode, formatted by the caller, e.g. "S1 . E4", with a spoken [contentDescription]. */
+@Composable
+fun EpisodeBadge(
+    text: String,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    tone: BadgeTone = BadgeTone.OverArtwork
+) {
+    BadgeBody(tone = tone, contentDescription = contentDescription, modifier = modifier) { colors ->
+        BadgeText(text = text, style = LocalAppTypeTokens.current.labelNumeric, color = colors.content)
+    }
+}
+
+// Badges are never focusable: the card or row that holds them takes focus and the badge only adds its description.
+@Composable
+private fun BadgeBody(
+    tone: BadgeTone,
+    contentDescription: String,
+    modifier: Modifier,
+    content: @Composable RowScope.(BadgeColors) -> Unit
+) {
+    val spacing = LocalAppSpacing.current
+    val palette = BrowseColors.current
+    val colors = remember(tone, palette) { badgeColors(tone, palette) }
+    Row(
+        modifier = modifier
+            .clearAndSetSemantics { this.contentDescription = contentDescription }
+            .background(colors.container, LocalAppShapes.current.xSmall)
+            .padding(horizontal = spacing.xs, vertical = spacing.xxs),
+        horizontalArrangement = Arrangement.spacedBy(spacing.xxs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        content(colors)
+    }
+}
+
+@Composable
+private fun BadgeText(text: String, style: TextStyle, color: Color) {
+    Text(text = text, style = style, color = color, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
 @Composable
