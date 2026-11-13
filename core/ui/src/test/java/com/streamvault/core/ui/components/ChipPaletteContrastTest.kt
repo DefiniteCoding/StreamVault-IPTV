@@ -1,7 +1,5 @@
 package com.streamvault.core.ui.components
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import com.streamvault.core.ui.components.shell.PillColors
 import com.streamvault.core.ui.design.AppPalette
 import org.junit.Test
@@ -62,25 +60,6 @@ class ChipPaletteContrastTest {
         ambientBackdrops(browse).forEach { (where, backdrop) ->
             expect("rest container against $where", chip.restContainer, backdrop, ambientFloor)
         }
-    }
-
-    // Chip rows sit on the browse backdrop (both gradient ends, also under the brand ambient light at its strongest)
-    // and on browse surfaces. They are kept off SurfaceElevated panels and the Live strip's AccentSoft aurora,
-    // where the resting and m3_purple selected fills lose too much contrast.
-    private fun pageBackdrops(browse: AppPalette) = plainBackdrops(browse) + ambientBackdrops(browse)
-
-    private fun plainBackdrops(browse: AppPalette) = listOf(
-        "Canvas" to browse.canvas,
-        "CanvasElevated" to browse.canvasElevated,
-        "Surface" to browse.surface,
-    )
-
-    private fun ambientBackdrops(browse: AppPalette): List<Pair<String, Color>> {
-        val ambient = browse.brand.copy(alpha = if (browse.isLight) 0.07f else 0.10f)
-        return listOf(
-            "Canvas under ambient" to ambient.compositeOver(browse.canvas),
-            "CanvasElevated under ambient" to ambient.compositeOver(browse.canvasElevated),
-        )
     }
 
     private fun checkEveryTheme(checks: ContrastChecks.(AppPalette, PillColors) -> Unit) =

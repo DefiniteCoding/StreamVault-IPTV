@@ -75,8 +75,7 @@ fun VodSectionHeader(
             .fillMaxWidth()
             .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp),
         actionLabel = onSeeAll?.let { seeAllLabel },
-        onActionClick = onSeeAll,
-        actionContentColor = AppColors.TextSecondary
+        onActionClick = onSeeAll
     )
 }
 
