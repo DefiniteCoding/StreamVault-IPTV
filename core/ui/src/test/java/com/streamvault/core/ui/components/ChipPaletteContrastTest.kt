@@ -2,11 +2,8 @@ package com.streamvault.core.ui.components
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.luminance
-import com.google.common.truth.Truth.assertWithMessage
 import com.streamvault.core.ui.components.shell.PillColors
 import com.streamvault.core.ui.design.AppPalette
-import com.streamvault.core.ui.design.forBrowsing
 import org.junit.Test
 
 /**
@@ -86,48 +83,15 @@ class ChipPaletteContrastTest {
         )
     }
 
-    private fun checkEveryTheme(checks: ContrastChecks.(AppPalette, PillColors) -> Unit) {
-        val failures = THEME_IDS.flatMap { themeId ->
-            val browse = AppPalette.forTheme(themeId).forBrowsing()
-            ContrastChecks(themeId).apply { checks(browse, appChipColors(browse)) }.failures
-        }
-        assertWithMessage(failures.joinToString("\n")).that(failures).isEmpty()
-    }
-
-    private class ContrastChecks(private val themeId: String) {
-        val failures = mutableListOf<String>()
-
-        fun expect(pair: String, foreground: Color, background: Color, minimum: Float) {
-            val ratio = contrastRatio(foreground, background)
-            if (ratio < minimum) failures += "$themeId $pair: %.2f:1, expected at least %.1f:1".format(ratio, minimum)
-        }
-    }
+    private fun checkEveryTheme(checks: ContrastChecks.(AppPalette, PillColors) -> Unit) =
+        checkEveryBrowsePalette { browse -> checks(browse, appChipColors(browse)) }
 
     private companion object {
-        const val TEXT = 4.5f
-        const val NON_TEXT = 3f
+        const val TEXT = TEXT_CONTRAST
+        const val NON_TEXT = NON_TEXT_CONTRAST
         const val DARK_CONTROL_FLOOR = 1.5f
         const val LIGHT_CONTROL_FLOOR = 1.3f
         const val DARK_AMBIENT_FLOOR = 1.35f
         const val LIGHT_AMBIENT_FLOOR = 1.15f
-
-        val THEME_IDS = listOf(
-            AppPalette.CLASSIC_BLUE_ID,
-            AppPalette.M3_PURPLE_ID,
-            AppPalette.LIGHT_ID,
-            AppPalette.FOREST_ID,
-            AppPalette.SUNSET_ID,
-            AppPalette.OCEAN_ID,
-            AppPalette.ROSE_ID,
-            AppPalette.AMOLED_BLACK_ID,
-            AppPalette.VINTAGE_ID,
-        )
-
-        fun contrastRatio(first: Color, second: Color): Float {
-            val firstLuminance = first.luminance()
-            val secondLuminance = second.luminance()
-            return (maxOf(firstLuminance, secondLuminance) + 0.05f) /
-                (minOf(firstLuminance, secondLuminance) + 0.05f)
-        }
     }
 }
