@@ -52,6 +52,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -117,6 +118,13 @@ data class UiDestination(
     val selectedIcon: ImageVector = icon
 )
 
+/** Search drawn as an icon-only glass pill before the top bar. Its destination never appears as a tab there. */
+@Immutable
+data class TopBarSearch(
+    val destinationId: String,
+    val contentDescription: String
+)
+
 @Composable
 fun CoreAppScreenScaffold(
     currentDestinationId: String,
@@ -134,6 +142,7 @@ fun CoreAppScreenScaffold(
     topBarOverlaysContent: Boolean = false,
     topBarTier: GlassTier = GlassTier.Bar,
     brand: (@Composable () -> Unit)? = null,
+    topBarSearch: TopBarSearch? = null,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -217,6 +226,7 @@ fun CoreAppScreenScaffold(
                             onDestinationSelected = onDestinationSelected,
                             tier = topBarTier,
                             brand = brand,
+                            search = topBarSearch,
                             actions = topBarActions,
                             modifier = Modifier
                                 .zIndex(1f)
@@ -271,6 +281,8 @@ val LocalTopBarContentInset = compositionLocalOf { 0.dp }
 
 private val TopBarHeight = 48.dp
 private val TopNavIconSize = 18.dp
+// Same height as a tab: titleSmall line height (20) plus xs padding above and below.
+private val TopNavSearchPillSize = 36.dp
 
 @Composable
 fun AppScreenHeader(
@@ -318,6 +330,7 @@ private fun TopNavigationBar(
     onDestinationSelected: (String) -> Unit,
     tier: GlassTier,
     brand: (@Composable () -> Unit)?,
+    search: TopBarSearch?,
     actions: (@Composable RowScope.() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -325,6 +338,7 @@ private fun TopNavigationBar(
     val scrollState = rememberScrollState()
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
     val pillColors = topNavPillColors(BrowseColors.current, tier)
+    val tabs = remember(destinations, search) { topBarTabs(destinations, search) }
 
     Row(
         modifier = modifier.height(TopBarHeight),
@@ -332,38 +346,57 @@ private fun TopNavigationBar(
         horizontalArrangement = Arrangement.spacedBy(spacing.sm)
     ) {
         brand?.invoke()
+        // One focus group for the search pill and the tabs, so entering from anywhere lands on the active item.
         Row(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight()
-                .glassSurface(tier, CircleShape)
                 .focusProperties {
                     // onEnter returns Unit: a returned requester is discarded, so focus is redirected explicitly.
                     onEnter = {
-                        val activeItem = findActiveDestination(destinations, currentDestinationId)
-                        focusRequesters[activeItem?.id]?.requestFocus()
+                        val targetId = topBarEntryTargetId(currentDestinationId, tabs, search)
+                        focusRequesters[targetId]?.requestFocus()
                     }
                 }
-                .focusGroup()
-                .horizontalScroll(scrollState)
-                // Inside the scroll so the first and last pills keep room for their focus scale and ring.
-                .padding(horizontal = spacing.sm),
+                .focusGroup(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.xs)
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm)
         ) {
-            destinations.forEach { destination ->
-                val requester = focusRequesters.getOrPut(destination.id) { FocusRequester() }
-                TopNavigationButton(
-                    destination = destination,
-                    selected = currentDestinationId.startsWith(destination.id),
+            if (search != null) {
+                TopNavigationSearchPill(
+                    search = search,
+                    selected = currentDestinationId.startsWith(search.destinationId),
+                    tier = tier,
                     colors = pillColors,
-                    focusRequester = requester,
-                    onClick = {
-                        if (!currentDestinationId.startsWith(destination.id)) {
-                            onDestinationSelected(destination.id)
-                        }
-                    }
+                    focusRequester = focusRequesters.getOrPut(search.destinationId) { FocusRequester() },
+                    onDestinationSelected = onDestinationSelected
                 )
+            }
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .glassSurface(tier, CircleShape)
+                    .horizontalScroll(scrollState)
+                    // Inside the scroll so the first and last pills keep room for their focus scale and ring.
+                    .padding(horizontal = spacing.sm),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(spacing.xs)
+            ) {
+                tabs.forEach { destination ->
+                    val requester = focusRequesters.getOrPut(destination.id) { FocusRequester() }
+                    TopNavigationButton(
+                        destination = destination,
+                        selected = currentDestinationId.startsWith(destination.id),
+                        colors = pillColors,
+                        focusRequester = requester,
+                        onClick = {
+                            if (!currentDestinationId.startsWith(destination.id)) {
+                                onDestinationSelected(destination.id)
+                            }
+                        }
+                    )
+                }
             }
         }
         if (actions != null) {
@@ -468,6 +501,76 @@ private fun TopNavigationButton(
     onClick: () -> Unit
 ) {
     val spacing = LocalAppSpacing.current
+    TopNavPill(
+        selected = selected,
+        colors = colors,
+        focusRequester = focusRequester,
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.xs),
+            horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = if (selected) destination.selectedIcon else destination.icon,
+                // The visible label already names the tab.
+                contentDescription = null,
+                modifier = Modifier.size(TopNavIconSize)
+            )
+            Text(
+                text = destination.label,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = if (selected) FontWeight.SemiBold else null,
+                maxLines = 1
+            )
+        }
+    }
+}
+
+@Composable
+private fun TopNavigationSearchPill(
+    search: TopBarSearch,
+    selected: Boolean,
+    tier: GlassTier,
+    colors: TopNavPillColors,
+    focusRequester: FocusRequester,
+    onDestinationSelected: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .size(TopBarHeight)
+            .glassSurface(tier, CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        TopNavPill(
+            selected = selected,
+            colors = colors,
+            focusRequester = focusRequester,
+            onClick = { if (!selected) onDestinationSelected(search.destinationId) }
+        ) {
+            Box(modifier = Modifier.size(TopNavSearchPillSize), contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = search.contentDescription,
+                    modifier = Modifier.size(TopNavIconSize)
+                )
+            }
+        }
+    }
+}
+
+/** Shared tab body: selected and focused fills, the outset focus ring, focus scale and tab semantics. */
+@Composable
+private fun TopNavPill(
+    selected: Boolean,
+    colors: TopNavPillColors,
+    focusRequester: FocusRequester,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
     var isFocused by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
@@ -524,24 +627,7 @@ private fun TopNavigationButton(
         ),
         interactionSource = interactionSource
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.xs),
-            horizontalArrangement = Arrangement.spacedBy(spacing.xs),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = if (selected) destination.selectedIcon else destination.icon,
-                // The visible label already names the tab.
-                contentDescription = null,
-                modifier = Modifier.size(TopNavIconSize)
-            )
-            Text(
-                text = destination.label,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = if (selected) FontWeight.SemiBold else null,
-                maxLines = 1
-            )
-        }
+        content()
     }
 }
 
@@ -878,6 +964,21 @@ private fun RailButton(
         }
     }
 }
+
+internal fun topBarTabs(destinations: List<UiDestination>, search: TopBarSearch?): List<UiDestination> =
+    if (search == null) destinations else destinations.filterNot { it.id == search.destinationId }
+
+/** The item that takes focus when D-pad focus enters the bar: the search pill on Search, else the active tab. */
+internal fun topBarEntryTargetId(
+    currentDestinationId: String,
+    tabs: List<UiDestination>,
+    search: TopBarSearch?
+): String? =
+    if (search != null && currentDestinationId.startsWith(search.destinationId)) {
+        search.destinationId
+    } else {
+        findActiveDestination(tabs, currentDestinationId)?.id
+    }
 
 private fun findActiveDestination(
     destinations: List<UiDestination>,

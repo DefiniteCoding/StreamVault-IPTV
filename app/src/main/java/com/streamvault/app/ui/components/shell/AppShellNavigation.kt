@@ -48,6 +48,7 @@ import com.streamvault.app.R
 import com.streamvault.app.navigation.Routes
 import com.streamvault.core.ui.components.shell.CoreAppScreenScaffold
 import com.streamvault.core.ui.components.shell.NavigationChrome
+import com.streamvault.core.ui.components.shell.TopBarSearch
 import com.streamvault.core.ui.components.shell.UiDestination
 import com.streamvault.domain.model.AppTopLevelDestination
 import com.streamvault.domain.model.CatalogLayout
@@ -80,6 +81,11 @@ fun AppScreenScaffold(
             configuredDestinations = AppTopLevelDestination.defaultOrder,
             catalogLayout = CatalogLayout.SPLIT
         )
+    val searchLabel = stringResource(R.string.search_title)
+    // Always on the TV top bar, even when Search is not a configured destination (user decision).
+    val topBarSearch = remember(searchLabel) {
+        TopBarSearch(destinationId = Routes.SEARCH, contentDescription = searchLabel)
+    }
 
     CoreAppScreenScaffold(
         currentDestinationId = selectedNavigationDestinationId(currentRoute, navigationDestinations),
@@ -98,6 +104,7 @@ fun AppScreenScaffold(
         header = header,
         topBarActions = topBarActions,
         brand = { StreamVaultBrandMark() },
+        topBarSearch = topBarSearch,
         contentPadding = contentPadding,
         content = content
     )
