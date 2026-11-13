@@ -409,9 +409,10 @@ private fun TopNavigationBar(
     }
 }
 
-/** Nav pill colors for one glass tier. Pairs are covered by GlassPaletteContrastTest in every theme. */
+/** Colors of one [FocusPill] use: nav tabs on a glass tier, or chips on the page. */
 @Immutable
-internal data class TopNavPillColors(
+internal data class PillColors(
+    val restContainer: Color,
     val restContent: Color,
     val selectedContainer: Color,
     val selectedContent: Color,
@@ -420,9 +421,11 @@ internal data class TopNavPillColors(
     val ring: Color
 )
 
-internal fun topNavPillColors(palette: AppPalette, tier: GlassTier): TopNavPillColors =
+/** Nav pill colors for one glass tier. Pairs are covered by GlassPaletteContrastTest in every theme. */
+internal fun topNavPillColors(palette: AppPalette, tier: GlassTier): PillColors =
     if (tier == GlassTier.OverVideo) {
-        TopNavPillColors(
+        PillColors(
+            restContainer = Color.Transparent,
             restContent = palette.onGlassOverVideo,
             selectedContainer = palette.navSelected,
             selectedContent = palette.onNavSelected,
@@ -431,7 +434,8 @@ internal fun topNavPillColors(palette: AppPalette, tier: GlassTier): TopNavPillC
             ring = palette.focusOverVideo
         )
     } else {
-        TopNavPillColors(
+        PillColors(
+            restContainer = Color.Transparent,
             restContent = palette.textSecondary,
             selectedContainer = palette.navSelected,
             selectedContent = palette.onNavSelected,
@@ -442,7 +446,8 @@ internal fun topNavPillColors(palette: AppPalette, tier: GlassTier): TopNavPillC
     }
 
 // Drawn outside the pill: tv-material's Border paints inside the shape and cannot stand off it.
-private fun Modifier.navFocusRing(color: Color, isFocused: () -> Boolean): Modifier = drawWithCache {
+// The corner radius assumes a full pill (CircleShape).
+private fun Modifier.pillFocusRing(color: Color, isFocused: () -> Boolean): Modifier = drawWithCache {
     val ringWidth = FocusSpec.NavRingWidth.toPx()
     val outset = FocusSpec.NavRingGap.toPx() + ringWidth / 2f
     val ringSize = Size(size.width + outset * 2f, size.height + outset * 2f)
@@ -495,18 +500,19 @@ fun AppTopBarCloseAction(
 private fun TopNavigationButton(
     destination: UiDestination,
     selected: Boolean,
-    colors: TopNavPillColors,
+    colors: PillColors,
     focusRequester: FocusRequester,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
     val spacing = LocalAppSpacing.current
-    TopNavPill(
+    FocusPill(
         selected = selected,
         colors = colors,
-        focusRequester = focusRequester,
+        role = Role.Tab,
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        focusRequester = focusRequester
     ) {
         Row(
             modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.xs),
@@ -534,7 +540,7 @@ private fun TopNavigationSearchPill(
     search: TopBarSearch,
     selected: Boolean,
     tier: GlassTier,
-    colors: TopNavPillColors,
+    colors: PillColors,
     focusRequester: FocusRequester,
     onDestinationSelected: (String) -> Unit
 ) {
@@ -544,11 +550,12 @@ private fun TopNavigationSearchPill(
             .glassSurface(tier, CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        TopNavPill(
+        FocusPill(
             selected = selected,
             colors = colors,
-            focusRequester = focusRequester,
-            onClick = { if (!selected) onDestinationSelected(search.destinationId) }
+            role = Role.Tab,
+            onClick = { if (!selected) onDestinationSelected(search.destinationId) },
+            focusRequester = focusRequester
         ) {
             Box(modifier = Modifier.size(TopNavSearchPillSize), contentAlignment = Alignment.Center) {
                 Icon(
@@ -561,15 +568,19 @@ private fun TopNavigationSearchPill(
     }
 }
 
-/** Shared tab body: selected and focused fills, the outset focus ring, focus scale and tab semantics. */
+/**
+ * Shared pill body for nav tabs and chips: rest, selected and focused fills, the outset focus ring, focus scale and
+ * semantics. [selected] is null for a control that has no selected state, so none is announced.
+ */
 @Composable
-private fun TopNavPill(
-    selected: Boolean,
-    colors: TopNavPillColors,
-    focusRequester: FocusRequester,
+internal fun FocusPill(
+    selected: Boolean?,
+    colors: PillColors,
+    role: Role,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    focusRequester: FocusRequester = remember { FocusRequester() },
+    content: @Composable (focused: Boolean) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -583,7 +594,7 @@ private fun TopNavPill(
             else -> 1f
         },
         animationSpec = if (reducedEffects) snap() else AppMotion.FocusSpec,
-        label = "topNavScale"
+        label = "pillScale"
     )
 
     Surface(
@@ -605,21 +616,21 @@ private fun TopNavPill(
                 scaleY = scale
             }
             .zIndex(if (isFocused) 1f else 0f)
-            .navFocusRing(colors.ring) { isFocused }
+            .pillFocusRing(colors.ring) { isFocused }
             .onFocusChanged {
                 if (it.isFocused && !isFocused) sounds.playNavigate()
                 isFocused = it.isFocused
             }
             .semantics {
-                role = Role.Tab
-                this.selected = selected
+                this.role = role
+                if (selected != null) this.selected = selected
             },
         shape = ClickableSurfaceDefaults.shape(CircleShape),
         // Scale is applied above so the ring, drawn outside the Surface, scales with the pill.
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) colors.selectedContainer else Color.Transparent,
-            contentColor = if (selected) colors.selectedContent else colors.restContent,
+            containerColor = if (selected == true) colors.selectedContainer else colors.restContainer,
+            contentColor = if (selected == true) colors.selectedContent else colors.restContent,
             focusedContainerColor = colors.focusedContainer,
             focusedContentColor = colors.focusedContent,
             pressedContainerColor = colors.focusedContainer,
@@ -627,7 +638,7 @@ private fun TopNavPill(
         ),
         interactionSource = interactionSource
     ) {
-        content()
+        content(isFocused)
     }
 }
 
