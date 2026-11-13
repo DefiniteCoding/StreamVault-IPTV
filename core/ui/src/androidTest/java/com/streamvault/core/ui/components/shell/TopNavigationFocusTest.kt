@@ -13,6 +13,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
@@ -24,6 +25,7 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -32,6 +34,7 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
@@ -78,6 +81,55 @@ class TopNavigationFocusTest {
     }
 
     @Test
+    fun searchPillSitsBeforeTheTabsAndLeavesTheRow() {
+        setScaffold(currentDestinationId = "live", withSearch = true)
+
+        composeRule.onAllNodes(hasText("Search")).assertCountEquals(0)
+        searchPill()
+            .assertIsNotSelected()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Tab))
+        assertThat(searchPill().getUnclippedBoundsInRoot().right)
+            .isLessThan(tab("Home").getUnclippedBoundsInRoot().left)
+    }
+
+    @Test
+    fun leftFromTheFirstTabReachesTheSearchPillAndRightReturns() {
+        setScaffold(currentDestinationId = "home", withSearch = true)
+        composeRule.runOnIdle { contentRequester.requestFocus() }
+
+        pressKey(Key.DirectionUp)
+        tab("Home").assertIsFocused()
+
+        pressKey(Key.DirectionLeft)
+        searchPill().assertIsFocused()
+
+        pressKey(Key.DirectionRight)
+        tab("Home").assertIsFocused()
+
+        pressKey(Key.DirectionLeft)
+        pressKey(Key.DirectionDown)
+        composeRule.onNodeWithTag(CONTENT_TAG).assertIsFocused()
+    }
+
+    @Test
+    fun onSearchTheBarIsEnteredOnTheSelectedSearchPill() {
+        setScaffold(currentDestinationId = "search?query=news", withSearch = true)
+        composeRule.runOnIdle { contentRequester.requestFocus() }
+
+        searchPill().assertIsSelected()
+        pressKey(Key.DirectionUp)
+        searchPill().assertIsFocused()
+    }
+
+    @Test
+    fun searchPillMirrorsToTheEndInRtl() {
+        setScaffold(currentDestinationId = "home", withSearch = true, layoutDirection = LayoutDirection.Rtl)
+
+        assertThat(searchPill().getUnclippedBoundsInRoot().left)
+            .isGreaterThan(tab("Home").getUnclippedBoundsInRoot().right)
+    }
+
+    @Test
     fun paddedContentStartsBelowTheBar() {
         setScaffold(currentDestinationId = "home")
 
@@ -97,23 +149,37 @@ class TopNavigationFocusTest {
         assertThat(contentInset).isEqualTo(76.dp)
     }
 
-    private fun setScaffold(currentDestinationId: String, overlay: Boolean = false) {
+    private fun setScaffold(
+        currentDestinationId: String,
+        overlay: Boolean = false,
+        withSearch: Boolean = false,
+        layoutDirection: LayoutDirection = LayoutDirection.Ltr
+    ) {
+        val destinations = buildList {
+            add("home" to "Home")
+            add("live" to "Live")
+            if (withSearch) add("search" to "Search")
+            add("guide" to "Guide")
+        }
         composeRule.setContent {
-            CompositionLocalProvider(LocalConfiguration provides Configuration().apply {
-                orientation = Configuration.ORIENTATION_LANDSCAPE
-                screenWidthDp = 960
-                screenHeightDp = 540
-            }) {
+            CompositionLocalProvider(
+                LocalConfiguration provides Configuration().apply {
+                    orientation = Configuration.ORIENTATION_LANDSCAPE
+                    screenWidthDp = 960
+                    screenHeightDp = 540
+                },
+                LocalLayoutDirection provides layoutDirection
+            ) {
                 StreamVaultTheme {
                     CoreAppScreenScaffold(
                         currentDestinationId = currentDestinationId,
-                        destinations = listOf("home" to "Home", "live" to "Live", "guide" to "Guide")
-                            .map { (id, label) -> UiDestination(id, label, Icons.Default.Home) },
+                        destinations = destinations.map { (id, label) -> UiDestination(id, label, Icons.Default.Home) },
                         onDestinationSelected = {},
                         title = "Screen",
                         navigationChrome = NavigationChrome.TopBar,
                         showScreenHeader = false,
-                        topBarOverlaysContent = overlay
+                        topBarOverlaysContent = overlay,
+                        topBarSearch = if (withSearch) TopBarSearch("search", SEARCH_DESCRIPTION) else null
                     ) {
                         contentInset = LocalTopBarContentInset.current
                         Box(
@@ -132,6 +198,8 @@ class TopNavigationFocusTest {
 
     private fun tab(label: String) = composeRule.onNode(hasText(label) and hasClickAction())
 
+    private fun searchPill() = composeRule.onNode(hasContentDescription(SEARCH_DESCRIPTION) and hasClickAction())
+
     private fun pressKey(key: Key) {
         composeRule.onRoot().performKeyInput { pressKey(key) }
         composeRule.waitForIdle()
@@ -139,5 +207,6 @@ class TopNavigationFocusTest {
 
     private companion object {
         const val CONTENT_TAG = "content"
+        const val SEARCH_DESCRIPTION = "Search"
     }
 }
