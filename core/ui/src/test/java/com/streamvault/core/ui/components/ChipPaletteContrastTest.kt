@@ -1,0 +1,133 @@
+package com.streamvault.core.ui.components
+
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
+import com.google.common.truth.Truth.assertWithMessage
+import com.streamvault.core.ui.components.shell.PillColors
+import com.streamvault.core.ui.design.AppPalette
+import com.streamvault.core.ui.design.forBrowsing
+import org.junit.Test
+
+/**
+ * Checks the colors chips actually draw ([appChipColors] on the browse palette) against the page backdrops a chip
+ * row can sit on. Pressed chips reuse the focused colors, so they add no pairs.
+ */
+class ChipPaletteContrastTest {
+
+    @Test
+    fun `chip labels and icons are readable in every state`() = checkEveryTheme { browse, chip ->
+        expect("label on rest container", chip.restContent, chip.restContainer, TEXT)
+        expect("dropdown label on rest container", browse.textSecondary, chip.restContainer, TEXT)
+        expect("label and check on selected container", chip.selectedContent, chip.selectedContainer, TEXT)
+        expect("label and check on focused container", chip.focusedContent, chip.focusedContainer, TEXT)
+    }
+
+    @Test
+    fun `group label is readable on every page backdrop`() = checkEveryTheme { browse, _ ->
+        pageBackdrops(browse).forEach { (where, backdrop) ->
+            expect("group label on $where", browse.textSecondary, backdrop, TEXT)
+        }
+    }
+
+    @Test
+    fun `focused chip and its ring stand out from every page backdrop`()= checkEveryTheme { browse, chip ->
+        pageBackdrops(browse).forEach { (where, backdrop) ->
+            expect("focus ring against $where", chip.ring, backdrop, NON_TEXT)
+            expect("focused container against $where", chip.focusedContainer, backdrop, NON_TEXT)
+        }
+    }
+
+    // Rule 15: nothing at rest may look focused.
+    @Test
+    fun `resting and selected chips never read as focused`() = checkEveryTheme { _, chip ->
+        expect("rest container against focus", chip.restContainer, chip.focusedContainer, NON_TEXT)
+        expect("selected container against focus", chip.selectedContainer, chip.focusedContainer, NON_TEXT)
+    }
+
+    @Test
+    fun `selected fill stands out from every page backdrop`() = checkEveryTheme { browse, chip ->
+        pageBackdrops(browse).forEach { (where, backdrop) ->
+            expect("selected container against $where", chip.selectedContainer, backdrop, NON_TEXT)
+        }
+    }
+
+    // The resting fill uses the input floor, not 3:1: the palette keeps unstroked controls quiet and the label
+    // identifies the chip. Selection and focus, which carry meaning, are held to 3:1 above. Where the brand ambient
+    // light peaks, the fill drops below the input floor, so that tint has its own, lower floor.
+    @Test
+    fun `resting chip stays visible on every page backdrop`() = checkEveryTheme { browse, chip ->
+        val plainFloor = if (browse.isLight) LIGHT_CONTROL_FLOOR else DARK_CONTROL_FLOOR
+        val ambientFloor = if (browse.isLight) LIGHT_AMBIENT_FLOOR else DARK_AMBIENT_FLOOR
+        plainBackdrops(browse).forEach { (where, backdrop) ->
+            expect("rest container against $where", chip.restContainer, backdrop, plainFloor)
+        }
+        ambientBackdrops(browse).forEach { (where, backdrop) ->
+            expect("rest container against $where", chip.restContainer, backdrop, ambientFloor)
+        }
+    }
+
+    // Chip rows sit on the browse backdrop (both gradient ends, also under the brand ambient light at its strongest)
+    // and on browse surfaces. They are kept off SurfaceElevated panels and the Live strip's AccentSoft aurora,
+    // where the resting and m3_purple selected fills lose too much contrast.
+    private fun pageBackdrops(browse: AppPalette) = plainBackdrops(browse) + ambientBackdrops(browse)
+
+    private fun plainBackdrops(browse: AppPalette) = listOf(
+        "Canvas" to browse.canvas,
+        "CanvasElevated" to browse.canvasElevated,
+        "Surface" to browse.surface,
+    )
+
+    private fun ambientBackdrops(browse: AppPalette): List<Pair<String, Color>> {
+        val ambient = browse.brand.copy(alpha = if (browse.isLight) 0.07f else 0.10f)
+        return listOf(
+            "Canvas under ambient" to ambient.compositeOver(browse.canvas),
+            "CanvasElevated under ambient" to ambient.compositeOver(browse.canvasElevated),
+        )
+    }
+
+    private fun checkEveryTheme(checks: ContrastChecks.(AppPalette, PillColors) -> Unit) {
+        val failures = THEME_IDS.flatMap { themeId ->
+            val browse = AppPalette.forTheme(themeId).forBrowsing()
+            ContrastChecks(themeId).apply { checks(browse, appChipColors(browse)) }.failures
+        }
+        assertWithMessage(failures.joinToString("\n")).that(failures).isEmpty()
+    }
+
+    private class ContrastChecks(private val themeId: String) {
+        val failures = mutableListOf<String>()
+
+        fun expect(pair: String, foreground: Color, background: Color, minimum: Float) {
+            val ratio = contrastRatio(foreground, background)
+            if (ratio < minimum) failures += "$themeId $pair: %.2f:1, expected at least %.1f:1".format(ratio, minimum)
+        }
+    }
+
+    private companion object {
+        const val TEXT = 4.5f
+        const val NON_TEXT = 3f
+        const val DARK_CONTROL_FLOOR = 1.5f
+        const val LIGHT_CONTROL_FLOOR = 1.3f
+        const val DARK_AMBIENT_FLOOR = 1.35f
+        const val LIGHT_AMBIENT_FLOOR = 1.15f
+
+        val THEME_IDS = listOf(
+            AppPalette.CLASSIC_BLUE_ID,
+            AppPalette.M3_PURPLE_ID,
+            AppPalette.LIGHT_ID,
+            AppPalette.FOREST_ID,
+            AppPalette.SUNSET_ID,
+            AppPalette.OCEAN_ID,
+            AppPalette.ROSE_ID,
+            AppPalette.AMOLED_BLACK_ID,
+            AppPalette.VINTAGE_ID,
+        )
+
+        fun contrastRatio(first: Color, second: Color): Float {
+            val firstLuminance = first.luminance()
+            val secondLuminance = second.luminance()
+            return (maxOf(firstLuminance, secondLuminance) + 0.05f) /
+                (minOf(firstLuminance, secondLuminance) + 0.05f)
+        }
+    }
+}
