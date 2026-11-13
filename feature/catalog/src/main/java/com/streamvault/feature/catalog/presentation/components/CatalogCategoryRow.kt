@@ -1,13 +1,12 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
-import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -19,25 +18,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRestorer
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
-import androidx.tv.material3.Border
-import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Icon
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
-import androidx.tv.material3.Text
 import com.streamvault.feature.catalog.R
 import com.streamvault.core.ui.components.shell.AppSectionHeader
-import com.streamvault.core.ui.design.browse.FocusBorder
-import com.streamvault.core.ui.design.browse.OnSurface
-import com.streamvault.core.ui.design.browse.Primary
-import com.streamvault.core.ui.design.browse.SurfaceElevated
-import com.streamvault.core.ui.design.browse.SurfaceHighlight
-import com.streamvault.core.ui.interaction.mouseClickable
+import com.streamvault.core.ui.components.shell.AppSectionToggleAction
+import com.streamvault.core.ui.design.LocalAppSpacing
 
 // ׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬ Netflix-style horizontal category row ׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬׳³ג€™׳’ג‚¬ֲ׳’ג€ֲ¬
 
@@ -55,97 +44,49 @@ fun <T : Any> CategoryRow(
     itemContent: @Composable (T) -> Unit
 ) {
     val resolvedContentTypeSelector: (T) -> Any? = contentTypeSelector ?: { null }
+    val seeAllFocusRequester = remember { FocusRequester() }
 
     Column(
         modifier = modifier
             .fillMaxWidth()
             .suppressParentVerticalScroll()
     ) {
+        val headerPadding = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 6.dp)
         if (onSeeAll != null) {
-            val seeAllFocusRequester = remember { FocusRequester() }
-            val pinFocusRequester = remember { FocusRequester() }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            Row(
+                modifier = headerPadding,
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AppSectionHeader(title = title, modifier = Modifier.weight(1f))
-                    Surface(
-                        onClick = onSeeAll,
-                        modifier = Modifier
-                            .focusRequester(seeAllFocusRequester)
-                            .mouseClickable(
-                                focusRequester = seeAllFocusRequester,
-                                onClick = onSeeAll
-                            ),
-                        colors = ClickableSurfaceDefaults.colors(
-                            containerColor = SurfaceElevated,
-                            focusedContainerColor = SurfaceHighlight,
-                            contentColor = Primary,
-                            focusedContentColor = OnSurface
-                        ),
-                        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                        border = ClickableSurfaceDefaults.border(
-                            focusedBorder = Border(
-                                border = BorderStroke(2.dp, FocusBorder),
-                                shape = BrowseShapes.Control
-                            )
-                        )
-                    ) {
-                        Text(
-                            text = stringResource(R.string.category_see_all),
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                            style = MaterialTheme.typography.labelMedium
-                        )
-                    }
-                    if (onPinToggle != null) {
-                        Surface(
-                            onClick = onPinToggle,
-                            modifier = Modifier
-                                .focusRequester(pinFocusRequester)
-                                .mouseClickable(
-                                    focusRequester = pinFocusRequester,
-                                    onClick = onPinToggle
-                                ),
-                            colors = ClickableSurfaceDefaults.colors(
-                                containerColor = if (isPinned) Primary.copy(alpha = 0.18f) else SurfaceElevated,
-                                focusedContainerColor = SurfaceHighlight,
-                                contentColor = if (isPinned) Primary else OnSurface,
-                                focusedContentColor = OnSurface
-                            ),
-                            shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                            border = ClickableSurfaceDefaults.border(
-                                focusedBorder = Border(
-                                    border = BorderStroke(2.dp, FocusBorder),
-                                    shape = BrowseShapes.Control
-                                )
-                            )
-                        ) {
-                            Icon(
-                                imageVector = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
-                                contentDescription = if (isPinned) stringResource(R.string.category_unpin) else stringResource(R.string.category_pin),
-                                modifier = Modifier.padding(8.dp),
-                                tint = if (isPinned) Primary else OnSurface
-                            )
-                        }
-                    }
+                AppSectionHeader(
+                    title = title,
+                    modifier = Modifier.weight(1f),
+                    actionLabel = stringResource(R.string.category_see_all),
+                    onActionClick = onSeeAll,
+                    actionFocusRequester = seeAllFocusRequester
+                )
+                if (onPinToggle != null) {
+                    AppSectionToggleAction(
+                        icon = if (isPinned) Icons.Filled.PushPin else Icons.Outlined.PushPin,
+                        contentDescription = stringResource(if (isPinned) R.string.category_unpin else R.string.category_pin),
+                        selected = isPinned,
+                        onClick = onPinToggle
+                    )
                 }
             }
         } else {
-            AppSectionHeader(
-                title = title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 6.dp)
-            )
+            AppSectionHeader(title = title, modifier = headerPadding)
         }
 
+        // Posters sit far from the header actions, so geometry alone never reaches them on a scrolled row.
+        // Up from any poster lands on "See all"; a second Up leaves for the row above. The property goes on a
+        // wrapper per poster: focusProperties only reaches focusables up to the nearest enclosing focus group.
+        val hasActions = onSeeAll != null
+        val posterUp = remember(hasActions) {
+            if (hasActions) Modifier.focusProperties { up = seeAllFocusRequester } else Modifier
+        }
         LazyRow(
             modifier = Modifier.focusRestorer(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
@@ -156,7 +97,7 @@ fun <T : Any> CategoryRow(
                 key = keySelector,
                 contentType = resolvedContentTypeSelector
             ) { item ->
-                itemContent(item)
+                Box(modifier = posterUp) { itemContent(item) }
             }
         }
     }

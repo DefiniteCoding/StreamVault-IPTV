@@ -1,6 +1,7 @@
 package com.streamvault.core.ui.components
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.luminance
 import com.google.common.truth.Truth.assertWithMessage
 import com.streamvault.core.ui.design.AppPalette
@@ -43,4 +44,25 @@ internal fun contrastRatio(first: Color, second: Color): Float {
     val firstLuminance = first.luminance()
     val secondLuminance = second.luminance()
     return (maxOf(firstLuminance, secondLuminance) + 0.05f) / (minOf(firstLuminance, secondLuminance) + 0.05f)
+}
+
+/**
+ * Backdrops a chip row or a section header action can sit on: the browse canvas (both gradient ends, also under the
+ * brand ambient light at its strongest) and browse surfaces. SurfaceElevated panels and the Live strip's AccentSoft
+ * aurora are excluded: controls there lose too much contrast.
+ */
+internal fun pageBackdrops(browse: AppPalette) = plainBackdrops(browse) + ambientBackdrops(browse)
+
+internal fun plainBackdrops(browse: AppPalette) = listOf(
+    "Canvas" to browse.canvas,
+    "CanvasElevated" to browse.canvasElevated,
+    "Surface" to browse.surface,
+)
+
+internal fun ambientBackdrops(browse: AppPalette): List<Pair<String, Color>> {
+    val ambient = browse.brand.copy(alpha = if (browse.isLight) 0.07f else 0.10f)
+    return listOf(
+        "Canvas under ambient" to ambient.compositeOver(browse.canvas),
+        "CanvasElevated under ambient" to ambient.compositeOver(browse.canvasElevated),
+    )
 }

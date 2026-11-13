@@ -51,6 +51,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -695,9 +696,9 @@ fun AppSectionHeader(
     modifier: Modifier = Modifier,
     actionLabel: String? = null,
     onActionClick: (() -> Unit)? = null,
-    actionContentColor: Color = BrowseColors.TextTertiary
+    actionFocusRequester: FocusRequester? = null
 ) {
-    val shapes = LocalAppShapes.current
+    val spacing = LocalAppSpacing.current
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -705,7 +706,7 @@ fun AppSectionHeader(
     ) {
         Column(
             modifier = if (onActionClick != null && !actionLabel.isNullOrBlank()) Modifier.weight(1f) else Modifier,
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(spacing.xxs)
         ) {
             Text(
                 text = title,
@@ -718,24 +719,80 @@ fun AppSectionHeader(
             }
         }
         if (onActionClick != null && !actionLabel.isNullOrBlank()) {
-            val actionFocusRequester = remember { FocusRequester() }
-            Surface(
+            val palette = BrowseColors.current
+            val colors = remember(palette) { sectionActionColors(palette) }
+            val ownFocusRequester = remember { FocusRequester() }
+            FocusPill(
+                selected = null,
+                colors = colors,
+                role = Role.Button,
                 onClick = onActionClick,
-                modifier = Modifier
-                    .focusRequester(actionFocusRequester)
-                    .mouseClickable(focusRequester = actionFocusRequester, onClick = onActionClick),
-                shape = ClickableSurfaceDefaults.shape(shapes.pill),
-                colors = ClickableSurfaceDefaults.colors(
-                    containerColor = BrowseColors.Brand.copy(alpha = 0.12f),
-                    focusedContainerColor = BrowseColors.Brand.copy(alpha = 0.22f),
-                    contentColor = actionContentColor
-                )
+                focusRequester = actionFocusRequester ?: ownFocusRequester
             ) {
-                Text(text = actionLabel, style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+                Row(
+                    modifier = Modifier.padding(horizontal = spacing.sm, vertical = spacing.xs),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.xxs),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = actionLabel,
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    // The label names the action; the chevron only signals "go further" and mirrors in RTL.
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        modifier = Modifier.size(SectionActionIconSize)
+                    )
+                }
             }
         }
     }
 }
+
+/**
+ * Icon-only action that sits beside a section header action, such as pinning a category. [selected] shows as the
+ * tonal fill and the icon the caller swaps (outlined to filled), so it never relies on color alone.
+ */
+@Composable
+fun AppSectionToggleAction(
+    icon: ImageVector,
+    contentDescription: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val palette = BrowseColors.current
+    val colors = remember(palette) { sectionActionColors(palette) }
+    FocusPill(
+        selected = selected,
+        colors = colors,
+        role = Role.Button,
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Box(modifier = Modifier.size(SectionActionToggleSize), contentAlignment = Alignment.Center) {
+            Icon(imageVector = icon, contentDescription = contentDescription, modifier = Modifier.size(SectionActionIconSize))
+        }
+    }
+}
+
+// Same size as the nav search pill and chips, so a header action lines up with them.
+private val SectionActionToggleSize = 36.dp
+private val SectionActionIconSize = 18.dp
+
+/** Section header action colors: no fill at rest, tonal when selected. Pairs are covered by SectionActionContrastTest. */
+internal fun sectionActionColors(palette: AppPalette): PillColors = PillColors(
+    restContainer = Color.Transparent,
+    restContent = palette.textSecondary,
+    selectedContainer = palette.selectedContainer,
+    selectedContent = palette.onSelectedContainer,
+    focusedContainer = palette.focus,
+    focusedContent = palette.onFocus,
+    ring = palette.focus
+)
 
 @Composable
 fun StatusPill(
