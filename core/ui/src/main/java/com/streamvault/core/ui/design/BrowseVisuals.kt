@@ -180,6 +180,11 @@ object BrowseFocusSpec {
     val BorderWidth = 2.dp
     val CardBorderWidth = 2.dp
     val SelectableRingWidth = 3.dp
+    // Nav pills are small, so they scale further than cards to stay identifiable at TV distance (rule 15).
+    const val NavFocusedScale = 1.06f
+    val NavRingWidth = 2.dp
+    // The ring stands off the pill so the bar shows between them, matching the approved halo look without a glow.
+    val NavRingGap = 3.dp
 }
 
 val LocalBrowseVisuals = staticCompositionLocalOf { false }

@@ -1,6 +1,17 @@
 package com.streamvault.app.ui.components.shell
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.unit.dp
+import com.streamvault.core.ui.design.AppPalette
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -22,6 +33,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
+@OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 class ShellGoldenTest {
 
@@ -132,5 +144,65 @@ class ShellGoldenTest {
         }
 
         composeRule.onNodeWithTag("golden").assertAgainstGolden("app_screen_scaffold_rtl")
+    }
+
+    @Test
+    fun topNavigationBar_rest_matchesGolden() {
+        setTopBarScreen(AppPalette.CLASSIC_BLUE_ID)
+        composeRule.onNodeWithTag("golden").assertAgainstGolden("top_navigation_bar_rest")
+    }
+
+    @Test
+    fun topNavigationBar_focused_matchesGoldenInEveryReferenceTheme() {
+        listOf(AppPalette.CLASSIC_BLUE_ID, AppPalette.LIGHT_ID, AppPalette.AMOLED_BLACK_ID).forEach { themeId ->
+            setTopBarScreen(themeId)
+            focusTabNextToSelected()
+            composeRule.onNodeWithTag("golden").assertAgainstGolden("top_navigation_bar_focused_$themeId")
+        }
+    }
+
+    private val currentThemeId = androidx.compose.runtime.mutableStateOf(AppPalette.CLASSIC_BLUE_ID)
+    private val contentRequester = FocusRequester()
+    private var contentSet = false
+
+    // One composition per test: switching the theme state recomposes it instead of calling setContent again.
+    private fun setTopBarScreen(themeId: String) {
+        currentThemeId.value = themeId
+        if (contentSet) {
+            composeRule.runOnIdle { contentRequester.requestFocus() }
+            composeRule.waitForIdle()
+            return
+        }
+        contentSet = true
+        composeRule.setContent {
+            StreamVaultTheme(themeId = currentThemeId.value) {
+                AppScreenScaffold(
+                    currentRoute = Routes.LIVE_TV,
+                    onNavigate = {},
+                    title = "Live TV",
+                    navigationChrome = AppNavigationChrome.TopBar,
+                    showScreenHeader = false,
+                    modifier = Modifier.testTag("golden")
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(120.dp)
+                            .focusRequester(contentRequester)
+                            .focusable()
+                    )
+                }
+            }
+        }
+        composeRule.runOnIdle { contentRequester.requestFocus() }
+        composeRule.waitForIdle()
+    }
+
+    // Up restores the selected Live TV tab, Right focuses its neighbour: one golden shows selected and focused apart.
+    private fun focusTabNextToSelected() {
+        composeRule.onRoot().performKeyInput { pressKey(Key.DirectionUp) }
+        composeRule.waitForIdle()
+        composeRule.onRoot().performKeyInput { pressKey(Key.DirectionRight) }
+        composeRule.waitForIdle()
     }
 }

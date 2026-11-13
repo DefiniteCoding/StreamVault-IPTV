@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">Καμία εφαρμογή δεν μπόρεσε να λάβει το αρχείο αντιγράφου.</string>
     <string name="settings_catalog_count_pending">Σε αναμονή</string>
     <string name="settings_live_timeshift_backend_value">Αυτόματο</string>
-    <string name="nav_close_app">Κλείσιμο εφαρμογής</string>
     <string name="hidden_categories_dialog_title">Κρυφές κατηγορίες</string>
     <string name="hidden_categories_dialog_subtitle">Επιλέξτε ποιες θα επαναφέρετε.</string>
     <string name="hidden_categories_dialog_unhide_all">Επαναφορά όλων</string>

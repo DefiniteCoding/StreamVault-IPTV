@@ -242,7 +242,6 @@
     <string name="settings_live_timeshift_backend_value">自动</string>
     <!-- M2: Google Drive backup sync -->
     <string name="nav_vod">VOD</string>
-    <string name="nav_close_app">关闭应用</string>
     <string name="nav_downloads">下载</string>
     <string name="hidden_categories_dialog_title">隐藏的分类</string>
     <string name="hidden_categories_dialog_subtitle">选择要恢复的项目。</string>
