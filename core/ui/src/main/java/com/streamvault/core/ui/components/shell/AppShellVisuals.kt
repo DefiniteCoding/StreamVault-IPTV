@@ -280,9 +280,10 @@ private fun TopNavigationBar(
     Surface(
         modifier = modifier
             .focusProperties {
+                // onEnter returns Unit: a returned requester is discarded, so focus is redirected explicitly.
                 onEnter = {
                     val activeItem = findActiveDestination(destinations, currentDestinationId)
-                    focusRequesters[activeItem?.id] ?: FocusRequester.Default
+                    focusRequesters[activeItem?.id]?.requestFocus()
                 }
             }
             .focusGroup(),
