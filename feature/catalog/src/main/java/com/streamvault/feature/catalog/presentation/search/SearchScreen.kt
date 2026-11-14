@@ -2,6 +2,7 @@
 
 package com.streamvault.feature.catalog.presentation.search
 
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.focusRingButtonBorder
 import com.streamvault.core.ui.design.secondaryButtonColors
 import com.streamvault.core.ui.design.secondarySurfaceColors
@@ -23,7 +24,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -924,6 +924,9 @@ fun SearchScreen(
     }
 }
 
+// Pill rows inside the search card grow into this padding so pills slide off the card edge.
+private val SearchCardHorizontalPadding = 20.dp
+
 @Composable
 private fun SearchHeroPanel(
     query: String,
@@ -946,7 +949,7 @@ private fun SearchHeroPanel(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(horizontal = SearchCardHorizontalPadding, vertical = 18.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
             AdaptiveRow(
@@ -1001,7 +1004,11 @@ private fun SearchHeroPanel(
                     .height(52.dp)
             )
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FocusSafeLazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                edgeGutterStart = SearchCardHorizontalPadding,
+                edgeGutterEnd = SearchCardHorizontalPadding
+            ) {
                 items(SearchTab.values().toList(), key = { it.name }) { tab ->
                     SearchPill(
                         text = stringResource(tab.titleRes),
@@ -1028,9 +1035,10 @@ private fun SearchHeroPanel(
                         style = MaterialTheme.typography.labelLarge,
                         color = TextSecondary
                     )
-                    LazyRow(
+                    FocusSafeLazyRow(
                         modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        edgeGutterEnd = SearchCardHorizontalPadding
                     ) {
                         items(recentQueries, key = { it }) { recentQuery ->
                             val recentQueryDescription = stringResource(R.string.a11y_recent_search, recentQuery)
