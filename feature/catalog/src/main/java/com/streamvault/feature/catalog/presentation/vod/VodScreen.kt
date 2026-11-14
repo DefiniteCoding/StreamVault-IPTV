@@ -1,5 +1,8 @@
 ﻿package com.streamvault.feature.catalog.presentation.vod
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -289,7 +291,11 @@ private fun VodModernShelves(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
                         )
                     }
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    FocusSafeLazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+                        edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
+                    ) {
                         items(row.items, key = VodCatalogItem::stableId) { item ->
                             VodItemCard(item, onMovieClick, onSeriesClick, useTypeBadgeIcon) {
                                 onItemLongClick(item)
