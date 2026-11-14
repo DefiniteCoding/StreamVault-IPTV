@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +37,7 @@ import androidx.tv.material3.Text
 import com.streamvault.feature.settings.R
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.components.dialogs.PremiumDialogFooterButton
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.FocusSpec
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.theme.ErrorColor
@@ -77,7 +77,7 @@ public fun CombinedM3uProfilesCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(SettingsDesignTokens.space16),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
@@ -103,7 +103,12 @@ public fun CombinedM3uProfilesCard(
             if (profiles.isEmpty()) {
             Text(stringResource(R.string.settings_combined_none), style = MaterialTheme.typography.bodySmall, color = OnSurfaceDim)
             } else {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                FocusSafeLazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    // The panel pads its content; the row grows into that padding so chips slide off the panel edge.
+                    edgeGutterStart = SettingsDesignTokens.space16,
+                    edgeGutterEnd = SettingsDesignTokens.space16
+                ) {
                     items(profiles, key = { it.id }) { profile ->
                         val isActive = (activeLiveSource as? ActiveLiveSource.CombinedM3uSource)?.profileId == profile.id
                         ProviderChip(

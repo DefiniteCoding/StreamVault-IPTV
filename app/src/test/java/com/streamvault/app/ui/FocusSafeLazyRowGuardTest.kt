@@ -21,8 +21,6 @@ class FocusSafeLazyRowGuardTest {
         "PlayerAuxiliaryOverlays.kt" to 1,
         "PlayerChannelInfoOverlay.kt" to 2,
         "PlayerControlsChrome.kt" to 1,
-        "SettingsCombinedM3uComponents.kt" to 1,
-        "SettingsProviderSection.kt" to 1,
         "StremioCatalogBrowseContent.kt" to 2,
         "StremioDirectoryContent.kt" to 1,
         "StremioGuideContent.kt" to 2,
