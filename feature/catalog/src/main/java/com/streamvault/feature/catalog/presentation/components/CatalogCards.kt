@@ -38,6 +38,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -81,6 +82,13 @@ import com.streamvault.domain.model.Series
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.interaction.rememberTvInteractionSounds
+
+// Badges sit over channel logos, so their container is near-solid; a 16% tint disappears on a busy logo.
+private const val ArtworkBadgeAlpha = 0.9f
+
+/** Black or white, whichever has the higher WCAG contrast on [container]. */
+private fun readableInkOn(container: Color): Color =
+    if (container.luminance() > 0.179f) Color.Black else Color.White
 
 @Composable
 fun FocusableCard(
@@ -308,7 +316,15 @@ fun ChannelCard(
                     StatusPill(label = stringResource(R.string.badge_error), containerColor = AccentRed, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
                 }
                 if (hasUsableArchive) {
-                    StatusPill(label = stringResource(R.string.badge_catch_up), containerColor = Primary, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
+                    StatusPill(
+                        label = stringResource(R.string.badge_catch_up),
+                        containerColor = Primary,
+                        contentColor = com.streamvault.core.ui.design.BrowseColors.OnPrimary,
+                        cornerRadius = 4.dp,
+                        horizontalPadding = 6.dp,
+                        verticalPadding = 2.dp,
+                        containerAlpha = ArtworkBadgeAlpha
+                    )
                 }
                 if (isRecording) {
                     StatusPill(label = stringResource(R.string.badge_recording), containerColor = AccentRed, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
@@ -318,9 +334,11 @@ fun ChannelCard(
                 StatusPill(
                     label = stringResource(R.string.card_live_badge),
                     containerColor = AccentRed,
+                    contentColor = readableInkOn(AccentRed),
                     cornerRadius = 4.dp,
                     horizontalPadding = 6.dp,
-                    verticalPadding = 2.dp
+                    verticalPadding = 2.dp,
+                    containerAlpha = ArtworkBadgeAlpha
                 )
             }
         }
