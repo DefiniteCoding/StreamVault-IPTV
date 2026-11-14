@@ -248,8 +248,10 @@ private fun appCatalogScaffold(
         subtitle = subtitle,
         navigationChrome = when (chrome) {
             CatalogNavigationChrome.Rail -> AppNavigationChrome.Rail
-            CatalogNavigationChrome.TopBar -> AppNavigationChrome.TopBar
+            CatalogNavigationChrome.TopBar,
+            CatalogNavigationChrome.TopBarOverlay -> AppNavigationChrome.TopBar
         },
+        topBarOverlaysContent = chrome == CatalogNavigationChrome.TopBarOverlay,
         topBarVisible = topBarVisible,
         compactHeader = compactHeader,
         showScreenHeader = showScreenHeader,

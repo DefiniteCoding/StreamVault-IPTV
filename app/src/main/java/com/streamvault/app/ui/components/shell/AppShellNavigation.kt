@@ -73,6 +73,7 @@ fun AppScreenScaffold(
     showScreenHeader: Boolean = true,
     header: (@Composable ColumnScope.() -> Unit)? = null,
     topBarActions: (@Composable RowScope.() -> Unit)? = null,
+    topBarOverlaysContent: Boolean = false,
     contentPadding: PaddingValues = PaddingValues(),
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -103,6 +104,7 @@ fun AppScreenScaffold(
         showScreenHeader = showScreenHeader,
         header = header,
         topBarActions = topBarActions,
+        topBarOverlaysContent = topBarOverlaysContent,
         brand = { StreamVaultBrandMark() },
         topBarSearch = topBarSearch,
         contentPadding = contentPadding,

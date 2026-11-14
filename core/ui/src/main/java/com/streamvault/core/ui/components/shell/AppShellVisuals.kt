@@ -24,6 +24,7 @@ import com.streamvault.core.ui.accessibility.LocalReducedEffects
 import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.GlassTier
 import com.streamvault.core.ui.design.glassSurface
+import com.streamvault.core.ui.design.requestFocusSafely
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -64,6 +65,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -221,7 +227,11 @@ fun CoreAppScreenScaffold(
         } else {
             val barTop = spacing.md
             val contentInset = if (topBarVisible) barTop + TopBarHeight + spacing.sm else barTop
-            CompositionLocalProvider(LocalTopBarContentInset provides contentInset) {
+            val downTarget = remember { TopBarDownTarget() }
+            CompositionLocalProvider(
+                LocalTopBarContentInset provides contentInset,
+                LocalTopBarDownTarget provides downTarget
+            ) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // Composed before the content so default focus order is unchanged; zIndex only lifts its drawing.
                     if (topBarVisible) {
@@ -233,6 +243,8 @@ fun CoreAppScreenScaffold(
                             brand = brand,
                             search = topBarSearch,
                             actions = topBarActions,
+                            brandScrim = topBarOverlaysContent,
+                            downTarget = downTarget.takeIf { topBarOverlaysContent },
                             modifier = Modifier
                                 .zIndex(1f)
                                 .fillMaxWidth()
@@ -284,10 +296,48 @@ fun CoreAppScreenScaffold(
  */
 val LocalTopBarContentInset = compositionLocalOf { 0.dp }
 
+/**
+ * Where Down from the top bar goes on a screen whose content scrolls under the bar. Rows under the glass still count
+ * as "below" for the focus search, so without an explicit target Down stalls on them. The screen sets [requester] to
+ * its initial focus target (plan 4.4: Down from the bar goes to the screen's initial target).
+ */
+class TopBarDownTarget {
+    var requester: FocusRequester? = null
+}
+
+val LocalTopBarDownTarget = compositionLocalOf { TopBarDownTarget() }
+
 private val TopBarHeight = 48.dp
 private val TopNavIconSize = 18.dp
 // Same height as a tab: titleSmall line height (20) plus xs padding above and below.
 private val TopNavSearchPillSize = 36.dp
+
+/**
+ * Fades the canvas in behind the brand mark and search pill so the logo keeps its contrast while rows scroll under
+ * the bar. The tab pill is opaque glass and needs nothing. Limited to this region on purpose: a full-width gradient
+ * cost about 1.1 ms of GPU p50 on the TV (2026-11-14 A/B), this one covers a fraction of the pixels. Drawn in the
+ * draw phase with no layer, and it is not focusable.
+ */
+private fun Modifier.brandScrim(canvas: Color, extraEnd: Dp, topInset: Dp, bottomInset: Dp, startInset: Dp): Modifier =
+    drawWithCache {
+        val top = -topInset.toPx()
+        val left = -startInset.toPx()
+        val width = size.width + startInset.toPx() + extraEnd.toPx()
+        val height = size.height + topInset.toPx() + bottomInset.toPx()
+        val brush = Brush.verticalGradient(
+            colorStops = arrayOf(
+                0f to canvas.copy(alpha = 0.97f),
+                // The mark sits in the lower 85% of the rect, so stay near-opaque there and fade only below it.
+                0.85f to canvas.copy(alpha = 0.9f),
+                1f to Color.Transparent
+            ),
+            startY = top,
+            endY = top + height
+        )
+        onDrawBehind {
+            drawRect(brush = brush, topLeft = Offset(left, top), size = Size(width, height))
+        }
+    }
 
 @Composable
 fun AppScreenHeader(
@@ -337,6 +387,8 @@ private fun TopNavigationBar(
     brand: (@Composable () -> Unit)?,
     search: TopBarSearch?,
     actions: (@Composable RowScope.() -> Unit)?,
+    brandScrim: Boolean = false,
+    downTarget: TopBarDownTarget? = null,
     modifier: Modifier = Modifier
 ) {
     val spacing = LocalAppSpacing.current
@@ -344,13 +396,42 @@ private fun TopNavigationBar(
     val focusRequesters = remember { mutableMapOf<String, FocusRequester>() }
     val pillColors = topNavPillColors(BrowseColors.current, tier)
     val tabs = remember(destinations, search) { topBarTabs(destinations, search) }
-
+    // Down from a pill goes to the screen's target when it set one. Handled as a key event on the wrappers around the
+    // pills, because the geometric search does not leave the bar while rows scroll under it.
+    val downProperties = if (downTarget == null) {
+        Modifier
+    } else {
+        Modifier.onPreviewKeyEvent { event ->
+            val target = downTarget.requester
+            // Falls through to the default search when the target is not attached, so the bar is never a dead end.
+            target != null && event.key == Key.DirectionDown && event.type == KeyEventType.KeyDown &&
+                target.requestFocusSafely(tag = "TopNavigationBar", target = "Screen initial target")
+        }
+    }
     Row(
         modifier = modifier.height(TopBarHeight),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(spacing.sm)
     ) {
-        brand?.invoke()
+        if (brand != null) {
+            val canvas = BrowseColors.current.canvas
+            Box(
+                modifier = if (brandScrim) {
+                    // Covers the search pill and the gaps around it, and runs 40dp under the tab pill so the
+                    // hard right edge of the gradient is hidden behind it.
+                    val searchWidth = if (search != null) TopBarHeight + spacing.sm else 0.dp
+                    Modifier.brandScrim(
+                        canvas = canvas,
+                        extraEnd = spacing.sm + searchWidth + 40.dp,
+                        topInset = spacing.md,
+                        bottomInset = spacing.sm,
+                        startInset = spacing.md
+                    )
+                } else {
+                    Modifier
+                }
+            ) { brand() }
+        }
         // One focus group for the search pill and the tabs, so entering from anywhere lands on the active item.
         Row(
             modifier = Modifier
@@ -368,20 +449,23 @@ private fun TopNavigationBar(
             horizontalArrangement = Arrangement.spacedBy(spacing.sm)
         ) {
             if (search != null) {
-                TopNavigationSearchPill(
-                    search = search,
-                    selected = currentDestinationId.startsWith(search.destinationId),
-                    tier = tier,
-                    colors = pillColors,
-                    focusRequester = focusRequesters.getOrPut(search.destinationId) { FocusRequester() },
-                    onDestinationSelected = onDestinationSelected
-                )
+                Box(modifier = downProperties) {
+                    TopNavigationSearchPill(
+                        search = search,
+                        selected = currentDestinationId.startsWith(search.destinationId),
+                        tier = tier,
+                        colors = pillColors,
+                        focusRequester = focusRequesters.getOrPut(search.destinationId) { FocusRequester() },
+                        onDestinationSelected = onDestinationSelected
+                    )
+                }
             }
             Row(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
                     .glassSurface(tier, CircleShape)
+                    .then(downProperties)
                     .horizontalScroll(scrollState)
                     // Inside the scroll so the first and last pills keep room for their focus scale and ring.
                     .padding(horizontal = spacing.sm),
