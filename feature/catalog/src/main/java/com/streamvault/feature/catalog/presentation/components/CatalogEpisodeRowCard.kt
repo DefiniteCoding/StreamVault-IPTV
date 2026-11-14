@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.text.font.FontWeight
 import androidx.tv.material3.ButtonDefaults
-import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvIconButton
 import androidx.compose.material3.Icon
@@ -412,12 +411,21 @@ fun EpisodeCard(
             shape = ClickableSurfaceDefaults.shape(shape = BrowseShapes.Panel),
             // Opaque fill that does not change on focus: the 3dp ring and the scale carry focus.
             colors = ClickableSurfaceDefaults.colors(
-                containerColor = AppColors.SurfaceElevated,
+                containerColor = AppColors.SurfaceEmphasis,
                 contentColor = AppColors.TextPrimary,
-                focusedContainerColor = AppColors.SurfaceElevated,
+                focusedContainerColor = AppColors.SurfaceEmphasis,
                 focusedContentColor = AppColors.TextPrimary
             ),
-            border = selectableFocusBorder(BrowseShapes.Panel),
+            // SurfaceElevated sits only 1.07 to 1.4:1 off the page (1.12 on amoled_black), which left the card body
+            // melting into the background; SurfaceEmphasis is a step further, plus the same 1dp hairline as the other
+            // catalog cards. The focus ring replaces the hairline.
+            border = ClickableSurfaceDefaults.border(
+                border = Border(border = BorderStroke(1.dp, AppColors.Outline), shape = BrowseShapes.Panel),
+                focusedBorder = Border(
+                    border = BorderStroke(FocusSpec.SelectableRingWidth, AppColors.Focus),
+                    shape = BrowseShapes.Panel
+                )
+            ),
             scale = ClickableSurfaceDefaults.scale(focusedScale = FocusSpec.FocusedScale)
         ) {
             Column {
@@ -425,7 +433,7 @@ fun EpisodeCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .aspectRatio(16f / 9f)
-                        .background(AppColors.SurfaceEmphasis)
+                        .background(AppColors.SurfaceAccent)
                 ) {
                     if (displayUrl != null) {
                         AsyncImage(
@@ -445,7 +453,7 @@ fun EpisodeCard(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(8.dp)
-                            .background(Color.Black.copy(alpha = EPISODE_BADGE_SCRIM_ALPHA), RoundedCornerShape(6.dp))
+                            .background(Color.Black.copy(alpha = OVER_ARTWORK_SCRIM_ALPHA), RoundedCornerShape(6.dp))
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     )
                     if (showProgress) {
@@ -525,8 +533,6 @@ fun EpisodeCard(
         }
     }
 }
-
-internal const val EPISODE_BADGE_SCRIM_ALPHA = 0.55f
 
 @Composable
 private fun PosterCard(

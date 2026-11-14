@@ -12,8 +12,8 @@ class EpisodeCardContrastTest {
 
     @Test
     fun `card text is readable on the card fill`() = checkEveryBrowsePalette { browse ->
-        expect("title (textPrimary) on surfaceElevated", browse.textPrimary, browse.surfaceElevated, TEXT_CONTRAST)
-        expect("duration (textSecondary) on surfaceElevated", browse.textSecondary, browse.surfaceElevated, TEXT_CONTRAST)
+        expect("title (textPrimary) on surfaceEmphasis", browse.textPrimary, browse.surfaceEmphasis, TEXT_CONTRAST)
+        expect("duration (textSecondary) on surfaceEmphasis", browse.textSecondary, browse.surfaceEmphasis, TEXT_CONTRAST)
     }
 
     @Test
@@ -30,7 +30,7 @@ class EpisodeCardContrastTest {
 
     @Test
     fun `focus ring stands out from the card, the icon fill and every page backdrop`() = checkEveryBrowsePalette { browse ->
-        expect("focus ring on surfaceElevated", browse.focus, browse.surfaceElevated, NON_TEXT_CONTRAST)
+        expect("focus ring on surfaceEmphasis (card fill)", browse.focus, browse.surfaceEmphasis, NON_TEXT_CONTRAST)
         expect("focus ring on surfaceAccent", browse.focus, browse.surfaceAccent, NON_TEXT_CONTRAST)
         pageBackdrops(browse).forEach { (where, backdrop) ->
             expect("focus ring on $where", browse.focus, backdrop, NON_TEXT_CONTRAST)
@@ -43,12 +43,23 @@ class EpisodeCardContrastTest {
     }
 
     @Test
+    fun `card fill stands apart from the page it sits on`() = checkEveryBrowsePalette { browse ->
+        plainBackdrops(browse).forEach { (where, backdrop) ->
+            expect("card fill (surfaceEmphasis) on $where", browse.surfaceEmphasis, backdrop, CARD_SEPARATION)
+        }
+    }
+
+    @Test
     fun `tertiary detail action label is readable over the lightest possible artwork`() = checkEveryBrowsePalette { _ ->
         val scrimOverWhiteArt = Color.Black.copy(alpha = BADGE_SCRIM_ALPHA).compositeOver(Color.White)
         expect("white label on 55% black over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
     }
 
     private companion object {
+        // A card body cannot reach the 3:1 of meaningful UI without turning into a slab; this floor only keeps it
+        // from melting into the page (surfaceElevated measured 1.07 to 1.41:1, 1.12 on amoled_black).
+        const val CARD_SEPARATION = 1.15f
+
         // Mirrors OVER_ARTWORK_SCRIM_ALPHA in the catalog module, which core:ui cannot depend on.
         const val BADGE_SCRIM_ALPHA = 0.55f
     }
