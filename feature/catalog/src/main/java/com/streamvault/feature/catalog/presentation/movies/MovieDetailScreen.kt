@@ -270,11 +270,14 @@ private fun MovieDetailContent(
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                item {
-                    DetailBackButton(
-                        contentDescription = stringResource(R.string.movie_detail_back),
-                        onClick = onBack
-                    )
+                // The remote's Back key covers TV; the on-screen button stays for touch devices.
+                if (!isTelevisionDevice) {
+                    item {
+                        DetailBackButton(
+                            contentDescription = stringResource(R.string.movie_detail_back),
+                            onClick = onBack
+                        )
+                    }
                 }
 
                 item {
@@ -288,6 +291,7 @@ private fun MovieDetailContent(
                                 hasResume = hasResume,
                                 resumePositionMs = resumePositionMs,
                                 isCasting = isCasting,
+                                showCopyUrlAndCast = !isTelevisionDevice,
                                 externalRatings = externalRatings,
                                 isLoadingExternalRatings = isLoadingExternalRatings,
                                 onPlay = onPlay,
@@ -322,6 +326,7 @@ private fun MovieDetailContent(
                                 hasResume = hasResume,
                                 resumePositionMs = resumePositionMs,
                                 isCasting = isCasting,
+                                showCopyUrlAndCast = !isTelevisionDevice,
                                 externalRatings = externalRatings,
                                 isLoadingExternalRatings = isLoadingExternalRatings,
                                 onPlay = onPlay,
@@ -470,6 +475,7 @@ private fun MovieDetailHeroText(
     hasResume: Boolean,
     resumePositionMs: Long,
     isCasting: Boolean,
+    showCopyUrlAndCast: Boolean,
     externalRatings: ExternalRatings,
     isLoadingExternalRatings: Boolean,
     onPlay: () -> Unit,
@@ -548,12 +554,16 @@ private fun MovieDetailHeroText(
                 modifier = playButtonModifier,
                 primary = true
             ) }
-            item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
+            if (showCopyUrlAndCast) {
+                item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
+            }
             item { DetailActionButton(stringResource(R.string.download_button_label), onDownload) }
-            item { DetailActionButton(
-                stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
-                onCast, enabled = !isCasting
-            ) }
+            if (showCopyUrlAndCast) {
+                item { DetailActionButton(
+                    stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
+                    onCast, enabled = !isCasting
+                ) }
+            }
             if (hasTrailer) {
                 item { DetailActionButton(stringResource(R.string.movie_detail_trailer), onPlayTrailer) }
             }

@@ -350,11 +350,14 @@ private fun SeriesDetailContent(
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                item {
-                    DetailBackButton(
-                        contentDescription = stringResource(R.string.series_detail_back),
-                        onClick = onBack
-                    )
+                // The remote's Back key covers TV; the on-screen button stays for touch devices.
+                if (!isTelevisionDevice) {
+                    item {
+                        DetailBackButton(
+                            contentDescription = stringResource(R.string.series_detail_back),
+                            onClick = onBack
+                        )
+                    }
                 }
 
                 item {
@@ -432,6 +435,7 @@ private fun SeriesDetailContent(
                                     series = series,
                                     resumeEpisode = resumeEpisode,
                                     isCasting = isCasting,
+                                    showCopyUrlAndCast = !isTelevisionDevice,
                                     onResumeClick = onResumeClick,
                                     onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
                                     onCast = onCastResumeEpisode,
@@ -519,6 +523,7 @@ private fun SeriesDetailContent(
                                     series = series,
                                     resumeEpisode = resumeEpisode,
                                     isCasting = isCasting,
+                                    showCopyUrlAndCast = !isTelevisionDevice,
                                     onResumeClick = onResumeClick,
                                     onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
                                     onCast = onCastResumeEpisode,
@@ -698,12 +703,13 @@ private fun SeriesVersionSelector(
     }
 }
 
-/** Primary Play/Resume, secondary My list (and the 13c-bound Copy URL and Cast), then tertiary Trakt actions. */
+/** Primary Play/Resume, secondary My list (Copy URL and Cast off TV only), then tertiary Trakt actions. */
 @Composable
 private fun SeriesDetailActions(
     series: Series,
     resumeEpisode: Episode?,
     isCasting: Boolean,
+    showCopyUrlAndCast: Boolean,
     onResumeClick: (Episode) -> Unit,
     onCopyUrl: () -> Unit,
     onCast: () -> Unit,
@@ -741,12 +747,14 @@ private fun SeriesDetailActions(
                     primary = true
                 )
             }
-            item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
-            item {
-                DetailActionButton(
-                    stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
-                    onCast, enabled = !isCasting
-                )
+            if (showCopyUrlAndCast) {
+                item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
+                item {
+                    DetailActionButton(
+                        stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
+                        onCast, enabled = !isCasting
+                    )
+                }
             }
         }
         item {
