@@ -41,6 +41,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.feature.playback.R
 
@@ -76,6 +77,7 @@ internal fun VodPlaybackSettingsSheet(
 ) {
     val closeLabel = stringResource(R.string.player_close_playback_settings)
     val firstActionFocusRequester = remember { FocusRequester() }
+    val pictureInPictureAvailable = !rememberIsTelevisionDevice()
     val actions = buildList {
         if (state.showSubtitleAction) add(VodSettingsAction("subtitles", stringResource(R.string.player_subs), onClick = onOpenSubtitleTracks))
         if (state.showAudioAction) add(VodSettingsAction("audio", stringResource(R.string.player_audio), onClick = onOpenAudioTracks))
@@ -85,7 +87,9 @@ internal fun VodPlaybackSettingsSheet(
         add(VodSettingsAction("idle_timer", stringResource(R.string.player_idle_standby_after), onClick = onOpenIdleStandbyTimer))
         add(VodSettingsAction("aspect", stringResource(R.string.player_aspect_ratio), onClick = onToggleAspectRatio))
         add(VodSettingsAction("mute", stringResource(if (isMuted) R.string.player_unmute else R.string.player_mute), onClick = onToggleMute))
-        add(VodSettingsAction("pip", stringResource(R.string.player_picture_in_picture), onClick = onEnterPictureInPicture))
+        if (pictureInPictureAvailable) {
+            add(VodSettingsAction("pip", stringResource(R.string.player_picture_in_picture), onClick = onEnterPictureInPicture))
+        }
         if (state.showEpisodesAction) add(VodSettingsAction("episodes", stringResource(R.string.player_episodes), onClick = onOpenEpisodes))
         if (state.showExternalPlayerAction) {
             add(VodSettingsAction("external", stringResource(R.string.player_open_in_external_player), onClick = onOpenExternalPlayer))

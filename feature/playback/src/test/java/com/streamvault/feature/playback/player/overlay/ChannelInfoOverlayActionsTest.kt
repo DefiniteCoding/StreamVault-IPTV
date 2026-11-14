@@ -24,6 +24,7 @@ class ChannelInfoOverlayActionsTest {
         qualityOptionCount = 0,
         audioVideoSyncEnabled = false,
         isCastConnected = false,
+        pictureInPictureAvailable = true,
         lastVisitedCategoryName = null,
         recordingStatus = null,
         canRestartProgram = false,
@@ -31,6 +32,13 @@ class ChannelInfoOverlayActionsTest {
     )
 
     // Row
+
+    @Test
+    fun `more menu omits picture in picture when it is unavailable`() {
+        val items = channelInfoMoreItems(minimal.copy(pictureInPictureAvailable = false))
+        assertThat(items).doesNotContain(ChannelInfoMoreItem.PICTURE_IN_PICTURE)
+        assertThat(items).contains(ChannelInfoMoreItem.CAST)
+    }
 
     @Test
     fun `row always has play, guide, record and more in that order`() {

@@ -422,7 +422,9 @@ class MainActivity : ComponentActivity(), CatalogPlatformHost {
     }
 
     private fun supportsPictureInPicture(): Boolean {
+        // Android TV has no PiP use case here: Home should leave the app, not shrink the player.
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !isTelevisionDevice() &&
             packageManager.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
     }
 

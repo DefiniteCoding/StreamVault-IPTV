@@ -806,6 +806,8 @@ private fun PlayerLiveInfo(
     showExternalPlayerAction: Boolean,
     onOpenExternalPlayer: () -> Unit
 ) {
+    // Android TV leaves the app for Home instead of shrinking it; PiP is an Android-device feature.
+    val pictureInPictureAvailable = !rememberIsTelevisionDevice()
     val showTimeshiftControls = timeshiftUiState.available && !isCastConnected
     val appTimeFormat = LocalUiTimeFormat.current
     val timeFormat = remember(appTimeFormat) { appTimeFormat.createTimeFormat() }
@@ -850,7 +852,9 @@ private fun PlayerLiveInfo(
             ),
             onOpenIdleStandbyTimer
         ))
-        add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        if (pictureInPictureAvailable) {
+            add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        }
         if (showExternalPlayerAction) {
             add(PlayerActionSpec("external_player", stringResource(R.string.player_open_in_external_player), onOpenExternalPlayer))
         }
@@ -1060,6 +1064,7 @@ private fun PlayerVodInfo(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isTelevisionDevice = rememberIsTelevisionDevice()
+    val pictureInPictureAvailable = !isTelevisionDevice
     val compactControls = screenWidth < 700.dp
     val tabletControls = !isTelevisionDevice && screenWidth >= 700.dp && screenWidth < 1280.dp
     val transportButtonSize = when {
@@ -1152,7 +1157,9 @@ private fun PlayerVodInfo(
             stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
             if (isCastConnected) onStopCasting else onCast
         ))
-        add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        if (pictureInPictureAvailable) {
+            add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        }
         add(PlayerActionSpec("aspect_ratio", stringResource(R.string.player_aspect_ratio_label, aspectRatioLabel), onToggleAspectRatio))
     }
     var sliderValue by remember(duration, currentPosition) {

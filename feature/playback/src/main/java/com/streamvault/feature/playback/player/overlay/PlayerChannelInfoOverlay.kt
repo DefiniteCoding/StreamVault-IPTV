@@ -149,6 +149,7 @@ fun ChannelInfoOverlay(
         qualityOptionCount = qualityOptionCount,
         audioVideoSyncEnabled = audioVideoSyncEnabled,
         isCastConnected = isCastConnected,
+        pictureInPictureAvailable = !isTelevision,
         lastVisitedCategoryName = lastVisitedCategoryName,
         recordingStatus = currentRecordingStatus,
         canRestartProgram = canRestartProgram,
