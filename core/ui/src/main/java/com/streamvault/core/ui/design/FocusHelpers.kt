@@ -186,6 +186,8 @@ val MoreContentFadeWidth = 56.dp
  *
  * While more items exist past a side, the row fades out over [fadeWidth] at that edge, so a cut-off card reads as
  * "keep scrolling" and not as a layout bug. The fade is an offscreen mask, used only while the row can scroll.
+ * Pass a [fadeWidth] of 0 to skip it entirely, with no modifier and no offscreen layer: use that for rows drawn over
+ * video, where a new offscreen layer needs a measured TV GPU frame time first.
  */
 @Composable
 fun FocusSafeLazyRow(
@@ -205,7 +207,10 @@ fun FocusSafeLazyRow(
     LazyRow(
         modifier = modifier
             .bleed(start = bleedStart, end = bleedEnd, vertical = FocusOverflowPadding)
-            .fadeWhenMoreContent(state, edgeInset = FocusOverflowPadding, fadeWidth = fadeWidth),
+            .then(
+                if (fadeWidth > 0.dp) Modifier.fadeWhenMoreContent(state, edgeInset = FocusOverflowPadding, fadeWidth = fadeWidth)
+                else Modifier
+            ),
         state = state,
         contentPadding = PaddingValues(
             start = contentPadding.calculateStart(direction) + bleedStart,

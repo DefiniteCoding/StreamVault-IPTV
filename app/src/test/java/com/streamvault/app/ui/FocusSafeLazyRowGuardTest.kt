@@ -5,11 +5,9 @@ import java.io.File
 import org.junit.Test
 
 /**
- * Rows of focusable items use FocusSafeLazyRow so the first and last item keep their focus ring and the row fades
- * at a scrollable edge. A raw LazyRow brings back the clipped ring.
- *
- * [pendingMigration] lists files not migrated yet, with their remaining raw call count. Migrating a file means
- * removing its entry; the test fails on a stale entry so the list only shrinks.
+ * Rows of focusable items use FocusSafeLazyRow so the first and last item keep their focus ring. A raw LazyRow
+ * brings back the clipped ring. Rows drawn over video pass `fadeWidth = 0.dp` to skip the edge fade, which is an
+ * offscreen layer.
  */
 class FocusSafeLazyRowGuardTest {
     private val rawLazyRowCall = Regex("(?<![A-Za-z])LazyRow\\(")
@@ -17,14 +15,8 @@ class FocusSafeLazyRowGuardTest {
     // The wrapper itself is the one place that calls LazyRow.
     private val permanentAllowlist = setOf("FocusHelpers.kt")
 
-    private val pendingMigration = mapOf(
-        "PlayerAuxiliaryOverlays.kt" to 1,
-        "PlayerChannelInfoOverlay.kt" to 2,
-        "PlayerControlsChrome.kt" to 1
-    )
-
     @Test
-    fun rawLazyRowCallsMatchThePendingMigrationList() {
+    fun noRawLazyRowCallsOutsideTheWrapper() {
         val sourceRoots = listOf("src", "../core/ui/src", "../feature").map(::File)
         val counts = sourceRoots
             .flatMap { root -> root.walkTopDown().toList() }
@@ -33,6 +25,6 @@ class FocusSafeLazyRowGuardTest {
             .associate { it.name to rawLazyRowCall.findAll(it.readText()).count() }
             .filterValues { it > 0 }
 
-        assertThat(counts).isEqualTo(pendingMigration)
+        assertThat(counts).isEmpty()
     }
 }

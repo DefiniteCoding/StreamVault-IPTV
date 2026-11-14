@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -479,11 +479,13 @@ fun ChannelInfoOverlay(
                 )
             }
 
-            LazyRow(
+            // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
+            FocusSafeLazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                contentPadding = PaddingValues(end = 8.dp)
+                contentPadding = PaddingValues(end = 8.dp),
+                fadeWidth = 0.dp
             ) {
                 item {
                     QuickActionButton(
@@ -1117,9 +1119,11 @@ private fun ChannelInfoActionMenuTray(
                 color = Primary,
                 fontWeight = FontWeight.Bold
             )
-            LazyRow(
+            // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
+            FocusSafeLazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                fadeWidth = 0.dp
             ) {
                 itemsIndexed(
                     items = actions,

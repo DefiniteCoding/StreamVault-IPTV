@@ -8,7 +8,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.History
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
@@ -24,11 +23,13 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.AppColors
 import com.streamvault.core.ui.design.LocalAppShapes
 import com.streamvault.core.ui.design.LocalAppSpacing
@@ -129,9 +130,11 @@ fun ChannelListOverlay(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        LazyRow(
+                        // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
+                        FocusSafeLazyRow(
                             contentPadding = PaddingValues(spacing.xs),
-                            horizontalArrangement = Arrangement.spacedBy(spacing.xs)
+                            horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                            fadeWidth = 0.dp
                         ) {
                             itemsIndexed(recentChannels, key = { index, channel -> "recent:${channel.id}:$index" }) { _, channel ->
                                 PlayerBrowseAction(

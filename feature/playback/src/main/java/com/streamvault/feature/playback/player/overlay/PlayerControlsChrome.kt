@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
@@ -1629,9 +1629,11 @@ private fun PlayerQuickActionRows(
 
     if (singleRow) {
         val actions = rows.flatten()
-        LazyRow(
+        // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(end = 4.dp)
+            contentPadding = PaddingValues(end = 4.dp),
+            fadeWidth = 0.dp
         ) {
             itemsIndexed(
                 items = actions,
