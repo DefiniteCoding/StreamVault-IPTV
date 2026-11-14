@@ -42,8 +42,14 @@ class EpisodeCardContrastTest {
         expect("brand progress on surfaceEmphasis track", browse.brand, browse.surfaceEmphasis, NON_TEXT_CONTRAST)
     }
 
+    @Test
+    fun `tertiary detail action label is readable over the lightest possible artwork`() = checkEveryBrowsePalette { _ ->
+        val scrimOverWhiteArt = Color.Black.copy(alpha = BADGE_SCRIM_ALPHA).compositeOver(Color.White)
+        expect("white label on 55% black over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
+    }
+
     private companion object {
-        // Mirrors EPISODE_BADGE_SCRIM_ALPHA in the catalog module, which core:ui cannot depend on.
+        // Mirrors OVER_ARTWORK_SCRIM_ALPHA in the catalog module, which core:ui cannot depend on.
         const val BADGE_SCRIM_ALPHA = 0.55f
     }
 }
