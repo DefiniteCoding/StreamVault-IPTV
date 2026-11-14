@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +38,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -71,6 +72,7 @@ import com.streamvault.core.ui.components.shell.ContentMetadataStrip
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.rememberInitialFocusModifier
 import com.streamvault.domain.model.ExternalRatings
 import com.streamvault.domain.model.Movie
@@ -238,6 +240,8 @@ private fun MovieDetailContent(
             PaddingValues(horizontal = 56.dp, vertical = 36.dp)
         }
         val posterWidth = if (compactLayout) 148.dp else 240.dp
+        // Rows grow into the screen padding so cards slide off the screen edge instead of being cut at the padding.
+        val screenGutter = contentPadding.calculateLeftPadding(LayoutDirection.Ltr)
 
         AsyncImage(
             model = rememberCrossfadeImageModel(movie.backdropUrl ?: movie.posterUrl),
@@ -279,6 +283,8 @@ private fun MovieDetailContent(
                             MoviePoster(movie = movie, posterWidth = posterWidth)
                             MovieDetailHeroText(
                                 movie = movie,
+                                edgeGutterStart = screenGutter,
+                                edgeGutterEnd = screenGutter,
                                 hasResume = hasResume,
                                 resumePositionMs = resumePositionMs,
                                 isCasting = isCasting,
@@ -312,6 +318,7 @@ private fun MovieDetailContent(
                             MoviePoster(movie = movie, posterWidth = posterWidth)
                             MovieDetailHeroText(
                                 movie = movie,
+                                edgeGutterEnd = screenGutter,
                                 hasResume = hasResume,
                                 resumePositionMs = resumePositionMs,
                                 isCasting = isCasting,
@@ -343,9 +350,11 @@ private fun MovieDetailContent(
 
                 if (movie.tmdbId?.let { it > 0L } == true) {
                     item {
-                        LazyRow(
+                        FocusSafeLazyRow(
                             horizontalArrangement = Arrangement.spacedBy(10.dp),
                             verticalAlignment = Alignment.CenterVertically,
+                            edgeGutterStart = screenGutter,
+                            edgeGutterEnd = screenGutter
                         ) {
                             item {
                                 TraktWatchlistActionButton(
@@ -381,8 +390,10 @@ private fun MovieDetailContent(
                         DetailSectionHeading(stringResource(R.string.movie_detail_related))
                     }
                     item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        FocusSafeLazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            edgeGutterStart = screenGutter,
+                            edgeGutterEnd = screenGutter
                         ) {
                             items(relatedContent, key = { it.id }) { related ->
                                 TvClickableSurface(
@@ -469,7 +480,9 @@ private fun MovieDetailHeroText(
     onSelectVariant: (Long) -> Unit,
     playButtonModifier: Modifier,
     onPlayTrailer: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
     val hasTrailer = !movie.youtubeTrailer.isNullOrBlank()
     Column(
@@ -514,10 +527,17 @@ private fun MovieDetailHeroText(
         MovieVersionSelector(
             variants = movie.variants,
             selectedVariantId = movie.selectedVariantId ?: movie.id,
-            onSelectVariant = onSelectVariant
+            onSelectVariant = onSelectVariant,
+            edgeGutterStart = edgeGutterStart,
+            edgeGutterEnd = edgeGutterEnd
         )
 
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            edgeGutterStart = edgeGutterStart,
+            edgeGutterEnd = edgeGutterEnd
+        ) {
             item { DetailActionButton(
                 label = if (hasResume) {
                     stringResource(R.string.movie_detail_resume_from, formatPositionMs(resumePositionMs))
@@ -555,7 +575,9 @@ private fun MovieDetailHeroText(
 private fun MovieVersionSelector(
     variants: List<VodMovieVariant>,
     selectedVariantId: Long,
-    onSelectVariant: (Long) -> Unit
+    onSelectVariant: (Long) -> Unit,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
     if (variants.size <= 1) return
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -564,7 +586,11 @@ private fun MovieVersionSelector(
             style = MaterialTheme.typography.titleMedium,
             color = AppColors.TextPrimary
         )
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutterStart,
+            edgeGutterEnd = edgeGutterEnd
+        ) {
             items(variants, key = { it.rawMovieId }) { variant ->
                 val selected = variant.rawMovieId == selectedVariantId
                 DetailVariantButton(

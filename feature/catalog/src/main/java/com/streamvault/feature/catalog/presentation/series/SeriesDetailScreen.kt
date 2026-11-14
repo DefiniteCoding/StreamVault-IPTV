@@ -55,6 +55,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.Button
@@ -314,6 +316,8 @@ private fun SeriesDetailContent(
             PaddingValues(horizontal = 56.dp, vertical = 36.dp)
         }
         val posterWidth = if (compactLayout) 132.dp else 220.dp
+        // Rows grow into the screen padding so cards slide off the screen edge instead of being cut at the padding.
+        val screenGutter = contentPadding.calculateLeftPadding(LayoutDirection.Ltr)
 
         AsyncImage(
             model = rememberCrossfadeImageModel(series.backdropUrl ?: series.posterUrl),
@@ -413,7 +417,9 @@ private fun SeriesDetailContent(
                                 SeriesVersionSelector(
                                     variants = series.variants,
                                     selectedVariantId = series.selectedVariantId ?: series.id,
-                                    onSelectVariant = onSelectVariant
+                                    onSelectVariant = onSelectVariant,
+                                    edgeGutterStart = screenGutter,
+                                    edgeGutterEnd = screenGutter
                                 )
                                 Text(
                                     text = series.plot ?: stringResource(R.string.series_plot_fallback),
@@ -431,7 +437,9 @@ private fun SeriesDetailContent(
                                     onCast = onCastResumeEpisode,
                                     onToggleFavorite = onToggleFavorite,
                                     initialFocusModifier = initialFocusModifier,
-                                    traktActions = traktActions
+                                    traktActions = traktActions,
+                                    edgeGutterStart = screenGutter,
+                                    edgeGutterEnd = screenGutter
                                 )
                             }
                         }
@@ -497,7 +505,8 @@ private fun SeriesDetailContent(
                                 SeriesVersionSelector(
                                     variants = series.variants,
                                     selectedVariantId = series.selectedVariantId ?: series.id,
-                                    onSelectVariant = onSelectVariant
+                                    onSelectVariant = onSelectVariant,
+                                    edgeGutterEnd = screenGutter
                                 )
                                 Text(
                                     text = series.plot ?: stringResource(R.string.series_plot_fallback),
@@ -515,7 +524,8 @@ private fun SeriesDetailContent(
                                     onCast = onCastResumeEpisode,
                                     onToggleFavorite = onToggleFavorite,
                                     initialFocusModifier = initialFocusModifier,
-                                    traktActions = traktActions
+                                    traktActions = traktActions,
+                                    edgeGutterEnd = screenGutter
                                 )
                             }
                         }
@@ -527,7 +537,8 @@ private fun SeriesDetailContent(
                     selectedSeason = selectedSeason,
                     onSeasonSelected = onSeasonSelected,
                     onEpisodeClick = onEpisodeClick,
-                    onDownloadEpisode = onDownloadEpisode
+                    onDownloadEpisode = onDownloadEpisode,
+                    edgeGutter = screenGutter
                 )
             }
         }
@@ -540,7 +551,8 @@ internal fun LazyListScope.seasonAndEpisodeItems(
     selectedSeason: Season?,
     onSeasonSelected: (Season) -> Unit,
     onEpisodeClick: (Episode) -> Unit,
-    onDownloadEpisode: (Episode) -> Unit
+    onDownloadEpisode: (Episode) -> Unit,
+    edgeGutter: Dp = 0.dp
 ) {
     if (series.seasons.isNotEmpty()) {
         item {
@@ -554,7 +566,9 @@ internal fun LazyListScope.seasonAndEpisodeItems(
                     state = seasonListState,
                     modifier = Modifier.focusRestorer(selectedChipFocus),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    contentPadding = PaddingValues(vertical = 4.dp)
+                    contentPadding = PaddingValues(vertical = 4.dp),
+                    edgeGutterStart = edgeGutter,
+                    edgeGutterEnd = edgeGutter
                 ) {
                     items(series.seasons, key = { it.seasonNumber }) { season ->
                         val isSelected = season == selectedSeason
@@ -590,7 +604,9 @@ internal fun LazyListScope.seasonAndEpisodeItems(
                 FocusSafeLazyRow(
                     modifier = Modifier.focusRestorer(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(vertical = 12.dp)
+                    contentPadding = PaddingValues(vertical = 12.dp),
+                    edgeGutterStart = edgeGutter,
+                    edgeGutterEnd = edgeGutter
                 ) {
                     items(season.episodes, key = { it.id }) { episode ->
                         EpisodeCard(
@@ -654,7 +670,9 @@ private fun Series.traktNestedListItems(): List<TraktCustomListItem> {
 private fun SeriesVersionSelector(
     variants: List<VodSeriesVariant>,
     selectedVariantId: Long,
-    onSelectVariant: (Long) -> Unit
+    onSelectVariant: (Long) -> Unit,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
     if (variants.size <= 1) return
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -663,7 +681,11 @@ private fun SeriesVersionSelector(
             style = MaterialTheme.typography.titleMedium,
             color = AppColors.TextPrimary
         )
-        FocusSafeLazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutterStart,
+            edgeGutterEnd = edgeGutterEnd
+        ) {
             items(variants, key = { it.rawSeriesId }) { variant ->
                 val selected = variant.rawSeriesId == selectedVariantId
                 DetailVariantButton(
@@ -687,9 +709,16 @@ private fun SeriesDetailActions(
     onCast: () -> Unit,
     onToggleFavorite: () -> Unit,
     initialFocusModifier: Modifier,
-    traktActions: LazyListScope.() -> Unit
+    traktActions: LazyListScope.() -> Unit,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
-    FocusSafeLazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+    FocusSafeLazyRow(
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        edgeGutterStart = edgeGutterStart,
+        edgeGutterEnd = edgeGutterEnd
+    ) {
         if (resumeEpisode != null) {
             item {
                 DetailActionButton(
