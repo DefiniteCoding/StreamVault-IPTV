@@ -26,6 +26,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +36,11 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.focus.focusRequester
+import kotlinx.coroutines.flow.first
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,8 +74,11 @@ import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMen
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.feature.catalog.presentation.components.SeriesCard
-import com.streamvault.core.ui.components.shell.AppHeroHeader
-import com.streamvault.core.ui.components.shell.StatusPill
+import com.streamvault.core.ui.components.AppDialogButton
+import com.streamvault.core.ui.components.shell.AppMessageState
+import com.streamvault.core.ui.components.shell.LocalTopBarContentInset
+import com.streamvault.core.ui.components.shell.LocalTopBarDownTarget
+import com.streamvault.core.ui.design.requestFocusSafely
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.feature.catalog.presentation.time.LocalCatalogTimeFormat
 import com.streamvault.feature.catalog.presentation.time.createCatalogDateTimeFormat
@@ -101,6 +109,12 @@ import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvButton
 import com.streamvault.core.ui.interaction.TvIconButton
 
+private val ContinueWatchingShelves = setOf(
+    AppHomeDashboardShelf.CONTINUE_WATCHING,
+    AppHomeDashboardShelf.CONTINUE_WATCHING_MOVIES,
+    AppHomeDashboardShelf.CONTINUE_WATCHING_SERIES
+)
+
 @Composable
 fun DashboardScreen(
     onDestinationRequested: (AppDestination) -> Unit,
@@ -126,6 +140,19 @@ fun DashboardScreen(
     var channelMenuTarget by remember { mutableStateOf<Channel?>(null) }
     val recentChannelRequesters = remember { HashMap<Long, FocusRequester>() }
     var recentRemovalHandoff by remember { mutableStateOf<Pair<Long, Long?>?>(null) }
+    val initialFocusRequester = remember { FocusRequester() }
+    var initialTargetPlaced by remember { mutableStateOf(false) }
+    val initialFocusModifier = remember {
+        Modifier
+            .focusRequester(initialFocusRequester)
+            .onGloballyPositioned { initialTargetPlaced = true }
+    }
+
+    // One shot per screen entry: wait until the target card is placed, or the list scrolls to an unfinished rect.
+    LaunchedEffect(Unit) {
+        snapshotFlow { initialTargetPlaced }.first { it }
+        initialFocusRequester.requestFocusSafely(tag = "DashboardScreen", target = "Home initial card")
+    }
 
     LaunchedEffect(uiState.recentChannels) {
         recentChannelRequesters.keys.retainAll(uiState.recentChannels.mapTo(HashSet()) { it.id })
@@ -149,13 +176,25 @@ fun DashboardScreen(
             AppDestination.Home,
             stringResource(R.string.nav_home),
             provider?.name,
-            CatalogNavigationChrome.TopBar,
+            CatalogNavigationChrome.TopBarOverlay,
             true,
             true,
             false
         ) {
+            val downTarget = LocalTopBarDownTarget.current
+            val hasProvider = provider != null
+            DisposableEffect(downTarget, hasProvider) {
+                // The empty state has nothing under the bar, so default focus search already works there.
+                downTarget.requester = initialFocusRequester.takeIf { hasProvider }
+                onDispose { downTarget.requester = null }
+            }
             if (provider == null) {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = LocalTopBarContentInset.current)
+                        .verticalScroll(rememberScrollState())
+                ) {
                     val hasStremio = stremioContent()
                     if (!hasStremio) Box(Modifier.fillMaxWidth().height(380.dp)) {
                         EmptyDashboard(onAddProvider = onAddProvider,
@@ -165,6 +204,9 @@ fun DashboardScreen(
                 return@scaffold
             }
             val orderedSections = rememberDashboardSections(uiState)
+            // Rule 17: the first Continue Watching card, else the first Recent Channels card.
+            val initialFocusShelf = orderedSections.firstOrNull { it in ContinueWatchingShelves }
+                ?: AppHomeDashboardShelf.RECENT_CHANNELS.takeIf { it in orderedSections }
             val presentedSeriesFor: (PlaybackHistory) -> Series? = { history ->
                 val rawSeriesId = history.seriesId ?: history.contentId
                 if (
@@ -192,7 +234,7 @@ fun DashboardScreen(
 
             androidx.compose.foundation.lazy.LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 28.dp)
+                contentPadding = PaddingValues(top = LocalTopBarContentInset.current, bottom = 28.dp)
             ) {
                 item(key = "stremio_viewing") { stremioContent() }
                 if (uiState.isLoading && orderedSections.isEmpty()) {
@@ -263,6 +305,10 @@ fun DashboardScreen(
                             isScheduledRecording = channel.id in scheduledChannelIds,
                             onClick = { onRecentChannelClick(channel, uiState.currentCombinedProfileId) },
                             onLongClick = { channelMenuTarget = channel },
+                            modifier = if (
+                                initialFocusShelf == AppHomeDashboardShelf.RECENT_CHANNELS &&
+                                channel.id == uiState.recentChannels.firstOrNull()?.id
+                            ) initialFocusModifier else Modifier,
                             focusRequester = remember(channel.id) {
                                 recentChannelRequesters.getOrPut(channel.id) { FocusRequester() }
                             }
@@ -272,7 +318,8 @@ fun DashboardScreen(
                     AppHomeDashboardShelf.CONTINUE_WATCHING -> ContinueWatchingRow(
                         items = uiState.continueWatching,
                         onItemClick = onContinueWatchingItemClick,
-                        menu = continueWatchingMenu
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.PINNED_CATEGORIES -> PinnedCategoriesSection(
@@ -355,14 +402,16 @@ fun DashboardScreen(
                         title = stringResource(R.string.dashboard_continue_watching_movies),
                         items = uiState.continueWatchingMovies,
                         onItemClick = onPlaybackHistoryClick,
-                        menu = continueWatchingMenu
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.CONTINUE_WATCHING_SERIES -> ContinueWatchingRow(
                         title = stringResource(R.string.dashboard_continue_watching_series),
                         items = uiState.continueWatchingSeriesItems,
                         onItemClick = onContinueWatchingItemClick,
-                        menu = continueWatchingMenu
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.TOP_RATED_MOVIES -> CategoryRow(
@@ -432,123 +481,8 @@ fun DashboardScreen(
     }
 }
 
-@Composable
-private fun DashboardHero(
-    providerName: String,
-    feature: DashboardFeature,
-    stats: DashboardStats,
-    onOpenLiveTv: () -> Unit,
-    onOpenGuide: () -> Unit,
-    onOpenSearch: () -> Unit,
-    onOpenSavedLibrary: () -> Unit,
-    onFeatureAction: () -> Unit
-) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val isTelevisionDevice = rememberIsTelevisionDevice()
-    val heroHeight = when {
-        screenWidth < 700.dp -> 176.dp
-        !isTelevisionDevice && screenWidth < 1280.dp -> 196.dp
-        else -> 220.dp
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-    ) {
-        if (!feature.artworkUrl.isNullOrBlank()) {
-            AsyncImage(
-                model = rememberCrossfadeImageModel(feature.artworkUrl),
-                contentDescription = feature.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(heroHeight)
-                    .clip(BrowseShapes.Hero)
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(heroHeight)
-                    .clip(BrowseShapes.Hero)
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.88f),
-                                Color.Black.copy(alpha = 0.72f),
-                                Color.Black.copy(alpha = 0.34f)
-                            )
-                        )
-                    )
-            )
-        }
-
-        AppHeroHeader(
-            eyebrow = providerName,
-            title = feature.title.ifBlank { stringResource(R.string.dashboard_title) },
-            subtitle = feature.summary.ifBlank { stringResource(R.string.dashboard_subtitle, providerName) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (isPortraitLayout()) Modifier else Modifier.height(heroHeight)),
-            footer = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        StatusPill(label = stringResource(R.string.nav_live_tv), containerColor = AppColors.BrandMuted)
-                        StatusPill(label = stringResource(R.string.nav_epg), containerColor = AppColors.SurfaceEmphasis)
-                        StatusPill(label = stringResource(R.string.favorites_title), containerColor = AppColors.Warning, contentColor = Color.Black)
-                    }
-                    DashboardStatRow(stats = stats)
-                }
-            },
-            actions = {
-                DashboardActionButton(label = stringResource(R.string.nav_live_tv), onClick = onOpenLiveTv)
-                DashboardActionButton(label = stringResource(R.string.nav_epg), onClick = onOpenGuide)
-                DashboardActionButton(label = stringResource(R.string.dashboard_search_library), onClick = onOpenSearch)
-                DashboardActionButton(label = stringResource(R.string.favorites_title), onClick = onOpenSavedLibrary)
-                if (feature.actionLabel.isNotBlank()) {
-                    DashboardActionButton(
-                        label = feature.actionLabel,
-                        onClick = onFeatureAction
-                    )
-                }
-            }
-        )
-    }
-}
-
 private fun Series.rawSeriesIdsForNavigation(): List<Long> =
     variants.map { it.rawSeriesId }.ifEmpty { listOf(selectedVariantId ?: id) }
-
-@Composable
-private fun DashboardStatRow(
-    stats: DashboardStats
-) {
-    val statItems = listOf(
-        stringResource(R.string.dashboard_stat_live, stats.liveChannelCount),
-        stringResource(R.string.dashboard_stat_favorites, stats.favoriteChannelCount),
-        stringResource(R.string.dashboard_stat_recent, stats.recentChannelCount),
-        stringResource(R.string.dashboard_stat_resume, stats.continueWatchingCount),
-        stringResource(R.string.dashboard_stat_movies, stats.movieLibraryCount),
-        stringResource(R.string.dashboard_stat_series, stats.seriesLibraryCount)
-    )
-
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(statItems, key = { it }) { statLabel ->
-            Surface(
-                shape = BrowseShapes.Control,
-                colors = SurfaceDefaults.colors(
-                    containerColor = AppColors.Surface.copy(alpha = 0.64f)
-                )
-            ) {
-                Text(
-                    text = statLabel,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = TextPrimary,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun DashboardShortcutRow(
@@ -668,155 +602,6 @@ private fun DashboardShortcutCard(
 }
 
 @Composable
-private fun DashboardActionButton(
-    label: String,
-    onClick: () -> Unit
-) {
-    TvButton(
-        onClick = onClick,
-        colors = ButtonDefaults.colors(
-            containerColor = Primary.copy(alpha = 0.18f),
-            focusedContainerColor = Primary.copy(alpha = 0.32f),
-            contentColor = TextPrimary
-        )
-    ) {
-        Text(text = label)
-    }
-}
-
-@Composable
-private fun DashboardProviderHealthCard(
-    providerName: String,
-    health: DashboardProviderHealth,
-    onOpenDiagnostics: () -> Unit
-) {
-    val appTimeFormat = LocalCatalogTimeFormat.current
-    val dateTimeFormat = remember(appTimeFormat) { appTimeFormat.createCatalogDateTimeFormat() }
-    val syncLabel = if (health.lastSyncedAt <= 0L) {
-        stringResource(R.string.dashboard_provider_no_sync)
-    } else {
-        stringResource(
-            R.string.dashboard_provider_synced_at,
-            dateTimeFormat.format(Date(health.lastSyncedAt))
-        )
-    }
-    val expiryLabel = health.expirationDate?.let {
-        val format = remember(it) { SimpleDateFormat("MMM d, yyyy", Locale.getDefault()) }
-        stringResource(R.string.dashboard_provider_expires_at, format.format(Date(it)))
-    } ?: stringResource(R.string.dashboard_provider_no_expiry)
-    val statusLabel = when (health.status) {
-        com.streamvault.domain.model.ProviderStatus.ACTIVE -> stringResource(R.string.settings_status_active)
-        com.streamvault.domain.model.ProviderStatus.PARTIAL -> stringResource(R.string.settings_status_partial)
-        com.streamvault.domain.model.ProviderStatus.ERROR -> stringResource(R.string.settings_status_error)
-        com.streamvault.domain.model.ProviderStatus.EXPIRED -> stringResource(R.string.settings_status_expired)
-        com.streamvault.domain.model.ProviderStatus.DISABLED -> stringResource(R.string.settings_status_disabled)
-        com.streamvault.domain.model.ProviderStatus.UNKNOWN -> stringResource(R.string.settings_status_unknown)
-    }
-    val sourceLabel = when (health.type) {
-        com.streamvault.domain.model.ProviderType.XTREAM_CODES -> stringResource(R.string.dashboard_provider_xtream)
-        com.streamvault.domain.model.ProviderType.M3U -> stringResource(R.string.dashboard_provider_m3u)
-        com.streamvault.domain.model.ProviderType.STALKER_PORTAL -> "Stalker/MAG Portal"
-        com.streamvault.domain.model.ProviderType.JELLYFIN -> "Jellyfin"
-    }
-
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 48.dp, vertical = 4.dp),
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = SurfaceHighlight)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 18.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.dashboard_provider_health_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = TextPrimary
-                )
-                Text(
-                    text = providerName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = OnSurfaceDim
-                )
-                Text(
-                    text = "$syncLabel | $expiryLabel",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = OnSurfaceDim
-                )
-            }
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                item {
-                    DashboardHealthPill(
-                        label = statusLabel,
-                        value = stringResource(R.string.dashboard_provider_status)
-                    )
-                }
-                item {
-                    DashboardHealthPill(
-                        label = sourceLabel,
-                        value = stringResource(R.string.dashboard_provider_source)
-                    )
-                }
-                item {
-                    DashboardHealthPill(
-                        label = health.maxConnections.toString(),
-                        value = stringResource(R.string.dashboard_provider_connections)
-                    )
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 0.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            DashboardActionButton(
-                label = stringResource(R.string.dashboard_warning_review),
-                onClick = onOpenDiagnostics
-            )
-        }
-    }
-}
-
-@Composable
-private fun DashboardHealthPill(
-    label: String,
-    value: String
-) {
-    Surface(
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = Color.White.copy(alpha = 0.08f))
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.labelSmall,
-                color = OnSurfaceDim
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = TextPrimary
-            )
-        }
-    }
-}
-
-@Composable
 private fun DashboardProviderWarningCard(
     warnings: List<String>,
     onOpenSettings: () -> Unit
@@ -843,9 +628,10 @@ private fun DashboardProviderWarningCard(
                 color = OnSurfaceDim
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                DashboardActionButton(
-                    label = stringResource(R.string.dashboard_warning_review),
-                    onClick = onOpenSettings
+                AppDialogButton(
+                    text = stringResource(R.string.dashboard_warning_review),
+                    onClick = onOpenSettings,
+                    primary = false
                 )
             }
         }
@@ -863,8 +649,7 @@ private fun DashboardUpdateCard(
             .fillMaxWidth()
             .padding(horizontal = 48.dp, vertical = 6.dp),
         shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = Primary.copy(alpha = 0.16f)),
-        border = Border(BorderStroke(1.dp, Primary.copy(alpha = 0.45f)))
+        colors = SurfaceDefaults.colors(containerColor = SurfaceElevated)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 22.dp, vertical = 18.dp),
@@ -889,8 +674,10 @@ private fun DashboardUpdateCard(
                 color = OnSurfaceDim
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                DashboardActionButton(
-                    label = stringResource(
+                // The single primary on Home: an update is the one action that needs a decision.
+                AppDialogButton(
+                    primary = true,
+                    text = stringResource(
                         if (notice.installPermissionRequired) {
                             R.string.dashboard_update_allow_installs
                         } else if (notice.installReady) {
@@ -917,6 +704,12 @@ private fun EmptyDashboard(
     onAddProvider: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+    val addProviderFocus = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        // The button is composed in this same pass, so one frame is enough for it to be attached.
+        withFrameNanos { }
+        addProviderFocus.requestFocusSafely(tag = "DashboardScreen", target = "Add provider")
+    }
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -930,45 +723,28 @@ private fun EmptyDashboard(
             Modifier.width(720.dp)
         }
 
-        Surface(
-            shape = BrowseShapes.Hero,
-            colors = SurfaceDefaults.colors(
-                containerColor = SurfaceHighlight
-            )
-        ) {
-            Column(
-                modifier = contentModifier
-                    .padding(horizontal = 32.dp, vertical = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = stringResource(R.string.dashboard_empty_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = OnBackground
-                )
-                Text(
-                    text = stringResource(R.string.dashboard_empty_body),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = OnSurfaceDim
-                )
+        AppMessageState(
+            title = stringResource(R.string.dashboard_empty_title),
+            subtitle = stringResource(R.string.dashboard_empty_body),
+            modifier = contentModifier,
+            titleStyle = MaterialTheme.typography.headlineMedium,
+            subtitleStyle = MaterialTheme.typography.titleMedium,
+            action = {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TvButton(onClick = onAddProvider) {
-                        Text(stringResource(R.string.settings_add_provider))
-                    }
-                    TvButton(
+                    AppDialogButton(
+                        text = stringResource(R.string.settings_add_provider),
+                        onClick = onAddProvider,
+                        primary = true,
+                        focusRequester = addProviderFocus
+                    )
+                    AppDialogButton(
+                        text = stringResource(R.string.nav_settings),
                         onClick = onOpenSettings,
-                        colors = ButtonDefaults.colors(
-                            containerColor = SurfaceElevated,
-                            focusedContainerColor = Primary.copy(alpha = 0.24f),
-                            contentColor = TextPrimary
-                        )
-                    ) {
-                        Text(stringResource(R.string.nav_settings))
-                    }
+                        primary = false
+                    )
                 }
             }
-        }
+        )
     }
 }
 
