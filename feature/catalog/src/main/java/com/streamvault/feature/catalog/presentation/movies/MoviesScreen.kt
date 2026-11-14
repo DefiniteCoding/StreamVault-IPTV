@@ -84,6 +84,10 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
+import com.streamvault.feature.catalog.presentation.components.VodFocusHero
+import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
+import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
+import com.streamvault.feature.catalog.presentation.components.toVodHeroModel
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
 import com.streamvault.core.ui.design.requestFocusSafely
@@ -272,6 +276,7 @@ fun MoviesScreen(
                 },
                 onLoadMore = viewModel::loadMoreSelectedCategory,
                 onLoadMorePreviewRows = viewModel::loadMorePreviewRows,
+                onResolveHero = viewModel::resolveHeroMovie,
                 onDismissReorder = viewModel::exitCategoryReorderMode,
                 onMoveReorderItemUp = viewModel::moveItemUp,
                 onMoveReorderItemDown = viewModel::moveItemDown,
@@ -388,6 +393,7 @@ private fun MoviesVodContent(
     onOpenFresh: () -> Unit,
     onLoadMore: () -> Unit,
     onLoadMorePreviewRows: () -> Unit,
+    onResolveHero: suspend (Movie) -> Movie,
     onDismissReorder: () -> Unit,
     onMoveReorderItemUp: (Movie) -> Unit,
     onMoveReorderItemDown: (Movie) -> Unit,
@@ -451,6 +457,15 @@ private fun MoviesVodContent(
                 uiState.parentalControlLevel in 1..2 &&
                 (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
         }
+    }
+    // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+    val heroMovie = remember(freshMovies, topRatedMovies, favoriteMovies, isMovieLocked) {
+        listOf(freshMovies, topRatedMovies, favoriteMovies)
+            .firstNotNullOfOrNull { row -> row.firstOrNull { !isMovieLocked(it) } }
+    }
+    val focusedHeroMovie = remember { mutableStateOf<Movie?>(null) }
+    val onPosterFocused = remember(isMovieLocked) {
+        { movie: Movie -> if (!isMovieLocked(movie)) focusedHeroMovie.value = movie }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
     val browseCategoryNames = remember(uiState.categoryNames, uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
@@ -629,6 +644,26 @@ private fun MoviesVodContent(
                     )
                 }
             }
+            // Upstream's featured card owns the top slot while its mode is not Hidden; our focus hero fills it otherwise.
+            if (uiState.featured == null) {
+                item(key = "hero") {
+                    val shown = rememberHeroDetails(
+                        rememberHeroItem(focusedHeroMovie, heroMovie),
+                        onResolveHero
+                    )
+                    if (shown != null) {
+                        VodFocusHero(
+                            model = shown.toVodHeroModel(),
+                            actionLabel = stringResource(R.string.continue_watching_menu_open_details),
+                            onActionClick = {
+                                if (isMovieLocked(shown)) onProtectedMovieClick(shown) else onMovieClick(shown)
+                            },
+                            modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
+                            actionFocusRequester = initialFocusRequester
+                        )
+                    }
+                }
+            }
             item(key = "actions") {
             VodActionChipRow(
                     actions = buildList {
@@ -719,7 +754,7 @@ private fun MoviesVodContent(
                         }
                     },
                     modifier = Modifier.padding(top = 2.dp, bottom = 6.dp),
-                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null }
+                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null && heroMovie == null }
                 )
             }
             if (continueWatching.isNotEmpty()) {
@@ -737,7 +772,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.favorites_title),
                     items = favoriteMovies,
                     onSeeAll = { onSelectCategory(uiState.favoriteCategoryName) },
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -766,7 +802,8 @@ private fun MoviesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                     val isLocked = isMovieLocked(movie)
                     MovieCard(
@@ -784,7 +821,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.library_lens_fresh_movies),
                     items = freshMovies,
                     onSeeAll = null,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -802,7 +840,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.library_lens_top_rated),
                     items = topRatedMovies,
                     onSeeAll = null,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -827,7 +866,8 @@ private fun MoviesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                     val isLocked = isMovieLocked(movie)
                     MovieCard(

@@ -1,7 +1,31 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
 import com.streamvault.core.ui.design.BrowseShapes
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.background
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
+import com.streamvault.domain.model.Movie
+import com.streamvault.domain.model.Series
+import com.streamvault.core.ui.design.LocalAppTypeTokens
+import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.image.rememberCrossfadeImageModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -99,6 +123,171 @@ fun VodActionChipRow(
         supportingTextMaxLines = 1,
         firstItemFocusRequester = firstActionFocusRequester
     )
+}
+
+/** What the hero shows for one title. [metadata] is already formatted for the locale. */
+data class VodHeroModel(
+    val title: String,
+    val kicker: String,
+    val metadata: List<String>,
+    val plot: String,
+    val posterUrl: String?
+)
+
+// Provider genre fields are comma or slash separated lists; the hero shows the first.
+private fun firstGenre(genre: String?): String? =
+    genre?.split(',', '/')?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }
+
+private fun releaseYear(releaseDate: String?): String? =
+    releaseDate?.let { Regex("""\d{4}""").find(it)?.value }
+
+private fun heroMetadata(rating: Float, year: String?, genre: String?): List<String> = listOfNotNull(
+    formatVodRatingLabel(rating).takeIf { rating > 0f },
+    year?.takeIf { it.isNotBlank() },
+    firstGenre(genre)
+)
+
+// The shelf rows load a slim projection with no backdrop and no plot, and the provider list API carries no backdrop
+// for movies, so the poster is the only artwork every title has.
+fun Movie.toVodHeroModel() = VodHeroModel(
+    title = name,
+    kicker = categoryName.orEmpty(),
+    metadata = heroMetadata(rating, year ?: releaseYear(releaseDate), genre),
+    plot = plot.orEmpty().trim(),
+    posterUrl = posterUrl?.takeIf { it.isNotBlank() }
+)
+
+fun Series.toVodHeroModel() = VodHeroModel(
+    title = name,
+    kicker = categoryName.orEmpty(),
+    metadata = heroMetadata(rating, releaseYear(releaseDate), genre),
+    plot = plot.orEmpty().trim(),
+    posterUrl = posterUrl?.takeIf { it.isNotBlank() }
+)
+
+private const val HeroFollowDebounceMs = 250L
+private val HeroHeight = 240.dp
+private val HeroPosterHeight = 208.dp
+private val HeroPosterWidth = 139.dp
+
+/**
+ * The item the hero shows: the last focused one, once focus has rested for [HeroFollowDebounceMs], so a fast D-pad
+ * run does not reload artwork per card. [fallback] shows until something has been focused. [focused] is read only
+ * here, so a focus move recomposes the hero and nothing above it.
+ */
+@OptIn(FlowPreview::class)
+@Composable
+fun <T : Any> rememberHeroItem(focused: State<T?>, fallback: T?): T? {
+    val shown = remember { mutableStateOf<T?>(null) }
+    LaunchedEffect(focused) {
+        snapshotFlow { focused.value }
+            .filterNotNull()
+            .debounce(HeroFollowDebounceMs)
+            .collect { shown.value = it }
+    }
+    return shown.value ?: fallback
+}
+
+/**
+ * [item] enriched by [resolve] (a local row lookup, possibly a provider call). Shows [item] at once and swaps in the
+ * resolved copy when it arrives; a new [item] cancels the pending resolve, which is what keeps fast browsing free of
+ * provider traffic.
+ */
+@Composable
+fun <T : Any> rememberHeroDetails(item: T?, resolve: suspend (T) -> T): T? =
+    produceState(initialValue = item, item) {
+        value = item
+        if (item != null) value = resolve(item)
+    }.value
+
+/** Opaque theme surface with the title on the start side and its poster on the end side: no scrim, no overdraw. */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun VodFocusHero(
+    model: VodHeroModel,
+    actionLabel: String,
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    actionFocusRequester: FocusRequester? = null
+) {
+    val type = LocalAppTypeTokens.current
+    // The hero is taller than its button, so the default focus scroll reveals only the button and leaves the top of
+    // the panel clipped. Asking for the whole hero (padding included) keeps it fully visible while its button is focused.
+    val heroInView = remember { BringIntoViewRequester() }
+    val scope = rememberCoroutineScope()
+    Box(modifier = Modifier.bringIntoViewRequester(heroInView)) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp)
+                .height(HeroHeight)
+                .clip(BrowseShapes.Hero)
+                .background(AppColors.SurfaceElevated)
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                if (model.kicker.isNotBlank()) {
+                    Text(
+                        text = type.kicker(model.kicker),
+                        style = type.labelKicker,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                Text(
+                    text = model.title,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = AppColors.TextPrimary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (model.metadata.isNotEmpty()) {
+                    Text(
+                        text = model.metadata.joinToString("  \u00B7  "),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                // Two lines are always reserved so the plot arriving later does not move the title or the button.
+                Text(
+                    text = model.plot,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppColors.TextSecondary,
+                    minLines = 2,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                TvButton(
+                    onClick = onActionClick,
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .then(if (actionFocusRequester != null) Modifier.focusRequester(actionFocusRequester) else Modifier)
+                        .onFocusChanged { if (it.hasFocus) scope.launch { heroInView.bringIntoView() } },
+                    colors = browsePrimaryButtonColors()
+                ) {
+                    Text(text = actionLabel, style = MaterialTheme.typography.labelLarge)
+                }
+            }
+            if (model.posterUrl != null) {
+                AsyncImage(
+                    model = rememberCrossfadeImageModel(model.posterUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = HeroPosterWidth, height = HeroPosterHeight)
+                        .clip(BrowseShapes.Artwork),
+                    contentScale = ContentScale.Crop
+                )
+            }
+        }
+    }
 }
 
 data class VodActionChip(

@@ -84,6 +84,10 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
+import com.streamvault.feature.catalog.presentation.components.VodFocusHero
+import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
+import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
+import com.streamvault.feature.catalog.presentation.components.toVodHeroModel
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
 import com.streamvault.core.ui.design.requestFocusSafely
@@ -271,6 +275,7 @@ fun SeriesScreen(
                 },
                 onLoadMore = viewModel::loadMoreSelectedCategory,
                 onLoadMorePreviewRows = viewModel::loadMorePreviewRows,
+                onResolveHero = viewModel::resolveHeroSeries,
                 onDismissReorder = viewModel::exitCategoryReorderMode,
                 onMoveReorderItemUp = viewModel::moveItemUp,
                 onMoveReorderItemDown = viewModel::moveItemDown,
@@ -388,6 +393,7 @@ private fun SeriesVodContent(
     onOpenFresh: () -> Unit,
     onLoadMore: () -> Unit,
     onLoadMorePreviewRows: () -> Unit,
+    onResolveHero: suspend (Series) -> Series,
     onDismissReorder: () -> Unit,
     onMoveReorderItemUp: (Series) -> Unit,
     onMoveReorderItemDown: (Series) -> Unit,
@@ -452,6 +458,15 @@ private fun SeriesVodContent(
                 uiState.parentalControlLevel in 1..2 &&
                 (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
         }
+    }
+    // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+    val heroSeries = remember(freshSeries, topRatedSeries, favoriteSeries, isSeriesLocked) {
+        listOf(freshSeries, topRatedSeries, favoriteSeries)
+            .firstNotNullOfOrNull { row -> row.firstOrNull { !isSeriesLocked(it) } }
+    }
+    val focusedHeroSeries = remember { mutableStateOf<Series?>(null) }
+    val onPosterFocused = remember(isSeriesLocked) {
+        { series: Series -> if (!isSeriesLocked(series)) focusedHeroSeries.value = series }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
     val browseCategoryNames = remember(uiState.categoryNames, uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
@@ -640,6 +655,26 @@ private fun SeriesVodContent(
                     )
                 }
             }
+            // Upstream's featured card owns the top slot while its mode is not Hidden; our focus hero fills it otherwise.
+            if (uiState.featured == null) {
+                item(key = "hero") {
+                    val shown = rememberHeroDetails(
+                        rememberHeroItem(focusedHeroSeries, heroSeries),
+                        onResolveHero
+                    )
+                    if (shown != null) {
+                        VodFocusHero(
+                            model = shown.toVodHeroModel(),
+                            actionLabel = stringResource(R.string.continue_watching_menu_open_details),
+                            onActionClick = {
+                                if (isSeriesLocked(shown)) onProtectedSeriesClick(shown) else onSeriesClick(shown)
+                            },
+                            modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
+                            actionFocusRequester = initialFocusRequester
+                        )
+                    }
+                }
+            }
             item(key = "actions") {
             VodActionChipRow(
                     actions = buildList {
@@ -730,7 +765,7 @@ private fun SeriesVodContent(
                         }
                     },
                     modifier = Modifier.padding(top = 2.dp, bottom = 6.dp),
-                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null }
+                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null && heroSeries == null }
                 )
             }
             if (continueWatching.isNotEmpty()) {
@@ -764,7 +799,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.favorites_title),
                         items = favoriteSeries,
                         onSeeAll = { onSelectCategory(uiState.favoriteCategoryName) },
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -791,7 +827,8 @@ private fun SeriesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { series ->
                     val isLocked = isSeriesLocked(series)
                     SeriesCard(
@@ -809,7 +846,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.library_lens_fresh_series),
                         items = freshSeries,
                         onSeeAll = null,
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -827,7 +865,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.library_lens_top_rated),
                         items = topRatedSeries,
                         onSeeAll = null,
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -852,7 +891,8 @@ private fun SeriesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { series ->
                     val isLocked = isSeriesLocked(series)
                     SeriesCard(

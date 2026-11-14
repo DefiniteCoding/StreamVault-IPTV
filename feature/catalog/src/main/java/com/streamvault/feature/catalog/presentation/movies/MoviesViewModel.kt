@@ -835,6 +835,11 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    private val heroMovieResolver = HeroMovieResolver(movieRepository)
+
+    /** See [HeroMovieResolver]. */
+    suspend fun resolveHeroMovie(movie: Movie): Movie = heroMovieResolver.resolve(movie)
+
     fun loadMorePreviewRows() {
         if (_uiState.value.hasMorePreviewRows && !_uiState.value.isLoadingPreviewRows) {
             _previewBatchSize.update { it + INITIAL_PREVIEW_BATCH_SIZE }

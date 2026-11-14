@@ -831,6 +831,12 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * The hero's view of [series]: the full local row, which has the plot the shelf projection leaves out. Series
+     * details also pull every episode, so nothing is requested from the provider here.
+     */
+    suspend fun resolveHeroSeries(series: Series): Series = seriesRepository.getSeriesById(series.id) ?: series
+
     fun loadMorePreviewRows() {
         if (_uiState.value.hasMorePreviewRows && !_uiState.value.isLoadingPreviewRows) {
             _previewBatchSize.update { it + INITIAL_PREVIEW_BATCH_SIZE }

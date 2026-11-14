@@ -19,6 +19,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,8 @@ fun <T : Any> CategoryRow(
     isPinned: Boolean = false,
     keySelector: (T) -> Any,
     contentTypeSelector: ((T) -> Any?)? = null,
+    // Reported when focus lands on an item's wrapper, which also covers focus inside the card.
+    onItemFocused: ((T) -> Unit)? = null,
     itemContent: @Composable (T) -> Unit
 ) {
     val resolvedContentTypeSelector: (T) -> Any? = contentTypeSelector ?: { null }
@@ -97,7 +100,10 @@ fun <T : Any> CategoryRow(
                 key = keySelector,
                 contentType = resolvedContentTypeSelector
             ) { item ->
-                Box(modifier = posterUp) { itemContent(item) }
+                val focusReport = if (onItemFocused == null) Modifier else Modifier.onFocusChanged {
+                    if (it.hasFocus) onItemFocused(item)
+                }
+                Box(modifier = posterUp.then(focusReport)) { itemContent(item) }
             }
         }
     }
