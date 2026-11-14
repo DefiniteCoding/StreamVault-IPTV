@@ -84,6 +84,7 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
+import com.streamvault.feature.catalog.presentation.components.VodFilterRow
 import com.streamvault.feature.catalog.presentation.components.VodFocusHero
 import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
 import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
@@ -944,6 +945,13 @@ private fun MoviesVodContent(
         prefetchDistance = uiState.selectedCategoryRawPageSize.coerceAtLeast(6),
         onLoadMore = onLoadMore
     )
+    val categoryTitle = when (uiState.selectedCategory) {
+        uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_movies)
+        VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
+        VodBrowseDefaults.TRAKT_TRENDING_MOVIES_CATEGORY -> traktTrendingLabel
+        VodBrowseDefaults.TRAKT_POPULAR_MOVIES_CATEGORY -> traktPopularLabel
+        else -> uiState.selectedCategory ?: stringResource(R.string.nav_movies)
+    }
     LazyVerticalGrid(
         state = modernGridState,
         columns = GridCells.Adaptive(minSize = 136.dp),
@@ -963,66 +971,52 @@ private fun MoviesVodContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            VodSectionHeader(
-                title = when (uiState.selectedCategory) {
-                    uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_movies)
-                    VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
-                    VodBrowseDefaults.TRAKT_TRENDING_MOVIES_CATEGORY -> traktTrendingLabel
-                    VodBrowseDefaults.TRAKT_POPULAR_MOVIES_CATEGORY -> traktPopularLabel
-                    else -> uiState.selectedCategory ?: stringResource(R.string.nav_movies)
-                }
-            )
+            VodSectionHeader(title = categoryTitle)
         }
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val browseOptionsDetail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy)
-                val hasActiveFilterSort = selectedFilterType != LibraryFilterType.ALL || selectedSortBy != LibrarySortBy.LIBRARY
-                VodActionChipRow(
-                    actions = buildList {
-                        add(
-                            VodActionChip(
-                                key = "back_home",
-                                label = stringResource(R.string.nav_movies),
-                                onClick = { onSelectCategory(null) }
-                            )
+                val inlineSortChips = remember { inlineMovieSortChips() }
+                // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
+                val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
+                VodFilterRow(
+                    leadingActions = listOf(
+                        VodActionChip(
+                            key = "back_home",
+                            label = stringResource(R.string.nav_movies),
+                            onClick = { onSelectCategory(null) }
+                        ),
+                        VodActionChip(
+                            key = "search_toggle",
+                            label = stringResource(
+                                if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
+                            ),
+                            onClick = { showSearchBar = !showSearchBar }
                         )
-                        add(
-                            VodActionChip(
-                                key = "categories",
-                                label = stringResource(R.string.movies_categories_title),
-                                onClick = { showCategoryPicker = true }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "search_toggle",
-                                label = stringResource(
-                                    if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
-                                ),
-                                onClick = { showSearchBar = !showSearchBar }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "browse_options",
-                                label = stringResource(R.string.library_action_filters_sort),
-                                detail = browseOptionsDetail,
-                                onClick = { showBrowseOptions = true }
-                            )
-                        )
-                        if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
-                            add(
-                                VodActionChip(
-                                    key = uiState.fullLibraryCategoryName,
-                                    label = stringResource(R.string.library_full_browse_title_movies),
-                                    onClick = onSelectFullLibraryBrowse
-                                )
-                            )
-                        }
+                    ),
+                    sortLabel = stringResource(R.string.vod_filter_sort_label),
+                    sortOptions = inlineSortChips,
+                    selectedSortKey = selectedSortBy.name,
+                    onSortSelected = { key ->
+                        LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
                     },
-                    selectedKey = if (hasActiveFilterSort) "browse_options" else null,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
+                    categoryLabel = stringResource(R.string.vod_filter_category_label),
+                    categoryName = categoryTitle,
+                    onCategoryClick = { showCategoryPicker = true },
+                    moreLabel = stringResource(R.string.library_action_filters_sort),
+                    moreValue = vodActiveFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
+                    onMoreClick = { showBrowseOptions = true },
+                    trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
+                        listOf(
+                            VodActionChip(
+                                key = uiState.fullLibraryCategoryName,
+                                label = stringResource(R.string.library_full_browse_title_movies),
+                                onClick = onSelectFullLibraryBrowse
+                            )
+                        )
+                    } else {
+                        emptyList()
+                    },
                     firstActionFocusRequester = if (
                         !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridMovieId == null)
                     ) initialFocusRequester else null
@@ -1637,6 +1631,12 @@ private fun movieFilterChips(): List<SelectionChip> {
         SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Recent"),
         SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
     )
+}
+
+// The sorts offered as chips on the grid row; the dialog keeps the full list.
+private fun inlineMovieSortChips(): List<SelectionChip> {
+    val byKey = movieSortChips().associateBy { it.key }
+    return listOf(LibrarySortBy.RELEASE, LibrarySortBy.TITLE, LibrarySortBy.RATING).mapNotNull { byKey[it.name] }
 }
 
 private fun movieSortChips(): List<SelectionChip> {

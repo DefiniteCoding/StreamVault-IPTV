@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Sem informações de agendamento</string>
   <string name="label_reordering">Reordenando %1$s</string>
   <string name="library_action_filters_sort">Filtros e ordem</string>
+  <string name="vod_filter_sort_label">Ordem</string>
+  <string name="vod_filter_category_label">Categoria</string>
   <string name="library_action_hide_search">Ocultar pesquisa</string>
   <string name="library_browse_all">Navegar por tudo</string>
   <string name="library_filter_empty">Nenhum item corresponde a este filtro.</string>

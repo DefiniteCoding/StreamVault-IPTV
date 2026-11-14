@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Нема информација о распореду</string>
   <string name="label_reordering">Промена редоследа %1$s</string>
   <string name="library_action_filters_sort">Филтери и сортирање</string>
+  <string name="vod_filter_sort_label">Сортирање</string>
+  <string name="vod_filter_category_label">Категорија</string>
   <string name="library_action_hide_search">Сакриј претрагу</string>
   <string name="library_browse_all">Прегледај све</string>
   <string name="library_filter_empty">Ниједна ставка не одговара овом филтеру.</string>

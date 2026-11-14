@@ -189,6 +189,8 @@
   <string name="label_no_schedule">اطلاعات برنامه در دسترس نیست</string>
   <string name="label_reordering">در حال مرتب‌سازی %1$s</string>
   <string name="library_action_filters_sort">فیلترها و مرتب‌سازی</string>
+  <string name="vod_filter_sort_label">مرتب‌سازی</string>
+  <string name="vod_filter_category_label">دسته‌بندی</string>
   <string name="library_action_hide_search">پنهان کردن جست‌وجو</string>
   <string name="library_browse_all">مرور همه</string>
   <string name="library_filter_empty">هیچ موردی با این فیلتر مطابقت ندارد.</string>

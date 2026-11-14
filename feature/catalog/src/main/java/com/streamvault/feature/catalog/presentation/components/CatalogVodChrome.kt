@@ -37,8 +37,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.streamvault.core.ui.components.AppChipGroup
+import com.streamvault.core.ui.components.AppDropdownPill
+import com.streamvault.core.ui.components.AppFilterChip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -123,6 +129,78 @@ fun VodActionChipRow(
         supportingTextMaxLines = 1,
         firstItemFocusRequester = firstActionFocusRequester
     )
+}
+
+private val CategoryPillMaxWidth = 280.dp
+
+/**
+ * Filter row of a VOD grid: the screen's own actions, a Sort group (single choice), the category pill and a pill that
+ * opens the full filter dialog. Sort values not offered in [sortOptions] stay reachable through the dialog, so no
+ * selected chip is shown for them. The row scrolls inside the grid, so its padding leaves room for the focus ring.
+ */
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun VodFilterRow(
+    leadingActions: List<VodActionChip>,
+    sortLabel: String,
+    sortOptions: List<SelectionChip>,
+    selectedSortKey: String,
+    onSortSelected: (String) -> Unit,
+    categoryLabel: String,
+    categoryName: String,
+    onCategoryClick: () -> Unit,
+    moreLabel: String,
+    moreValue: String,
+    onMoreClick: () -> Unit,
+    trailingActions: List<VodActionChip>,
+    modifier: Modifier = Modifier,
+    firstActionFocusRequester: FocusRequester? = null
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth().focusRestorer().suppressParentVerticalScroll(),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        itemsIndexed(leadingActions, key = { _, action -> action.key }) { index, action ->
+            AppFilterChip(
+                label = action.label,
+                selected = false,
+                onClick = action.onClick,
+                modifier = if (index == 0 && firstActionFocusRequester != null) {
+                    Modifier.focusRequester(firstActionFocusRequester)
+                } else {
+                    Modifier
+                }
+            )
+        }
+        item(key = "sort") {
+            AppChipGroup(label = sortLabel) {
+                sortOptions.forEach { option ->
+                    AppFilterChip(
+                        label = option.label,
+                        selected = option.key == selectedSortKey,
+                        onClick = { onSortSelected(option.key) }
+                    )
+                }
+            }
+        }
+        item(key = "category") {
+            // Provider category names can be long; the pill ellipsizes instead of pushing the other controls away.
+            AppDropdownPill(
+                label = categoryLabel,
+                value = categoryName,
+                onClick = onCategoryClick,
+                modifier = Modifier.widthIn(max = CategoryPillMaxWidth)
+            )
+        }
+        item(key = "more") {
+            AppDropdownPill(label = moreLabel, value = moreValue, onClick = onMoreClick)
+        }
+        items(trailingActions, key = { it.key }) { action ->
+            AppFilterChip(label = action.label, selected = false, onClick = action.onClick)
+        }
+    }
 }
 
 /** What the hero shows for one title. [metadata] is already formatted for the locale. */

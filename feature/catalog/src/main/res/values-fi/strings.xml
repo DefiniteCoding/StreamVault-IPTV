@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Ei aikataulutietoja</string>
   <string name="label_reordering">Järjestetään uudelleen %1$s</string>
   <string name="library_action_filters_sort">Suodattimet ja lajittelu</string>
+  <string name="vod_filter_sort_label">Lajittelu</string>
+  <string name="vod_filter_category_label">Kategoria</string>
   <string name="library_action_hide_search">Piilota haku</string>
   <string name="library_browse_all">Selaa kaikkia</string>
   <string name="library_filter_empty">Yksikään kohde ei vastaa tätä suodatinta.</string>

@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Немає інформації про розклад</string>
   <string name="label_reordering">Сортування %1$s</string>
   <string name="library_action_filters_sort">Фільтри та сортування</string>
+  <string name="vod_filter_sort_label">Сортування</string>
+  <string name="vod_filter_category_label">Категорія</string>
   <string name="library_action_hide_search">Приховати пошук</string>
   <string name="library_browse_all">Переглянути все</string>
   <string name="library_filter_empty">Жоден елемент не відповідає цьому фільтру.</string>

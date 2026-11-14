@@ -189,6 +189,8 @@
   <string name="label_no_schedule">कोई शेड्यूल जानकारी नहीं</string>
   <string name="label_reordering">%1$s का क्रम बदला जा रहा है</string>
   <string name="library_action_filters_sort">फ़िल्टर और क्रम</string>
+  <string name="vod_filter_sort_label">क्रम</string>
+  <string name="vod_filter_category_label">श्रेणी</string>
   <string name="library_action_hide_search">खोज छिपाएँ</string>
   <string name="library_browse_all">सभी ब्राउज़ करें</string>
   <string name="library_filter_empty">इस फ़िल्टर से कोई आइटम मेल नहीं खाता।</string>

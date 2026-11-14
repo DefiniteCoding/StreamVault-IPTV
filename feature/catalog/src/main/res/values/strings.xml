@@ -227,6 +227,8 @@
   <string name="label_no_schedule">No schedule information</string>
   <string name="label_reordering">Reordering %1$s</string>
   <string name="library_action_filters_sort">Filters &amp; Sort</string>
+  <string name="vod_filter_sort_label">Sort</string>
+  <string name="vod_filter_category_label">Category</string>
   <string name="library_action_hide_search">Hide Search</string>
   <string name="library_browse_all">Browse All</string>
   <string name="library_filter_empty">No items match this filter.</string>

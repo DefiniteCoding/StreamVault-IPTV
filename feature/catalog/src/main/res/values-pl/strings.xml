@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Brak informacji o harmonogramie</string>
   <string name="label_reordering">Zmiana kolejności %1$s</string>
   <string name="library_action_filters_sort">Filtry i sortowanie</string>
+  <string name="vod_filter_sort_label">Sortowanie</string>
+  <string name="vod_filter_category_label">Kategoria</string>
   <string name="library_action_hide_search">Ukryj wyszukiwanie</string>
   <string name="library_browse_all">Przeglądaj wszystko</string>
   <string name="library_filter_empty">Brak elementów pasujących do tego filtra.</string>

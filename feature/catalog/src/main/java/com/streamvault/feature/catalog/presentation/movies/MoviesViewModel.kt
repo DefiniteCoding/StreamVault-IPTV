@@ -901,14 +901,13 @@ class MoviesViewModel @Inject constructor(
             selectedCategoryLoadLimit = _selectedCategoryLoadLimit,
             uiState = _uiState,
             hasSelectedCategory = { it.selectedCategory != null }
-        ) { updatedSortBy, isLoadingSelectedCategory ->
+        ) { updatedSortBy, _ ->
+            // The current items stay on screen until the re-sorted snapshot replaces them: the full-library release
+            // sort takes a few hundred ms, and a blank grid for that long reads as a hang. Load-more is off meanwhile
+            // so the old list cannot trigger a page request against the new order.
             copy(
                 selectedLibrarySortBy = updatedSortBy,
-                selectedCategoryItems = emptyList(),
-                selectedCategoryLoadedCount = 0,
-                selectedCategoryTotalCount = 0,
-                canLoadMoreSelectedCategory = false,
-                isLoadingSelectedCategory = isLoadingSelectedCategory
+                canLoadMoreSelectedCategory = false
             )
         }
     }

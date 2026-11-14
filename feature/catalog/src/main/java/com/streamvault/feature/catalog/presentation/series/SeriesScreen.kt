@@ -84,6 +84,7 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
+import com.streamvault.feature.catalog.presentation.components.VodFilterRow
 import com.streamvault.feature.catalog.presentation.components.VodFocusHero
 import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
 import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
@@ -969,6 +970,13 @@ private fun SeriesVodContent(
         prefetchDistance = uiState.selectedCategoryRawPageSize.coerceAtLeast(6),
         onLoadMore = onLoadMore
     )
+    val categoryTitle = when (uiState.selectedCategory) {
+        uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_series)
+        VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
+        VodBrowseDefaults.TRAKT_TRENDING_SERIES_CATEGORY -> traktTrendingLabel
+        VodBrowseDefaults.TRAKT_POPULAR_SERIES_CATEGORY -> traktPopularLabel
+        else -> uiState.selectedCategory ?: stringResource(R.string.nav_series)
+    }
     LazyVerticalGrid(
         state = modernGridState,
         columns = GridCells.Adaptive(minSize = 136.dp),
@@ -988,66 +996,52 @@ private fun SeriesVodContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            VodSectionHeader(
-                title = when (uiState.selectedCategory) {
-                    uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_series)
-                    VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
-                    VodBrowseDefaults.TRAKT_TRENDING_SERIES_CATEGORY -> traktTrendingLabel
-                    VodBrowseDefaults.TRAKT_POPULAR_SERIES_CATEGORY -> traktPopularLabel
-                    else -> uiState.selectedCategory ?: stringResource(R.string.nav_series)
-                }
-            )
+            VodSectionHeader(title = categoryTitle)
         }
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val browseOptionsDetail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy)
-                val hasActiveFilterSort = selectedFilterType != LibraryFilterType.ALL || selectedSortBy != LibrarySortBy.LIBRARY
-                VodActionChipRow(
-                    actions = buildList {
-                        add(
-                            VodActionChip(
-                                key = "back_home",
-                                label = stringResource(R.string.nav_series),
-                                onClick = { onSelectCategory(null) }
-                            )
+                val inlineSortChips = remember { inlineSeriesSortChips() }
+                // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
+                val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
+                VodFilterRow(
+                    leadingActions = listOf(
+                        VodActionChip(
+                            key = "back_home",
+                            label = stringResource(R.string.nav_series),
+                            onClick = { onSelectCategory(null) }
+                        ),
+                        VodActionChip(
+                            key = "search_toggle",
+                            label = stringResource(
+                                if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
+                            ),
+                            onClick = { showSearchBar = !showSearchBar }
                         )
-                        add(
-                            VodActionChip(
-                                key = "categories",
-                                label = stringResource(R.string.series_categories_title),
-                                onClick = { showCategoryPicker = true }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "search_toggle",
-                                label = stringResource(
-                                    if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
-                                ),
-                                onClick = { showSearchBar = !showSearchBar }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "browse_options",
-                                label = stringResource(R.string.library_action_filters_sort),
-                                detail = browseOptionsDetail,
-                                onClick = { showBrowseOptions = true }
-                            )
-                        )
-                        if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
-                            add(
-                                VodActionChip(
-                                    key = uiState.fullLibraryCategoryName,
-                                    label = stringResource(R.string.library_full_browse_title_series),
-                                    onClick = onSelectFullLibraryBrowse
-                                )
-                            )
-                        }
+                    ),
+                    sortLabel = stringResource(R.string.vod_filter_sort_label),
+                    sortOptions = inlineSortChips,
+                    selectedSortKey = selectedSortBy.name,
+                    onSortSelected = { key ->
+                        LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
                     },
-                    selectedKey = if (hasActiveFilterSort) "browse_options" else null,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
+                    categoryLabel = stringResource(R.string.vod_filter_category_label),
+                    categoryName = categoryTitle,
+                    onCategoryClick = { showCategoryPicker = true },
+                    moreLabel = stringResource(R.string.library_action_filters_sort),
+                    moreValue = vodActiveFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
+                    onMoreClick = { showBrowseOptions = true },
+                    trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
+                        listOf(
+                            VodActionChip(
+                                key = uiState.fullLibraryCategoryName,
+                                label = stringResource(R.string.library_full_browse_title_series),
+                                onClick = onSelectFullLibraryBrowse
+                            )
+                        )
+                    } else {
+                        emptyList()
+                    },
                     firstActionFocusRequester = if (
                         !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridSeriesId == null)
                     ) initialFocusRequester else null
@@ -1664,6 +1658,12 @@ private fun seriesFilterChips(): List<SelectionChip> {
         SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Updated"),
         SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
     )
+}
+
+// The sorts offered as chips on the grid row; the dialog keeps the full list.
+private fun inlineSeriesSortChips(): List<SelectionChip> {
+    val byKey = seriesSortChips().associateBy { it.key }
+    return listOf(LibrarySortBy.RELEASE, LibrarySortBy.TITLE, LibrarySortBy.RATING).mapNotNull { byKey[it.name] }
 }
 
 private fun seriesSortChips(): List<SelectionChip> {

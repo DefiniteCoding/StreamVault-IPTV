@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Нет информации о расписании</string>
   <string name="label_reordering">Изменение порядка %1$s</string>
   <string name="library_action_filters_sort">Фильтры и сортировка</string>
+  <string name="vod_filter_sort_label">Сортировка</string>
+  <string name="vod_filter_category_label">Категория</string>
   <string name="library_action_hide_search">Скрыть поиск</string>
   <string name="library_browse_all">Просмотреть всё</string>
   <string name="library_filter_empty">Нет элементов, соответствующих этому фильтру.</string>

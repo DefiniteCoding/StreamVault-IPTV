@@ -189,6 +189,8 @@
   <string name="label_no_schedule">אין מידע על לוח זמנים</string>
   <string name="label_reordering">מסדר מחדש %1$s</string>
   <string name="library_action_filters_sort">מסננים ומיון</string>
+  <string name="vod_filter_sort_label">מיון</string>
+  <string name="vod_filter_category_label">קטגוריה</string>
   <string name="library_action_hide_search">הסתר חיפוש</string>
   <string name="library_browse_all">עיין בהכל</string>
   <string name="library_filter_empty">אין פריטים שתואמים למסנן זה.</string>

@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Fără informații despre program</string>
   <string name="label_reordering">Recomandând %1$s</string>
   <string name="library_action_filters_sort">Filtre și Sortare</string>
+  <string name="vod_filter_sort_label">Sortare</string>
+  <string name="vod_filter_category_label">Categorie</string>
   <string name="library_action_hide_search">Ascunde căutarea</string>
   <string name="library_browse_all">Răsfoiți toate</string>
   <string name="library_filter_empty">Niciun articol nu se potrivește cu acest filtru.</string>

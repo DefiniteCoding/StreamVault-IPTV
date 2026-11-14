@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Ingen schemainformation</string>
   <string name="label_reordering">Ombeställning %1$s</string>
   <string name="library_action_filters_sort">Filter &amp; Sortera</string>
+  <string name="vod_filter_sort_label">Sortera</string>
+  <string name="vod_filter_category_label">Kategori</string>
   <string name="library_action_hide_search">Dölj sökning</string>
   <string name="library_browse_all">Bläddra bland alla</string>
   <string name="library_filter_empty">Inga objekt matchar detta filter.</string>

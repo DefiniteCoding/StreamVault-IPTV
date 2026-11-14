@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Program bilgisi yok</string>
   <string name="label_reordering">%1$s yeniden sıralanıyor</string>
   <string name="library_action_filters_sort">Filtreler ve Sıralama</string>
+  <string name="vod_filter_sort_label">Sıralama</string>
+  <string name="vod_filter_category_label">Kategori</string>
   <string name="library_action_hide_search">Aramayı Gizle</string>
   <string name="library_browse_all">Tümüne Göz At</string>
   <string name="library_filter_empty">Bu filtreyle eşleşen öğe yok.</string>

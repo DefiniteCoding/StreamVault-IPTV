@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Aucune information sur les horaires</string>
   <string name="label_reordering">Réorganisation %1$s</string>
   <string name="library_action_filters_sort">Filtres et tri</string>
+  <string name="vod_filter_sort_label">Trier</string>
+  <string name="vod_filter_category_label">Catégorie</string>
   <string name="library_action_hide_search">Masquer la recherche</string>
   <string name="library_browse_all">Parcourir tout</string>
   <string name="library_filter_empty">Aucun élément ne correspond à ce filtre.</string>

@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Tiada maklumat jadual</string>
   <string name="label_reordering">Menyusun semula %1$s</string>
   <string name="library_action_filters_sort">Penapis &amp; Susunan</string>
+  <string name="vod_filter_sort_label">Susunan</string>
+  <string name="vod_filter_category_label">Kategori</string>
   <string name="library_action_hide_search">Sembunyikan Carian</string>
   <string name="library_browse_all">Layari Semua</string>
   <string name="library_filter_empty">Tiada item sepadan dengan penapis ini.</string>

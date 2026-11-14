@@ -189,6 +189,8 @@
   <string name="label_no_schedule">لا توجد معلومات عن الجدول</string>
   <string name="label_reordering">إعادة ترتيب %1$s</string>
   <string name="library_action_filters_sort">الفلاتر والترتيب</string>
+  <string name="vod_filter_sort_label">ترتيب</string>
+  <string name="vod_filter_category_label">الفئة</string>
   <string name="library_action_hide_search">إخفاء البحث</string>
   <string name="library_browse_all">تصفح الكل</string>
   <string name="library_filter_empty">لا توجد عناصر تطابق هذا الفلتر.</string>

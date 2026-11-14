@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Geen schema-informatie</string>
   <string name="label_reordering">Herordenen %1$s</string>
   <string name="library_action_filters_sort">Filteren en sorteren</string>
+  <string name="vod_filter_sort_label">Sorteren</string>
+  <string name="vod_filter_category_label">Categorie</string>
   <string name="library_action_hide_search">Zoekopdracht verbergen</string>
   <string name="library_browse_all">Blader door alles</string>
   <string name="library_filter_empty">Er zijn geen artikelen die overeenkomen met dit filter.</string>

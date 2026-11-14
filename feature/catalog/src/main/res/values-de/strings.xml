@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Keine Fahrplaninformationen</string>
   <string name="label_reordering">Neuordnung %1$s</string>
   <string name="library_action_filters_sort">Filtern und Sortieren</string>
+  <string name="vod_filter_sort_label">Sortieren</string>
+  <string name="vod_filter_category_label">Kategorie</string>
   <string name="library_action_hide_search">Suche ausblenden</string>
   <string name="library_browse_all">Alle durchsuchen</string>
   <string name="library_filter_empty">Keine Artikel entsprechen diesem Filter.</string>

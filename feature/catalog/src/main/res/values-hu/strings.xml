@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Nincs műsorinformáció</string>
   <string name="label_reordering">%1$s átrendezése</string>
   <string name="library_action_filters_sort">Szűrők és rendezés</string>
+  <string name="vod_filter_sort_label">Rendezés</string>
+  <string name="vod_filter_category_label">Kategória</string>
   <string name="library_action_hide_search">Keresés elrejtése</string>
   <string name="library_browse_all">Összes böngészése</string>
   <string name="library_filter_empty">Egyetlen elem sem felel meg ennek a szűrőnek.</string>

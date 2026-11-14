@@ -189,6 +189,8 @@
   <string name="label_no_schedule">ไม่มีข้อมูลผังรายการ</string>
   <string name="label_reordering">กำลังจัดลำดับ %1$s</string>
   <string name="library_action_filters_sort">ตัวกรองและจัดเรียง</string>
+  <string name="vod_filter_sort_label">จัดเรียง</string>
+  <string name="vod_filter_category_label">หมวดหมู่</string>
   <string name="library_action_hide_search">ซ่อนการค้นหา</string>
   <string name="library_browse_all">เรียกดูทั้งหมด</string>
   <string name="library_filter_empty">ไม่มีรายการที่ตรงกับตัวกรองนี้</string>

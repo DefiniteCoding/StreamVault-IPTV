@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Tidak ada informasi jadwal</string>
   <string name="label_reordering">Menyusun ulang %1$s</string>
   <string name="library_action_filters_sort">Filter &amp; Sortir</string>
+  <string name="vod_filter_sort_label">Urutkan</string>
+  <string name="vod_filter_category_label">Kategori</string>
   <string name="library_action_hide_search">Sembunyikan Pencarian</string>
   <string name="library_browse_all">Telusuri Semua</string>
   <string name="library_filter_empty">Tidak ada item yang cocok dengan filter ini.</string>

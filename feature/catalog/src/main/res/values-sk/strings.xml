@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Žiadne informácie o programe</string>
   <string name="label_reordering">Zmena poradia %1$s</string>
   <string name="library_action_filters_sort">Filtre a zoradenie</string>
+  <string name="vod_filter_sort_label">Zoradenie</string>
+  <string name="vod_filter_category_label">Kategória</string>
   <string name="library_action_hide_search">Skryť vyhľadávanie</string>
   <string name="library_browse_all">Prehľadať všetko</string>
   <string name="library_filter_empty">Tomuto filtru nezodpovedajú žiadne položky.</string>

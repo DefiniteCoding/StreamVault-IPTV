@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Walang impormasyon ng schedule</string>
   <string name="label_reordering">Inaayos ang %1$s</string>
   <string name="library_action_filters_sort">Mga Filter at Pag-aayos</string>
+  <string name="vod_filter_sort_label">Pag-aayos</string>
+  <string name="vod_filter_category_label">Kategorya</string>
   <string name="library_action_hide_search">Itago ang Paghahanap</string>
   <string name="library_browse_all">I-browse Lahat</string>
   <string name="library_filter_empty">Walang item na tumutugma sa filter na ito.</string>

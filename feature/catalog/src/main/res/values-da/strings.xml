@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Ingen tidsplanoplysninger</string>
   <string name="label_reordering">Genbestilling %1$s</string>
   <string name="library_action_filters_sort">Filtre og sortering</string>
+  <string name="vod_filter_sort_label">Sortering</string>
+  <string name="vod_filter_category_label">Kategori</string>
   <string name="library_action_hide_search">Skjul søgning</string>
   <string name="library_browse_all">Gennemse alle</string>
   <string name="library_filter_empty">Ingen varer matcher dette filter.</string>

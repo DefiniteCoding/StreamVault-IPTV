@@ -189,6 +189,8 @@
   <string name="label_no_schedule">番組情報なし</string>
   <string name="label_reordering">%1$s を並べ替え中</string>
   <string name="library_action_filters_sort">フィルターと並べ替え</string>
+  <string name="vod_filter_sort_label">並べ替え</string>
+  <string name="vod_filter_category_label">カテゴリ</string>
   <string name="library_action_hide_search">検索を非表示にする</string>
   <string name="library_browse_all">すべて閲覧</string>
   <string name="library_filter_empty">この条件に一致する項目はありません。</string>

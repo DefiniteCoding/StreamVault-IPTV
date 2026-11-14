@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Không có thông tin lịch</string>
   <string name="label_reordering">Đang sắp xếp lại %1$s</string>
   <string name="library_action_filters_sort">Bộ lọc &amp; Sắp xếp</string>
+  <string name="vod_filter_sort_label">Sắp xếp</string>
+  <string name="vod_filter_category_label">Danh mục</string>
   <string name="library_action_hide_search">Ẩn tìm kiếm</string>
   <string name="library_browse_all">Duyệt tất cả</string>
   <string name="library_filter_empty">Không có mục nào khớp với bộ lọc này.</string>

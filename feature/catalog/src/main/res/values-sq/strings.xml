@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Nuk ka informacion programi</string>
   <string name="label_reordering">Po rirenditet %1$s</string>
   <string name="library_action_filters_sort">Filtra &amp; renditje</string>
+  <string name="vod_filter_sort_label">Renditje</string>
+  <string name="vod_filter_category_label">Kategoria</string>
   <string name="library_action_hide_search">Fshih kërkimin</string>
   <string name="library_browse_all">Shfleto të gjitha</string>
   <string name="library_filter_empty">Asnjë element nuk përputhet me këtë filtër.</string>

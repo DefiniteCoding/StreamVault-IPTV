@@ -189,6 +189,8 @@
   <string name="label_no_schedule">沒有節目表資訊</string>
   <string name="label_reordering">正在重新排序 %1$s</string>
   <string name="library_action_filters_sort">篩選與排序</string>
+  <string name="vod_filter_sort_label">排序</string>
+  <string name="vod_filter_category_label">類別</string>
   <string name="library_action_hide_search">隱藏搜尋</string>
   <string name="library_browse_all">瀏覽全部</string>
   <string name="library_filter_empty">沒有符合此篩選條件的項目。</string>

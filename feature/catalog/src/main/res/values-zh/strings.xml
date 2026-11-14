@@ -189,6 +189,8 @@
   <string name="label_no_schedule">无节目安排信息</string>
   <string name="label_reordering">正在重新排序 %1$s</string>
   <string name="library_action_filters_sort">过滤和排序</string>
+  <string name="vod_filter_sort_label">排序</string>
+  <string name="vod_filter_category_label">分类</string>
   <string name="library_action_hide_search">隐藏搜索</string>
   <string name="library_browse_all">浏览全部</string>
   <string name="library_filter_empty">没有符合此筛选条件的项目。</string>

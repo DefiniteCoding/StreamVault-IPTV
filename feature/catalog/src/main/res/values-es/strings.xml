@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Sin información de programación</string>
   <string name="label_reordering">Reordenando %1$s</string>
   <string name="library_action_filters_sort">Filtrar y ordenar</string>
+  <string name="vod_filter_sort_label">Ordenar</string>
+  <string name="vod_filter_category_label">Categoría</string>
   <string name="library_action_hide_search">Ocultar búsqueda</string>
   <string name="library_browse_all">Explorar todo</string>
   <string name="library_filter_empty">Ningún artículo coincide con este filtro.</string>

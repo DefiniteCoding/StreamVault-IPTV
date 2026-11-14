@@ -189,6 +189,8 @@
   <string name="label_no_schedule">Няма информация за програмата</string>
   <string name="label_reordering">Пренареждане на %1$s</string>
   <string name="library_action_filters_sort">Филтри &amp; сортиране</string>
+  <string name="vod_filter_sort_label">Сортиране</string>
+  <string name="vod_filter_category_label">Категория</string>
   <string name="library_action_hide_search">Скрий търсенето</string>
   <string name="library_browse_all">Разгледай всичко</string>
   <string name="library_filter_empty">Няма елементи, отговарящи на този филтър.</string>
