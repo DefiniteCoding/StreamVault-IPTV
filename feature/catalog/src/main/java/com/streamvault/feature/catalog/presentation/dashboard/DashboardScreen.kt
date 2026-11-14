@@ -204,9 +204,15 @@ fun DashboardScreen(
                 return@scaffold
             }
             val orderedSections = rememberDashboardSections(uiState)
-            // Rule 17: the first Continue Watching card, else the first Recent Channels card.
-            val initialFocusShelf = orderedSections.firstOrNull { it in ContinueWatchingShelves }
-                ?: AppHomeDashboardShelf.RECENT_CHANNELS.takeIf { it in orderedSections }
+            // Rule 17: the update notice's primary button, else the first Continue Watching card, else the first
+            // Recent Channels card. One requester serves one node, so a shelf only takes the role without a notice.
+            val noticeHoldsInitialFocus = uiState.updateNotice != null
+            val initialFocusShelf = if (noticeHoldsInitialFocus) {
+                null
+            } else {
+                orderedSections.firstOrNull { it in ContinueWatchingShelves }
+                    ?: AppHomeDashboardShelf.RECENT_CHANNELS.takeIf { it in orderedSections }
+            }
             val presentedSeriesFor: (PlaybackHistory) -> Series? = { history ->
                 val rawSeriesId = history.seriesId ?: history.contentId
                 if (
@@ -261,6 +267,7 @@ fun DashboardScreen(
                     item(key = "update_notice") {
                         DashboardUpdateCard(
                             notice = updateNotice,
+                            primaryButtonModifier = initialFocusModifier,
                             onOpenSettings = { onDestinationRequested(AppDestination.Settings()) },
                             onInstallUpdate = viewModel::installDownloadedUpdate
                         )
@@ -641,6 +648,7 @@ private fun DashboardProviderWarningCard(
 @Composable
 private fun DashboardUpdateCard(
     notice: DashboardUpdateNotice,
+    primaryButtonModifier: Modifier,
     onOpenSettings: () -> Unit,
     onInstallUpdate: () -> Unit
 ) {
@@ -677,6 +685,7 @@ private fun DashboardUpdateCard(
                 // The single primary on Home: an update is the one action that needs a decision.
                 AppDialogButton(
                     primary = true,
+                    modifier = primaryButtonModifier,
                     text = stringResource(
                         if (notice.installPermissionRequired) {
                             R.string.dashboard_update_allow_installs
