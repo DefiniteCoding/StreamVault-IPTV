@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -103,7 +103,7 @@ fun LiveChipRowSection(
                 modifier = Modifier.padding(horizontal = headerHorizontalPadding.dp, vertical = 2.dp)
             )
         }
-        LazyRow(contentPadding = contentPadding, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FocusSafeLazyRow(contentPadding = contentPadding, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(items = chips, key = { it.key }, contentType = { "live_selection_chip" }) { chip ->
                 val selected = chip.key == selectedKey
                 var wasFocused by remember(chip.key) { mutableStateOf(false) }

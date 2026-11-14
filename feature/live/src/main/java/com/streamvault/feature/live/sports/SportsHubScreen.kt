@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -84,6 +83,9 @@ import androidx.tv.material3.Text
 import kotlinx.coroutines.delay
 import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.image.ChannelLogoBadge
 import com.streamvault.core.ui.interaction.TvButton
@@ -102,6 +104,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import kotlinx.coroutines.launch
 
 private data class SportsLeagueFilterOption(val id: String, val label: String)
+
+// Padding the list puts around its items, inside the shell inset.
+private val SportsHubHorizontalPadding = 28.dp
 
 @Composable
 fun SportsHubScreen(
@@ -179,9 +184,10 @@ internal fun SportsHubContent(
         .sortedBy { it.label }
         .toList()
     val fallbackLeague = stringResource(R.string.nav_sports)
+    val spacing = LocalAppSpacing.current
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(horizontal = 28.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(horizontal = SportsHubHorizontalPadding, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         item(key = "sports-header") {
@@ -249,10 +255,13 @@ internal fun SportsHubContent(
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             Text(league, fontSize = 17.sp, fontWeight = FontWeight.SemiBold,
                                 color = BrowseColors.TextPrimary)
-                            LazyRow(
+                            FocusSafeLazyRow(
                                 modifier = Modifier.fillMaxWidth().focusGroup(),
                                 contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
                                 horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                // The list pads its items, and the shell pads the list: the row grows into both so cards slide off the screen edge.
+                                edgeGutterStart = SportsHubHorizontalPadding + spacing.shellHorizontalInset,
+                                edgeGutterEnd = SportsHubHorizontalPadding + spacing.shellHorizontalInset,
                             ) {
                                 items(events, key = SportsEvent::id) { event ->
                                     SportsEventCard(

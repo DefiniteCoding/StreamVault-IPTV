@@ -18,10 +18,6 @@ class FocusSafeLazyRowGuardTest {
     private val permanentAllowlist = setOf("FocusHelpers.kt")
 
     private val pendingMigration = mapOf(
-        "LiveCategoryRow.kt" to 1,
-        "LiveSelectionChipRow.kt" to 1,
-        "LiveGuideControlComponents.kt" to 3,
-        "SportsHubScreen.kt" to 1,
         "PlayerAuxiliaryOverlays.kt" to 1,
         "PlayerChannelInfoOverlay.kt" to 2,
         "PlayerControlsChrome.kt" to 1,
