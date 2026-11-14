@@ -1,5 +1,8 @@
 package com.streamvault.feature.catalog.presentation.dashboard
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.layout.isPortraitLayout
 
 import com.streamvault.core.ui.design.BrowseShapes
@@ -20,7 +23,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -519,9 +521,11 @@ private fun DashboardShortcutRow(
             )
         }
 
-        LazyRow(
+        FocusSafeLazyRow(
             contentPadding = PaddingValues(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(shortcuts, key = { "${it.type}:${it.categoryId}:${it.label}" }) { shortcut ->
                 DashboardShortcutCard(
@@ -864,9 +868,11 @@ private fun FavoriteChannelsRow(
             }
         }
 
-        LazyRow(
+        FocusSafeLazyRow(
             contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(channels, key = { it.id }) { channel ->
                 FavoriteChannelLogoCard(
