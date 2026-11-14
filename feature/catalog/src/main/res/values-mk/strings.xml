@@ -63,6 +63,7 @@
   <string name="continue_watching_menu_remove">Отстрани од Продолжи со гледање</string>
   <string name="continue_watching_menu_resume">Продолжи</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Филм</string>
   <string name="continue_watching_time_left_h">Преостануваат %1$d ч</string>
   <string name="continue_watching_time_left_hm">Преостануваат %1$d ч %2$d мин</string>
   <string name="continue_watching_time_left_m">Преостануваат %1$d мин</string>
