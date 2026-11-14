@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryContextCard
@@ -103,6 +104,7 @@ fun SeriesScreen(
     onSeriesClick: (Series) -> Unit,
     onSeriesIdClick: (Long) -> Unit,
     onFeaturedPlay: (PlaybackHistory) -> Unit = {},
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: SeriesViewModel = hiltViewModel()
 ) {
@@ -234,8 +236,10 @@ fun SeriesScreen(
                 onSeriesClick = onSeriesClick,
                 onSeriesIdClick = onSeriesIdClick,
                 onFeaturedPlay = { history -> viewModel.playFeaturedHistory(history, onFeaturedPlay, onSeriesIdClick) },
-                onRemoveFromContinueWatching = viewModel::removeFromContinueWatching,
                 onRequestContinueWatchingRemoval = { pendingContinueWatchingRemoval = it },
+                onContinueWatchingRemove = viewModel::onRemoveContinueWatching,
+                onContinueWatchingMarkWatched = viewModel::onMarkContinueWatchingWatched,
+                onContinueWatchingPlay = onContinueWatchingPlay,
                 onProtectedSeriesClick = { series ->
                     pendingCategory = null
                     pendingSeries = series
@@ -289,7 +293,7 @@ fun SeriesScreen(
             history = history,
             onDismiss = { pendingContinueWatchingRemoval = null },
             onConfirm = {
-                viewModel.removeFromContinueWatching(history)
+                viewModel.onRemoveContinueWatching(history)
                 pendingContinueWatchingRemoval = null
             }
         )
@@ -360,6 +364,9 @@ fun SeriesScreen(
 @Composable
 private fun SeriesVodContent(
     uiState: SeriesUiState,
+    onContinueWatchingRemove: (PlaybackHistory) -> Unit,
+    onContinueWatchingMarkWatched: (PlaybackHistory) -> Unit,
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     selectedFilterType: LibraryFilterType,
     onSelectedFilterTypeChange: (LibraryFilterType) -> Unit,
     selectedSortBy: LibrarySortBy,
@@ -369,7 +376,6 @@ private fun SeriesVodContent(
     onSeriesClick: (Series) -> Unit,
     onSeriesIdClick: (Long) -> Unit,
     onFeaturedPlay: (PlaybackHistory) -> Unit,
-    onRemoveFromContinueWatching: (PlaybackHistory) -> Unit,
     onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
     onProtectedSeriesClick: (Series) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
@@ -729,20 +735,26 @@ private fun SeriesVodContent(
             }
             if (continueWatching.isNotEmpty()) {
             item(key = "continue_watching") {
+                val openContinueWatchingDetails: (PlaybackHistory) -> Unit = { history ->
+                    val rawSeriesId = history.seriesId ?: history.contentId
+                    val presentedSeries = continueSeries.firstOrNull { series ->
+                        series.rawSeriesIdsForNavigation().contains(rawSeriesId)
+                    }
+                    if (presentedSeries != null) {
+                        onSeriesClick(presentedSeries)
+                    } else {
+                        onSeriesIdClick(rawSeriesId)
+                    }
+                }
                 ContinueWatchingRow(
                         items = continueWatching,
-                        onRemoveFromContinueWatching = onRemoveFromContinueWatching,
-                        onItemClick = { history ->
-                            val rawSeriesId = history.seriesId ?: history.contentId
-                            val presentedSeries = continueSeries.firstOrNull { series ->
-                                series.rawSeriesIdsForNavigation().contains(rawSeriesId)
-                            }
-                            if (presentedSeries != null) {
-                                onSeriesClick(presentedSeries)
-                            } else {
-                                onSeriesIdClick(rawSeriesId)
-                            }
-                        }
+                        onItemClick = openContinueWatchingDetails,
+                        menu = ContinueWatchingMenuActions(
+                            onResume = onContinueWatchingPlay,
+                            onRemove = onContinueWatchingRemove,
+                            onOpenDetails = openContinueWatchingDetails,
+                            onMarkWatched = onContinueWatchingMarkWatched
+                        )
                     )
             }
             }

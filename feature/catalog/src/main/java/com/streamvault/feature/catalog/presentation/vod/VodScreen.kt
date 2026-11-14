@@ -52,6 +52,7 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodCategoryPickerDialog
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.domain.model.VodViewMode
 import com.streamvault.domain.model.LibraryFilterType
@@ -269,7 +270,10 @@ private fun VodModernShelves(
                 ContinueWatchingRow(
                     items = continueWatching,
                     onItemClick = onContinueWatchingClick,
-                    onRemoveFromContinueWatching = onRemoveFromContinueWatching
+                    menu = ContinueWatchingMenuActions(
+                        onResume = onContinueWatchingClick,
+                        onRemove = onRemoveFromContinueWatching
+                    )
                 )
             }
         }
@@ -357,7 +361,10 @@ private fun VodClassicCategories(
                 ContinueWatchingRow(
                     items = continueWatching,
                     onItemClick = onContinueWatchingClick,
-                    onRemoveFromContinueWatching = onRemoveFromContinueWatching
+                    menu = ContinueWatchingMenuActions(
+                        onResume = onContinueWatchingClick,
+                        onRemove = onRemoveFromContinueWatching
+                    )
                 )
             }
         }

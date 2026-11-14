@@ -93,11 +93,12 @@ fun FocusableCard(
     isDragging: Boolean = false,
     semanticsDescription: String? = null,
     semanticsStateDescription: String? = null,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null,
     content: @Composable BoxScope.(Boolean) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val sounds = rememberTvInteractionSounds()
-    val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
+    val focusRequester = focusRequester ?: remember { androidx.compose.ui.focus.FocusRequester() }
     val reducedMotionEnabled = rememberReducedMotionEnabled()
 
     val scale by animateFloatAsState(
@@ -182,7 +183,8 @@ fun ChannelCard(
     isReorderMode: Boolean = false,
     isDragging: Boolean = false,
     isRecording: Boolean = false,
-    isScheduledRecording: Boolean = false
+    isScheduledRecording: Boolean = false,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null
 ) {
     val channelCardShape = LocalAppShapes.current.small
     val hasUsableArchive = channel.archivePlaybackCapability().canBuildReplayCandidate
@@ -216,7 +218,8 @@ fun ChannelCard(
         isReorderMode = isReorderMode,
         isDragging = isDragging,
         semanticsDescription = channelDescription,
-        semanticsStateDescription = if (isLocked) stringResource(R.string.a11y_locked) else null
+        semanticsStateDescription = if (isLocked) stringResource(R.string.a11y_locked) else null,
+        focusRequester = focusRequester
     ) { isFocused ->
         if (!isLocked) {
             ChannelLogoBadge(

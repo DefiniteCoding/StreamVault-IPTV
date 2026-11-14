@@ -35,6 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,7 +62,10 @@ import com.streamvault.core.ui.image.ChannelLogoBadge
 import com.streamvault.feature.catalog.presentation.components.CatalogChannelProgressTicker
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
 import com.streamvault.feature.catalog.presentation.components.ChannelCard
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
+import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMenuDialog
+import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMenuEntry
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.feature.catalog.presentation.components.SeriesCard
@@ -105,6 +110,7 @@ fun DashboardScreen(
     onMovieClick: (Movie) -> Unit,
     onSeriesClick: (Series) -> Unit,
     onPlaybackHistoryClick: (PlaybackHistory) -> Unit,
+    onOpenHistoryDetails: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     dashboardShelfCustomizationContent: CatalogDashboardShelfCustomizationContent,
     stremioContent: @Composable () -> Boolean = { false },
@@ -117,6 +123,19 @@ fun DashboardScreen(
     val provider = uiState.provider
     val snackbarHostState = remember { SnackbarHostState() }
     var showHomeCustomizationDialog by remember { mutableStateOf(false) }
+    var channelMenuTarget by remember { mutableStateOf<Channel?>(null) }
+    val recentChannelRequesters = remember { HashMap<Long, FocusRequester>() }
+    var recentRemovalHandoff by remember { mutableStateOf<Pair<Long, Long?>?>(null) }
+
+    LaunchedEffect(uiState.recentChannels) {
+        recentChannelRequesters.keys.retainAll(uiState.recentChannels.mapTo(HashSet()) { it.id })
+        val (removedId, neighborId) = recentRemovalHandoff ?: return@LaunchedEffect
+        if (uiState.recentChannels.any { it.id == removedId }) return@LaunchedEffect
+        recentRemovalHandoff = null
+        // The menu window is still leaving; wait a frame so focus is not taken back from the card.
+        withFrameNanos { }
+        neighborId?.let { recentChannelRequesters[it]?.requestFocus() }
+    }
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let { message ->
@@ -146,9 +165,9 @@ fun DashboardScreen(
                 return@scaffold
             }
             val orderedSections = rememberDashboardSections(uiState)
-            val onContinueWatchingItemClick: (PlaybackHistory) -> Unit = { history ->
+            val presentedSeriesFor: (PlaybackHistory) -> Series? = { history ->
                 val rawSeriesId = history.seriesId ?: history.contentId
-                val presentedSeries = if (
+                if (
                     history.contentType == com.streamvault.domain.model.ContentType.SERIES ||
                     history.contentType == com.streamvault.domain.model.ContentType.SERIES_EPISODE
                 ) {
@@ -158,12 +177,18 @@ fun DashboardScreen(
                 } else {
                     null
                 }
-                if (presentedSeries != null) {
-                    onSeriesClick(presentedSeries)
-                } else {
-                    onPlaybackHistoryClick(history)
-                }
             }
+            val onContinueWatchingItemClick: (PlaybackHistory) -> Unit = { history ->
+                presentedSeriesFor(history)?.let(onSeriesClick) ?: onPlaybackHistoryClick(history)
+            }
+            val continueWatchingMenu = ContinueWatchingMenuActions(
+                onResume = onPlaybackHistoryClick,
+                onRemove = viewModel::onRemoveContinueWatching,
+                onOpenDetails = { history ->
+                    presentedSeriesFor(history)?.let(onSeriesClick) ?: onOpenHistoryDetails(history)
+                },
+                onMarkWatched = viewModel::onMarkContinueWatchingWatched
+            )
 
             androidx.compose.foundation.lazy.LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -236,13 +261,18 @@ fun DashboardScreen(
                             nowMs = nowMs,
                             isRecording = channel.id in recordingChannelIds,
                             isScheduledRecording = channel.id in scheduledChannelIds,
-                            onClick = { onRecentChannelClick(channel, uiState.currentCombinedProfileId) }
+                            onClick = { onRecentChannelClick(channel, uiState.currentCombinedProfileId) },
+                            onLongClick = { channelMenuTarget = channel },
+                            focusRequester = remember(channel.id) {
+                                recentChannelRequesters.getOrPut(channel.id) { FocusRequester() }
+                            }
                         )
                     }
 
                     AppHomeDashboardShelf.CONTINUE_WATCHING -> ContinueWatchingRow(
                         items = uiState.continueWatching,
-                        onItemClick = onContinueWatchingItemClick
+                        onItemClick = onContinueWatchingItemClick,
+                        menu = continueWatchingMenu
                     )
 
                     AppHomeDashboardShelf.PINNED_CATEGORIES -> PinnedCategoriesSection(
@@ -324,13 +354,15 @@ fun DashboardScreen(
                     AppHomeDashboardShelf.CONTINUE_WATCHING_MOVIES -> ContinueWatchingRow(
                         title = stringResource(R.string.dashboard_continue_watching_movies),
                         items = uiState.continueWatchingMovies,
-                        onItemClick = onPlaybackHistoryClick
+                        onItemClick = onPlaybackHistoryClick,
+                        menu = continueWatchingMenu
                     )
 
                     AppHomeDashboardShelf.CONTINUE_WATCHING_SERIES -> ContinueWatchingRow(
                         title = stringResource(R.string.dashboard_continue_watching_series),
                         items = uiState.continueWatchingSeriesItems,
-                        onItemClick = onContinueWatchingItemClick
+                        onItemClick = onContinueWatchingItemClick,
+                        menu = continueWatchingMenu
                     )
 
                     AppHomeDashboardShelf.TOP_RATED_MOVIES -> CategoryRow(
@@ -360,6 +392,31 @@ fun DashboardScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
+        )
+    }
+
+    channelMenuTarget?.let { channel ->
+        val openLabel = stringResource(R.string.channel_menu_open)
+        // The Recent shelf's channel rows do not re-emit when a favorite changes, so read the favorites shelf.
+        val isFavorite = uiState.favoriteChannels.any { it.id == channel.id && it.providerId == channel.providerId }
+        val favoriteLabel = stringResource(
+            if (isFavorite) R.string.add_group_remove_favorites else R.string.add_group_add_favorites
+        )
+        val removeLabel = stringResource(R.string.channel_options_remove_from_recent)
+        ActionMenuDialog(
+            title = channel.name,
+            entries = listOf(
+                ActionMenuEntry(openLabel) { onRecentChannelClick(channel, uiState.currentCombinedProfileId) },
+                ActionMenuEntry(favoriteLabel) { viewModel.onToggleChannelFavorite(channel, isFavorite) },
+                ActionMenuEntry(removeLabel) {
+                    val recent = uiState.recentChannels
+                    val index = recent.indexOfFirst { it.id == channel.id }
+                    val neighbor = recent.getOrNull(index + 1) ?: recent.getOrNull(index - 1)
+                    recentRemovalHandoff = channel.id to neighbor?.id
+                    viewModel.onRemoveRecentChannel(channel)
+                }
+            ),
+            onDismissRequest = { channelMenuTarget = null }
         )
     }
 

@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
 import com.streamvault.feature.catalog.presentation.components.MovieCard
@@ -102,6 +103,7 @@ import kotlinx.coroutines.delay
 fun MoviesScreen(
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
+    onContinueWatchingOpenDetails: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: MoviesViewModel = hiltViewModel()
 ) {
@@ -232,8 +234,13 @@ fun MoviesScreen(
                 onSearchQueryChange = viewModel::setSearchQuery,
                 onMovieClick = onMovieClick,
                 onContinueWatchingPlay = onContinueWatchingPlay,
-                onRemoveFromContinueWatching = viewModel::removeFromContinueWatching,
                 onRequestContinueWatchingRemoval = { pendingContinueWatchingRemoval = it },
+                onContinueWatchingMenu = ContinueWatchingMenuActions(
+                    onResume = onContinueWatchingPlay,
+                    onRemove = viewModel::onRemoveContinueWatching,
+                    onOpenDetails = onContinueWatchingOpenDetails,
+                    onMarkWatched = viewModel::onMarkContinueWatchingWatched
+                ),
                 onProtectedMovieClick = { movie ->
                     pendingCategory = null
                     pendingMovie = movie
@@ -287,7 +294,7 @@ fun MoviesScreen(
             history = history,
             onDismiss = { pendingContinueWatchingRemoval = null },
             onConfirm = {
-                viewModel.removeFromContinueWatching(history)
+                viewModel.onRemoveContinueWatching(history)
                 pendingContinueWatchingRemoval = null
             }
         )
@@ -368,8 +375,8 @@ private fun MoviesVodContent(
     onSearchQueryChange: (String) -> Unit,
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
-    onRemoveFromContinueWatching: (PlaybackHistory) -> Unit,
     onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
+    onContinueWatchingMenu: ContinueWatchingMenuActions,
     onProtectedMovieClick: (Movie) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Movie) -> Unit,
@@ -720,7 +727,7 @@ private fun MoviesVodContent(
                 ContinueWatchingRow(
                         items = continueWatching,
                         onItemClick = onContinueWatchingPlay,
-                        onRemoveFromContinueWatching = onRemoveFromContinueWatching
+                        menu = onContinueWatchingMenu
                     )
             }
             }
