@@ -24,6 +24,7 @@ internal fun TraktRatingActionButton(
     busy: Boolean,
     rating: Int?,
     onClick: () -> Unit,
+    tertiary: Boolean = false,
 ) {
     // Rating needs a connection; the watchlist button already offers the way to Settings.
     if (!hasIdentity || !connected) return
@@ -35,6 +36,7 @@ internal fun TraktRatingActionButton(
         onClick = onClick,
         enabled = !busy,
         compact = true,
+        tertiary = tertiary,
         icon = Icons.Filled.Star,
     )
 }

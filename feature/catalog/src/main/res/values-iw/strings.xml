@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">ספק זקוק לתשומת לב</string>
   <string name="dashboard_watch_live">צפו בשידור חי</string>
   <string name="download_button_label">הורדה</string>
+  <string name="series_episode_download_cd">הורדת %1$s</string>
   <string name="download_error_no_url">לא ניתן לפענח כתובת זרם להורדה</string>
   <string name="download_failed">ההורדה נכשלה: %1$s</string>
   <string name="download_started">ההורדה החלה</string>

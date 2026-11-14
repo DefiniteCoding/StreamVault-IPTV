@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">سرویس‌دهنده نیاز به توجه دارد</string>
   <string name="dashboard_watch_live">تماشای زنده</string>
   <string name="download_button_label">دانلود</string>
+  <string name="series_episode_download_cd">دانلود %1$s</string>
   <string name="download_error_no_url">نشانی پخش برای دانلود پیدا نشد</string>
   <string name="download_failed">دانلود ناموفق بود: %1$s</string>
   <string name="download_started">دانلود آغاز شد</string>

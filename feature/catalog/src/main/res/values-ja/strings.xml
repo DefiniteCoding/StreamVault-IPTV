@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">プロバイダーの確認が必要です</string>
   <string name="dashboard_watch_live">ライブ視聴</string>
   <string name="download_button_label">ダウンロード</string>
+  <string name="series_episode_download_cd">%1$s をダウンロード</string>
   <string name="download_error_no_url">ダウンロード用のストリーム URL を解決できませんでした</string>
   <string name="download_failed">ダウンロードに失敗しました: %1$s</string>
   <string name="download_started">ダウンロードを開始しました</string>

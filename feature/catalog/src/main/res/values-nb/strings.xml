@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Leverandøren trenger oppmerksomhet</string>
   <string name="dashboard_watch_live">Se direkte</string>
   <string name="download_button_label">Last ned</string>
+  <string name="series_episode_download_cd">Last ned %1$s</string>
   <string name="download_error_no_url">Kunne ikke finne strøm-URL for nedlasting</string>
   <string name="download_failed">Nedlasting mislyktes: %1$s</string>
   <string name="download_started">Nedlasting startet</string>

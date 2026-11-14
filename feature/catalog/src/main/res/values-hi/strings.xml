@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">प्रदाता पर ध्यान दें</string>
   <string name="dashboard_watch_live">लाइव देखें</string>
   <string name="download_button_label">डाउनलोड</string>
+  <string name="series_episode_download_cd">%1$s डाउनलोड करें</string>
   <string name="download_error_no_url">डाउनलोड के लिए स्ट्रीम URL प्राप्त नहीं हो सका</string>
   <string name="download_failed">डाउनलोड विफल: %1$s</string>
   <string name="download_started">डाउनलोड शुरू हुआ</string>

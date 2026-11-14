@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Le fournisseur a besoin d’attention</string>
   <string name="dashboard_watch_live">Regarder en direct</string>
   <string name="download_button_label">Télécharger</string>
+  <string name="series_episode_download_cd">Télécharger %1$s</string>
   <string name="download_error_no_url">Impossible de résoudre l’URL du flux pour le téléchargement</string>
   <string name="download_failed">Échec du téléchargement : %1$s</string>
   <string name="download_started">Téléchargement démarré</string>

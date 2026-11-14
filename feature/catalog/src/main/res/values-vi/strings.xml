@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Nhà cung cấp cần chú ý</string>
   <string name="dashboard_watch_live">Xem trực tiếp</string>
   <string name="download_button_label">Tải xuống</string>
+  <string name="series_episode_download_cd">Tải xuống %1$s</string>
   <string name="download_error_no_url">Không thể xác định URL luồng để tải xuống</string>
   <string name="download_failed">Tải xuống thất bại: %1$s</string>
   <string name="download_started">Đã bắt đầu tải xuống</string>

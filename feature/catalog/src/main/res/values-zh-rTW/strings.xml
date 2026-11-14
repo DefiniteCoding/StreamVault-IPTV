@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">供應商需要注意</string>
   <string name="dashboard_watch_live">觀看直播</string>
   <string name="download_button_label">下載</string>
+  <string name="series_episode_download_cd">下載 %1$s</string>
   <string name="download_error_no_url">無法解析用於下載的串流 URL</string>
   <string name="download_failed">下載失敗：%1$s</string>
   <string name="download_started">已開始下載</string>

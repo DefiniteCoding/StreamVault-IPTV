@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Провайдеру потрібна увага</string>
   <string name="dashboard_watch_live">Дивитися наживо</string>
   <string name="download_button_label">Завантажити</string>
+  <string name="series_episode_download_cd">Завантажити %1$s</string>
   <string name="download_error_no_url">Не вдалося визначити URL потоку для завантаження</string>
   <string name="download_failed">Помилка завантаження: %1$s</string>
   <string name="download_started">Завантаження розпочато</string>

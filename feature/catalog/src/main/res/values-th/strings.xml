@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">ผู้ให้บริการต้องได้รับการดูแล</string>
   <string name="dashboard_watch_live">ดูทีวีสด</string>
   <string name="download_button_label">ดาวน์โหลด</string>
+  <string name="series_episode_download_cd">ดาวน์โหลด %1$s</string>
   <string name="download_error_no_url">ไม่สามารถระบุ URL สตรีมสำหรับดาวน์โหลดได้</string>
   <string name="download_failed">ดาวน์โหลดล้มเหลว: %1$s</string>
   <string name="download_started">เริ่มดาวน์โหลดแล้ว</string>

@@ -15,6 +15,7 @@ internal fun TraktWatchlistActionButton(
     watchlisted: Boolean,
     busy: Boolean,
     onClick: () -> Unit,
+    tertiary: Boolean = false,
 ) {
     if (!hasIdentity) return
     val actionLabel = when {
@@ -29,6 +30,7 @@ internal fun TraktWatchlistActionButton(
         // Disconnected, the button is the way to Settings, so it stays enabled.
         enabled = !connected || !busy,
         compact = true,
+        tertiary = tertiary,
         icon = if (watchlisted) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
     )
 }

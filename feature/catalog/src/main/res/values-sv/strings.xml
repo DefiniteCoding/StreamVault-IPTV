@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Leverantören behöver uppmärksamhet</string>
   <string name="dashboard_watch_live">Se live</string>
   <string name="download_button_label">Ladda ner</string>
+  <string name="series_episode_download_cd">Ladda ner %1$s</string>
   <string name="download_error_no_url">Det gick inte att hämta stream-URL:en för nedladdning</string>
   <string name="download_failed">Nedladdning misslyckades: %1$s</string>
   <string name="download_started">Nedladdning startad</string>

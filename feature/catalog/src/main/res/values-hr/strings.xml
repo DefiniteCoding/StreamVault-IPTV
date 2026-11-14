@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Pružatelj zahtijeva pažnju</string>
   <string name="dashboard_watch_live">Gledaj uživo</string>
   <string name="download_button_label">Preuzmi</string>
+  <string name="series_episode_download_cd">Preuzmi %1$s</string>
   <string name="download_error_no_url">Nije moguće odrediti URL streama za preuzimanje</string>
   <string name="download_failed">Preuzimanje nije uspjelo: %1$s</string>
   <string name="download_started">Preuzimanje je započelo</string>

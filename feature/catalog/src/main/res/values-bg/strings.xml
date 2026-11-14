@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Доставчикът изисква внимание</string>
   <string name="dashboard_watch_live">Гледай на живо</string>
   <string name="download_button_label">Изтегли</string>
+  <string name="series_episode_download_cd">Изтегляне на %1$s</string>
   <string name="download_error_no_url">URL адресът на потока за изтегляне не можа да бъде намерен</string>
   <string name="download_failed">Изтеглянето се провали: %1$s</string>
   <string name="download_started">Изтеглянето започна</string>

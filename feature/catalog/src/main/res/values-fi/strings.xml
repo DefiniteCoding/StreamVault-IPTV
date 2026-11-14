@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Palveluntarjoaja tarvitsee huomiota</string>
   <string name="dashboard_watch_live">Katso suorana</string>
   <string name="download_button_label">Lataa</string>
+  <string name="series_episode_download_cd">Lataa %1$s</string>
   <string name="download_error_no_url">Streamin URL-osoitetta ei voitu selvittää latausta varten</string>
   <string name="download_failed">Lataus epäonnistui: %1$s</string>
   <string name="download_started">Lataus aloitettu</string>

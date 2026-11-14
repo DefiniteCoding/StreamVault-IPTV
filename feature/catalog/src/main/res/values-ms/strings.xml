@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Penyedia Perlu Perhatian</string>
   <string name="dashboard_watch_live">Tonton Langsung</string>
   <string name="download_button_label">Muat Turun</string>
+  <string name="series_episode_download_cd">Muat turun %1$s</string>
   <string name="download_error_no_url">Tidak dapat menyelesaikan URL strim untuk muat turun</string>
   <string name="download_failed">Muat turun gagal: %1$s</string>
   <string name="download_started">Muat turun dimulakan</string>

@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Kailangan ng Atensyon ang Provider</string>
   <string name="dashboard_watch_live">Manood ng Live</string>
   <string name="download_button_label">I-download</string>
+  <string name="series_episode_download_cd">I-download ang %1$s</string>
   <string name="download_error_no_url">Hindi ma-resolve ang stream URL para sa download</string>
   <string name="download_failed">Nabigo ang download: %1$s</string>
   <string name="download_started">Nagsimula ang download</string>

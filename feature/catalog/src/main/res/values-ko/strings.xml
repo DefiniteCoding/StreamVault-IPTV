@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">공급자 확인 필요</string>
   <string name="dashboard_watch_live">라이브 시청</string>
   <string name="download_button_label">다운로드</string>
+  <string name="series_episode_download_cd">%1$s 다운로드</string>
   <string name="download_error_no_url">다운로드할 스트림 URL을 확인할 수 없습니다</string>
   <string name="download_failed">다운로드 실패: %1$s</string>
   <string name="download_started">다운로드가 시작되었습니다</string>

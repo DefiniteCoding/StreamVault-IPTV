@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Sağlayıcıya Dikkat Gerekli</string>
   <string name="dashboard_watch_live">Canlı İzle</string>
   <string name="download_button_label">İndir</string>
+  <string name="series_episode_download_cd">%1$s indir</string>
   <string name="download_error_no_url">İndirme için yayın URL\'si çözümlenemedi</string>
   <string name="download_failed">İndirme başarısız: %1$s</string>
   <string name="download_started">İndirme başladı</string>

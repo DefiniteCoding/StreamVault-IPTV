@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Провайдер требует внимания</string>
   <string name="dashboard_watch_live">Смотреть в прямом эфире</string>
   <string name="download_button_label">Скачать</string>
+  <string name="series_episode_download_cd">Скачать %1$s</string>
   <string name="download_error_no_url">Не удалось определить URL потока для загрузки</string>
   <string name="download_failed">Ошибка загрузки: %1$s</string>
   <string name="download_started">Загрузка начата</string>

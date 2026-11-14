@@ -10,6 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.focus.focusProperties
+import androidx.compose.ui.text.font.FontWeight
+import androidx.tv.material3.ButtonDefaults
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.interaction.TvClickableSurface
+import com.streamvault.core.ui.interaction.TvIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,10 +48,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -371,99 +379,154 @@ fun SeriesPosterCard(series: Series, modifier: Modifier = Modifier) {
     )
 }
 
+internal val EpisodeCardWidth = 280.dp
+private val EpisodeDownloadSize = 40.dp
+private val EpisodeDownloadInset = 10.dp
+
+/**
+ * One episode in the series detail row: art with an episode badge, title, duration and a download icon.
+ * The icon is a sibling of the card surface, not a child, so Down and Up move between two real focus targets
+ * (the icon is always composed: adding a control on focus change costs main-thread time on the TV).
+ */
 @Composable
-fun EpisodeRowCard(
+fun EpisodeCard(
     episode: Episode,
+    onClick: () -> Unit,
+    onDownload: () -> Unit,
     modifier: Modifier = Modifier,
     fallbackImageUrl: String? = null
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val previewWidth = if (screenWidth < 700.dp) 116.dp else 154.dp
+    val cardFocus = remember { FocusRequester() }
+    val downloadFocus = remember { FocusRequester() }
     val durationMs = episode.durationSeconds.toLong() * 1000L
     val showProgress = episode.watchProgress > 5000L && durationMs > 0L &&
         !isPlaybackComplete(episode.watchProgress, durationMs)
     val displayUrl = episode.coverUrl.takeIf { !it.isNullOrBlank() } ?: fallbackImageUrl
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(BrowseShapes.Panel)
-            .background(
-                Brush.horizontalGradient(
-                    listOf(AppColors.SurfaceElevated, AppColors.Surface)
-                )
-            )
-            .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
-            .padding(14.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+    Box(modifier = modifier.width(EpisodeCardWidth)) {
+        TvClickableSurface(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .focusRequester(cardFocus)
+                .focusProperties { down = downloadFocus },
+            shape = ClickableSurfaceDefaults.shape(shape = BrowseShapes.Panel),
+            // Opaque fill that does not change on focus: the 3dp ring and the scale carry focus.
+            colors = ClickableSurfaceDefaults.colors(
+                containerColor = AppColors.SurfaceElevated,
+                contentColor = AppColors.TextPrimary,
+                focusedContainerColor = AppColors.SurfaceElevated,
+                focusedContentColor = AppColors.TextPrimary
+            ),
+            border = selectableFocusBorder(BrowseShapes.Panel),
+            scale = ClickableSurfaceDefaults.scale(focusedScale = FocusSpec.FocusedScale)
         ) {
-            Box(
-                modifier = Modifier.width(previewWidth).aspectRatio(16f / 9f)
-                    .clip(BrowseShapes.Artwork)
-                    .background(AppColors.SurfaceEmphasis)
-                    .border(1.dp, AppColors.Outline, BrowseShapes.Artwork),
-                contentAlignment = Alignment.Center
-            ) {
-                if (displayUrl != null) {
-                    AsyncImage(
-                        model = rememberCrossfadeImageModel(displayUrl),
-                        contentDescription = episode.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-                Text(
-                    text = stringResource(R.string.label_episode_full, episode.episodeNumber),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.TextPrimary,
-                    modifier = Modifier.align(Alignment.TopStart)
-                        .padding(7.dp)
-                        .background(AppColors.HeroBottom.copy(alpha = 0.9f), RoundedCornerShape(6.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                )
-                if (showProgress) {
-                    LinearProgressIndicator(
-                        progress = { (episode.watchProgress.toFloat() / durationMs).coerceIn(0f, 1f) },
-                        modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(4.dp),
-                        color = AppColors.Brand,
-                        trackColor = AppColors.SurfaceEmphasis
-                    )
-                }
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
-            ) {
-                Text(
-                    text = episode.title,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = AppColors.TextPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                episode.duration?.takeIf { it.isNotBlank() }?.let { duration ->
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(16f / 9f)
+                        .background(AppColors.SurfaceEmphasis)
+                ) {
+                    if (displayUrl != null) {
+                        AsyncImage(
+                            model = rememberCrossfadeImageModel(displayUrl),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                    // Scrim limited to the badge: 55% black keeps white text above 4.5:1 even over white art.
                     Text(
-                        duration,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = AppColors.Brand
+                        text = stringResource(R.string.label_episode, episode.episodeNumber),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White,
+                        maxLines = 1,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(8.dp)
+                            .background(Color.Black.copy(alpha = EPISODE_BADGE_SCRIM_ALPHA), RoundedCornerShape(6.dp))
+                            .padding(horizontal = 8.dp, vertical = 3.dp)
                     )
+                    if (showProgress) {
+                        LinearProgressIndicator(
+                            progress = { (episode.watchProgress.toFloat() / durationMs).coerceIn(0f, 1f) },
+                            modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth().height(4.dp),
+                            color = AppColors.Brand,
+                            trackColor = AppColors.SurfaceEmphasis,
+                            drawStopIndicator = {}
+                        )
+                    }
                 }
-                episode.plot?.takeIf { it.isNotBlank() }?.let { plot ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 12.dp,
+                            end = EpisodeDownloadSize + EpisodeDownloadInset * 2,
+                            top = 10.dp,
+                            bottom = 12.dp
+                        ),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     Text(
-                        text = plot,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = AppColors.TextSecondary,
+                        text = episode.title,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = AppColors.TextPrimary,
+                        // Provider titles often share a long prefix; two lines keep the episode part visible and
+                        // the minimum keeps every card the same height.
+                        minLines = 2,
                         maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = episode.duration?.takeIf { it.isNotBlank() }.orEmpty(),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
             }
         }
+        TvIconButton(
+            onClick = onDownload,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                // A focused Surface is raised above its siblings, which would hide the icon behind the card.
+                .zIndex(1f)
+                .padding(end = EpisodeDownloadInset, bottom = EpisodeDownloadInset)
+                .size(EpisodeDownloadSize)
+                .focusRequester(downloadFocus)
+                // The icon is the last stop: Down stays put (rule 18), Up returns to its card.
+                .focusProperties {
+                    up = cardFocus
+                    down = FocusRequester.Cancel
+                },
+            scale = ButtonDefaults.scale(focusedScale = FocusSpec.FocusedScale),
+            shape = ButtonDefaults.shape(shape = CircleShape),
+            border = ButtonDefaults.border(
+                focusedBorder = Border(
+                    border = BorderStroke(FocusSpec.SelectableRingWidth, AppColors.Focus),
+                    shape = CircleShape
+                )
+            ),
+            colors = ButtonDefaults.colors(
+                containerColor = AppColors.ControlContainer,
+                contentColor = AppColors.TextPrimary,
+                focusedContainerColor = AppColors.SurfaceAccent,
+                focusedContentColor = AppColors.TextPrimary
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Download,
+                contentDescription = stringResource(R.string.series_episode_download_cd, episode.title)
+            )
+        }
     }
 }
+
+internal const val EPISODE_BADGE_SCRIM_ALPHA = 0.55f
 
 @Composable
 private fun PosterCard(

@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">El proveedor necesita atención</string>
   <string name="dashboard_watch_live">Ver en vivo</string>
   <string name="download_button_label">Descargar</string>
+  <string name="series_episode_download_cd">Descargar %1$s</string>
   <string name="download_error_no_url">No se pudo resolver la URL de transmisión para la descarga</string>
   <string name="download_failed">Error de descarga: %1$s</string>
   <string name="download_started">Descarga iniciada</string>

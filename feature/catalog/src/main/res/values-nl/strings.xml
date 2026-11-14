@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Aanbieder heeft aandacht nodig</string>
   <string name="dashboard_watch_live">Kijk live</string>
   <string name="download_button_label">Download</string>
+  <string name="series_episode_download_cd">%1$s downloaden</string>
   <string name="download_error_no_url">Stream-URL voor download kon niet worden gevonden</string>
   <string name="download_failed">Download mislukt: %1$s</string>
   <string name="download_started">Download gestart</string>

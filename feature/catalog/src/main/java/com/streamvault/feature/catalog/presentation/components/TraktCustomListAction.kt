@@ -96,6 +96,7 @@ class TraktCustomListActionViewModel @Inject constructor(
 internal fun TraktCustomListActionButton(
     item: TraktCustomListItem?,
     additionalItems: List<TraktCustomListItem> = emptyList(),
+    tertiary: Boolean = false,
 ) {
     if (item == null) return
     val viewModel: TraktCustomListActionViewModel = hiltViewModel()
@@ -129,6 +130,7 @@ internal fun TraktCustomListActionButton(
         // The custom-list state starts disconnected and is populated by this click's refresh.
         enabled = !operation,
         compact = true,
+        tertiary = tertiary,
     )
 
     if (!dialogOpen) return

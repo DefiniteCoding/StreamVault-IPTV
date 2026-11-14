@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Ofruesi kërkon vëmendje</string>
   <string name="dashboard_watch_live">Shiko live</string>
   <string name="download_button_label">Shkarko</string>
+  <string name="series_episode_download_cd">Shkarko %1$s</string>
   <string name="download_error_no_url">URL-ja e transmetimit për shkarkim nuk u përcaktua</string>
   <string name="download_failed">Shkarkimi dështoi: %1$s</string>
   <string name="download_started">Shkarkimi filloi</string>

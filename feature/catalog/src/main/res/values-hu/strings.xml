@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">A szolgáltató figyelmet igényel</string>
   <string name="dashboard_watch_live">Nézd élőben</string>
   <string name="download_button_label">Letöltés</string>
+  <string name="series_episode_download_cd">%1$s letöltése</string>
   <string name="download_error_no_url">A letöltéshez nem sikerült feloldani a stream URL-t</string>
   <string name="download_failed">A letöltés sikertelen: %1$s</string>
   <string name="download_started">A letöltés elindult</string>

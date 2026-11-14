@@ -104,7 +104,8 @@ fun DetailActionButton(
     primary: Boolean = false,
     enabled: Boolean = true,
     icon: ImageVector? = if (primary) Icons.Default.PlayArrow else null,
-    compact: Boolean = false
+    compact: Boolean = false,
+    tertiary: Boolean = false
 ) {
     TvButton(
         onClick = onClick,
@@ -118,6 +119,16 @@ fun DetailActionButton(
                 contentColor = AppColors.OnPrimary,
                 focusedContainerColor = AppColors.Brand,
                 focusedContentColor = AppColors.OnPrimary
+            )
+        } else if (tertiary) {
+            // Text and icon only at rest; the container appears on focus together with the ring.
+            ButtonDefaults.colors(
+                containerColor = Color.Transparent,
+                contentColor = AppColors.TextPrimary,
+                focusedContainerColor = AppColors.SurfaceAccent,
+                focusedContentColor = AppColors.TextPrimary,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = AppColors.TextDisabled
             )
         } else {
             secondaryButtonColors()

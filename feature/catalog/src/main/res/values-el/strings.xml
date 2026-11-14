@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Ο πάροχος χρειάζεται προσοχή</string>
   <string name="dashboard_watch_live">Παρακολούθηση ζωντανά</string>
   <string name="download_button_label">Λήψη</string>
+  <string name="series_episode_download_cd">Λήψη του %1$s</string>
   <string name="download_error_no_url">Δεν ήταν δυνατή η ανάκτηση του URL ροής για λήψη</string>
   <string name="download_failed">Η λήψη απέτυχε: %1$s</string>
   <string name="download_started">Η λήψη ξεκίνησε</string>

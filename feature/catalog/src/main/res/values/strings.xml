@@ -141,6 +141,7 @@
   <string name="dashboard_warning_title">Provider Needs Attention</string>
   <string name="dashboard_watch_live">Watch Live</string>
   <string name="download_button_label">Download</string>
+  <string name="series_episode_download_cd">Download %1$s</string>
   <string name="download_error_no_url">Could not resolve stream URL for download</string>
   <string name="download_failed">Download failed: %1$s</string>
   <string name="download_started">Download started</string>

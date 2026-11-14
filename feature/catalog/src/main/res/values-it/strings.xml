@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Il fornitore ha bisogno di attenzione</string>
   <string name="dashboard_watch_live">Guarda dal vivo</string>
   <string name="download_button_label">Scarica</string>
+  <string name="series_episode_download_cd">Scarica %1$s</string>
   <string name="download_error_no_url">Impossibile risolvere l\'URL dello stream per il download</string>
   <string name="download_failed">Download non riuscito: %1$s</string>
   <string name="download_started">Download avviato</string>

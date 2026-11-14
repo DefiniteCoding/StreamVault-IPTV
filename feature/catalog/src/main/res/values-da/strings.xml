@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Udbyderen kræver opmærksomhed</string>
   <string name="dashboard_watch_live">Se live</string>
   <string name="download_button_label">Download</string>
+  <string name="series_episode_download_cd">Download %1$s</string>
   <string name="download_error_no_url">Kunne ikke finde stream-URL til download</string>
   <string name="download_failed">Download mislykkedes: %1$s</string>
   <string name="download_started">Download startet</string>

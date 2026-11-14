@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Furnizorul are nevoie de atenție</string>
   <string name="dashboard_watch_live">Urmărește în direct</string>
   <string name="download_button_label">Descărcați</string>
+  <string name="series_episode_download_cd">Descarcă %1$s</string>
   <string name="download_error_no_url">Nu s-a putut rezolva URL-ul fluxului pentru descărcare</string>
   <string name="download_failed">Descărcare eșuată: %1$s</string>
   <string name="download_started">Descărcare pornită</string>

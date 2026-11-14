@@ -130,6 +130,7 @@
   <string name="dashboard_warning_title">Dostawca wymaga uwagi</string>
   <string name="dashboard_watch_live">Oglądaj na żywo</string>
   <string name="download_button_label">Pobierz</string>
+  <string name="series_episode_download_cd">Pobierz %1$s</string>
   <string name="download_error_no_url">Nie udało się ustalić adresu URL strumienia do pobrania</string>
   <string name="download_failed">Pobieranie nie powiodło się: %1$s</string>
   <string name="download_started">Pobieranie rozpoczęte</string>
