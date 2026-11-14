@@ -1,5 +1,7 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
@@ -90,7 +92,9 @@ fun ContinueWatchingRow(
     onItemClick: (PlaybackHistory) -> Unit,
     modifier: Modifier = Modifier,
     menu: ContinueWatchingMenuActions? = null,
-    initialFocusModifier: Modifier = Modifier
+    initialFocusModifier: Modifier = Modifier,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset
 ) {
     if (items.isEmpty()) return
 
@@ -124,10 +128,12 @@ fun ContinueWatchingRow(
             )
         }
 
-        LazyRow(
+        FocusSafeLazyRow(
             modifier = Modifier.focusRestorer(),
             contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutter,
+            edgeGutterEnd = edgeGutter
         ) {
             items(
                 items = items,

@@ -25,4 +25,10 @@ data class AppSpacing(
     val safeHoriz: Dp = 56.dp
 )
 
+/**
+ * Horizontal padding the screen shell puts around every screen's content. Rows of focusable items pass it as their
+ * edge gutter so cards slide off the screen edge instead of being cut at this padding.
+ */
+val AppSpacing.shellHorizontalInset: Dp get() = md
+
 val LocalAppSpacing = staticCompositionLocalOf { AppSpacing() }

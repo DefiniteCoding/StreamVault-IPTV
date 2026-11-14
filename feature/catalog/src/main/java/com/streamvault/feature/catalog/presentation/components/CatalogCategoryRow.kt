@@ -1,5 +1,7 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,7 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PushPin
@@ -44,6 +46,8 @@ fun <T : Any> CategoryRow(
     contentTypeSelector: ((T) -> Any?)? = null,
     // Reported when focus lands on an item's wrapper, which also covers focus inside the card.
     onItemFocused: ((T) -> Unit)? = null,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset,
     itemContent: @Composable (T) -> Unit
 ) {
     val resolvedContentTypeSelector: (T) -> Any? = contentTypeSelector ?: { null }
@@ -90,10 +94,12 @@ fun <T : Any> CategoryRow(
         val posterUp = remember(hasActions) {
             if (hasActions) Modifier.focusProperties { up = seeAllFocusRequester } else Modifier
         }
-        LazyRow(
+        FocusSafeLazyRow(
             modifier = Modifier.focusRestorer(),
             contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutter,
+            edgeGutterEnd = edgeGutter
         ) {
             items(
                 items = items,

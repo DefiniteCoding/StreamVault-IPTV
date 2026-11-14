@@ -1,5 +1,8 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import androidx.compose.ui.unit.Dp
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -54,7 +57,9 @@ fun SavedCategoryShortcutsRow(
     selectedShortcutName: String? = null,
     onShortcutLongClick: ((String) -> Unit)? = null,
     onShortcutClick: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val shortcutWidth = if (screenWidth < 700.dp) 156.dp else 192.dp
@@ -108,10 +113,12 @@ fun SavedCategoryShortcutsRow(
             return
         }
 
-        LazyRow(
+        FocusSafeLazyRow(
             modifier = Modifier.focusRestorer(),
             contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutter,
+            edgeGutterEnd = edgeGutter
         ) {
             if (primaryShortcutLabel != null && onPrimaryShortcutClick != null) {
                 item(key = "primary_shortcut") {

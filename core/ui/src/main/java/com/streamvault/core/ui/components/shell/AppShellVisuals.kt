@@ -25,6 +25,7 @@ import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.GlassTier
 import com.streamvault.core.ui.design.glassSurface
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -256,8 +257,8 @@ fun CoreAppScreenScaffold(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(
-                                start = spacing.md,
-                                end = spacing.md,
+                                start = spacing.shellHorizontalInset,
+                                end = spacing.shellHorizontalInset,
                                 top = if (topBarOverlaysContent) 0.dp else contentInset,
                                 bottom = spacing.sm
                             )

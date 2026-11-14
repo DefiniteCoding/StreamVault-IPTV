@@ -1,5 +1,8 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.graphics.Color
 import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.selectableFocusBorder
@@ -9,7 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -59,7 +62,9 @@ fun ChipRowSection(
     chipHorizontalPadding: Int = 16,
     supportingTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
     supportingTextMaxLines: Int = Int.MAX_VALUE,
-    firstItemFocusRequester: FocusRequester? = null
+    firstItemFocusRequester: FocusRequester? = null,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset
 ) {
     if (chips.isEmpty()) return
     val sounds = rememberTvInteractionSounds()
@@ -86,9 +91,11 @@ fun ChipRowSection(
                 modifier = Modifier.padding(horizontal = headerHorizontalPadding.dp, vertical = 2.dp)
             )
         }
-        LazyRow(
+        FocusSafeLazyRow(
             contentPadding = contentPadding,
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = edgeGutter,
+            edgeGutterEnd = edgeGutter
         ) {
             itemsIndexed(
                 items = chips,

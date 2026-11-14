@@ -1,5 +1,8 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import androidx.compose.ui.unit.Dp
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -39,7 +42,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import com.streamvault.core.ui.components.AppChipGroup
@@ -154,13 +157,17 @@ fun VodFilterRow(
     onMoreClick: () -> Unit,
     trailingActions: List<VodActionChip>,
     modifier: Modifier = Modifier,
-    firstActionFocusRequester: FocusRequester? = null
+    firstActionFocusRequester: FocusRequester? = null,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset
 ) {
-    LazyRow(
+    FocusSafeLazyRow(
         modifier = modifier.fillMaxWidth().focusRestorer().suppressParentVerticalScroll(),
         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        edgeGutterStart = edgeGutter,
+        edgeGutterEnd = edgeGutter
     ) {
         itemsIndexed(leadingActions, key = { _, action -> action.key }) { index, action ->
             AppFilterChip(
