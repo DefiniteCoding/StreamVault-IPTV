@@ -25,6 +25,7 @@ class ChannelInfoOverlayActionsTest {
         audioVideoSyncEnabled = false,
         isCastConnected = false,
         pictureInPictureAvailable = true,
+        castAvailable = true,
         lastVisitedCategoryName = null,
         recordingStatus = null,
         canRestartProgram = false,
@@ -38,6 +39,13 @@ class ChannelInfoOverlayActionsTest {
         val items = channelInfoMoreItems(minimal.copy(pictureInPictureAvailable = false))
         assertThat(items).doesNotContain(ChannelInfoMoreItem.PICTURE_IN_PICTURE)
         assertThat(items).contains(ChannelInfoMoreItem.CAST)
+    }
+
+    @Test
+    fun `more menu omits cast when it is unavailable`() {
+        val items = channelInfoMoreItems(minimal.copy(castAvailable = false))
+        assertThat(items).doesNotContain(ChannelInfoMoreItem.CAST)
+        assertThat(items).contains(ChannelInfoMoreItem.PICTURE_IN_PICTURE)
     }
 
     @Test

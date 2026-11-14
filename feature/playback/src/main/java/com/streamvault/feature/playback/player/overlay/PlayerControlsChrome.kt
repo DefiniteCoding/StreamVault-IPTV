@@ -808,6 +808,7 @@ private fun PlayerLiveInfo(
 ) {
     // Android TV leaves the app for Home instead of shrinking it; PiP is an Android-device feature.
     val pictureInPictureAvailable = !rememberIsTelevisionDevice()
+    val castAvailable = pictureInPictureAvailable
     val showTimeshiftControls = timeshiftUiState.available && !isCastConnected
     val appTimeFormat = LocalUiTimeFormat.current
     val timeFormat = remember(appTimeFormat) { appTimeFormat.createTimeFormat() }
@@ -823,11 +824,13 @@ private fun PlayerLiveInfo(
             stringResource(if (isMuted) R.string.player_unmute else R.string.player_mute),
             onToggleMute
         ))
-        add(PlayerActionSpec(
-            "cast",
-            stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
-            if (isCastConnected) onStopCasting else onCast
-        ))
+        if (castAvailable) {
+            add(PlayerActionSpec(
+                "cast",
+                stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
+                if (isCastConnected) onStopCasting else onCast
+            ))
+        }
         add(PlayerActionSpec(
             "stop_playback_timer",
             sleepTimerActionLabel(
@@ -1065,6 +1068,7 @@ private fun PlayerVodInfo(
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isTelevisionDevice = rememberIsTelevisionDevice()
     val pictureInPictureAvailable = !isTelevisionDevice
+    val castAvailable = !isTelevisionDevice
     val compactControls = screenWidth < 700.dp
     val tabletControls = !isTelevisionDevice && screenWidth >= 700.dp && screenWidth < 1280.dp
     val transportButtonSize = when {
@@ -1152,11 +1156,13 @@ private fun PlayerVodInfo(
             ),
             onOpenIdleStandbyTimer
         ))
-        add(PlayerActionSpec(
-            "cast",
-            stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
-            if (isCastConnected) onStopCasting else onCast
-        ))
+        if (castAvailable) {
+            add(PlayerActionSpec(
+                "cast",
+                stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
+                if (isCastConnected) onStopCasting else onCast
+            ))
+        }
         if (pictureInPictureAvailable) {
             add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
         }

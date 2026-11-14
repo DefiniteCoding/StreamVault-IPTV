@@ -33,6 +33,7 @@ internal data class ChannelInfoActionInputs(
     val audioVideoSyncEnabled: Boolean,
     val isCastConnected: Boolean,
     val pictureInPictureAvailable: Boolean,
+    val castAvailable: Boolean,
     val lastVisitedCategoryName: String?,
     val recordingStatus: RecordingStatus?,
     val canRestartProgram: Boolean,
@@ -102,7 +103,7 @@ internal fun channelInfoMoreItems(inputs: ChannelInfoActionInputs): List<Channel
     if (inputs.audioVideoSyncEnabled && !inputs.isCastConnected) add(ChannelInfoMoreItem.AV_SYNC)
     add(ChannelInfoMoreItem.MULTIVIEW)
     if (inputs.pictureInPictureAvailable) add(ChannelInfoMoreItem.PICTURE_IN_PICTURE)
-    add(ChannelInfoMoreItem.CAST)
+    if (inputs.castAvailable) add(ChannelInfoMoreItem.CAST)
     if (!inputs.lastVisitedCategoryName.isNullOrBlank()) add(ChannelInfoMoreItem.LAST_GROUP)
     add(ChannelInfoMoreItem.STATS)
 }

@@ -77,7 +77,9 @@ internal fun VodPlaybackSettingsSheet(
 ) {
     val closeLabel = stringResource(R.string.player_close_playback_settings)
     val firstActionFocusRequester = remember { FocusRequester() }
-    val pictureInPictureAvailable = !rememberIsTelevisionDevice()
+    val isTelevisionDevice = rememberIsTelevisionDevice()
+    val pictureInPictureAvailable = !isTelevisionDevice
+    val castAvailable = !isTelevisionDevice
     val actions = buildList {
         if (state.showSubtitleAction) add(VodSettingsAction("subtitles", stringResource(R.string.player_subs), onClick = onOpenSubtitleTracks))
         if (state.showAudioAction) add(VodSettingsAction("audio", stringResource(R.string.player_audio), onClick = onOpenAudioTracks))
@@ -95,13 +97,15 @@ internal fun VodPlaybackSettingsSheet(
             add(VodSettingsAction("external", stringResource(R.string.player_open_in_external_player), onClick = onOpenExternalPlayer))
         }
         add(VodSettingsAction("split_screen", stringResource(R.string.multiview_nav), onClick = onOpenSplitScreen))
-        add(
-            VodSettingsAction(
-                id = "cast",
-                label = stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
-                onClick = if (isCastConnected) onStopCasting else onCast
+        if (castAvailable) {
+            add(
+                VodSettingsAction(
+                    id = "cast",
+                    label = stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
+                    onClick = if (isCastConnected) onStopCasting else onCast
+                )
             )
-        )
+        }
         if (state.showAudioVideoSyncAction) {
             add(VodSettingsAction("av_sync", stringResource(R.string.player_av_sync_short), onClick = onOpenAudioVideoSync))
         }
