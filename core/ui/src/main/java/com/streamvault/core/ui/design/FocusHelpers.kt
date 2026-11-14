@@ -15,6 +15,19 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -142,3 +155,56 @@ fun FocusRestoreHost(
 
     content()
 }
+
+/**
+ * Room a focused item needs outside its own bounds: the 3dp focus ring is drawn outside the item and the focus
+ * scale (1.035) grows it further. A scrolling row clips along its scroll axis, so the first and last item lose
+ * that overflow unless the row has padding for it.
+ */
+val FocusOverflowPadding = 8.dp
+
+/**
+ * A [LazyRow] whose first and last item can show their focus ring and scale without being clipped, with no visible
+ * change in layout: the overflow room is added inside the row and the row bleeds out by the same amount, so items
+ * still line up with [contentPadding] as if the row had no extra room. Use it for every row of focusable items.
+ */
+@Composable
+fun FocusSafeLazyRow(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalAlignment: Alignment.Vertical = Alignment.Top,
+    content: LazyListScope.() -> Unit
+) {
+    val direction = LocalLayoutDirection.current
+    LazyRow(
+        modifier = modifier.bleedHorizontally(FocusOverflowPadding),
+        state = state,
+        contentPadding = PaddingValues(
+            start = contentPadding.calculateStart(direction) + FocusOverflowPadding,
+            top = contentPadding.calculateTopPadding(),
+            end = contentPadding.calculateEnd(direction) + FocusOverflowPadding,
+            bottom = contentPadding.calculateBottomPadding()
+        ),
+        horizontalArrangement = horizontalArrangement,
+        verticalAlignment = verticalAlignment,
+        content = content
+    )
+}
+
+private fun Modifier.bleedHorizontally(amount: Dp): Modifier = layout { measurable, constraints ->
+    if (constraints.maxWidth == Constraints.Infinity) {
+        val placeable = measurable.measure(constraints)
+        return@layout layout(placeable.width, placeable.height) { placeable.place(0, 0) }
+    }
+    val extra = amount.roundToPx()
+    val placeable = measurable.measure(constraints.copy(maxWidth = constraints.maxWidth + extra * 2))
+    layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(-extra, 0) }
+}
+
+private fun PaddingValues.calculateStart(direction: LayoutDirection): Dp =
+    if (direction == LayoutDirection.Ltr) calculateLeftPadding(direction) else calculateRightPadding(direction)
+
+private fun PaddingValues.calculateEnd(direction: LayoutDirection): Dp =
+    if (direction == LayoutDirection.Ltr) calculateRightPadding(direction) else calculateLeftPadding(direction)
