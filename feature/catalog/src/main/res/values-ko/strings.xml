@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">이어서 재생</string>
   <string name="continue_watching_remove_failed">이 항목을 삭제하지 못했습니다. 다시 시도하세요.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">영화</string>
   <string name="continue_watching_time_left_h">%1$d시간 남음</string>
   <string name="continue_watching_time_left_hm">%1$d시간 %2$d분 남음</string>
   <string name="continue_watching_time_left_m">%1$d분 남음</string>

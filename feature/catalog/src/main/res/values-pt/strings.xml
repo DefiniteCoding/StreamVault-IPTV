@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Retomar</string>
   <string name="continue_watching_remove_failed">Não foi possível remover este item. Tente novamente.</string>
   <string name="continue_watching_season_episode">T%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Filme</string>
   <string name="continue_watching_time_left_h">Faltam %1$d h</string>
   <string name="continue_watching_time_left_hm">Faltam %1$d h %2$d min</string>
   <string name="continue_watching_time_left_m">Faltam %1$d min</string>

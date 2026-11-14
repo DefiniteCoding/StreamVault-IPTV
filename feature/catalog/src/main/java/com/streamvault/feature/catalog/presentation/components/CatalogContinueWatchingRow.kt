@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Color
@@ -34,8 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
-import com.streamvault.core.ui.components.shell.BadgeTone
-import com.streamvault.core.ui.components.shell.EpisodeBadge
 import com.streamvault.core.ui.design.LocalAppSpacing
 import com.streamvault.core.ui.design.browse.SurfaceElevated
 import com.streamvault.core.ui.design.browse.TextPrimary
@@ -49,7 +46,11 @@ import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMen
 
 private const val MillisPerMinute = 60_000L
 private const val MinutesPerHour = 60
-private const val CaptionScrimAlpha = 0.6f
+private const val ChipScrimAlpha = 0.6f
+private val CardWidth = 208.dp
+private val ArtHeight = 117.dp
+// Two caption lines (13sp title, 12sp meta) plus padding.
+private val CaptionHeight = 44.dp
 
 /**
  * Whole minutes left in a title, rounded up so a nearly finished item reads "1m left", not "0m left".
@@ -78,7 +79,7 @@ class ContinueWatchingMenuActions(
 
 /**
  * Shelf of unfinished titles. When [menu] is set, a long press on a card opens the actions menu; the row never
- * edits [items] itself.
+ * edits [items] itself. [initialFocusModifier] goes on the first card so the screen can pick it as its initial focus.
  */
 @Composable
 fun ContinueWatchingRow(
@@ -86,7 +87,8 @@ fun ContinueWatchingRow(
     items: List<PlaybackHistory>,
     onItemClick: (PlaybackHistory) -> Unit,
     modifier: Modifier = Modifier,
-    menu: ContinueWatchingMenuActions? = null
+    menu: ContinueWatchingMenuActions? = null,
+    initialFocusModifier: Modifier = Modifier
 ) {
     if (items.isEmpty()) return
 
@@ -131,6 +133,7 @@ fun ContinueWatchingRow(
             ) { history ->
                 ContinueWatchingCard(
                     history = history,
+                    modifier = if (history.id == items.first().id) initialFocusModifier else Modifier,
                     onClick = { onItemClick(history) },
                     onLongClick = menu?.let { { menuTarget = history } },
                     focusRequester = remember(history.id) {
@@ -192,6 +195,7 @@ private fun continueWatchingMenuEntries(
 @Composable
 private fun ContinueWatchingCard(
     history: PlaybackHistory,
+    modifier: Modifier,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)?,
     focusRequester: FocusRequester
@@ -206,93 +210,106 @@ private fun ContinueWatchingCard(
 
     FocusableCard(
         onClick = onClick,
+        modifier = modifier,
         onLongClick = onLongClick,
-        width = 208.dp,
-        height = 117.dp,
+        width = CardWidth,
+        height = ArtHeight + CaptionHeight,
         focusRequester = focusRequester
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(SurfaceElevated),
-            contentAlignment = Alignment.Center
-        ) {
-            // Fallback always visible; covered by AsyncImage on successful load
-            Text(
-                text = when (history.contentType) {
-                    ContentType.LIVE -> stringResource(R.string.card_live_badge)
-                    ContentType.MOVIE,
-                    ContentType.VOD -> stringResource(R.string.nav_vod)
-                    ContentType.SERIES, ContentType.SERIES_EPISODE -> stringResource(R.string.nav_series)
-                },
-                style = MaterialTheme.typography.titleLarge,
-                color = TextSecondary
-            )
-            if (!history.posterUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = rememberCrossfadeImageModel(history.posterUrl),
-                    contentDescription = history.title,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(10.dp)),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        }
-
-        val season = history.seasonNumber
-        val episode = history.episodeNumber
-        if (history.contentType == ContentType.SERIES_EPISODE && season != null && episode != null) {
-            EpisodeBadge(
-                text = stringResource(R.string.continue_watching_season_episode, season, episode),
-                contentDescription = stringResource(R.string.favorites_content_type_episode_format, season, episode),
-                modifier = Modifier.align(Alignment.TopStart).padding(spacing.xs),
-                tone = BadgeTone.OverArtwork
-            )
-        }
-
-        // Rules 2 and 9: white ink on a black scrim of at least 55%, limited to the caption region.
-        Column(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .fillMaxWidth()
-                .background(Color.Black.copy(alpha = CaptionScrimAlpha))
-        ) {
-            Column(
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = spacing.sm, vertical = spacing.xs)
+                    .height(ArtHeight)
+                    .background(SurfaceElevated),
+                contentAlignment = Alignment.Center
             ) {
+                // Fallback always visible; covered by AsyncImage on successful load
                 Text(
-                    text = history.title,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = Color.White,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                    text = kindLabel(history),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = TextSecondary
                 )
+                if (!history.posterUrl.isNullOrBlank()) {
+                    AsyncImage(
+                        model = rememberCrossfadeImageModel(history.posterUrl),
+                        contentDescription = history.title,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                // Rules 2 and 9: white ink on a black scrim of at least 55%, limited to the chip.
                 if (minutesLeft != null) {
                     Text(
                         text = timeLeftLabel(minutesLeft),
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.labelMedium,
                         color = Color.White,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(end = spacing.xs, bottom = spacing.sm)
+                            .background(Color.Black.copy(alpha = ChipScrimAlpha), RoundedCornerShape(4.dp))
+                            .padding(horizontal = spacing.xs, vertical = spacing.xxs)
+                    )
+                }
+                if (progress > 0f) {
+                    LinearProgressIndicator(
+                        progress = { progress },
+                        modifier = Modifier
+                            .align(Alignment.BottomStart)
+                            .fillMaxWidth()
+                            .height(4.dp),
+                        color = Color.White,
+                        trackColor = Color.Black.copy(alpha = ChipScrimAlpha),
+                        // The default stop dot would draw a stray white mark at the end of the track.
+                        drawStopIndicator = {}
                     )
                 }
             }
-            if (progress > 0f) {
-                LinearProgressIndicator(
-                    progress = { progress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(4.dp),
-                    color = Color.White,
-                    trackColor = Color.Black.copy(alpha = CaptionScrimAlpha),
-                    // The default stop dot would draw a stray white mark at the end of the track.
-                    drawStopIndicator = {}
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = spacing.xs, vertical = spacing.xs)
+            ) {
+                Text(
+                    text = history.title,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextPrimary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = metaLabel(history),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = TextSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun kindLabel(history: PlaybackHistory): String = when (history.contentType) {
+    ContentType.LIVE -> stringResource(R.string.card_live_badge)
+    ContentType.MOVIE,
+    ContentType.VOD -> stringResource(R.string.nav_vod)
+    ContentType.SERIES, ContentType.SERIES_EPISODE -> stringResource(R.string.nav_series)
+}
+
+@Composable
+private fun metaLabel(history: PlaybackHistory): String {
+    val season = history.seasonNumber
+    val episode = history.episodeNumber
+    return when {
+        history.contentType == ContentType.SERIES_EPISODE && season != null && episode != null ->
+            stringResource(R.string.continue_watching_season_episode, season, episode)
+        history.contentType == ContentType.MOVIE || history.contentType == ContentType.VOD ->
+            stringResource(R.string.continue_watching_kind_movie)
+        history.contentType == ContentType.LIVE -> stringResource(R.string.card_live_badge)
+        else -> stringResource(R.string.nav_series)
     }
 }
 

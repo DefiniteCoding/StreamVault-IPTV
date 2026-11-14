@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Nastavi</string>
   <string name="continue_watching_remove_failed">Stavku nije moguće ukloniti. Pokušajte ponovno.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Preostalo %1$d h</string>
   <string name="continue_watching_time_left_hm">Preostalo %1$d h %2$d min</string>
   <string name="continue_watching_time_left_m">Preostalo %1$d min</string>

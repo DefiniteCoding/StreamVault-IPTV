@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Pokračovať</string>
   <string name="continue_watching_remove_failed">Položku sa nepodarilo odstrániť. Skúste to znova.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Zostáva %1$d h</string>
   <string name="continue_watching_time_left_hm">Zostáva %1$d h %2$d min</string>
   <string name="continue_watching_time_left_m">Zostáva %1$d min</string>

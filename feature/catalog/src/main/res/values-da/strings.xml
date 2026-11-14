@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Genoptag</string>
   <string name="continue_watching_remove_failed">Kunne ikke fjerne elementet. Prøv igen.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">%1$d t tilbage</string>
   <string name="continue_watching_time_left_hm">%1$d t %2$d min tilbage</string>
   <string name="continue_watching_time_left_m">%1$d min tilbage</string>

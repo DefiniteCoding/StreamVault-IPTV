@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Lanjutkan</string>
   <string name="continue_watching_remove_failed">Tidak dapat menghapus item ini. Coba lagi.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Sisa %1$d j</string>
   <string name="continue_watching_time_left_hm">Sisa %1$d j %2$d mnt</string>
   <string name="continue_watching_time_left_m">Sisa %1$d mnt</string>

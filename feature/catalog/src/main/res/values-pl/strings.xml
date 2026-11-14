@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Wznów</string>
   <string name="continue_watching_remove_failed">Nie udało się usunąć tej pozycji. Spróbuj ponownie.</string>
   <string name="continue_watching_season_episode">S%1$dE%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Zostało %1$d godz.</string>
   <string name="continue_watching_time_left_hm">Zostało %1$d godz. %2$d min</string>
   <string name="continue_watching_time_left_m">Zostało %1$d min</string>

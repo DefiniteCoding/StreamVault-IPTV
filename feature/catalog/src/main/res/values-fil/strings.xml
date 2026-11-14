@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Ituloy</string>
   <string name="continue_watching_remove_failed">Hindi naalis ang item na ito. Subukan muli.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Pelikula</string>
   <string name="continue_watching_time_left_h">%1$dh ang natitira</string>
   <string name="continue_watching_time_left_hm">%1$dh %2$dm ang natitira</string>
   <string name="continue_watching_time_left_m">%1$dm ang natitira</string>

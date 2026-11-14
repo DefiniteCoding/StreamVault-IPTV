@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Продолжить</string>
   <string name="continue_watching_remove_failed">Не удалось убрать элемент. Повторите попытку.</string>
   <string name="continue_watching_season_episode">С%1$d Э%2$d</string>
+  <string name="continue_watching_kind_movie">Фильм</string>
   <string name="continue_watching_time_left_h">Осталось %1$d ч</string>
   <string name="continue_watching_time_left_hm">Осталось %1$d ч %2$d мин</string>
   <string name="continue_watching_time_left_m">Осталось %1$d мин</string>

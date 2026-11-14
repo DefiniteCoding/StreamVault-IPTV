@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Συνέχεια</string>
   <string name="continue_watching_remove_failed">Δεν ήταν δυνατή η κατάργηση. Δοκιμάστε ξανά.</string>
   <string name="continue_watching_season_episode">Σ%1$d Ε%2$d</string>
+  <string name="continue_watching_kind_movie">Ταινία</string>
   <string name="continue_watching_time_left_h">Απομένουν %1$d ώ.</string>
   <string name="continue_watching_time_left_hm">Απομένουν %1$d ώ. %2$d λ.</string>
   <string name="continue_watching_time_left_m">Απομένουν %1$d λ.</string>

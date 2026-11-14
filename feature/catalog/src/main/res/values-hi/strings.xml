@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">फिर से शुरू करें</string>
   <string name="continue_watching_remove_failed">यह आइटम हटाया नहीं जा सका। फिर से कोशिश करें।</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">फ़िल्म</string>
   <string name="continue_watching_time_left_h">%1$d घं शेष</string>
   <string name="continue_watching_time_left_hm">%1$d घं %2$d मि शेष</string>
   <string name="continue_watching_time_left_m">%1$d मि शेष</string>

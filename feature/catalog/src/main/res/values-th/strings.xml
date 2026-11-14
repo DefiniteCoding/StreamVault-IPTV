@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">เล่นต่อ</string>
   <string name="continue_watching_remove_failed">ไม่สามารถนำรายการนี้ออกได้ โปรดลองอีกครั้ง</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">ภาพยนตร์</string>
   <string name="continue_watching_time_left_h">เหลืออีก %1$d ชม.</string>
   <string name="continue_watching_time_left_hm">เหลืออีก %1$d ชม. %2$d นาที</string>
   <string name="continue_watching_time_left_m">เหลืออีก %1$d นาที</string>

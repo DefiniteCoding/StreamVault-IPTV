@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Fortsetzen</string>
   <string name="continue_watching_remove_failed">Der Eintrag konnte nicht entfernt werden. Versuchen Sie es erneut.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Noch %1$d Std.</string>
   <string name="continue_watching_time_left_hm">Noch %1$d Std. %2$d Min.</string>
   <string name="continue_watching_time_left_m">Noch %1$d Min.</string>

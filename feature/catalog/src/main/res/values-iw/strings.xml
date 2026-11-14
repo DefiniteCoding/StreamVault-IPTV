@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">המשך</string>
   <string name="continue_watching_remove_failed">לא ניתן היה להסיר פריט זה. נסו שוב.</string>
   <string name="continue_watching_season_episode">עונה %1$d פרק %2$d</string>
+  <string name="continue_watching_kind_movie">סרט</string>
   <string name="continue_watching_time_left_h">נותרו %1$d שע׳</string>
   <string name="continue_watching_time_left_hm">נותרו %1$d שע׳ %2$d דק׳</string>
   <string name="continue_watching_time_left_m">נותרו %1$d דק׳</string>

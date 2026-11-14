@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Reanudar</string>
   <string name="continue_watching_remove_failed">No se pudo quitar este elemento. Inténtalo de nuevo.</string>
   <string name="continue_watching_season_episode">T%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Película</string>
   <string name="continue_watching_time_left_h">Quedan %1$d h</string>
   <string name="continue_watching_time_left_hm">Quedan %1$d h %2$d min</string>
   <string name="continue_watching_time_left_m">Quedan %1$d min</string>

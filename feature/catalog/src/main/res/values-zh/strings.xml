@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">继续</string>
   <string name="continue_watching_remove_failed">无法移除此项目，请重试。</string>
   <string name="continue_watching_season_episode">第%1$d季 第%2$d集</string>
+  <string name="continue_watching_kind_movie">电影</string>
   <string name="continue_watching_time_left_h">还剩%1$d小时</string>
   <string name="continue_watching_time_left_hm">还剩%1$d小时%2$d分钟</string>
   <string name="continue_watching_time_left_m">还剩%1$d分钟</string>

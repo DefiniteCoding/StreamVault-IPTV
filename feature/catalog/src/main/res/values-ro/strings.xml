@@ -64,6 +64,7 @@
   <string name="continue_watching_menu_resume">Reluare</string>
   <string name="continue_watching_remove_failed">Elementul nu a putut fi eliminat. Încercați din nou.</string>
   <string name="continue_watching_season_episode">S%1$d E%2$d</string>
+  <string name="continue_watching_kind_movie">Film</string>
   <string name="continue_watching_time_left_h">Au rămas %1$d h</string>
   <string name="continue_watching_time_left_hm">Au rămas %1$d h %2$d min</string>
   <string name="continue_watching_time_left_m">Au rămas %1$d min</string>
