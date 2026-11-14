@@ -1,5 +1,8 @@
 package com.streamvault.feature.catalog.presentation.favorites
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -804,9 +807,11 @@ private fun SavedHistoryRow(
             style = MaterialTheme.typography.bodySmall,
             color = OnSurfaceDim
         )
-        androidx.compose.foundation.lazy.LazyRow(
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp)
+            contentPadding = PaddingValues(vertical = 4.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(items, key = { "${it.history.contentType}:${it.history.contentId}" }) { item ->
                 TvClickableSurface(
@@ -868,9 +873,11 @@ private fun SavedGroupManagementRow(
             style = MaterialTheme.typography.bodySmall,
             color = OnSurfaceDim
         )
-        androidx.compose.foundation.lazy.LazyRow(
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp)
+            contentPadding = PaddingValues(vertical = 4.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(groups, key = { "group-manage:${it.group.id}" }) { group ->
                 TvClickableSurface(
