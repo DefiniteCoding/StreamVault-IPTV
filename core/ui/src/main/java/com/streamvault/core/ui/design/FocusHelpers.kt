@@ -22,6 +22,14 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
@@ -163,10 +171,21 @@ fun FocusRestoreHost(
  */
 val FocusOverflowPadding = 8.dp
 
+/** Width of the fade that tells the viewer a row continues past the screen edge. */
+val MoreContentFadeWidth = 56.dp
+
 /**
  * A [LazyRow] whose first and last item can show their focus ring and scale without being clipped, with no visible
  * change in layout: the overflow room is added inside the row and the row bleeds out by the same amount, so items
  * still line up with [contentPadding] as if the row had no extra room. Use it for every row of focusable items.
+ *
+ * A row inside a padded screen would clip its cards at the padding, a visible cut well short of the screen edge.
+ * Pass the screen's padding as [edgeGutterStart] and [edgeGutterEnd] and the row grows into it: cards slide off the
+ * screen edge, the first card still lines up with the padding. Leave a side at 0 when the row starts inside a
+ * column (for example next to a poster) and must not bleed on that side.
+ *
+ * While more items exist past a side, the row fades out over [fadeWidth] at that edge, so a cut-off card reads as
+ * "keep scrolling" and not as a layout bug. The fade is an offscreen mask, used only while the row can scroll.
  */
 @Composable
 fun FocusSafeLazyRow(
@@ -175,17 +194,24 @@ fun FocusSafeLazyRow(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalAlignment: Alignment.Vertical = Alignment.Top,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp,
+    fadeWidth: Dp = MoreContentFadeWidth,
     content: LazyListScope.() -> Unit
 ) {
     val direction = LocalLayoutDirection.current
+    val bleedStart = FocusOverflowPadding + edgeGutterStart
+    val bleedEnd = FocusOverflowPadding + edgeGutterEnd
     LazyRow(
-        modifier = modifier.bleedHorizontally(FocusOverflowPadding),
+        modifier = modifier
+            .bleed(start = bleedStart, end = bleedEnd, vertical = FocusOverflowPadding)
+            .fadeWhenMoreContent(state, edgeInset = FocusOverflowPadding, fadeWidth = fadeWidth),
         state = state,
         contentPadding = PaddingValues(
-            start = contentPadding.calculateStart(direction) + FocusOverflowPadding,
-            top = contentPadding.calculateTopPadding(),
-            end = contentPadding.calculateEnd(direction) + FocusOverflowPadding,
-            bottom = contentPadding.calculateBottomPadding()
+            start = contentPadding.calculateStart(direction) + bleedStart,
+            top = contentPadding.calculateTopPadding() + FocusOverflowPadding,
+            end = contentPadding.calculateEnd(direction) + bleedEnd,
+            bottom = contentPadding.calculateBottomPadding() + FocusOverflowPadding
         ),
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
@@ -193,15 +219,64 @@ fun FocusSafeLazyRow(
     )
 }
 
-private fun Modifier.bleedHorizontally(amount: Dp): Modifier = layout { measurable, constraints ->
+/**
+ * Grows the node by [start], [end] and [vertical] on each side while reporting its original size, so the room
+ * is only used for drawing. The vertical room also keeps the focus ring inside the offscreen layer of
+ * [fadeWhenMoreContent], which clips to its bounds.
+ */
+private fun Modifier.bleed(start: Dp, end: Dp, vertical: Dp): Modifier = layout { measurable, constraints ->
     if (constraints.maxWidth == Constraints.Infinity) {
         val placeable = measurable.measure(constraints)
         return@layout layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
-    val extra = amount.roundToPx()
-    val placeable = measurable.measure(constraints.copy(maxWidth = constraints.maxWidth + extra * 2))
-    layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(-extra, 0) }
+    val extraStart = start.roundToPx()
+    val extraEnd = end.roundToPx()
+    val extraVertical = vertical.roundToPx()
+    val placeable = measurable.measure(constraints.copy(maxWidth = constraints.maxWidth + extraStart + extraEnd))
+    val height = (placeable.height - extraVertical * 2).coerceAtLeast(0)
+    layout(constraints.maxWidth, height) { placeable.placeRelative(-extraStart, -extraVertical) }
 }
+
+/**
+ * Masks the row to transparent over [fadeWidth] at each edge that has more items behind it. [edgeInset] is the
+ * part of the row outside the screen (the bleed for ring overflow). State is read in the draw phase, so scrolling
+ * never recomposes. Without more content nothing is masked and the layer is not offscreen.
+ */
+private fun Modifier.fadeWhenMoreContent(state: LazyListState, edgeInset: Dp, fadeWidth: Dp): Modifier = this
+    .graphicsLayer {
+        compositingStrategy =
+            if (state.canScrollBackward || state.canScrollForward) CompositingStrategy.Offscreen
+            else CompositingStrategy.Auto
+    }
+    .drawWithContent {
+        drawContent()
+        val isLtr = layoutDirection == LayoutDirection.Ltr
+        val fadeLeft = if (isLtr) state.canScrollBackward else state.canScrollForward
+        val fadeRight = if (isLtr) state.canScrollForward else state.canScrollBackward
+        val inset = edgeInset.toPx()
+        val width = fadeWidth.toPx()
+        if (fadeLeft) {
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    0f to Color.Transparent, 1f to Color.Black,
+                    startX = inset, endX = inset + width
+                ),
+                size = Size(inset + width, size.height),
+                blendMode = BlendMode.DstIn
+            )
+        }
+        if (fadeRight) {
+            drawRect(
+                brush = Brush.horizontalGradient(
+                    0f to Color.Black, 1f to Color.Transparent,
+                    startX = size.width - inset - width, endX = size.width - inset
+                ),
+                topLeft = Offset(size.width - inset - width, 0f),
+                size = Size(inset + width, size.height),
+                blendMode = BlendMode.DstIn
+            )
+        }
+    }
 
 private fun PaddingValues.calculateStart(direction: LayoutDirection): Dp =
     if (direction == LayoutDirection.Ltr) calculateLeftPadding(direction) else calculateRightPadding(direction)
