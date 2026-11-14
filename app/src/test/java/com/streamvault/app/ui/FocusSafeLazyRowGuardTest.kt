@@ -20,13 +20,7 @@ class FocusSafeLazyRowGuardTest {
     private val pendingMigration = mapOf(
         "PlayerAuxiliaryOverlays.kt" to 1,
         "PlayerChannelInfoOverlay.kt" to 2,
-        "PlayerControlsChrome.kt" to 1,
-        "StremioCatalogBrowseContent.kt" to 2,
-        "StremioDirectoryContent.kt" to 1,
-        "StremioGuideContent.kt" to 2,
-        "StremioItemDetailContent.kt" to 3,
-        "StremioLibraryContent.kt" to 1,
-        "StremioViewingContent.kt" to 2
+        "PlayerControlsChrome.kt" to 1
     )
 
     @Test

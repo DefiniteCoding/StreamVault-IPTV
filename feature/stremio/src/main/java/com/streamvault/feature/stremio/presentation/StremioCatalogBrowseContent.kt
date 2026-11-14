@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -247,8 +249,14 @@ internal fun StremioCatalogBrowseContent(
                 Icon(Icons.Default.Refresh, stringResource(R.string.stremio_refresh))
             }
         }
+        // The shell pads the screen; rows grow into it so buttons slide off the screen edge.
+        val shellInset = LocalAppSpacing.current.shellHorizontalInset
         if (selected.customExtras.isNotEmpty()) {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FocusSafeLazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                edgeGutterStart = shellInset,
+                edgeGutterEnd = shellInset
+            ) {
                 itemsIndexed(selected.customExtras, key = { _, extra -> extra.name }) { _, extra ->
                     TvButton(
                         onClick = { editingExtra = extra.name },
@@ -263,10 +271,12 @@ internal fun StremioCatalogBrowseContent(
                 }
             }
         }
-        LazyRow(
+        FocusSafeLazyRow(
             modifier = Modifier.fillMaxWidth().height(28.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 2.dp)
+            contentPadding = PaddingValues(horizontal = 2.dp),
+            edgeGutterStart = shellInset,
+            edgeGutterEnd = shellInset
         ) {
             itemsIndexed(state.rows, key = { _, row -> "${row.key.addonId}:${row.key.catalogKey}" }) { _, row ->
                 val active = row.key == selected.key

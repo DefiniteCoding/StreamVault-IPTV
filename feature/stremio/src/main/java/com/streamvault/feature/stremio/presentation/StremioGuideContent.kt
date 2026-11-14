@@ -2,7 +2,9 @@ package com.streamvault.feature.stremio.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
@@ -30,6 +32,8 @@ internal fun StremioGuideContent(
     viewModel: StremioGuideViewModel = hiltViewModel()
 ) {
     BackHandler(onBack = onBack)
+    // The shell pads the screen; rows grow into it so buttons slide off the screen edge.
+    val shellInset = LocalAppSpacing.current.shellHorizontalInset
     val state by viewModel.state.collectAsStateWithLifecycle()
     var pendingUnlock by remember { mutableStateOf<String?>(null) }
     var pinFailed by remember { mutableStateOf(false) }
@@ -45,7 +49,11 @@ internal fun StremioGuideContent(
             TvButton(onClick = { viewModel.setDate(LocalDate.now()) }) { Text(stringResource(R.string.stremio_today)) }
             TvButton(onClick = viewModel::load) { Text(stringResource(R.string.stremio_refresh)) }
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = shellInset,
+            edgeGutterEnd = shellInset
+        ) {
             items(state.catalogs, key = { it.key }) { catalog ->
                 TvButton(onClick = { if (catalog.locked) pendingUnlock = catalog.key else viewModel.select(catalog.key) }) {
                     Text(listOfNotNull(catalog.catalog.name ?: catalog.catalog.id, catalog.addonName).joinToString(" · "))
@@ -62,7 +70,11 @@ internal fun StremioGuideContent(
                     TvButton(onClick = { addonId?.let { onOpenItem(it, channel.toPreview()) } }) {
                         Text(channel.name)
                     }
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    FocusSafeLazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        edgeGutterStart = shellInset,
+                        edgeGutterEnd = shellInset
+                    ) {
                         items(channel.videos, key = { "${it.id}:${it.startTime}" }) { programme ->
                             val start = Instant.parse(programme.startTime).atZone(zone)
                             val end = Instant.parse(programme.endTime).atZone(zone)

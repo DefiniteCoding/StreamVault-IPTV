@@ -1,7 +1,9 @@
 package com.streamvault.feature.stremio.presentation
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.material3.Switch
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,6 +25,8 @@ internal fun StremioLibraryContent(onBack: () -> Unit, onOpenItem: (Long, Stremi
     viewModel: StremioLibraryViewModel = hiltViewModel()
 ) {
     BackHandler(onBack = onBack)
+    // The shell pads the screen; rows grow into it so buttons slide off the screen edge.
+    val shellInset = LocalAppSpacing.current.shellHorizontalInset
     val rows by viewModel.state.collectAsStateWithLifecycle()
     val loading by viewModel.loading.collectAsStateWithLifecycle()
     var sort by remember { mutableIntStateOf(0) }
@@ -46,7 +50,11 @@ internal fun StremioLibraryContent(onBack: () -> Unit, onOpenItem: (Long, Stremi
         if(!notificationsGranted) TvButton(onClick={ permission.launch(android.Manifest.permission.POST_NOTIFICATIONS) }) {
             Text(stringResource(R.string.stremio_notifications))
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = shellInset,
+            edgeGutterEnd = shellInset
+        ) {
             items(listOf(R.string.stremio_last_watched, R.string.stremio_sort_title, R.string.stremio_status_watched, R.string.stremio_status_unwatched).withIndex().toList()) { (index,key) ->
                 TvButton(onClick = { sort = index }) { Text(stringResource(key)) }
             }

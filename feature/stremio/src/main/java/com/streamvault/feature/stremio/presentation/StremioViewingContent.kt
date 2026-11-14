@@ -4,7 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.*
@@ -29,6 +31,9 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+// Padding around the home shelf; the shelf row grows into it plus the shell inset so cards slide off the screen edge.
+private val HomeShelfPadding = 14.dp
+
 /** App composition injects this shelf without coupling Catalog to Stremio. */
 @Composable
 fun StremioHomeShelf(onOpen: (Long, StremioPlaybackHistory) -> Unit,
@@ -42,7 +47,7 @@ fun StremioHomeShelf(onOpen: (Long, StremioPlaybackHistory) -> Unit,
             footer = { PremiumDialogFooterButton(label = stringResource(R.string.stremio_cancel), onClick = { showAll = false }) })
     }
     if (state.history.isEmpty() && state.watching.isEmpty() && state.releases.isEmpty()) return false
-    Column(Modifier.fillMaxWidth().padding(14.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.fillMaxWidth().padding(HomeShelfPadding), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(if (state.watching.isEmpty()) R.string.stremio_recently_watched else R.string.stremio_continue_watching))
             TvButton(onClick = { showAll = true }) { Text(stringResource(R.string.stremio_recently_watched)) }
@@ -60,7 +65,7 @@ internal fun StremioViewingContent(onBack: () -> Unit, onOpen: (Long, StremioPla
     val state by viewModel.state.collectAsStateWithLifecycle()
     var tab by remember { mutableIntStateOf(initialTab) }
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             item { TvButton(onClick = onBack) { Text(stringResource(R.string.stremio_browse)) } }
             items(listOf(R.string.stremio_continue_watching, R.string.stremio_recently_watched, R.string.stremio_release_calendar).withIndex().toList()) { (index,label) ->
                 TvButton(onClick = { tab = index }) { Text(stringResource(label)) }
@@ -96,7 +101,12 @@ internal fun StremioViewingContent(onBack: () -> Unit, onOpen: (Long, StremioPla
 @Composable
 private fun ViewingRow(rows: List<ViewingCard>, viewModel: StremioViewingViewModel,
     onOpen: (Long, StremioPlaybackHistory) -> Unit, onDetails: (Long, StremioMetaPreview) -> Unit) {
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    val gutter = HomeShelfPadding + LocalAppSpacing.current.shellHorizontalInset
+    FocusSafeLazyRow(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        edgeGutterStart = gutter,
+        edgeGutterEnd = gutter
+    ) {
         items(rows, key = { it.history.contentKey }) { row ->
             Box(Modifier.width(270.dp)) { ViewingCardContent(row, viewModel, onOpen, onDetails) }
         }

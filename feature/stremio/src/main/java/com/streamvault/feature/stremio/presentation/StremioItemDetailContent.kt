@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
@@ -121,6 +123,9 @@ internal fun StremioItemDetailScreen(
     }
 }
 
+// Padding the detail body puts around the poster and metadata in the wide layout.
+private val DetailBodyPadding = 24.dp
+
 @Composable
 private fun StremioItemDetailContent(
     state: StremioItemDetailState,
@@ -194,7 +199,7 @@ private fun StremioItemDetailContent(
                         StremioMetadataContent(state, onRetryMetadata)
                     }
                 } else {
-                    Row(Modifier.padding(24.dp), horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.padding(DetailBodyPadding), horizontalArrangement = Arrangement.spacedBy(24.dp), verticalAlignment = Alignment.CenterVertically) {
                         poster()
                         StremioMetadataContent(state, onRetryMetadata, Modifier.weight(1f))
                     }
@@ -211,7 +216,11 @@ private fun StremioItemDetailContent(
         } else {
             if (state.preview.type == StremioMediaType.SERIES && state.videos.isNotEmpty()) {
                 item(key = "bulk-watched") {
-                    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FocusSafeLazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+                        edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
+                    ) {
                         item { TvButton(onClick = { onSetSeasonWatched(selectedSeason, true) }, enabled = !state.libraryBusy) { Text(stringResource(R.string.stremio_season_watched)) } }
                         item { TvButton(onClick = { onSetSeasonWatched(selectedSeason, false) }, enabled = !state.libraryBusy) { Text(stringResource(R.string.stremio_season_unwatched)) } }
                         item { TvButton(onClick = { onSetSeasonWatched(null, true) }, enabled = !state.libraryBusy) { Text(stringResource(R.string.stremio_series_watched)) } }
@@ -242,7 +251,11 @@ private fun StremioItemDetailContent(
             ) {
                 if (state.preview.type == StremioMediaType.SERIES && seasons.size > 1) {
                     item(key = "season-picker") {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        FocusSafeLazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+                            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
+                        ) {
                             items(seasons, key = { "season:$it" }) { season ->
                                 TvButton(onClick = { selectedSeason = season }) {
                                     Text(
@@ -539,7 +552,12 @@ private fun StremioMetadataContent(
         }
         if (linkFailed) Text(stringResource(R.string.stremio_error_generic))
         state.metadata?.links?.takeIf { it.isNotEmpty() }?.let { links ->
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            // Beside the poster, so no bleed at the start; at the end the row grows into the body padding and the shell inset.
+            val linksEndGutter = DetailBodyPadding + LocalAppSpacing.current.shellHorizontalInset
+            FocusSafeLazyRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                edgeGutterEnd = linksEndGutter
+            ) {
                 items(links, key = { it.url + it.name }) { link ->
                     TvButton(onClick = { linkFailed = runCatching { uriHandler.openUri(link.url) }.isFailure }) {
                         Text(link.name)
