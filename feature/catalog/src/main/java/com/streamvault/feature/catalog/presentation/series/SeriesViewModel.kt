@@ -42,6 +42,8 @@ import com.streamvault.domain.trakt.TraktDiscoveryState
 import com.streamvault.domain.usecase.ContinueWatchingResult
 import com.streamvault.domain.usecase.ContinueWatchingScope
 import com.streamvault.domain.usecase.GetContinueWatching
+import com.streamvault.domain.usecase.MarkAsWatched
+import com.streamvault.domain.usecase.RemoveContinueWatchingItem
 import com.streamvault.domain.usecase.GetCustomCategories
 import com.streamvault.feature.catalog.presentation.vod.createVodGroup
 import com.streamvault.feature.catalog.presentation.vod.incrementVodSelectedCategoryLoadLimit
@@ -103,6 +105,8 @@ class SeriesViewModel @Inject constructor(
     private val playbackHistoryRepository: PlaybackHistoryRepository,
     private val favoriteRepository: FavoriteRepository,
     private val getContinueWatching: GetContinueWatching,
+    private val removeContinueWatchingItem: RemoveContinueWatchingItem,
+    private val markAsWatched: MarkAsWatched,
     private val getCustomCategories: GetCustomCategories,
     private val parentalControlManager: ParentalControlManager,
     private val m3uClassificationRepository: M3uClassificationRepository,
@@ -1176,6 +1180,26 @@ class SeriesViewModel @Inject constructor(
                     groupToDelete = null,
                     userMessage = "Deleted group ${category.name}"
                 )
+            }
+        }
+    }
+
+    fun onRemoveContinueWatching(history: PlaybackHistory) {
+        viewModelScope.launch {
+            if (removeContinueWatchingItem(history) is Result.Error) {
+                _uiState.update {
+                    it.copy(userMessage = appContext.getString(R.string.continue_watching_remove_failed))
+                }
+            }
+        }
+    }
+
+    fun onMarkContinueWatchingWatched(history: PlaybackHistory) {
+        viewModelScope.launch {
+            if (markAsWatched(history) is Result.Error) {
+                _uiState.update {
+                    it.copy(userMessage = appContext.getString(R.string.continue_watching_mark_watched_failed))
+                }
             }
         }
     }

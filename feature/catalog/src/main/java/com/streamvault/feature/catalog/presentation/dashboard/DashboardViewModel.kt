@@ -32,6 +32,8 @@ import com.streamvault.domain.repository.SeriesRepository
 import com.streamvault.domain.usecase.ContinueWatchingResult
 import com.streamvault.domain.usecase.ContinueWatchingScope
 import com.streamvault.domain.usecase.GetContinueWatching
+import com.streamvault.domain.usecase.MarkAsWatched
+import com.streamvault.domain.usecase.RemoveContinueWatchingItem
 import com.streamvault.domain.usecase.GetCustomCategories
 import com.streamvault.domain.manager.RecordingManager
 import com.streamvault.domain.model.RecordingStatus
@@ -75,6 +77,8 @@ class DashboardViewModel @Inject constructor(
     private val seriesRepository: SeriesRepository,
     private val preferencesRepository: PreferencesRepository,
     private val getContinueWatching: GetContinueWatching,
+    private val removeContinueWatchingItem: RemoveContinueWatchingItem,
+    private val markAsWatched: MarkAsWatched,
     private val getCustomCategories: GetCustomCategories,
     private val syncManager: ProviderSyncStateSource,
     private val appUpdatePort: CatalogAppUpdatePort,
@@ -922,6 +926,48 @@ class DashboardViewModel @Inject constructor(
                 else -> Unit
             }
         }
+    }
+
+    fun onRemoveContinueWatching(history: PlaybackHistory) {
+        viewModelScope.launch {
+            if (removeContinueWatchingItem(history) is com.streamvault.domain.model.Result.Error) {
+                showUserMessage(R.string.continue_watching_remove_failed)
+            }
+        }
+    }
+
+    fun onMarkContinueWatchingWatched(history: PlaybackHistory) {
+        viewModelScope.launch {
+            if (markAsWatched(history) is com.streamvault.domain.model.Result.Error) {
+                showUserMessage(R.string.continue_watching_mark_watched_failed)
+            }
+        }
+    }
+
+    fun onToggleChannelFavorite(channel: Channel, isFavorite: Boolean) {
+        viewModelScope.launch {
+            val result = if (isFavorite) {
+                favoriteRepository.removeFavorite(channel.providerId, channel.id, ContentType.LIVE)
+            } else {
+                favoriteRepository.addFavorite(channel.providerId, channel.id, ContentType.LIVE)
+            }
+            if (result is com.streamvault.domain.model.Result.Error) {
+                showUserMessage(R.string.channel_menu_action_failed)
+            }
+        }
+    }
+
+    fun onRemoveRecentChannel(channel: Channel) {
+        viewModelScope.launch {
+            val result = playbackHistoryRepository.removeFromHistory(channel.id, ContentType.LIVE, channel.providerId)
+            if (result is com.streamvault.domain.model.Result.Error) {
+                showUserMessage(R.string.channel_menu_action_failed)
+            }
+        }
+    }
+
+    private fun showUserMessage(messageRes: Int) {
+        _uiState.value = _uiState.value.copy(userMessage = appContext.getString(messageRes))
     }
 
     fun userMessageShown() {

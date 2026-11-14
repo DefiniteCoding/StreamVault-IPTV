@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryContextCard
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryShortcut
@@ -52,6 +53,7 @@ import com.streamvault.core.ui.design.browse.*
 import com.streamvault.domain.model.Category
 import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
+import com.streamvault.domain.model.PlaybackHistory
 import com.streamvault.domain.model.Series
 import com.streamvault.domain.util.SearchTextNormalizer
 import kotlinx.coroutines.launch
@@ -100,6 +102,7 @@ import kotlinx.coroutines.delay
 fun SeriesScreen(
     onSeriesClick: (Series) -> Unit,
     onSeriesIdClick: (Long) -> Unit,
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: SeriesViewModel = hiltViewModel()
 ) {
@@ -229,6 +232,9 @@ fun SeriesScreen(
                 onSearchQueryChange = viewModel::setSearchQuery,
                 onSeriesClick = onSeriesClick,
                 onSeriesIdClick = onSeriesIdClick,
+                onContinueWatchingRemove = viewModel::onRemoveContinueWatching,
+                onContinueWatchingMarkWatched = viewModel::onMarkContinueWatchingWatched,
+                onContinueWatchingPlay = onContinueWatchingPlay,
                 onProtectedSeriesClick = { series ->
                     pendingCategory = null
                     pendingSeries = series
@@ -342,6 +348,9 @@ fun SeriesScreen(
 @Composable
 private fun SeriesVodContent(
     uiState: SeriesUiState,
+    onContinueWatchingRemove: (PlaybackHistory) -> Unit,
+    onContinueWatchingMarkWatched: (PlaybackHistory) -> Unit,
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     selectedFilterType: LibraryFilterType,
     onSelectedFilterTypeChange: (LibraryFilterType) -> Unit,
     selectedSortBy: LibrarySortBy,
@@ -699,19 +708,26 @@ private fun SeriesVodContent(
             }
             if (continueWatching.isNotEmpty()) {
             item(key = "continue_watching") {
+                val openContinueWatchingDetails: (PlaybackHistory) -> Unit = { history ->
+                    val rawSeriesId = history.seriesId ?: history.contentId
+                    val presentedSeries = continueSeries.firstOrNull { series ->
+                        series.rawSeriesIdsForNavigation().contains(rawSeriesId)
+                    }
+                    if (presentedSeries != null) {
+                        onSeriesClick(presentedSeries)
+                    } else {
+                        onSeriesIdClick(rawSeriesId)
+                    }
+                }
                 ContinueWatchingRow(
                         items = continueWatching,
-                        onItemClick = { history ->
-                            val rawSeriesId = history.seriesId ?: history.contentId
-                            val presentedSeries = continueSeries.firstOrNull { series ->
-                                series.rawSeriesIdsForNavigation().contains(rawSeriesId)
-                            }
-                            if (presentedSeries != null) {
-                                onSeriesClick(presentedSeries)
-                            } else {
-                                onSeriesIdClick(rawSeriesId)
-                            }
-                        }
+                        onItemClick = openContinueWatchingDetails,
+                        menu = ContinueWatchingMenuActions(
+                            onResume = onContinueWatchingPlay,
+                            onRemove = onContinueWatchingRemove,
+                            onOpenDetails = openContinueWatchingDetails,
+                            onMarkWatched = onContinueWatchingMarkWatched
+                        )
                     )
             }
             }

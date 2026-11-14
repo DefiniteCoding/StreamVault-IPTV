@@ -40,6 +40,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.feature.catalog.presentation.components.TraktRatingSummary
@@ -101,6 +102,7 @@ import kotlinx.coroutines.delay
 fun MoviesScreen(
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
+    onContinueWatchingOpenDetails: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: MoviesViewModel = hiltViewModel()
 ) {
@@ -230,6 +232,12 @@ fun MoviesScreen(
                 onSearchQueryChange = viewModel::setSearchQuery,
                 onMovieClick = onMovieClick,
                 onContinueWatchingPlay = onContinueWatchingPlay,
+                onContinueWatchingMenu = ContinueWatchingMenuActions(
+                    onResume = onContinueWatchingPlay,
+                    onRemove = viewModel::onRemoveContinueWatching,
+                    onOpenDetails = onContinueWatchingOpenDetails,
+                    onMarkWatched = viewModel::onMarkContinueWatchingWatched
+                ),
                 onProtectedMovieClick = { movie ->
                     pendingCategory = null
                     pendingMovie = movie
@@ -353,6 +361,7 @@ private fun MoviesVodContent(
     onSearchQueryChange: (String) -> Unit,
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
+    onContinueWatchingMenu: ContinueWatchingMenuActions,
     onProtectedMovieClick: (Movie) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Movie) -> Unit,
@@ -702,7 +711,8 @@ private fun MoviesVodContent(
             item(key = "continue_watching") {
                 ContinueWatchingRow(
                         items = continueWatching,
-                        onItemClick = onContinueWatchingPlay
+                        onItemClick = onContinueWatchingPlay,
+                        menu = onContinueWatchingMenu
                     )
             }
             }

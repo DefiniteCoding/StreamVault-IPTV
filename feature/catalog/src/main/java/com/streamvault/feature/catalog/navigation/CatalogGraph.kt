@@ -9,6 +9,7 @@ import com.streamvault.core.navigation.AppDestination
 import com.streamvault.core.navigation.NavigationActions
 import com.streamvault.core.navigation.NavigationOptions
 import com.streamvault.domain.model.Channel
+import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.Episode
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.PlaybackHistory
@@ -77,6 +78,7 @@ fun NavGraphBuilder.registerCatalogGraph(
             onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Home) },
             onSeriesClick = { series -> onOpenSeriesDetail(series, AppDestination.Home) },
             onPlaybackHistoryClick = { history -> onPlayHistory(history, AppDestination.Home) },
+            onOpenHistoryDetails = { history -> openHistoryDetails(actions, history, AppDestination.Home) },
             scaffold = scaffold,
             dashboardShelfCustomizationContent = dashboardShelfCustomizationContent,
             stremioContent = stremioContent,
@@ -87,6 +89,7 @@ fun NavGraphBuilder.registerCatalogGraph(
         MoviesScreen(
             onMovieClick = { movie -> onOpenMovieDetail(movie, AppDestination.Movies) },
             onContinueWatchingPlay = { history -> onPlayHistory(history, AppDestination.Movies) },
+            onContinueWatchingOpenDetails = { history -> openHistoryDetails(actions, history, AppDestination.Movies) },
             scaffold = scaffold,
         )
     }
@@ -100,6 +103,7 @@ fun NavGraphBuilder.registerCatalogGraph(
                     NavigationOptions(launchSingleTop = true)
                 )
             },
+            onContinueWatchingPlay = { history -> onPlayHistory(history, AppDestination.Series) },
             scaffold = scaffold,
         )
     }
@@ -220,6 +224,28 @@ internal fun openRelatedMovieDetail(
             returnDestination = currentReturnDestination,
         )
     )
+}
+
+/**
+ * Opens the detail page of the title behind a Continue Watching card, for screens that have no loaded
+ * [Movie] or [Series] to hand over. Live history has no detail page.
+ */
+internal fun openHistoryDetails(
+    actions: NavigationActions,
+    history: PlaybackHistory,
+    returnDestination: AppDestination,
+) {
+    val destination = when (history.contentType) {
+        ContentType.MOVIE,
+        ContentType.VOD -> AppDestination.MovieDetail(history.contentId, returnDestination)
+        ContentType.SERIES,
+        ContentType.SERIES_EPISODE -> AppDestination.SeriesDetail(
+            seriesId = history.seriesId?.takeIf { it > 0L } ?: history.contentId,
+            returnDestination = returnDestination,
+        )
+        ContentType.LIVE -> return
+    }
+    actions.navigate(destination, NavigationOptions(launchSingleTop = true))
 }
 
 private fun decodeCatalogReturnDestination(route: String): AppDestination? {
