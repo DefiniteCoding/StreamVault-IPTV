@@ -802,13 +802,16 @@ fun StatusPill(
     contentColor: Color = AppColors.TextPrimary,
     cornerRadius: Dp = 999.dp,
     horizontalPadding: Dp = 10.dp,
-    verticalPadding: Dp = 4.dp
+    verticalPadding: Dp = 4.dp,
+    // Set for pills drawn over artwork: a near-solid container carrying [contentColor], instead of the 16% tint.
+    containerAlpha: Float? = null
 ) {
     val modern = LocalBrowseVisuals.current
     val isStatusColor = containerColor in listOf(AppColors.Live, AppColors.Brand, AppColors.Warning, AppColors.Success, AppColors.Info)
-    val tinted = modern && isStatusColor
+    val tinted = modern && isStatusColor && containerAlpha == null
     val shape = RoundedCornerShape(if (modern && cornerRadius == 999.dp) 6.dp else cornerRadius)
     val resolvedContentColor = when {
+        containerAlpha != null -> contentColor
         tinted -> containerColor
         modern && containerColor.copy(alpha = 1f) == Color.Black -> Color.White
         else -> contentColor
@@ -816,7 +819,13 @@ fun StatusPill(
     Box(
         modifier = modifier
             .clip(shape)
-            .background(if (tinted) containerColor.copy(alpha = 0.16f) else containerColor)
+            .background(
+                when {
+                    containerAlpha != null -> containerColor.copy(alpha = containerAlpha)
+                    tinted -> containerColor.copy(alpha = 0.16f)
+                    else -> containerColor
+                }
+            )
             .then(if (modern) Modifier.border(1.dp, (if (tinted) containerColor else AppColors.TextPrimary).copy(alpha = 0.14f), shape) else Modifier)
             .padding(horizontal = horizontalPadding, vertical = verticalPadding)
     ) {
