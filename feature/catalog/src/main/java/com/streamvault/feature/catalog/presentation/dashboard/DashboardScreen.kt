@@ -620,7 +620,7 @@ private fun DashboardProviderWarningCard(
             Text(
                 text = stringResource(R.string.dashboard_warning_title),
                 style = MaterialTheme.typography.titleMedium,
-                color = Primary
+                color = TextPrimary
             )
             Text(
                 text = warnings.take(3).joinToString(" | "),

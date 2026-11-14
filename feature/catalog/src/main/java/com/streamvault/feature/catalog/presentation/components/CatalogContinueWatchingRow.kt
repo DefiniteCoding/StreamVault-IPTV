@@ -35,6 +35,7 @@ import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.streamvault.core.ui.components.AppDialogButton
 import com.streamvault.core.ui.components.dialogs.AppAlertDialog
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.design.LocalAppSpacing
 import com.streamvault.core.ui.design.browse.SurfaceElevated
 import com.streamvault.core.ui.design.browse.TextPrimary
@@ -48,7 +49,6 @@ import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMen
 
 private const val MillisPerMinute = 60_000L
 private const val MinutesPerHour = 60
-private const val ChipScrimAlpha = 0.6f
 private val CardWidth = 208.dp
 private val ArtHeight = 117.dp
 // Two caption lines (13sp title, 12sp meta) plus padding.
@@ -317,7 +317,7 @@ private fun ContinueWatchingCard(
                         modifier = Modifier
                             .align(Alignment.BottomEnd)
                             .padding(end = spacing.xs, bottom = spacing.sm)
-                            .background(Color.Black.copy(alpha = ChipScrimAlpha), RoundedCornerShape(4.dp))
+                            .background(Color.Black.copy(alpha = BadgeScrimAlpha), RoundedCornerShape(4.dp))
                             .padding(horizontal = spacing.xs, vertical = spacing.xxs)
                     )
                 }
@@ -329,7 +329,7 @@ private fun ContinueWatchingCard(
                             .fillMaxWidth()
                             .height(4.dp),
                         color = Color.White,
-                        trackColor = Color.Black.copy(alpha = ChipScrimAlpha),
+                        trackColor = Color.Black.copy(alpha = BadgeScrimAlpha),
                         // The default stop dot would draw a stray white mark at the end of the track.
                         drawStopIndicator = {}
                     )

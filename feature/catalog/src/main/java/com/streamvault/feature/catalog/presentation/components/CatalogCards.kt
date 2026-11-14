@@ -38,7 +38,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
@@ -61,7 +60,9 @@ import com.streamvault.core.ui.image.ChannelLogoBadge
 import com.streamvault.core.ui.accessibility.rememberReducedMotionEnabled
 import com.streamvault.feature.catalog.presentation.components.MoviePosterCard
 import com.streamvault.feature.catalog.presentation.components.SeriesPosterCard
+import com.streamvault.core.ui.components.shell.ArtworkPillAlpha
 import com.streamvault.core.ui.components.shell.StatusPill
+import com.streamvault.core.ui.components.shell.readableInkOn
 import com.streamvault.feature.catalog.presentation.components.formatVodRatingLabel
 import com.streamvault.domain.playback.archivePlaybackCapability
 import com.streamvault.core.ui.design.browse.AccentAmber
@@ -82,13 +83,6 @@ import com.streamvault.domain.model.Series
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.interaction.rememberTvInteractionSounds
-
-// Badges sit over channel logos, so their container is near-solid; a 16% tint disappears on a busy logo.
-private const val ArtworkBadgeAlpha = 0.9f
-
-/** Black or white, whichever has the higher WCAG contrast on [container]. */
-private fun readableInkOn(container: Color): Color =
-    if (container.luminance() > 0.179f) Color.Black else Color.White
 
 @Composable
 fun FocusableCard(
@@ -323,7 +317,7 @@ fun ChannelCard(
                         cornerRadius = 4.dp,
                         horizontalPadding = 6.dp,
                         verticalPadding = 2.dp,
-                        containerAlpha = ArtworkBadgeAlpha
+                        containerAlpha = ArtworkPillAlpha
                     )
                 }
                 if (isRecording) {
@@ -338,7 +332,7 @@ fun ChannelCard(
                     cornerRadius = 4.dp,
                     horizontalPadding = 6.dp,
                     verticalPadding = 2.dp,
-                    containerAlpha = ArtworkBadgeAlpha
+                    containerAlpha = ArtworkPillAlpha
                 )
             }
         }
