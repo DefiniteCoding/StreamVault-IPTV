@@ -23,6 +23,9 @@ import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.Series
 import com.streamvault.core.ui.design.LocalAppTypeTokens
 import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.selectableSurfaceColors
+import com.streamvault.core.ui.design.secondarySurfaceColors
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
@@ -64,7 +67,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
-import androidx.tv.material3.Border
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.tv.material3.Icon
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
@@ -72,13 +77,8 @@ import androidx.tv.material3.Text
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.feature.catalog.presentation.components.ChipRowItem
 import com.streamvault.feature.catalog.presentation.components.ChipRowSection
-import com.streamvault.core.ui.design.BrowseColors.Brand as Primary
-import com.streamvault.core.ui.design.BrowseColors.Focus as FocusBorder
-import com.streamvault.core.ui.design.BrowseColors.SurfaceElevated as SurfaceElevated
-import com.streamvault.core.ui.design.BrowseColors.SurfaceEmphasis as SurfaceHighlight
 import com.streamvault.core.ui.design.BrowseColors.TextPrimary as TextPrimary
 import com.streamvault.core.ui.design.BrowseColors.TextTertiary as OnSurfaceDim
-import androidx.compose.foundation.BorderStroke
 import com.streamvault.feature.catalog.R
 import com.streamvault.core.ui.components.SearchInput
 import com.streamvault.domain.util.SearchTextNormalizer
@@ -446,7 +446,7 @@ fun VodCategoryPickerDialog(
 
                     LazyColumn(
                         modifier = Modifier.height(listHeight),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs)
                     ) {
                         items(filteredCategories, key = { it.name }) { category ->
                             TvClickableSurface(
@@ -461,22 +461,15 @@ fun VodCategoryPickerDialog(
                                     }
                                 },
                                 shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                                colors = ClickableSurfaceDefaults.colors(
-                                    containerColor = SurfaceElevated,
-                                    focusedContainerColor = SurfaceHighlight
-                                ),
-                                border = ClickableSurfaceDefaults.border(
-                                    focusedBorder = Border(
-                                        border = BorderStroke(2.dp, FocusBorder),
-                                        shape = BrowseShapes.Control
-                                    )
-                                ),
+                                colors = secondarySurfaceColors(),
+                                border = selectableFocusBorder(BrowseShapes.Control),
                                 scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                             ) {
+                                val spacing = LocalAppSpacing.current
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        .padding(horizontal = spacing.md, vertical = spacing.sm),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -489,19 +482,19 @@ fun VodCategoryPickerDialog(
                                         modifier = Modifier.weight(1f)
                                     )
                                     if (category.isLocked) {
-                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Spacer(modifier = Modifier.width(spacing.xs))
                                         Text(
                                             text = stringResource(R.string.home_locked_short),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Primary
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = AppColors.TextSecondary
                                         )
                                     }
                                     if (category.count > 0) {
-                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Spacer(modifier = Modifier.width(spacing.xs))
                                         Text(
                                             text = category.count.toString(),
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = OnSurfaceDim
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = AppColors.TextSecondary
                                         )
                                     }
                                 }
@@ -538,7 +531,7 @@ fun VodBrowseOptionsDialog(
         onDismissRequest = onDismiss,
         widthFraction = 0.6f,
         heightFraction = null,
-        bodyHeightFraction = 0.44f,
+        bodyHeightFraction = 0.6f,
         content = {
             VodBrowseOptionsSection(
                 title = filterTitle,
@@ -595,6 +588,8 @@ private fun VodBrowseOptionsSection(
     }
 }
 
+private val OptionChipCheckSize = 18.dp
+
 @Composable
 private fun VodBrowseOptionChip(
     label: String,
@@ -604,31 +599,34 @@ private fun VodBrowseOptionChip(
 ) {
     Surface(
         onClick = onClick,
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) Primary.copy(alpha = 0.18f) else SurfaceElevated,
-            focusedContainerColor = if (selected) Primary.copy(alpha = 0.28f) else SurfaceHighlight,
-            contentColor = if (selected) Primary else TextPrimary,
-            focusedContentColor = TextPrimary
-        ),
+        colors = if (selected) selectableSurfaceColors(selected = true) else secondarySurfaceColors(),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, FocusBorder),
-                shape = BrowseShapes.Control
-            )
-        ),
+        border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 11.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (selected) {
+                    // The check backs up the tonal fill so selection never rests on color alone.
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(OptionChipCheckSize)
+                    )
+                }
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             supportingText?.takeIf { it.isNotBlank() }?.let { detail ->
                 Text(
                     text = detail,
