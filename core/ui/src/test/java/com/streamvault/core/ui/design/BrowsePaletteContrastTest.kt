@@ -1,6 +1,8 @@
 package com.streamvault.core.ui.design
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -92,6 +94,21 @@ class BrowsePaletteContrastTest {
             val browse = AppPalette.forTheme(id).forBrowsing()
             val ratio = contrast(browse.focus, browse.selectedContainer)
             assertTrue("$id focus ring on selectedContainer was $ratio", ratio >= 3f)
+        }
+    }
+
+    // PremiumDialog paints a brandMuted tint at 18% over surfaceElevated that fades out over the first half of the
+    // dialog. Option chips start about 20% down, so the backdrop there is 60% of that tint.
+    @Test
+    fun selectedChipSeparatesFromUnselectedChipsAndTheDialogBackdrop() {
+        allThemeIds.forEach { id ->
+            val browse = AppPalette.forTheme(id).forBrowsing()
+            val dialogTop = browse.brandMuted.copy(alpha = 0.18f).compositeOver(browse.surfaceElevated)
+            val backdropAtChips = lerp(dialogTop, browse.surfaceElevated, 0.4f)
+            val onBackdrop = contrast(browse.selectedContainer, backdropAtChips)
+            assertTrue("$id selectedContainer on dialog backdrop was $onBackdrop", onBackdrop >= 3f)
+            val onControl = contrast(browse.selectedContainer, browse.controlContainer)
+            assertTrue("$id selectedContainer on controlContainer was $onControl", onControl >= 3f)
         }
     }
 
