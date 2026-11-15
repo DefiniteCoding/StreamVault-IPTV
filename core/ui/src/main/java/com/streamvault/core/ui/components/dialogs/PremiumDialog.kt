@@ -31,10 +31,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.streamvault.core.ui.components.dialogs.AppDialog as Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -58,6 +66,56 @@ import com.streamvault.core.ui.design.LocalBrowseVisuals
 import com.streamvault.core.ui.design.FocusSpec
 
 internal val LocalDialogCanInteract = compositionLocalOf { true }
+
+private val FadeMask = Brush.verticalGradient(listOf(Color.Transparent, Color.Black))
+private val FadeMaskReversed = Brush.verticalGradient(listOf(Color.Black, Color.Transparent))
+
+/**
+ * Fades the content itself at an edge that has more to scroll, as a cue. A mask is used instead of a color overlay
+ * because the dialog background is a gradient and no single overlay color matches it. The offscreen layer is
+ * limited to the scroll viewport.
+ */
+private fun Modifier.fadeScrollEdges(canScrollUp: () -> Boolean, canScrollDown: () -> Boolean): Modifier =
+    graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
+        .drawWithContent {
+            drawContent()
+            val fade = ScrollFadeHeight.toPx().coerceAtMost(size.height / 2)
+            if (canScrollUp()) {
+                drawRect(FadeMask, size = Size(size.width, fade), blendMode = BlendMode.DstIn)
+            }
+            if (canScrollDown()) {
+                drawRect(
+                    FadeMaskReversed,
+                    topLeft = Offset(0f, size.height - fade),
+                    size = Size(size.width, fade),
+                    blendMode = BlendMode.DstIn
+                )
+            }
+        }
+
+// Room around the scrolled content for a focus ring, which draws outside its item and would otherwise be cut by the clip.
+private val ScrollRingInset = 8.dp
+private val ScrollFadeHeight = 16.dp
+
+/**
+ * Grows the clip bounds by [inset] on every side without changing the space the node takes in its parent, so
+ * the dialog layout stays as designed while rings at the viewport edge keep their full stroke.
+ */
+private fun Modifier.clipBleed(inset: Dp): Modifier = layout { measurable, constraints ->
+    val bleed = inset.roundToPx()
+    val width = constraints.maxWidth
+    val placeable = measurable.measure(
+        constraints.copy(
+            minWidth = width + 2 * bleed,
+            maxWidth = width + 2 * bleed,
+            minHeight = 0,
+            maxHeight = if (constraints.hasBoundedHeight) constraints.maxHeight + 2 * bleed else constraints.maxHeight
+        )
+    )
+    layout(width, (placeable.height - 2 * bleed).coerceAtLeast(0)) {
+        placeable.place(-bleed, -bleed)
+    }
+}
 
 @Composable
 fun rememberDialogOpenGestureBlocker(canInteract: Boolean): (KeyEvent) -> Boolean = remember(canInteract) {
@@ -261,6 +319,7 @@ private fun ColumnScope.PremiumDialogScrollableBody(
             .weight(1f, fill = false)
             .heightIn(max = maxHeight)
             .fillMaxWidth()
+            .clipBleed(ScrollRingInset)
             .focusGroup()
             .onPreviewKeyEvent { event ->
                 if (event.nativeKeyEvent.action != AndroidKeyEvent.ACTION_DOWN) {
@@ -288,9 +347,17 @@ private fun ColumnScope.PremiumDialogScrollableBody(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .fadeScrollEdges(
+                    canScrollUp = { canScrollUp },
+                    canScrollDown = { canScrollDown }
+                )
                 .verticalScroll(scrollState)
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
+            Column(
+                modifier = Modifier.padding(ScrollRingInset),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                content = content
+            )
         }
 
         if (!scrollHint.isNullOrBlank() && (canScrollUp || canScrollDown)) {
