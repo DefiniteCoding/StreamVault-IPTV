@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.focusGroup
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
@@ -297,6 +299,31 @@ fun PremiumDialog(
     }
 }
 
+private fun Modifier.stepScrollOnDpad(
+    scrollState: ScrollState,
+    coroutineScope: CoroutineScope,
+): Modifier = onPreviewKeyEvent { event ->
+    if (event.nativeKeyEvent.action != AndroidKeyEvent.ACTION_DOWN) {
+        return@onPreviewKeyEvent false
+    }
+    val delta = when (event.nativeKeyEvent.keyCode) {
+        AndroidKeyEvent.KEYCODE_DPAD_UP -> -DpadScrollStepPx
+        AndroidKeyEvent.KEYCODE_DPAD_DOWN -> DpadScrollStepPx
+        else -> 0
+    }
+    if (delta == 0 || scrollState.maxValue == 0) {
+        return@onPreviewKeyEvent false
+    }
+    val target = (scrollState.value + delta).coerceIn(0, scrollState.maxValue)
+    if (target != scrollState.value) {
+        coroutineScope.launch { scrollState.animateScrollTo(target) }
+    }
+    // Keep the event available to focus navigation so the focused control still advances.
+    false
+}
+
+private const val DpadScrollStepPx = 240
+
 @Composable
 private fun ColumnScope.PremiumDialogScrollableBody(
     maxHeight: androidx.compose.ui.unit.Dp,
@@ -321,28 +348,11 @@ private fun ColumnScope.PremiumDialogScrollableBody(
             .fillMaxWidth()
             .clipBleed(ScrollRingInset)
             .focusGroup()
-            .onPreviewKeyEvent { event ->
-                if (event.nativeKeyEvent.action != AndroidKeyEvent.ACTION_DOWN) {
-                    return@onPreviewKeyEvent false
-                }
-                val delta = when (event.nativeKeyEvent.keyCode) {
-                    AndroidKeyEvent.KEYCODE_DPAD_UP -> -240
-                    AndroidKeyEvent.KEYCODE_DPAD_DOWN -> 240
-                    else -> 0
-                }
-                if (delta == 0 || scrollState.maxValue == 0) {
-                    return@onPreviewKeyEvent false
-                }
-                val target = (scrollState.value + delta).coerceIn(0, scrollState.maxValue)
-                if (target != scrollState.value) {
-                    coroutineScope.launch {
-                        scrollState.animateScrollTo(target)
-                    }
-                }
-                // Keep the event available to focus navigation. This scrolls
-                // the body while the focused control advances normally.
-                false
-            }
+            .then(
+                // Bodies with a hint hold text that cannot take focus, so the D-pad has to scroll them. Elsewhere
+                // the focused item scrolls itself into view; a fixed step would fight that and hide the focus.
+                if (scrollHint != null) Modifier.stepScrollOnDpad(scrollState, coroutineScope) else Modifier
+            )
     ) {
         Box(
             modifier = Modifier
