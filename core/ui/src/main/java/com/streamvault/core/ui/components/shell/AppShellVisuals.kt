@@ -722,10 +722,13 @@ internal fun FocusPill(
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (selected == true) colors.selectedContainer else colors.restContainer,
             contentColor = if (selected == true) colors.selectedContent else colors.restContent,
-            focusedContainerColor = colors.focusedContainer,
-            focusedContentColor = colors.focusedContent,
-            pressedContainerColor = colors.focusedContainer,
-            pressedContentColor = colors.focusedContent
+            // A selected pill keeps its tonal fill and label when focused; the ring and scale carry focus. Its fill
+            // is light enough in the dark themes to give the label 9:1, so it cannot also stay 3:1 apart from the
+            // focus fill that an unselected pill takes.
+            focusedContainerColor = if (selected == true) colors.selectedContainer else colors.focusedContainer,
+            focusedContentColor = if (selected == true) colors.selectedContent else colors.focusedContent,
+            pressedContainerColor = if (selected == true) colors.selectedContainer else colors.focusedContainer,
+            pressedContentColor = if (selected == true) colors.selectedContent else colors.focusedContent
         ),
         interactionSource = interactionSource
     ) {

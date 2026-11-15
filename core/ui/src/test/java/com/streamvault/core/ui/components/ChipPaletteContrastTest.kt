@@ -33,11 +33,13 @@ class ChipPaletteContrastTest {
         }
     }
 
-    // Rule 15: nothing at rest may look focused.
+    // Rule 15: nothing at rest may look focused. A selected chip keeps its tonal fill when focused, so the ring and
+    // scale mark focus (ring contrast is held above); the selected fill only has to read apart from the focus fill
+    // an unselected chip takes.
     @Test
     fun `resting and selected chips never read as focused`() = checkEveryTheme { _, chip ->
         expect("rest container against focus", chip.restContainer, chip.focusedContainer, NON_TEXT)
-        expect("selected container against focus", chip.selectedContainer, chip.focusedContainer, NON_TEXT)
+        expect("selected container against focus", chip.selectedContainer, chip.focusedContainer, SELECTED_VS_FOCUS)
     }
 
     @Test
@@ -68,6 +70,7 @@ class ChipPaletteContrastTest {
     private companion object {
         const val TEXT = TEXT_CONTRAST
         const val NON_TEXT = NON_TEXT_CONTRAST
+        const val SELECTED_VS_FOCUS = 1.5f
         const val DARK_CONTROL_FLOOR = 1.5f
         const val LIGHT_CONTROL_FLOOR = 1.3f
         const val DARK_AMBIENT_FLOOR = 1.35f

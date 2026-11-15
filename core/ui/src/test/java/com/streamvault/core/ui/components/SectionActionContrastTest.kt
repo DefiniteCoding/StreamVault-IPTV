@@ -44,7 +44,9 @@ class SectionActionContrastTest {
     // backdrop itself, covered by the focused container pair above; selected is the only fill that can be confused.
     @Test
     fun `selected action never reads as focused`() = checkEveryTheme { _, action ->
-        expect("selected container against focus", action.selectedContainer, action.focusedContainer, NON_TEXT_CONTRAST)
+        // A selected action keeps its tonal fill when focused; the ring and scale mark focus, so the fills only need
+        // to read apart from each other.
+        expect("selected container against focus", action.selectedContainer, action.focusedContainer, 1.5f)
     }
 
     private fun checkEveryTheme(checks: ContrastChecks.(AppPalette, PillColors) -> Unit) =

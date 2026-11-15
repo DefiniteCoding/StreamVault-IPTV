@@ -76,7 +76,8 @@ class BrowsePaletteContrastTest {
         allThemeIds.forEach { id ->
             val browse = AppPalette.forTheme(id).forBrowsing()
             val label = contrast(browse.onSelectedContainer, browse.selectedContainer)
-            assertTrue("$id label on selectedContainer was $label", label >= 4.5f)
+            val floor = if (browse.isLight) 4.5f else 9f
+            assertTrue("$id label on selectedContainer was $label", label >= floor)
             mapOf(
                 "canvas" to browse.canvas,
                 "surface" to browse.surface,
@@ -88,12 +89,24 @@ class BrowsePaletteContrastTest {
         }
     }
 
+    // The selected fill is light enough in the dark themes to give its label 9:1, so the ring cannot also hold
+    // 3:1 against the fill. The ring is judged against the surfaces around the chip and must still read apart
+    // from the fill.
     @Test
-    fun focusRingIsVisibleOnSelectedContainer() {
+    fun focusRingStandsOutAroundTheSelectedContainer() {
         allThemeIds.forEach { id ->
             val browse = AppPalette.forTheme(id).forBrowsing()
-            val ratio = contrast(browse.focus, browse.selectedContainer)
-            assertTrue("$id focus ring on selectedContainer was $ratio", ratio >= 3f)
+            mapOf(
+                "canvas" to browse.canvas,
+                "surface" to browse.surface,
+                "surfaceElevated" to browse.surfaceElevated,
+                "controlContainer" to browse.controlContainer,
+            ).forEach { (name, around) ->
+                val ratio = contrast(browse.focus, around)
+                assertTrue("$id focus ring on $name was $ratio", ratio >= 3f)
+            }
+            val onFill = contrast(browse.focus, browse.selectedContainer)
+            assertTrue("$id focus ring on selectedContainer was $onFill", onFill >= 1.5f)
         }
     }
 
