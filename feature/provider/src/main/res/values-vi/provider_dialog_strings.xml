@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Hủy</string>
+  <string name="setup_completion_saved_sync_pending">Đã lưu nhà cung cấp. Đồng bộ sẽ tiếp tục trong nền.</string>
+  <string name="setup_combined_attach_title">Thêm danh sách phát vào M3U kết hợp?</string>
+  <string name="setup_combined_attach_message">Thêm %1$s vào %2$s và giữ nguồn kết hợp đó hoạt động cho TV trực tiếp?</string>
+  <string name="setup_combined_attach_fallback_playlist">danh sách phát này</string>
+  <string name="setup_combined_attach_fallback_source">nguồn kết hợp đang hoạt động</string>
+  <string name="setup_combined_attach_skip">Để sau</string>
+  <string name="setup_combined_attach_confirm">Thêm vào nguồn kết hợp</string>
+</resources>

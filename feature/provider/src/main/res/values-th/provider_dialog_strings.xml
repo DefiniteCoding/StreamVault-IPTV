@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">ยกเลิก</string>
+  <string name="setup_completion_saved_sync_pending">บันทึกผู้ให้บริการแล้ว การซิงค์จะดำเนินการต่อในเบื้องหลัง</string>
+  <string name="setup_combined_attach_title">เพิ่มเพลย์ลิสต์ไปยัง M3U รวมหรือไม่?</string>
+  <string name="setup_combined_attach_message">เพิ่ม %1$s ไปยัง %2$s และคงแหล่งที่มารวมนั้นไว้ให้ใช้งานสำหรับทีวีสดหรือไม่?</string>
+  <string name="setup_combined_attach_fallback_playlist">เพลย์ลิสต์นี้</string>
+  <string name="setup_combined_attach_fallback_source">แหล่งที่มารวมที่ใช้งานอยู่</string>
+  <string name="setup_combined_attach_skip">ไว้ทีหลัง</string>
+  <string name="setup_combined_attach_confirm">เพิ่มไปยังแหล่งรวม</string>
+</resources>

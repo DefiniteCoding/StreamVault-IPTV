@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Ακύρωση</string>
+  <string name="setup_completion_saved_sync_pending">Ο πάροχος αποθηκεύτηκε. Ο συγχρονισμός θα συνεχιστεί στο παρασκήνιο.</string>
+  <string name="setup_combined_attach_title">Προσθήκη λίστας αναπαραγωγής σε συνδυασμένο M3U;</string>
+  <string name="setup_combined_attach_message">Προσθέστε %1$s σε %2$s και κρατήστε αυτή τη συνδυασμένη πηγή ενεργή για τη Ζωντανή TV;</string>
+  <string name="setup_combined_attach_fallback_playlist">αυτή τη λίστα αναπαραγωγής</string>
+  <string name="setup_combined_attach_fallback_source">ενεργή συνδυασμένη πηγή</string>
+  <string name="setup_combined_attach_skip">Όχι τώρα</string>
+  <string name="setup_combined_attach_confirm">Προσθήκη στο συνδυασμένο</string>
+</resources>

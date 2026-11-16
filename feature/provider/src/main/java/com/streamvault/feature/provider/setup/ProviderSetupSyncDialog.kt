@@ -84,7 +84,7 @@ fun SyncProgressDialog(
                     )
                     if (onCancel != null) {
                         TextButton(onClick = onCancel) {
-                            Text("Cancel", color = Color.White)
+                            Text(stringResource(R.string.setup_sync_cancel), color = Color.White)
                         }
                     }
                 }

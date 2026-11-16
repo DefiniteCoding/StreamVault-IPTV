@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Anulează</string>
+  <string name="setup_completion_saved_sync_pending">Furnizor salvat. Sincronizarea va continua în fundal.</string>
+  <string name="setup_combined_attach_title">Adaugi lista de redare la M3U combinat?</string>
+  <string name="setup_combined_attach_message">Adaugi %1$s la %2$s și păstrezi această sursă combinată activă pentru TV în direct?</string>
+  <string name="setup_combined_attach_fallback_playlist">această listă de redare</string>
+  <string name="setup_combined_attach_fallback_source">sursa combinată activă</string>
+  <string name="setup_combined_attach_skip">Nu acum</string>
+  <string name="setup_combined_attach_confirm">Adaugă la combinat</string>
+</resources>

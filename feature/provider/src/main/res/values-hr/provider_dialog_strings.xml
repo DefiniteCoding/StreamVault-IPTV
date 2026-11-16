@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Odustani</string>
+  <string name="setup_completion_saved_sync_pending">Pružatelj je spremljen. Sinkronizacija će se nastaviti u pozadini.</string>
+  <string name="setup_combined_attach_title">Dodati playlistu u kombinirani M3U?</string>
+  <string name="setup_combined_attach_message">Dodati %1$s u %2$s i zadržati taj kombinirani izvor aktivnim za TV uživo?</string>
+  <string name="setup_combined_attach_fallback_playlist">ovu playlistu</string>
+  <string name="setup_combined_attach_fallback_source">aktivni kombinirani izvor</string>
+  <string name="setup_combined_attach_skip">Ne sada</string>
+  <string name="setup_combined_attach_confirm">Dodaj u kombinirani</string>
+</resources>

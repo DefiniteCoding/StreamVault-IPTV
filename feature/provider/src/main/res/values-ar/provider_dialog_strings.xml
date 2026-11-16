@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">إلغاء</string>
+  <string name="setup_completion_saved_sync_pending">تم حفظ المزوّد. ستُستأنف المزامنة في الخلفية.</string>
+  <string name="setup_combined_attach_title">إضافة قائمة التشغيل إلى M3U المدمجة؟</string>
+  <string name="setup_combined_attach_message">هل تريد إضافة %1$s إلى %2$s وإبقاء هذا المصدر المدمج نشطًا للبث المباشر؟</string>
+  <string name="setup_combined_attach_fallback_playlist">قائمة التشغيل هذه</string>
+  <string name="setup_combined_attach_fallback_source">المصدر المدمج النشط</string>
+  <string name="setup_combined_attach_skip">ليس الآن</string>
+  <string name="setup_combined_attach_confirm">إضافة إلى المصدر المدمج</string>
+</resources>

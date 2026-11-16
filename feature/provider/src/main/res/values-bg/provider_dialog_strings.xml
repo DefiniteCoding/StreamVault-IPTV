@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Отказ</string>
+  <string name="setup_completion_saved_sync_pending">Доставчикът е запазен. Синхронизацията ще продължи във фонов режим.</string>
+  <string name="setup_combined_attach_title">Добавяне на плейлист към комбиниран M3U?</string>
+  <string name="setup_combined_attach_message">Да се добави ли %1$s към %2$s и този комбиниран източник да остане ли активен за ТВ на живо?</string>
+  <string name="setup_combined_attach_fallback_playlist">този плейлист</string>
+  <string name="setup_combined_attach_fallback_source">активния комбиниран източник</string>
+  <string name="setup_combined_attach_skip">Не сега</string>
+  <string name="setup_combined_attach_confirm">Добави към комбиниран</string>
+</resources>

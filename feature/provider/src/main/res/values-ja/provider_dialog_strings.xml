@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">キャンセル</string>
+  <string name="setup_completion_saved_sync_pending">プロバイダーを保存しました。同期はバックグラウンドで再開されます。</string>
+  <string name="setup_combined_attach_title">プレイリストを統合M3Uに追加しますか？</string>
+  <string name="setup_combined_attach_message">%1$sを%2$sに追加し、その統合ソースをライブテレビ用に有効のままにしますか？</string>
+  <string name="setup_combined_attach_fallback_playlist">このプレイリスト</string>
+  <string name="setup_combined_attach_fallback_source">有効な統合ソース</string>
+  <string name="setup_combined_attach_skip">今はしない</string>
+  <string name="setup_combined_attach_confirm">統合ソースに追加</string>
+</resources>

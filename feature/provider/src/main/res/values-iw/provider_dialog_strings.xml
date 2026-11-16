@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">בטל</string>
+  <string name="setup_completion_saved_sync_pending">הספק נשמר. הסנכרון יימשך ברקע.</string>
+  <string name="setup_combined_attach_title">להוסיף רשימת השמעה ל-M3U משולב?</string>
+  <string name="setup_combined_attach_message">להוסיף את %1$s אל %2$s ולהשאיר את המקור המשולב פעיל לטלוויזיה בשידור חי?</string>
+  <string name="setup_combined_attach_fallback_playlist">רשימת השמעה זו</string>
+  <string name="setup_combined_attach_fallback_source">המקור המשולב הפעיל</string>
+  <string name="setup_combined_attach_skip">לא עכשיו</string>
+  <string name="setup_combined_attach_confirm">הוספה למשולב</string>
+</resources>
