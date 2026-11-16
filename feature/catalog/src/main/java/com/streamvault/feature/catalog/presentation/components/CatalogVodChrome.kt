@@ -526,18 +526,22 @@ fun VodBrowseOptionsDialog(
     onSortSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Explicit target so RTL lands on the selected chip, not whichever chip the layout puts first.
+    val initialFocus = remember { FocusRequester() }
     PremiumDialog(
         title = title,
         onDismissRequest = onDismiss,
         widthFraction = 0.6f,
         heightFraction = null,
         bodyHeightFraction = 0.6f,
+        initialBodyFocusRequester = initialFocus,
         content = {
             VodBrowseOptionsSection(
                 title = filterTitle,
                 chips = filterChips,
                 selectedKey = selectedFilterKey,
-                onChipSelected = onFilterSelected
+                onChipSelected = onFilterSelected,
+                initialFocusRequester = initialFocus
             )
             VodBrowseOptionsSection(
                 title = sortTitle,
@@ -560,8 +564,10 @@ private fun VodBrowseOptionsSection(
     title: String,
     chips: List<SelectionChip>,
     selectedKey: String,
-    onChipSelected: (String) -> Unit
+    onChipSelected: (String) -> Unit,
+    initialFocusRequester: FocusRequester? = null
 ) {
+    val focusKey = chips.firstOrNull { it.key == selectedKey }?.key ?: chips.firstOrNull()?.key
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -581,7 +587,12 @@ private fun VodBrowseOptionsSection(
                     label = chip.label,
                     supportingText = chip.supportingText,
                     selected = chip.key == selectedKey,
-                    onClick = { onChipSelected(chip.key) }
+                    onClick = { onChipSelected(chip.key) },
+                    modifier = if (initialFocusRequester != null && chip.key == focusKey) {
+                        Modifier.focusRequester(initialFocusRequester)
+                    } else {
+                        Modifier
+                    }
                 )
             }
         }
@@ -595,10 +606,12 @@ private fun VodBrowseOptionChip(
     label: String,
     supportingText: String?,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         onClick = onClick,
+        modifier = modifier,
         colors = if (selected) selectableSurfaceColors(selected = true) else secondarySurfaceColors(),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         border = selectableFocusBorder(BrowseShapes.Control),
