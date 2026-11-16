@@ -131,7 +131,7 @@ fun LiveCategoryOptionsDialog(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     Text(
-                        text = category.name,
+                        text = category.localizedName(),
                         style = MaterialTheme.typography.headlineMedium,
                         color = OnSurface
                     )

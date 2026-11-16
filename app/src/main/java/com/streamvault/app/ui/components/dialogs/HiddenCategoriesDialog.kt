@@ -1,5 +1,6 @@
 package com.streamvault.app.ui.components.dialogs
 
+import com.streamvault.app.ui.components.localizedName
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -133,7 +134,7 @@ private fun HiddenCategoryRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = category.name,
+                text = category.localizedName(),
                 style = MaterialTheme.typography.bodySmall,
                 color = OnSurface,
                 modifier = Modifier.weight(1f).padding(end = 12.dp)

@@ -202,7 +202,7 @@ public fun SettingsPreferenceDialogs(
             uiState.guideDefaultCategoryOptions.forEachIndexed { index, category ->
                 LevelOption(
                     level = index,
-                    text = category.name,
+                    text = category.localizedName(),
                     currentLevel = if (uiState.guideDefaultCategoryId == category.id) index else -1,
                     onSelect = {
                         viewModel.setGuideDefaultCategory(category.id)

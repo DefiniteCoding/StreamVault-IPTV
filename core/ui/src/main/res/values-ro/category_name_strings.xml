@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Favorite</string>
+    <string name="category_name_recent">Recente</string>
+    <string name="category_name_all_channels">Toate canalele</string>
+    <string name="category_name_placeholder">Categoria %1$s</string>
+</resources>

@@ -28,6 +28,7 @@ import com.streamvault.core.ui.design.LocalAppSpacing
 import com.streamvault.domain.model.Category
 import com.streamvault.feature.playback.R
 import com.streamvault.feature.playback.player.playerCategoryOverlayItemKey
+import com.streamvault.feature.playback.ui.localizedName
 
 @Composable
 fun CategoryListOverlay(
@@ -97,7 +98,7 @@ fun CategoryListOverlay(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            category.name,
+                            category.localizedName(),
                             style = MaterialTheme.typography.titleMedium,
                             color = AppColors.TextPrimary,
                             maxLines = 2,

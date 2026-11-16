@@ -1,5 +1,6 @@
 ﻿package com.streamvault.feature.catalog.presentation.vod
 
+import com.streamvault.feature.catalog.presentation.components.localizedName
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -290,7 +291,7 @@ private fun VodModernShelves(
                         onClick = { onCategoryClick(row.category) }
                     ) {
                         Text(
-                            text = row.category.name,
+                            text = row.category.localizedName(),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
                         )
@@ -384,7 +385,7 @@ private fun VodClassicCategories(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp)
             ) {
                 Text(
-                    text = row.category.name,
+                    text = row.category.localizedName(),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(18.dp)
                 )

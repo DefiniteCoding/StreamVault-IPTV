@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Kedvencek</string>
+    <string name="category_name_recent">Legutóbbiak</string>
+    <string name="category_name_all_channels">Összes csatorna</string>
+    <string name="category_name_placeholder">%1$s. kategória</string>
+</resources>

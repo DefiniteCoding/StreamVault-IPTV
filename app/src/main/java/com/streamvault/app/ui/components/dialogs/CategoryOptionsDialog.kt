@@ -1,5 +1,6 @@
 package com.streamvault.app.ui.components.dialogs
 
+import com.streamvault.app.ui.components.localizedName
 import com.streamvault.core.ui.design.focusRingButtonBorder
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -104,7 +105,7 @@ fun CategoryOptionsDialog(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
-                    text = category.name,
+                    text = category.localizedName(),
                     style = MaterialTheme.typography.headlineMedium,
                     color = OnSurface
                 )

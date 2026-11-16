@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">पसंदीदा</string>
+    <string name="category_name_recent">हाल के</string>
+    <string name="category_name_all_channels">सभी चैनल</string>
+    <string name="category_name_placeholder">श्रेणी %1$s</string>
+</resources>

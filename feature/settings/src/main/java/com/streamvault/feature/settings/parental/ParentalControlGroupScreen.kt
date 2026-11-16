@@ -1,5 +1,6 @@
 package com.streamvault.feature.settings.parental
 
+import com.streamvault.feature.settings.presentation.localizedName
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -268,7 +269,7 @@ fun ParentalControlGroupScreen(
                                     )
                                 } else {
                                     CategoryModeChip(
-                                        label = item.category.name,
+                                        label = item.category.localizedName(),
                                         selected = false,
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = {
@@ -572,7 +573,7 @@ private fun CategoryProtectionCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = item.category.name,
+                    text = item.category.localizedName(),
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.primaryText,
                     maxLines = 1,
@@ -630,7 +631,7 @@ private fun CategoryVisibilityCard(
                 verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
                 Text(
-                    text = item.category.name,
+                    text = item.category.localizedName(),
                     style = MaterialTheme.typography.titleMedium,
                     color = colors.primaryText,
                     maxLines = 1,

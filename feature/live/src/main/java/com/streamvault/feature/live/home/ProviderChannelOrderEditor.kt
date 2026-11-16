@@ -88,7 +88,7 @@ fun ProviderChannelOrderEditor(
                     true
                 } else false
             }.padding(spacing.md), verticalArrangement = Arrangement.spacedBy(spacing.xs)) {
-                OrderEditorHeader(title = stringResource(R.string.label_reordering, state.category?.name ?: category.name),
+                OrderEditorHeader(title = stringResource(R.string.label_reordering, (state.category ?: category).localizedName()),
                     enabled = !state.saving, saveEnabled = state.draft != null && !state.loading,
                     onSave = { viewModel.save() }, onCancel = dismiss)
                 if (state.draft != null) {

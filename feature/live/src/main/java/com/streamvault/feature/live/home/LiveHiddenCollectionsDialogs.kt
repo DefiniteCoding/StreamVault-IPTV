@@ -119,7 +119,7 @@ private fun LiveHiddenCategoryRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = category.name,
+                text = category.localizedName(),
                 style = MaterialTheme.typography.bodySmall,
                 color = OnSurface,
                 modifier = Modifier.weight(1f).padding(end = 12.dp)

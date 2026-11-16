@@ -56,7 +56,7 @@ fun ProviderCategoryChannelOrderControl(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(spacing.md)) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(spacing.xs)) {
-                Text(category.name, style = MaterialTheme.typography.titleMedium, color = AppColors.TextPrimary,
+                Text(category.localizedName(), style = MaterialTheme.typography.titleMedium, color = AppColors.TextPrimary,
                     maxLines = 1, overflow = TextOverflow.Ellipsis)
                 val detail = when {
                     state.loading -> stringResource(R.string.home_loading_channels)

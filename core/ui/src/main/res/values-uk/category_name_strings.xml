@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Обране</string>
+    <string name="category_name_recent">Нещодавні</string>
+    <string name="category_name_all_channels">Усі канали</string>
+    <string name="category_name_placeholder">Категорія %1$s</string>
+</resources>

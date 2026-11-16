@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Kegemaran</string>
+    <string name="category_name_recent">Terkini</string>
+    <string name="category_name_all_channels">Semua Saluran</string>
+    <string name="category_name_placeholder">Kategori %1$s</string>
+</resources>

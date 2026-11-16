@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Favoriter</string>
+    <string name="category_name_recent">Nyligen</string>
+    <string name="category_name_all_channels">Alla kanaler</string>
+    <string name="category_name_placeholder">Kategori %1$s</string>
+</resources>

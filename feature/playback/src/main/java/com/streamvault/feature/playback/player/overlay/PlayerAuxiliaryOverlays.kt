@@ -1,5 +1,6 @@
 package com.streamvault.feature.playback.player.overlay
 
+import com.streamvault.feature.playback.ui.localizedName
 import androidx.activity.compose.BackHandler
 import android.view.KeyEvent
 import androidx.compose.animation.AnimatedVisibility

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Yêu thích</string>
+    <string name="category_name_recent">Gần đây</string>
+    <string name="category_name_all_channels">Tất cả các kênh</string>
+    <string name="category_name_placeholder">Danh mục %1$s</string>
+</resources>

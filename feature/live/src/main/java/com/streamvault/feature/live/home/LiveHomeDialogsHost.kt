@@ -363,7 +363,7 @@ fun LiveHomeDialogsHost(
         LiveM3uCategorySeriesAssignmentDialog(
             items = pendingM3uSeriesItems!!,
             labels = LiveM3uCategorySeriesAssignmentLabels(
-                title = stringResource(R.string.m3u_series_review_title, category.name),
+                title = stringResource(R.string.m3u_series_review_title, category.localizedName()),
                 subtitle = stringResource(R.string.m3u_series_review_subtitle),
                 seriesName = stringResource(R.string.m3u_series_name),
                 seasonNumber = stringResource(R.string.m3u_season_number),

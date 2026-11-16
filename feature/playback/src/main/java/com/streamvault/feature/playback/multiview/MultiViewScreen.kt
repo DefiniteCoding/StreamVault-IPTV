@@ -1,5 +1,6 @@
 package com.streamvault.feature.playback.multiview
 
+import com.streamvault.feature.playback.ui.localizedName
 import com.streamvault.core.ui.layout.isPortraitLayout
 
 import com.streamvault.core.ui.design.BrowseShapes
@@ -866,7 +867,7 @@ private fun ReplaceSlotDialog(
                             items(filtered, key = { it.id }) { category ->
                                 val locked = isCategoryLocked(category)
                                 PremiumDialogActionButton(
-                                    label = if (locked) "\uD83D\uDD12 ${category.name}" else category.name,
+                                    label = if (locked) "\uD83D\uDD12 ${category.localizedName()}" else category.localizedName(),
                                     onClick = {
                                         if (locked) {
                                             pendingLockedCategory = category

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">מועדפים</string>
+    <string name="category_name_recent">אחרונים</string>
+    <string name="category_name_all_channels">כל הערוצים</string>
+    <string name="category_name_placeholder">קטגוריה %1$s</string>
+</resources>

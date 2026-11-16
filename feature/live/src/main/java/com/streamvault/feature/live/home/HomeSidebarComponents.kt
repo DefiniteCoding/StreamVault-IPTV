@@ -319,7 +319,7 @@ fun CategoryItem(
                 )
             }
             LiveFocusedMarqueeText(
-                text = category.name,
+                text = category.localizedName(),
                 isFocused = isFocused,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,

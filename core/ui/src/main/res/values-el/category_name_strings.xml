@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Αγαπημένα</string>
+    <string name="category_name_recent">Πρόσφατα</string>
+    <string name="category_name_all_channels">Όλα τα κανάλια</string>
+    <string name="category_name_placeholder">Κατηγορία %1$s</string>
+</resources>
