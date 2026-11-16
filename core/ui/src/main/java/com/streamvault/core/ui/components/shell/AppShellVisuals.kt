@@ -23,6 +23,7 @@ import androidx.compose.ui.semantics.selected
 import com.streamvault.core.ui.accessibility.LocalReducedEffects
 import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.GlassTier
+import com.streamvault.core.ui.design.fadeWhenMoreContent
 import com.streamvault.core.ui.design.glassSurface
 import com.streamvault.core.ui.design.requestFocusSafely
 import com.streamvault.core.ui.design.shellHorizontalInset
@@ -310,6 +311,7 @@ class TopBarDownTarget {
 val LocalTopBarDownTarget = compositionLocalOf { TopBarDownTarget() }
 
 private val TopBarHeight = 48.dp
+private val TopNavFadeWidth = 32.dp
 private val TopNavIconSize = 18.dp
 // Same height as a tab: titleSmall line height (20) plus xs padding above and below.
 private val TopNavSearchPillSize = 36.dp
@@ -468,6 +470,8 @@ private fun TopNavigationBar(
                     .fillMaxHeight()
                     .glassSurface(tier, CircleShape)
                     .then(downProperties)
+                    // Inside the glass so the pill background stays solid and only the tabs fade.
+                    .fadeWhenMoreContent(scrollState, edgeInset = 0.dp, fadeWidth = TopNavFadeWidth)
                     .horizontalScroll(scrollState)
                     // Inside the scroll so the first and last pills keep room for their focus scale and ring.
                     .padding(horizontal = spacing.sm),

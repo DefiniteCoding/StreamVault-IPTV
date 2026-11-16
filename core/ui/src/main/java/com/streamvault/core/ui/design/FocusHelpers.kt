@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.BringIntoViewSpec
 import androidx.compose.foundation.gestures.LocalBringIntoViewSpec
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -247,7 +248,7 @@ private fun Modifier.bleed(start: Dp, end: Dp, vertical: Dp): Modifier = layout 
  * part of the row outside the screen (the bleed for ring overflow). State is read in the draw phase, so scrolling
  * never recomposes. Without more content nothing is masked and the layer is not offscreen.
  */
-private fun Modifier.fadeWhenMoreContent(state: LazyListState, edgeInset: Dp, fadeWidth: Dp): Modifier = this
+internal fun Modifier.fadeWhenMoreContent(state: ScrollableState, edgeInset: Dp, fadeWidth: Dp): Modifier = this
     .graphicsLayer {
         compositingStrategy =
             if (state.canScrollBackward || state.canScrollForward) CompositingStrategy.Offscreen
