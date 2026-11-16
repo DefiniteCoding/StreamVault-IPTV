@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Teruk</string>
     <string name="multiview_thermal_critical">Kritikal</string>
     <string name="multiview_low_memory_warning">Tekanan memori tinggi. Slot tambahan kekal dalam mod sedia sehingga main balik stabil.</string>
+    <string name="multiview_search_categories">Cari kategori…</string>
+    <string name="multiview_search_channels">Cari saluran…</string>
+    <string name="multiview_no_categories">Tiada kategori ditemui</string>
+    <string name="multiview_no_channels">Tiada saluran ditemui</string>
+    <string name="multiview_picker_subtitle">Pilih kategori, kemudian pilih saluran</string>
 </resources>

@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">شدید</string>
     <string name="multiview_thermal_critical">بحرانی</string>
     <string name="multiview_low_memory_warning">فشار حافظه بالاست. جایگاه‌های اضافی تا پایدار شدن پخش در حالت آماده‌به‌کار می‌مانند.</string>
+    <string name="multiview_search_categories">جستجوی دسته‌ها…</string>
+    <string name="multiview_search_channels">جستجوی کانال‌ها…</string>
+    <string name="multiview_no_categories">دسته‌ای پیدا نشد</string>
+    <string name="multiview_no_channels">کانالی پیدا نشد</string>
+    <string name="multiview_picker_subtitle">یک دسته انتخاب کنید، سپس یک کانال برگزینید</string>
 </resources>

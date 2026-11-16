@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Nặng</string>
     <string name="multiview_thermal_critical">Nguy cấp</string>
     <string name="multiview_low_memory_warning">Áp lực bộ nhớ đang cao. Các ô bổ sung sẽ ở trạng thái chờ cho đến khi phát lại ổn định.</string>
+    <string name="multiview_search_categories">Tìm danh mục…</string>
+    <string name="multiview_search_channels">Tìm kênh…</string>
+    <string name="multiview_no_categories">Không tìm thấy danh mục nào</string>
+    <string name="multiview_no_channels">Không tìm thấy kênh nào</string>
+    <string name="multiview_picker_subtitle">Chọn một danh mục, sau đó chọn một kênh</string>
 </resources>

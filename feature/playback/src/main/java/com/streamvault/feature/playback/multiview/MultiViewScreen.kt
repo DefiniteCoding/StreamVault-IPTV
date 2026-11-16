@@ -805,7 +805,7 @@ private fun ReplaceSlotDialog(
 
     PremiumDialog(
         title = if (selectedCategory == null) stringResource(R.string.multiview_replace_title) else selectedCategory.name,
-        subtitle = if (selectedCategory == null) "Choose a category, then pick a channel" else null,
+        subtitle = if (selectedCategory == null) stringResource(R.string.multiview_picker_subtitle) else null,
         onDismissRequest = onDismiss,
         widthFraction = 0.62f,
         content = {
@@ -824,7 +824,10 @@ private fun ReplaceSlotDialog(
                     Box {
                         if (searchQuery.isEmpty()) {
                             Text(
-                                text = if (selectedCategory == null) "Search categories\u2026" else "Search channels\u2026",
+                                text = stringResource(
+                                    if (selectedCategory == null) R.string.multiview_search_categories
+                                    else R.string.multiview_search_channels
+                                ),
                                 color = Color.White.copy(alpha = 0.38f),
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -851,7 +854,7 @@ private fun ReplaceSlotDialog(
                         else pickerState.categories.filter { it.name.contains(catSearch, ignoreCase = true) }
                     if (filtered.isEmpty()) {
                         Text(
-                            text = "No categories found",
+                            text = stringResource(R.string.multiview_no_categories),
                             color = Color.White.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -882,7 +885,7 @@ private fun ReplaceSlotDialog(
                     val filtered = pickerState.filteredChannels
                     if (filtered.isEmpty() && !pickerState.isLoading) {
                         Text(
-                            text = "No channels found",
+                            text = stringResource(R.string.multiview_no_channels),
                             color = Color.White.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodyMedium
                         )

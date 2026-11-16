@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Grave</string>
     <string name="multiview_thermal_critical">Crítico</string>
     <string name="multiview_low_memory_warning">A pressão de memória está alta. Os slots extras ficam em espera até a reprodução estabilizar.</string>
+    <string name="multiview_search_categories">Pesquisar categorias…</string>
+    <string name="multiview_search_channels">Pesquisar canais…</string>
+    <string name="multiview_no_categories">Nenhuma categoria encontrada</string>
+    <string name="multiview_no_channels">Nenhum canal encontrado</string>
+    <string name="multiview_picker_subtitle">Escolha uma categoria e depois um canal</string>
 </resources>

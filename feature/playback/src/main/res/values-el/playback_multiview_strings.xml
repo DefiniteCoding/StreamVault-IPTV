@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Σοβαρό</string>
     <string name="multiview_thermal_critical">Κρίσιμο</string>
     <string name="multiview_low_memory_warning">Η πίεση μνήμης είναι υψηλή. Οι επιπλέον θέσεις παραμένουν σε αναμονή μέχρι να σταθεροποιηθεί η αναπαραγωγή.</string>
+    <string name="multiview_search_categories">Αναζήτηση κατηγοριών…</string>
+    <string name="multiview_search_channels">Αναζήτηση καναλιών…</string>
+    <string name="multiview_no_categories">Δεν βρέθηκαν κατηγορίες</string>
+    <string name="multiview_no_channels">Δεν βρέθηκαν κανάλια</string>
+    <string name="multiview_picker_subtitle">Επιλέξτε κατηγορία και μετά κανάλι</string>
 </resources>

@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Сериозно</string>
     <string name="multiview_thermal_critical">Критично</string>
     <string name="multiview_low_memory_warning">Натоварването на паметта е високо. Допълнителните слотове остават в готовност, докато възпроизвеждането се стабилизира.</string>
+    <string name="multiview_search_categories">Търсене на категории…</string>
+    <string name="multiview_search_channels">Търсене на канали…</string>
+    <string name="multiview_no_categories">Няма намерени категории</string>
+    <string name="multiview_no_channels">Няма намерени канали</string>
+    <string name="multiview_picker_subtitle">Изберете категория, после изберете канал</string>
 </resources>

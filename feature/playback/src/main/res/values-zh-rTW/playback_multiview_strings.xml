@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">嚴重</string>
     <string name="multiview_thermal_critical">危急</string>
     <string name="multiview_low_memory_warning">記憶體壓力過高。額外插槽會保持待機，直到播放穩定為止。</string>
+    <string name="multiview_search_categories">搜尋分類…</string>
+    <string name="multiview_search_channels">搜尋頻道…</string>
+    <string name="multiview_no_categories">找不到分類</string>
+    <string name="multiview_no_channels">找不到頻道</string>
+    <string name="multiview_picker_subtitle">先選擇分類，再選擇頻道</string>
 </resources>
