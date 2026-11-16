@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">APK 직접 URL을 입력하세요. StreamVault가 다운로드한 후 설치 프로그램을 엽니다.</string>
+  <string name="plugins_install_url_label">플러그인 APK URL</string>
+  <string name="plugins_installing">설치 중…</string>
+  <string name="plugins_download_install">다운로드 및 설치</string>
+</resources>

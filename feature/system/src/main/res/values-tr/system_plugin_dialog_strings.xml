@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Doğrudan APK URL\'sini girin. StreamVault dosyayı indirip yükleyiciyi açacak.</string>
+  <string name="plugins_install_url_label">Eklenti APK URL\'si</string>
+  <string name="plugins_installing">Yükleniyor…</string>
+  <string name="plugins_download_install">İndir ve yükle</string>
+</resources>

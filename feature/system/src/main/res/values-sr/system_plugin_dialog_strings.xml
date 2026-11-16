@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Унесите директан URL APK-а. StreamVault ће га преузети и отворити инсталер.</string>
+  <string name="plugins_install_url_label">URL APK-а прикључка</string>
+  <string name="plugins_installing">Инсталирање…</string>
+  <string name="plugins_download_install">Преузми и инсталирај</string>
+</resources>

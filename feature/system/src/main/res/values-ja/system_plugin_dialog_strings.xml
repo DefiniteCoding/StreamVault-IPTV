@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">APKの直接URLを入力してください。StreamVaultがダウンロードしてインストーラーを開きます。</string>
+  <string name="plugins_install_url_label">プラグインAPKのURL</string>
+  <string name="plugins_installing">インストール中…</string>
+  <string name="plugins_download_install">ダウンロードしてインストール</string>
+</resources>

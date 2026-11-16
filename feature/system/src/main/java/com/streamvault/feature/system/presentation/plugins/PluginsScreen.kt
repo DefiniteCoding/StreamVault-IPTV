@@ -443,8 +443,8 @@ private fun PluginInstallUrlDialog(
     }
 
     PremiumDialog(
-        title = "Install plugin from URL",
-        subtitle = "Enter the direct APK URL. StreamVault will download it and open the installer.",
+        title = stringResource(R.string.plugins_install_url),
+        subtitle = stringResource(R.string.plugins_install_url_subtitle),
         onDismissRequest = {
             keyboardController?.hide()
             if (!isInstalling) onDismiss()
@@ -460,7 +460,7 @@ private fun PluginInstallUrlDialog(
                     .focusRequester(focusRequester),
                 enabled = !isInstalling,
                 singleLine = true,
-                label = { androidx.compose.material3.Text("Plugin APK URL") },
+                label = { androidx.compose.material3.Text(stringResource(R.string.plugins_install_url_label)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
                     imeAction = ImeAction.Done
@@ -482,7 +482,7 @@ private fun PluginInstallUrlDialog(
         },
         footer = {
             PremiumDialogFooterButton(
-                label = "Cancel",
+                label = stringResource(R.string.settings_cancel),
                 onClick = {
                     keyboardController?.hide()
                     onDismiss()
@@ -490,7 +490,9 @@ private fun PluginInstallUrlDialog(
                 enabled = !isInstalling
             )
             PremiumDialogFooterButton(
-                label = if (isInstalling) "Installing..." else "Download and install",
+                label = stringResource(
+                    if (isInstalling) R.string.plugins_installing else R.string.plugins_download_install
+                ),
                 onClick = ::submitUrl,
                 enabled = !isInstalling && normalizedUrl.isNotBlank(),
                 emphasized = true

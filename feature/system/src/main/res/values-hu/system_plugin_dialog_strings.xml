@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Adja meg az APK közvetlen URL-címét. A StreamVault letölti, és megnyitja a telepítőt.</string>
+  <string name="plugins_install_url_label">Bővítmény APK URL-címe</string>
+  <string name="plugins_installing">Telepítés…</string>
+  <string name="plugins_download_install">Letöltés és telepítés</string>
+</resources>

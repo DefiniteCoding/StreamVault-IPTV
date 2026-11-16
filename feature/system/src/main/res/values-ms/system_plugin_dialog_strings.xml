@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Masukkan URL APK terus. StreamVault akan memuat turunnya dan membuka pemasang.</string>
+  <string name="plugins_install_url_label">URL APK pemalam</string>
+  <string name="plugins_installing">Memasang…</string>
+  <string name="plugins_download_install">Muat turun dan pasang</string>
+</resources>

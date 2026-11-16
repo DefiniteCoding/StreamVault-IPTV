@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Εισαγάγετε τον άμεσο σύνδεσμο URL του APK. Το StreamVault θα το κατεβάσει και θα ανοίξει το πρόγραμμα εγκατάστασης.</string>
+  <string name="plugins_install_url_label">URL APK πρόσθετου</string>
+  <string name="plugins_installing">Εγκατάσταση…</string>
+  <string name="plugins_download_install">Λήψη και εγκατάσταση</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Ange den direkta APK-URL:en. StreamVault laddar ner filen och öppnar installationsprogrammet.</string>
+  <string name="plugins_install_url_label">APK-URL för insticksprogram</string>
+  <string name="plugins_installing">Installerar…</string>
+  <string name="plugins_download_install">Ladda ner och installera</string>
+</resources>
