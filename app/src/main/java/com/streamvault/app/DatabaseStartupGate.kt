@@ -24,10 +24,7 @@ import javax.inject.Singleton
 sealed interface DatabaseStartupState {
     data object Opening : DatabaseStartupState
     data object Ready : DatabaseStartupState
-    data class Failed(
-        val errorType: String,
-        val userMessage: String = "The local database could not be upgraded. Your data was not deleted."
-    ) : DatabaseStartupState
+    data class Failed(val errorType: String) : DatabaseStartupState
 }
 
 internal class DatabaseStartupGate(

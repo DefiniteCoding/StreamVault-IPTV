@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Підготовка бібліотеки…</string>
+    <string name="startup_failed_title">StreamVault не вдалося відкрити вашу бібліотеку</string>
+    <string name="startup_failed_message">Не вдалося оновити локальну базу даних. Ваші дані не видалено.</string>
+    <string name="startup_failed_error_type">Помилка: %1$s</string>
+    <string name="startup_retry">Повторити</string>
+    <string name="startup_share_report">Поділитися звітом</string>
+</resources>

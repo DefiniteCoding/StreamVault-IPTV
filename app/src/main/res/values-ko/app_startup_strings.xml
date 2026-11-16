@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">라이브러리를 준비하는 중…</string>
+    <string name="startup_failed_title">StreamVault에서 라이브러리를 열 수 없습니다</string>
+    <string name="startup_failed_message">로컬 데이터베이스를 업그레이드할 수 없습니다. 데이터는 삭제되지 않았습니다.</string>
+    <string name="startup_failed_error_type">오류: %1$s</string>
+    <string name="startup_retry">다시 시도</string>
+    <string name="startup_share_report">보고서 공유</string>
+</resources>

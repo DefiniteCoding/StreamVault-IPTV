@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">A könyvtár előkészítése…</string>
+    <string name="startup_failed_title">A StreamVault nem tudta megnyitni a könyvtárat</string>
+    <string name="startup_failed_message">A helyi adatbázist nem sikerült frissíteni. Az adatok nem lettek törölve.</string>
+    <string name="startup_failed_error_type">Hiba: %1$s</string>
+    <string name="startup_retry">Újra</string>
+    <string name="startup_share_report">Jelentés megosztása</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Připravujeme vaši knihovnu…</string>
+    <string name="startup_failed_title">StreamVault nemohl otevřít vaši knihovnu</string>
+    <string name="startup_failed_message">Místní databázi se nepodařilo aktualizovat. Vaše data nebyla smazána.</string>
+    <string name="startup_failed_error_type">Chyba: %1$s</string>
+    <string name="startup_retry">Zkusit znovu</string>
+    <string name="startup_share_report">Sdílet zprávu</string>
+</resources>

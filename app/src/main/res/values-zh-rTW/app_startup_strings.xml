@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">正在準備您的媒體庫…</string>
+    <string name="startup_failed_title">StreamVault 無法開啟您的媒體庫</string>
+    <string name="startup_failed_message">無法升級本機資料庫。您的資料並未被刪除。</string>
+    <string name="startup_failed_error_type">錯誤：%1$s</string>
+    <string name="startup_retry">重試</string>
+    <string name="startup_share_report">分享報告</string>
+</resources>

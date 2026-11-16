@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Po përgatitet biblioteka jote…</string>
+    <string name="startup_failed_title">StreamVault nuk e hapi dot bibliotekën tënde</string>
+    <string name="startup_failed_message">Baza e të dhënave lokale nuk u përmirësua. Të dhënat e tua nuk u fshinë.</string>
+    <string name="startup_failed_error_type">Gabim: %1$s</string>
+    <string name="startup_retry">Provo përsëri</string>
+    <string name="startup_share_report">Ndaj raportin</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Inihahanda ang iyong library…</string>
+    <string name="startup_failed_title">Hindi mabuksan ng StreamVault ang iyong library</string>
+    <string name="startup_failed_message">Hindi ma-upgrade ang lokal na database. Hindi nabura ang iyong data.</string>
+    <string name="startup_failed_error_type">Error: %1$s</string>
+    <string name="startup_retry">Subukang Muli</string>
+    <string name="startup_share_report">Ibahagi ang ulat</string>
+</resources>

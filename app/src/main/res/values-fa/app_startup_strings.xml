@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">در حال آماده‌سازی کتابخانه شما…</string>
+    <string name="startup_failed_title">StreamVault نتوانست کتابخانه شما را باز کند</string>
+    <string name="startup_failed_message">پایگاه داده محلی ارتقا نیافت. داده‌های شما حذف نشده‌اند.</string>
+    <string name="startup_failed_error_type">خطا: %1$s</string>
+    <string name="startup_retry">تلاش دوباره</string>
+    <string name="startup_share_report">اشتراک‌گذاری گزارش</string>
+</resources>

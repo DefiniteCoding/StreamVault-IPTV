@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">جارٍ تجهيز مكتبتك…</string>
+    <string name="startup_failed_title">تعذّر على StreamVault فتح مكتبتك</string>
+    <string name="startup_failed_message">تعذّرت ترقية قاعدة البيانات المحلية. لم يتم حذف بياناتك.</string>
+    <string name="startup_failed_error_type">الخطأ: %1$s</string>
+    <string name="startup_retry">إعادة المحاولة</string>
+    <string name="startup_share_report">مشاركة التقرير</string>
+</resources>

@@ -52,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.runtime.CompositionLocalProvider
@@ -494,19 +495,20 @@ private fun DatabaseStartupScreen(
                 DatabaseStartupState.Opening -> {
                     CircularProgressIndicator()
                     Text(
-                        text = "Preparing your library…",
+                        text = stringResource(R.string.startup_preparing_library),
                         modifier = Modifier.padding(top = 24.dp),
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
                 is DatabaseStartupState.Failed -> {
                     Text(
-                        text = "StreamVault couldn't open your library",
+                        text = stringResource(R.string.startup_failed_title),
                         style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        text = "${state.userMessage}\nError: ${state.errorType}",
+                        text = stringResource(R.string.startup_failed_message) + "\n" +
+                            stringResource(R.string.startup_failed_error_type, state.errorType),
                         modifier = Modifier.padding(top = 16.dp),
                         textAlign = TextAlign.Center
                     )
@@ -514,8 +516,8 @@ private fun DatabaseStartupScreen(
                         modifier = Modifier.padding(top = 28.dp),
                         horizontalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Button(onClick = onRetry) { Text("Retry") }
-                        Button(onClick = onShareReport) { Text("Share report") }
+                        Button(onClick = onRetry) { Text(stringResource(R.string.startup_retry)) }
+                        Button(onClick = onShareReport) { Text(stringResource(R.string.startup_share_report)) }
                     }
                 }
                 DatabaseStartupState.Ready -> Unit

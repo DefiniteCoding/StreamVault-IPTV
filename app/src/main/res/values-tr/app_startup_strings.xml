@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Kitaplığınız hazırlanıyor…</string>
+    <string name="startup_failed_title">StreamVault kitaplığınızı açamadı</string>
+    <string name="startup_failed_message">Yerel veritabanı yükseltilemedi. Verileriniz silinmedi.</string>
+    <string name="startup_failed_error_type">Hata: %1$s</string>
+    <string name="startup_retry">Yeniden dene</string>
+    <string name="startup_share_report">Raporu paylaş</string>
+</resources>

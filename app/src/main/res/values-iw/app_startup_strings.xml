@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">מכינים את הספרייה שלכם…</string>
+    <string name="startup_failed_title">StreamVault לא הצליח לפתוח את הספרייה שלכם</string>
+    <string name="startup_failed_message">לא ניתן היה לשדרג את מסד הנתונים המקומי. הנתונים שלכם לא נמחקו.</string>
+    <string name="startup_failed_error_type">שגיאה: %1$s</string>
+    <string name="startup_retry">נסה שוב</string>
+    <string name="startup_share_report">שיתוף דוח</string>
+</resources>

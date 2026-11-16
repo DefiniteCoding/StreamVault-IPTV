@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Προετοιμασία της βιβλιοθήκης σας…</string>
+    <string name="startup_failed_title">Το StreamVault δεν μπόρεσε να ανοίξει τη βιβλιοθήκη σας</string>
+    <string name="startup_failed_message">Η τοπική βάση δεδομένων δεν μπόρεσε να αναβαθμιστεί. Τα δεδομένα σας δεν διαγράφηκαν.</string>
+    <string name="startup_failed_error_type">Σφάλμα: %1$s</string>
+    <string name="startup_retry">Δοκιμάστε ξανά</string>
+    <string name="startup_share_report">Κοινοποίηση αναφοράς</string>
+</resources>
