@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Quay lại</string>
+    <string name="multiview_hud_title">Điều khiển chia đôi màn hình</string>
+    <string name="multiview_hud_standby_active">Đang chờ</string>
+    <string name="multiview_hud_presets">Cài sẵn</string>
+    <string name="player_episode_picker_hint">Chọn một mùa, rồi di chuyển sang phải để xem các tập.</string>
+    <string name="player_episode_picker_now_on">Đang phát S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="other">%1$d mùa</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="other">%1$d tập</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="other">%1$d tập sẵn sàng để phát</item>
+    </plurals>
+</resources>

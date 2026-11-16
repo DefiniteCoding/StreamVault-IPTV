@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Πίσω</string>
+    <string name="multiview_hud_title">Χειριστήρια διαχωρισμένης οθόνης</string>
+    <string name="multiview_hud_standby_active">Αναμονή ενεργή</string>
+    <string name="multiview_hud_presets">Προεπιλογές</string>
+    <string name="player_episode_picker_hint">Επιλέξτε σεζόν και μετακινηθείτε δεξιά για τα επεισόδια.</string>
+    <string name="player_episode_picker_now_on">Τώρα: Σ%1$dΕ%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d σεζόν</item>
+        <item quantity="other">%1$d σεζόν</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d επεισόδιο</item>
+        <item quantity="other">%1$d επεισόδια</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d επεισόδιο έτοιμο για αναπαραγωγή</item>
+        <item quantity="other">%1$d επεισόδια έτοιμα για αναπαραγωγή</item>
+    </plurals>
+</resources>

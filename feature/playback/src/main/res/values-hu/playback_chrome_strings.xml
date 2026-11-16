@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Vissza</string>
+    <string name="multiview_hud_title">Osztott képernyő vezérlői</string>
+    <string name="multiview_hud_standby_active">Készenlét aktív</string>
+    <string name="multiview_hud_presets">Előbeállítások</string>
+    <string name="player_episode_picker_hint">Válasszon egy évadot, majd lépjen jobbra az epizódokhoz.</string>
+    <string name="player_episode_picker_now_on">Most: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d évad</item>
+        <item quantity="other">%1$d évad</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d epizód</item>
+        <item quantity="other">%1$d epizód</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d epizód lejátszásra kész</item>
+        <item quantity="other">%1$d epizód lejátszásra kész</item>
+    </plurals>
+</resources>

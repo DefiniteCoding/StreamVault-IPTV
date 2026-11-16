@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Kthehu</string>
+    <string name="multiview_hud_title">Kontrollet e ekranit të ndarë</string>
+    <string name="multiview_hud_standby_active">Modaliteti i pritjes është aktiv</string>
+    <string name="multiview_hud_presets">Paracaktime</string>
+    <string name="player_episode_picker_hint">Zgjidh një sezon, pastaj lëviz djathtas për episodet.</string>
+    <string name="player_episode_picker_now_on">Tani në S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d sezon</item>
+        <item quantity="other">%1$d sezone</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d episod</item>
+        <item quantity="other">%1$d episode</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d episod gati për luajtje</item>
+        <item quantity="other">%1$d episode gati për luajtje</item>
+    </plurals>
+</resources>

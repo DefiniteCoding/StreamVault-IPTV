@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Tillbaka</string>
+    <string name="multiview_hud_title">Kontroller för delad skärm</string>
+    <string name="multiview_hud_standby_active">Standby aktiv</string>
+    <string name="multiview_hud_presets">Förinställningar</string>
+    <string name="player_episode_picker_hint">Välj en säsong och gå sedan åt höger för avsnitt.</string>
+    <string name="player_episode_picker_now_on">Spelar nu S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d säsong</item>
+        <item quantity="other">%1$d säsonger</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d avsnitt</item>
+        <item quantity="other">%1$d avsnitt</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d avsnitt redo att spelas</item>
+        <item quantity="other">%1$d avsnitt redo att spelas</item>
+    </plurals>
+</resources>

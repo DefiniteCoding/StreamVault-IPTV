@@ -37,6 +37,7 @@ internal fun VodTransportControls(
     onSeekNextChapter: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val playPauseDescription = stringResource(if (isPlaying) R.string.player_pause else R.string.player_play)
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -58,7 +59,7 @@ internal fun VodTransportControls(
             modifier = Modifier
                 .focusRequester(playButtonFocusRequester)
                 .focusProperties { up = timelineFocusRequester }
-                .semantics { contentDescription = if (isPlaying) "Pause" else "Play" }
+                .semantics { contentDescription = playPauseDescription }
                 .padding(2.dp)
         ) {
             Icon(

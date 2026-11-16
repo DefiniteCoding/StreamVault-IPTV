@@ -909,7 +909,7 @@ private fun ReplaceSlotDialog(
         footer = {
             if (selectedCategory != null) {
                 PremiumDialogFooterButton(
-                    label = "\u2190 Back",
+                    label = stringResource(R.string.playback_back),
                     onClick = onBackToCategories
                 )
             }

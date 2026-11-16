@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Atrás</string>
+    <string name="multiview_hud_title">Controles de pantalla dividida</string>
+    <string name="multiview_hud_standby_active">En espera activo</string>
+    <string name="multiview_hud_presets">Preajustes</string>
+    <string name="player_episode_picker_hint">Elige una temporada y luego muévete a la derecha para ver los episodios.</string>
+    <string name="player_episode_picker_now_on">Ahora en S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d temporada</item>
+        <item quantity="many">%1$d de temporadas</item>
+        <item quantity="other">%1$d temporadas</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d episodio</item>
+        <item quantity="many">%1$d de episodios</item>
+        <item quantity="other">%1$d episodios</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d episodio listo para reproducir</item>
+        <item quantity="many">%1$d de episodios listos para reproducir</item>
+        <item quantity="other">%1$d episodios listos para reproducir</item>
+    </plurals>
+</resources>

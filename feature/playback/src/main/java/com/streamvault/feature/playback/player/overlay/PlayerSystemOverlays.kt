@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -235,7 +236,7 @@ fun PlayerErrorOverlay(
                         )
                     ) {
                         Text(
-                            text = "Back",
+                            text = stringResource(R.string.playback_back),
                             color = Color.White,
                             modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                         )
@@ -1444,10 +1445,28 @@ fun PlayerEpisodeSelectionDialog(
                         )
 
                         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            PlayerEpisodeStatPill(text = "${availableSeasons.size} seasons")
-                            PlayerEpisodeStatPill(text = "$totalEpisodeCount episodes")
                             PlayerEpisodeStatPill(
-                                text = selectedEpisode?.let { "Now on S${it.seasonNumber}E${it.episodeNumber}" }
+                                text = pluralStringResource(
+                                    R.plurals.player_episode_picker_seasons_count,
+                                    availableSeasons.size,
+                                    availableSeasons.size
+                                )
+                            )
+                            PlayerEpisodeStatPill(
+                                text = pluralStringResource(
+                                    R.plurals.player_episode_picker_episodes_count,
+                                    totalEpisodeCount,
+                                    totalEpisodeCount
+                                )
+                            )
+                            PlayerEpisodeStatPill(
+                                text = selectedEpisode?.let {
+                                    stringResource(
+                                        R.string.player_episode_picker_now_on,
+                                        it.seasonNumber,
+                                        it.episodeNumber
+                                    )
+                                }
                                     ?: selectedSeason.name,
                                 accent = true
                             )
@@ -1478,7 +1497,7 @@ fun PlayerEpisodeSelectionDialog(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = "Choose a season, then move right for episodes.",
+                                    text = stringResource(R.string.player_episode_picker_hint),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = AppColors.TextTertiary
                                 )
@@ -1527,7 +1546,11 @@ fun PlayerEpisodeSelectionDialog(
                                                     overflow = TextOverflow.Ellipsis
                                                 )
                                                 Text(
-                                                    text = "${season.episodes.size} episodes",
+                                                    text = pluralStringResource(
+                                                        R.plurals.player_episode_picker_episodes_count,
+                                                        season.episodes.size,
+                                                        season.episodes.size
+                                                    ),
                                                     style = MaterialTheme.typography.bodySmall,
                                                     color = if (isSelectedSeason) AppColors.TextPrimary else AppColors.TextSecondary
                                                 )
@@ -1562,7 +1585,11 @@ fun PlayerEpisodeSelectionDialog(
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
-                                            text = "${selectedSeason.episodes.size} episodes ready to play",
+                                            text = pluralStringResource(
+                                                R.plurals.player_episode_picker_episodes_ready,
+                                                selectedSeason.episodes.size,
+                                                selectedSeason.episodes.size
+                                            ),
                                             style = MaterialTheme.typography.bodySmall,
                                             color = TextSecondary
                                         )

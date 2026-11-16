@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">กลับ</string>
+    <string name="multiview_hud_title">การควบคุมหน้าจอแยก</string>
+    <string name="multiview_hud_standby_active">สแตนด์บายทำงานอยู่</string>
+    <string name="multiview_hud_presets">พรีเซ็ต</string>
+    <string name="player_episode_picker_hint">เลือกซีซัน แล้วเลื่อนไปทางขวาเพื่อดูตอนต่าง ๆ</string>
+    <string name="player_episode_picker_now_on">กำลังเล่น S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="other">%1$d ซีซัน</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="other">%1$d ตอน</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="other">%1$d ตอนพร้อมเล่น</item>
+    </plurals>
+</resources>

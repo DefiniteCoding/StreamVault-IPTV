@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">뒤로</string>
+    <string name="multiview_hud_title">분할 화면 컨트롤</string>
+    <string name="multiview_hud_standby_active">대기 중</string>
+    <string name="multiview_hud_presets">프리셋</string>
+    <string name="player_episode_picker_hint">시즌을 선택한 다음 오른쪽으로 이동해 에피소드를 확인하세요.</string>
+    <string name="player_episode_picker_now_on">현재 재생 중: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="other">%1$d개 시즌</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="other">%1$d개 에피소드</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="other">재생 가능한 에피소드 %1$d개</item>
+    </plurals>
+</resources>

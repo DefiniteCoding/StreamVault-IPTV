@@ -120,7 +120,6 @@ class MultiViewViewModel @Inject constructor(
                     presets = presetList.mapIndexed { index, ids ->
                         MultiViewPresetUiModel(
                             index = index,
-                            label = "Preset ${index + 1}",
                             isPopulated = ids.isNotEmpty(),
                             channelCount = ids.size
                         )
