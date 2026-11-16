@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">Lahat</string>
+  <string name="library_chip_favorites">Mga Paborito</string>
+  <string name="library_chip_resume">Ituloy</string>
+  <string name="library_chip_unwatched">Hindi pa napanood</string>
+  <string name="library_chip_recent">Kamakailan</string>
+  <string name="library_chip_updated">Na-update</string>
+  <string name="library_chip_top_rated">Mataas ang Rating</string>
+
+  <string name="library_chip_sort_library_order">Ayos ng Library</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Pinakabago</string>
+  <string name="library_chip_sort_recently_updated">Kamakailang Na-update</string>
+  <string name="library_chip_sort_updated_short">Na-update</string>
+  <string name="library_chip_sort_rating">Rating</string>
+  <string name="library_chip_sort_recent_activity">Kamakailang Aktibidad</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="one">%d grupo</item>
+    <item quantity="other">%d na grupo</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d item</item>
+    <item quantity="other">%d na item</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d napili</item>
+    <item quantity="other">%d na napili</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d naka-save na item</item>
+    <item quantity="other">%d na naka-save na item</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">Hindi na-load ang mga pelikula</string>
+  <string name="series_error_load_failed">Hindi na-load ang mga serye</string>
+  <string name="movie_detail_error_load_failed">Hindi na-load ang mga detalye ng pelikula</string>
+  <string name="series_detail_error_load_failed">Hindi na-load ang mga detalye ng serye</string>
+  <string name="catalog_error_no_active_provider">Walang aktibong provider</string>
+  <string name="catalog_message_moved_back_to_live">Ibinalik ang \'%1$s\' sa Live TV</string>
+  <string name="catalog_message_group_created">Nagawa ang grupong %1$s</string>
+  <string name="catalog_message_group_created_and_added">Nagawa ang grupong %1$s at naidagdag ang %2$s</string>
+  <string name="catalog_message_category_hidden">Itinago ang kategoryang %1$s</string>
+  <string name="catalog_message_category_pinned">Na-pin ang %1$s</string>
+  <string name="catalog_message_category_unpinned">Na-unpin ang %1$s</string>
+  <string name="catalog_message_group_renamed">Pinalitan ang pangalan ng grupo sa %1$s</string>
+  <string name="catalog_message_group_deleted">Na-delete ang grupong %1$s</string>
+  <string name="catalog_error_group_name_required">Maglagay ng pangalan ng grupo</string>
+  <string name="catalog_error_group_name_reserved">Nakareserba ang Mga Paborito</string>
+  <string name="movies_error_group_name_duplicate">May grupo na ng pelikula na may ganoong pangalan</string>
+  <string name="series_error_group_name_duplicate">May grupo na ng serye na may ganoong pangalan</string>
+
+  <string name="favorites_message_removed_from_view">Inalis ang %1$s sa naka-save na view na ito.</string>
+  <string name="favorites_message_moved_to_group">Inilipat ang %1$s sa napiling grupo.</string>
+  <string name="favorites_message_group_deleted">Na-delete ang grupong %1$s.</string>
+  <string name="favorites_error_move_failed">Hindi mailipat ang %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Hindi ma-merge ang %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Hindi mai-save ang bagong ayos: %1$s</string>
+  <string name="favorites_error_unknown">Hindi kilalang error</string>
+  <string name="favorites_subtitle_channel_number">Channel %1$d</string>
+  <string name="favorites_group_subtitle">Grupong %1$s</string>
+  <string name="favorites_content_type_movie">Pelikula</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

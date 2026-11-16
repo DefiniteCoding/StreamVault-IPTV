@@ -8,6 +8,7 @@ import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.ProviderType
+import com.streamvault.feature.catalog.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
@@ -45,11 +46,41 @@ class CatalogVodHelpersTest {
 
     @Test
     fun filterAndSortDetail_isNullOnlyAtDefaults() {
-        assertThat(vodActiveFilterSortDetail(LibraryFilterType.ALL, LibrarySortBy.LIBRARY)).isNull()
-        assertThat(vodActiveFilterSortDetail(LibraryFilterType.FAVORITES, LibrarySortBy.RATING))
-            .isEqualTo("Favorites ֲ· Rating")
-        assertThat(vodActiveFilterSortDetail(LibraryFilterType.UNWATCHED, LibrarySortBy.TITLE))
-            .isEqualTo("Unwatched ֲ· A-Z")
+        val labels = mapOf(
+            R.string.library_chip_favorites to "Favorites",
+            R.string.library_chip_unwatched to "Unwatched",
+            R.string.library_chip_recent to "Recent",
+            R.string.library_chip_updated to "Updated",
+            R.string.library_chip_sort_rating to "Rating",
+            R.string.library_chip_sort_title to "A-Z",
+            R.string.library_chip_sort_updated_short to "Updated short"
+        )
+        val label: (Int) -> String = { id -> labels.getValue(id) }
+
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.ALL, LibrarySortBy.LIBRARY, false, label)).isNull()
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.FAVORITES, LibrarySortBy.RATING, false, label))
+            .isEqualTo("Favorites \u00B7 Rating")
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.UNWATCHED, LibrarySortBy.TITLE, false, label))
+            .isEqualTo("Unwatched \u00B7 A-Z")
+    }
+
+    @Test
+    fun filterAndSortDetail_namesRecentlyUpdatedPerContentKind() {
+        val label: (Int) -> String = { id ->
+            when (id) {
+                R.string.library_chip_recent -> "Recent"
+                R.string.library_chip_updated -> "Updated"
+                R.string.library_chip_sort_updated_short -> "Updated short"
+                else -> error("unexpected label $id")
+            }
+        }
+
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.RECENTLY_UPDATED, LibrarySortBy.LIBRARY, false, label))
+            .isEqualTo("Recent")
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.RECENTLY_UPDATED, LibrarySortBy.LIBRARY, true, label))
+            .isEqualTo("Updated")
+        assertThat(vodActiveFilterSortDetail(LibraryFilterType.ALL, LibrarySortBy.UPDATED, false, label))
+            .isEqualTo("Updated short")
     }
 
     @Test

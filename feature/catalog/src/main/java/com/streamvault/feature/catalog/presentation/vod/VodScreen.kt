@@ -1,8 +1,5 @@
 ﻿package com.streamvault.feature.catalog.presentation.vod
 
-import com.streamvault.core.ui.design.shellHorizontalInset
-import com.streamvault.core.ui.design.LocalAppSpacing
-import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,13 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
@@ -41,13 +38,23 @@ import com.streamvault.core.ui.design.AppColors
 import com.streamvault.feature.catalog.R
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.core.ui.components.SearchInput
-import com.streamvault.feature.catalog.presentation.components.SelectionChip
-import com.streamvault.feature.catalog.presentation.components.SeriesCard
 import com.streamvault.core.ui.components.shell.AppMessageState
+import com.streamvault.core.ui.components.shell.LoadMoreCard
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.domain.model.LibraryFilterType
+import com.streamvault.domain.model.LibrarySortBy
+import com.streamvault.domain.model.Movie
+import com.streamvault.domain.model.ProviderType
+import com.streamvault.domain.model.Series
+import com.streamvault.domain.model.VodCatalogItem
+import com.streamvault.domain.model.VodViewMode
 import com.streamvault.feature.catalog.api.CatalogNavigationChrome
 import com.streamvault.feature.catalog.api.CatalogScaffoldContent
 import com.streamvault.feature.catalog.presentation.components.InfiniteScrollEffect
-import com.streamvault.core.ui.components.shell.LoadMoreCard
+import com.streamvault.feature.catalog.presentation.components.SelectionChip
+import com.streamvault.feature.catalog.presentation.components.SeriesCard
 import com.streamvault.feature.catalog.presentation.components.VodActionChip
 import com.streamvault.feature.catalog.presentation.components.VodActionChipRow
 import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsDialog
@@ -56,14 +63,11 @@ import com.streamvault.feature.catalog.presentation.components.VodCategoryPicker
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
-import com.streamvault.domain.model.VodViewMode
-import com.streamvault.domain.model.LibraryFilterType
-import com.streamvault.domain.model.LibrarySortBy
-import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.PlaybackHistory
-import com.streamvault.domain.model.Series
-import com.streamvault.domain.model.VodCatalogItem
-import com.streamvault.domain.model.ProviderType
+import com.streamvault.feature.catalog.presentation.components.libraryCountLabel
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterChips
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.rememberLibrarySortChips
 
 @Composable
 fun VodScreen(
@@ -261,7 +265,7 @@ private fun VodModernShelves(
                     VodActionChip(
                         key = "categories",
                         label = stringResource(R.string.movies_categories_title),
-                        detail = "${rows.size} groups",
+                        detail = libraryCountLabel(R.plurals.library_count_groups, rows.size),
                         onClick = { showCategoryPicker = true }
                     )
                 )
@@ -356,7 +360,7 @@ private fun VodClassicCategories(
                     VodActionChip(
                         key = "categories",
                         label = stringResource(R.string.movies_categories_title),
-                        detail = "${rows.size} groups",
+                        detail = libraryCountLabel(R.plurals.library_count_groups, rows.size),
                         onClick = { showCategoryPicker = true }
                     )
                 )
@@ -431,13 +435,13 @@ private fun SelectedVodCategory(
         VodBrowseOptionsDialog(
             title = title,
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = unifiedVodFilterChips(),
+            filterChips = rememberLibraryFilterChips(),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = unifiedVodSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSortByChange)
@@ -467,7 +471,7 @@ private fun SelectedVodCategory(
                 VodActionChip(
                     "browse_options",
                     stringResource(R.string.library_action_filters_sort),
-                    detail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy),
+                    detail = rememberLibraryFilterSortDetail(selectedFilterType, selectedSortBy),
                     onClick = { showBrowseOptions = true }
                 ).takeIf { showBrowseOptionsEnabled }
             ).filterNotNull(),
@@ -527,29 +531,6 @@ private fun SelectedVodCategory(
             }
         }
     }
-}
-
-private fun unifiedVodFilterChips(): List<SelectionChip> = listOf(
-    SelectionChip(LibraryFilterType.ALL.name, "All"),
-    SelectionChip(LibraryFilterType.FAVORITES.name, "Favorites"),
-    SelectionChip(LibraryFilterType.IN_PROGRESS.name, "Resume"),
-    SelectionChip(LibraryFilterType.UNWATCHED.name, "Unwatched"),
-    SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Recent"),
-    SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
-)
-
-private fun unifiedVodSortChips(): List<SelectionChip> = LibrarySortBy.entries.map { sort ->
-    SelectionChip(
-        sort.name,
-        when (sort) {
-            LibrarySortBy.LIBRARY -> "Library Order"
-            LibrarySortBy.TITLE -> "A-Z"
-            LibrarySortBy.RELEASE -> "Newest"
-            LibrarySortBy.UPDATED -> "Recently Updated"
-            LibrarySortBy.RATING -> "Rating"
-            LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-        }
-    )
 }
 
 @Composable

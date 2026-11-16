@@ -99,7 +99,11 @@ import com.streamvault.feature.catalog.presentation.vod.VodBrowseDefaults
 import com.streamvault.feature.catalog.presentation.vod.VodSelectedCategoryFocus
 import com.streamvault.feature.catalog.presentation.vod.VodReorderMoveDirection
 import com.streamvault.feature.catalog.presentation.vod.shouldShowVodPreview
-import com.streamvault.feature.catalog.presentation.vod.vodActiveFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.libraryCountLabel
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterChips
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.rememberLibrarySortChips
+import com.streamvault.feature.catalog.presentation.components.rememberInlineLibrarySortChips
 import com.streamvault.feature.catalog.presentation.vod.vodReorderMoveDirection
 import kotlinx.coroutines.delay
 
@@ -691,7 +695,7 @@ private fun SeriesVodContent(
                             VodActionChip(
                                 key = "categories",
                                 label = stringResource(R.string.series_categories_title),
-                                detail = "${visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }} groups",
+                                detail = libraryCountLabel(R.plurals.library_count_groups, visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }),
                                 onClick = { showCategoryPicker = true }
                             )
                         )
@@ -739,7 +743,7 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = "resume",
                                     label = stringResource(R.string.library_lens_continue),
-                                    detail = "${continueWatching.size} items",
+                                    detail = libraryCountLabel(R.plurals.library_count_items, continueWatching.size),
                                     onClick = onOpenContinueWatching
                                 )
                             )
@@ -749,7 +753,7 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = SeriesLibraryLens.TOP_RATED.name,
                                     label = stringResource(R.string.library_lens_top_rated),
-                                    detail = "${topRatedSeries.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, topRatedSeries.size),
                                     onClick = onOpenTopRated
                                 )
                             )
@@ -759,7 +763,7 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = SeriesLibraryLens.FRESH.name,
                                     label = stringResource(R.string.library_lens_fresh_series),
-                                    detail = "${freshSeries.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, freshSeries.size),
                                     onClick = onOpenFresh
                                 )
                             )
@@ -946,13 +950,13 @@ private fun SeriesVodContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_series),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = seriesFilterChips(),
+            filterChips = rememberLibraryFilterChips(recentAsUpdated = true),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = seriesSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -1001,7 +1005,7 @@ private fun SeriesVodContent(
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val inlineSortChips = remember { inlineSeriesSortChips() }
+                val inlineSortChips = rememberInlineLibrarySortChips()
                 // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
                 val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
                 VodFilterRow(
@@ -1029,7 +1033,7 @@ private fun SeriesVodContent(
                     categoryName = categoryTitle,
                     onCategoryClick = { showCategoryPicker = true },
                     moreLabel = stringResource(R.string.library_action_filters_sort),
-                    moreValue = vodActiveFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
+                    moreValue = rememberLibraryFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY, recentAsUpdated = true).orEmpty(),
                     onMoreClick = { showBrowseOptions = true },
                     trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
                         listOf(
@@ -1279,13 +1283,13 @@ private fun SeriesVodClassicContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_series),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = seriesFilterChips(),
+            filterChips = rememberLibraryFilterChips(recentAsUpdated = true),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = seriesSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -1480,7 +1484,7 @@ private fun SeriesVodClassicContent(
                         VodActionChip(
                             key = "browse_options",
                             label = stringResource(R.string.library_action_filters_sort),
-                            detail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy),
+                            detail = rememberLibraryFilterSortDetail(selectedFilterType, selectedSortBy, recentAsUpdated = true),
                             onClick = { showBrowseOptions = true }
                         )
                     )
@@ -1648,39 +1652,6 @@ private fun seriesLibraryLensLabel(lens: SeriesLibraryLens): String =
         SeriesLibraryLens.TOP_RATED -> stringResource(R.string.library_lens_top_rated)
         SeriesLibraryLens.FRESH -> stringResource(R.string.library_lens_fresh_series)
     }
-
-private fun seriesFilterChips(): List<SelectionChip> {
-    return listOf(
-        SelectionChip(LibraryFilterType.ALL.name, "All"),
-        SelectionChip(LibraryFilterType.FAVORITES.name, "Favorites"),
-        SelectionChip(LibraryFilterType.IN_PROGRESS.name, "Resume"),
-        SelectionChip(LibraryFilterType.UNWATCHED.name, "Unwatched"),
-        SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Updated"),
-        SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
-    )
-}
-
-// The sorts offered as chips on the grid row; the dialog keeps the full list.
-private fun inlineSeriesSortChips(): List<SelectionChip> {
-    val byKey = seriesSortChips().associateBy { it.key }
-    return listOf(LibrarySortBy.RELEASE, LibrarySortBy.TITLE, LibrarySortBy.RATING).mapNotNull { byKey[it.name] }
-}
-
-private fun seriesSortChips(): List<SelectionChip> {
-    return LibrarySortBy.entries.map { sort ->
-        SelectionChip(
-            key = sort.name,
-            label = when (sort) {
-                LibrarySortBy.LIBRARY -> "Library Order"
-                LibrarySortBy.TITLE -> "A-Z"
-                LibrarySortBy.RELEASE -> "Newest"
-                LibrarySortBy.UPDATED -> "Recently Updated"
-                LibrarySortBy.RATING -> "Rating"
-                LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-            }
-        )
-    }
-}
 
 private fun Series.rawSeriesIdsForNavigation(): List<Long> =
     variants.map { it.rawSeriesId }.ifEmpty { listOf(selectedVariantId ?: id) }

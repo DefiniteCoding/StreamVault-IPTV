@@ -422,7 +422,7 @@ class SeriesViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Failed to load series") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: appContext.getString(R.string.series_error_load_failed)) }
             }
         }
 
@@ -972,7 +972,7 @@ class SeriesViewModel @Inject constructor(
             when (val result = m3uClassificationRepository.moveSeriesBackToLive(provider.id, series.id)) {
                 is Result.Success -> {
                     onDismissDialog()
-                    _uiState.update { it.copy(userMessage = "Moved '${series.name}' back to Live TV") }
+                    _uiState.update { it.copy(userMessage = appContext.getString(R.string.catalog_message_moved_back_to_live, series.name)) }
                 }
                 is Result.Error -> _uiState.update { it.copy(userMessage = result.message) }
                 Result.Loading -> Unit
@@ -1074,9 +1074,9 @@ class SeriesViewModel @Inject constructor(
                         it.copy(
                             dialogGroupMemberships = memberships,
                             userMessage = if (selectedSeries != null) {
-                                "Created group $normalizedName and added ${selectedSeries.name}"
+                                appContext.getString(R.string.catalog_message_group_created_and_added, normalizedName, selectedSeries.name)
                             } else {
-                                "Created group $normalizedName"
+                                appContext.getString(R.string.catalog_message_group_created, normalizedName)
                             }
                         )
                     }
@@ -1132,7 +1132,7 @@ class SeriesViewModel @Inject constructor(
             } else {
                 dismissCategoryOptions()
             }
-            _uiState.update { it.copy(userMessage = "Hidden category ${category.name}") }
+            _uiState.update { it.copy(userMessage = appContext.getString(R.string.catalog_message_category_hidden, category.name)) }
         }
     }
 
@@ -1150,7 +1150,10 @@ class SeriesViewModel @Inject constructor(
             dismissCategoryOptions()
             _uiState.update {
                 it.copy(
-                    userMessage = if (shouldPin) "Pinned ${category.name}" else "Unpinned ${category.name}"
+                    userMessage = appContext.getString(
+                        if (shouldPin) R.string.catalog_message_category_pinned else R.string.catalog_message_category_unpinned,
+                        category.name
+                    )
                 )
             }
         }
@@ -1194,7 +1197,7 @@ class SeriesViewModel @Inject constructor(
                     showRenameGroupDialog = false,
                     groupToRename = null,
                     renameGroupError = null,
-                    userMessage = "Renamed group to $normalizedName"
+                    userMessage = appContext.getString(R.string.catalog_message_group_renamed, normalizedName)
                 )
             }
         }
@@ -1223,7 +1226,7 @@ class SeriesViewModel @Inject constructor(
                 it.copy(
                     showDeleteGroupDialog = false,
                     groupToDelete = null,
-                    userMessage = "Deleted group ${category.name}"
+                    userMessage = appContext.getString(R.string.catalog_message_group_deleted, category.name)
                 )
             }
         }
@@ -1591,13 +1594,13 @@ class SeriesViewModel @Inject constructor(
     }
 
     private fun validateGroupName(name: String, currentGroupId: Long? = null): String? {
-        if (name.isBlank()) return "Enter a group name"
-        if (name.equals("favorites", ignoreCase = true)) return "Favorites is reserved"
+        if (name.isBlank()) return appContext.getString(R.string.catalog_error_group_name_required)
+        if (name.equals("favorites", ignoreCase = true)) return appContext.getString(R.string.catalog_error_group_name_reserved)
 
         val duplicate = _uiState.value.categories.any { category ->
             category.id != currentGroupId && category.name.equals(name, ignoreCase = true)
         }
-        return if (duplicate) "A series group with that name already exists" else null
+        return if (duplicate) appContext.getString(R.string.series_error_group_name_duplicate) else null
     }
 
     private fun List<Series>.orderByIds(ids: List<Long>): List<Series> {

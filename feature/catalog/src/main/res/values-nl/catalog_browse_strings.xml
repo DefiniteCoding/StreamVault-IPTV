@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filterchips -->
+  <string name="library_chip_all">Alles</string>
+  <string name="library_chip_favorites">Favorieten</string>
+  <string name="library_chip_resume">Hervatten</string>
+  <string name="library_chip_unwatched">Niet bekeken</string>
+  <string name="library_chip_recent">Recent</string>
+  <string name="library_chip_updated">Bijgewerkt</string>
+  <string name="library_chip_top_rated">Hoogst gewaardeerd</string>
+
+  <!-- Sorteerchips -->
+  <string name="library_chip_sort_library_order">Bibliotheekvolgorde</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Nieuwste</string>
+  <string name="library_chip_sort_recently_updated">Onlangs bijgewerkt</string>
+  <string name="library_chip_sort_updated_short">Bijgewerkt</string>
+  <string name="library_chip_sort_rating">Beoordeling</string>
+  <string name="library_chip_sort_recent_activity">Recente activiteit</string>
+
+  <!-- Aantallen onder de tegels en in opgeslagen secties -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d groep</item>
+    <item quantity="other">%d groepen</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d item</item>
+    <item quantity="other">%d items</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d tip</item>
+    <item quantity="other">%d tips</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d opgeslagen item</item>
+    <item quantity="other">%d opgeslagen items</item>
+  </plurals>
+
+  <!-- Meldingen over films, series en groepsbeheer -->
+  <string name="movies_error_load_failed">Films laden mislukt</string>
+  <string name="series_error_load_failed">Series laden mislukt</string>
+  <string name="movie_detail_error_load_failed">Filmdetails laden mislukt</string>
+  <string name="series_detail_error_load_failed">Seriedetails laden mislukt</string>
+  <string name="catalog_error_no_active_provider">Geen actieve provider</string>
+  <string name="catalog_message_moved_back_to_live">‘%1$s’ teruggezet naar live-tv</string>
+  <string name="catalog_message_group_created">Groep %1$s gemaakt</string>
+  <string name="catalog_message_group_created_and_added">Groep %1$s gemaakt en %2$s toegevoegd</string>
+  <string name="catalog_message_category_hidden">Categorie %1$s verborgen</string>
+  <string name="catalog_message_category_pinned">%1$s vastgemaakt</string>
+  <string name="catalog_message_category_unpinned">%1$s losgemaakt</string>
+  <string name="catalog_message_group_renamed">Groep hernoemd naar %1$s</string>
+  <string name="catalog_message_group_deleted">Groep %1$s verwijderd</string>
+  <string name="catalog_error_group_name_required">Voer een groepsnaam in</string>
+  <string name="catalog_error_group_name_reserved">Favorieten is gereserveerd</string>
+  <string name="movies_error_group_name_duplicate">Er bestaat al een filmgroep met die naam</string>
+  <string name="series_error_group_name_duplicate">Er bestaat al een seriegroep met die naam</string>
+
+  <!-- Meldingen en labels van de opgeslagen bibliotheek -->
+  <string name="favorites_message_removed_from_view">%1$s verwijderd uit deze opgeslagen weergave.</string>
+  <string name="favorites_message_moved_to_group">%1$s verplaatst naar de geselecteerde groep.</string>
+  <string name="favorites_message_group_deleted">Groep %1$s verwijderd.</string>
+  <string name="favorites_error_move_failed">%1$s kan niet worden verplaatst: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s kan niet worden samengevoegd: %2$s</string>
+  <string name="favorites_error_reorder_failed">Nieuwe volgorde kan niet worden opgeslagen: %1$s</string>
+  <string name="favorites_error_unknown">Onbekende fout</string>
+  <string name="favorites_subtitle_channel_number">Zender %1$d</string>
+  <string name="favorites_group_subtitle">Groep %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

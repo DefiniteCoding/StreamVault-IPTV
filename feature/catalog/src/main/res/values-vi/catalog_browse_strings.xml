@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Tất cả</string>
+  <string name="library_chip_favorites">Yêu thích</string>
+  <string name="library_chip_resume">Tiếp tục</string>
+  <string name="library_chip_unwatched">Chưa xem</string>
+  <string name="library_chip_recent">Gần đây</string>
+  <string name="library_chip_updated">Đã cập nhật</string>
+  <string name="library_chip_top_rated">Đánh giá cao nhất</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Thứ tự thư viện</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Mới nhất</string>
+  <string name="library_chip_sort_recently_updated">Cập nhật gần đây</string>
+  <string name="library_chip_sort_updated_short">Đã cập nhật</string>
+  <string name="library_chip_sort_rating">Đánh giá</string>
+  <string name="library_chip_sort_recent_activity">Hoạt động gần đây</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d nhóm</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d mục</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d lựa chọn</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d mục đã lưu</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Không tải được phim</string>
+  <string name="series_error_load_failed">Không tải được phim bộ</string>
+  <string name="movie_detail_error_load_failed">Không tải được chi tiết phim</string>
+  <string name="series_detail_error_load_failed">Không tải được chi tiết phim bộ</string>
+  <string name="catalog_error_no_active_provider">Không có nhà cung cấp nào đang hoạt động</string>
+  <string name="catalog_message_moved_back_to_live">Đã chuyển \'%1$s\' về TV trực tiếp</string>
+  <string name="catalog_message_group_created">Đã tạo nhóm %1$s</string>
+  <string name="catalog_message_group_created_and_added">Đã tạo nhóm %1$s và thêm %2$s</string>
+  <string name="catalog_message_category_hidden">Đã ẩn danh mục %1$s</string>
+  <string name="catalog_message_category_pinned">Đã ghim %1$s</string>
+  <string name="catalog_message_category_unpinned">Đã bỏ ghim %1$s</string>
+  <string name="catalog_message_group_renamed">Đã đổi tên nhóm thành %1$s</string>
+  <string name="catalog_message_group_deleted">Đã xóa nhóm %1$s</string>
+  <string name="catalog_error_group_name_required">Nhập tên nhóm</string>
+  <string name="catalog_error_group_name_reserved">\'Yêu thích\' là tên được dành riêng</string>
+  <string name="movies_error_group_name_duplicate">Đã có nhóm phim với tên này</string>
+  <string name="series_error_group_name_duplicate">Đã có nhóm phim bộ với tên này</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">Đã xóa %1$s khỏi chế độ xem đã lưu này.</string>
+  <string name="favorites_message_moved_to_group">Đã chuyển %1$s vào nhóm đã chọn.</string>
+  <string name="favorites_message_group_deleted">Đã xóa nhóm %1$s.</string>
+  <string name="favorites_error_move_failed">Không thể chuyển %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Không thể gộp %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Không thể lưu thứ tự mới: %1$s</string>
+  <string name="favorites_error_unknown">Lỗi không xác định</string>
+  <string name="favorites_subtitle_channel_number">Kênh %1$d</string>
+  <string name="favorites_group_subtitle">Nhóm %1$s</string>
+  <string name="favorites_content_type_movie">Phim</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

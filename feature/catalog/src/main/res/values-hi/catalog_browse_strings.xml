@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">सभी</string>
+  <string name="library_chip_favorites">पसंदीदा</string>
+  <string name="library_chip_resume">फिर से शुरू करें</string>
+  <string name="library_chip_unwatched">नहीं देखा गया</string>
+  <string name="library_chip_recent">हाल के</string>
+  <string name="library_chip_updated">अपडेट किए गए</string>
+  <string name="library_chip_top_rated">टॉप रेटेड</string>
+
+  <string name="library_chip_sort_library_order">लाइब्रेरी क्रम</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">नवीनतम</string>
+  <string name="library_chip_sort_recently_updated">हाल ही में अपडेट</string>
+  <string name="library_chip_sort_updated_short">अपडेट किए गए</string>
+  <string name="library_chip_sort_rating">रेटिंग</string>
+  <string name="library_chip_sort_recent_activity">हाल की गतिविधि</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="one">%d समूह</item>
+    <item quantity="other">%d समूह</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d आइटम</item>
+    <item quantity="other">%d आइटम</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d चयन</item>
+    <item quantity="other">%d चयन</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d सहेजा गया आइटम</item>
+    <item quantity="other">%d सहेजे गए आइटम</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">फ़िल्में लोड नहीं हो सकीं</string>
+  <string name="series_error_load_failed">सीरीज़ लोड नहीं हो सकीं</string>
+  <string name="movie_detail_error_load_failed">फ़िल्म का विवरण लोड नहीं हो सका</string>
+  <string name="series_detail_error_load_failed">सीरीज़ का विवरण लोड नहीं हो सका</string>
+  <string name="catalog_error_no_active_provider">कोई सक्रिय प्रदाता नहीं</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\' को वापस लाइव टीवी में ले जाया गया</string>
+  <string name="catalog_message_group_created">समूह %1$s बनाया गया</string>
+  <string name="catalog_message_group_created_and_added">समूह %1$s बनाया गया और %2$s जोड़ा गया</string>
+  <string name="catalog_message_category_hidden">श्रेणी %1$s छिपाई गई</string>
+  <string name="catalog_message_category_pinned">%1$s पिन किया गया</string>
+  <string name="catalog_message_category_unpinned">%1$s अनपिन किया गया</string>
+  <string name="catalog_message_group_renamed">समूह का नाम बदलकर %1$s किया गया</string>
+  <string name="catalog_message_group_deleted">समूह %1$s हटाया गया</string>
+  <string name="catalog_error_group_name_required">समूह का नाम दर्ज करें</string>
+  <string name="catalog_error_group_name_reserved">\'पसंदीदा\' नाम आरक्षित है</string>
+  <string name="movies_error_group_name_duplicate">इस नाम का फ़िल्म समूह पहले से मौजूद है</string>
+  <string name="series_error_group_name_duplicate">इस नाम का सीरीज़ समूह पहले से मौजूद है</string>
+
+  <string name="favorites_message_removed_from_view">%1$s को इस सहेजे गए दृश्य से हटा दिया गया।</string>
+  <string name="favorites_message_moved_to_group">%1$s को चुने गए समूह में ले जाया गया।</string>
+  <string name="favorites_message_group_deleted">समूह %1$s हटाया गया।</string>
+  <string name="favorites_error_move_failed">%1$s को ले जाया नहीं जा सका: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s को मर्ज नहीं किया जा सका: %2$s</string>
+  <string name="favorites_error_reorder_failed">नया क्रम सहेजा नहीं जा सका: %1$s</string>
+  <string name="favorites_error_unknown">अज्ञात त्रुटि</string>
+  <string name="favorites_subtitle_channel_number">चैनल %1$d</string>
+  <string name="favorites_group_subtitle">%1$s समूह</string>
+  <string name="favorites_content_type_movie">फ़िल्म</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

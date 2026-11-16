@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">全部</string>
+  <string name="library_chip_favorites">收藏</string>
+  <string name="library_chip_resume">繼續</string>
+  <string name="library_chip_unwatched">未觀看</string>
+  <string name="library_chip_recent">最近</string>
+  <string name="library_chip_updated">已更新</string>
+  <string name="library_chip_top_rated">最高評分</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">媒體庫順序</string>
+  <string name="library_chip_sort_title">名稱</string>
+  <string name="library_chip_sort_newest">最新</string>
+  <string name="library_chip_sort_recently_updated">最近更新</string>
+  <string name="library_chip_sort_updated_short">已更新</string>
+  <string name="library_chip_sort_rating">評分</string>
+  <string name="library_chip_sort_recent_activity">最近活動</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d 個群組</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d 個項目</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d 個精選</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d 個已儲存項目</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">無法載入電影</string>
+  <string name="series_error_load_failed">無法載入影集</string>
+  <string name="movie_detail_error_load_failed">無法載入電影詳細資料</string>
+  <string name="series_detail_error_load_failed">無法載入影集詳細資料</string>
+  <string name="catalog_error_no_active_provider">沒有可用的供應商</string>
+  <string name="catalog_message_moved_back_to_live">已將「%1$s」移回直播電視</string>
+  <string name="catalog_message_group_created">已建立群組 %1$s</string>
+  <string name="catalog_message_group_created_and_added">已建立群組 %1$s 並加入 %2$s</string>
+  <string name="catalog_message_category_hidden">已隱藏分類 %1$s</string>
+  <string name="catalog_message_category_pinned">已釘選 %1$s</string>
+  <string name="catalog_message_category_unpinned">已取消釘選 %1$s</string>
+  <string name="catalog_message_group_renamed">群組已重新命名為 %1$s</string>
+  <string name="catalog_message_group_deleted">已刪除群組 %1$s</string>
+  <string name="catalog_error_group_name_required">請輸入群組名稱</string>
+  <string name="catalog_error_group_name_reserved">「收藏」為保留名稱</string>
+  <string name="movies_error_group_name_duplicate">已有同名的電影群組</string>
+  <string name="series_error_group_name_duplicate">已有同名的影集群組</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">已從此已儲存檢視中移除 %1$s。</string>
+  <string name="favorites_message_moved_to_group">已將 %1$s 移至所選群組。</string>
+  <string name="favorites_message_group_deleted">已刪除群組 %1$s。</string>
+  <string name="favorites_error_move_failed">無法移動 %1$s：%2$s</string>
+  <string name="favorites_error_merge_failed">無法合併 %1$s：%2$s</string>
+  <string name="favorites_error_reorder_failed">無法儲存排序：%1$s</string>
+  <string name="favorites_error_unknown">未知錯誤</string>
+  <string name="favorites_subtitle_channel_number">頻道 %1$d</string>
+  <string name="favorites_group_subtitle">%1$s 群組</string>
+  <string name="favorites_content_type_movie">電影</string>
+  <string name="favorites_content_type_vod">隨選視訊</string>
+</resources>

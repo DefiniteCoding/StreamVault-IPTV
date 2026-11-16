@@ -61,6 +61,7 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
+import androidx.compose.ui.platform.LocalContext
 import com.streamvault.feature.catalog.R
 import com.streamvault.feature.catalog.presentation.components.SelectionChip
 import com.streamvault.feature.catalog.presentation.components.SelectionChipRow
@@ -105,6 +106,8 @@ fun FavoritesScreen(
     val reducedMotionEnabled = rememberReducedMotionEnabled()
     val homeShelfGlobalTitle = stringResource(R.string.saved_preset_home_shelf_global_title)
     val homeShelfGlobalSubtitle = stringResource(R.string.saved_preset_home_shelf_global_subtitle)
+    val resources = LocalContext.current.resources
+    val configuration = LocalConfiguration.current
     val providerScopedSections = remember(
         uiState.sections,
         uiState.selectedPreset,
@@ -112,7 +115,8 @@ fun FavoritesScreen(
         uiState.activeProviderId,
         uiState.managedGroups,
         homeShelfGlobalTitle,
-        homeShelfGlobalSubtitle
+        homeShelfGlobalSubtitle,
+        configuration
     ) {
         val presetSections = when (uiState.selectedPreset) {
             SavedLibraryPreset.ALL_SAVED,
@@ -152,7 +156,7 @@ fun FavoritesScreen(
                     null
                 } else {
                     section.copy(
-                        subtitle = "${scopedItems.size} saved items",
+                        subtitle = resources.getQuantityString(R.plurals.library_count_saved_items, scopedItems.size, scopedItems.size),
                         items = scopedItems,
                         reorderable = section.reorderable && scopedItems.size > 1
                     )
@@ -191,7 +195,7 @@ fun FavoritesScreen(
             }
         }
     }
-    val filteredSections = remember(providerScopedSections, uiState.selectedFilter, uiState.selectedSort, uiState.isReorderMode) {
+    val filteredSections = remember(providerScopedSections, uiState.selectedFilter, uiState.selectedSort, uiState.isReorderMode, configuration) {
         providerScopedSections
             .mapNotNull { section ->
                 val filteredItems = when (uiState.selectedFilter) {
@@ -213,7 +217,7 @@ fun FavoritesScreen(
                         }
                     }
                     section.copy(
-                        subtitle = "${sortedItems.size} saved items",
+                        subtitle = resources.getQuantityString(R.plurals.library_count_saved_items, sortedItems.size, sortedItems.size),
                         items = sortedItems,
                         reorderable = section.reorderable && filteredItems.size > 1
                     )

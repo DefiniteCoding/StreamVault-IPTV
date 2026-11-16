@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">ทั้งหมด</string>
+  <string name="library_chip_favorites">รายการโปรด</string>
+  <string name="library_chip_resume">เล่นต่อ</string>
+  <string name="library_chip_unwatched">ยังไม่ได้ดู</string>
+  <string name="library_chip_recent">ล่าสุด</string>
+  <string name="library_chip_updated">อัปเดตแล้ว</string>
+  <string name="library_chip_top_rated">คะแนนสูงสุด</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">ลำดับคลัง</string>
+  <string name="library_chip_sort_title">ก-ฮ</string>
+  <string name="library_chip_sort_newest">ใหม่ล่าสุด</string>
+  <string name="library_chip_sort_recently_updated">อัปเดตล่าสุด</string>
+  <string name="library_chip_sort_updated_short">อัปเดตแล้ว</string>
+  <string name="library_chip_sort_rating">คะแนน</string>
+  <string name="library_chip_sort_recent_activity">กิจกรรมล่าสุด</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d กลุ่ม</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d รายการ</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d รายการแนะนำ</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d รายการที่บันทึก</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">โหลดภาพยนตร์ไม่สำเร็จ</string>
+  <string name="series_error_load_failed">โหลดซีรีส์ไม่สำเร็จ</string>
+  <string name="movie_detail_error_load_failed">โหลดรายละเอียดภาพยนตร์ไม่สำเร็จ</string>
+  <string name="series_detail_error_load_failed">โหลดรายละเอียดซีรีส์ไม่สำเร็จ</string>
+  <string name="catalog_error_no_active_provider">ไม่มีผู้ให้บริการที่ใช้งานอยู่</string>
+  <string name="catalog_message_moved_back_to_live">ย้าย \'%1$s\' กลับไปยังทีวีสดแล้ว</string>
+  <string name="catalog_message_group_created">สร้างกลุ่ม %1$s แล้ว</string>
+  <string name="catalog_message_group_created_and_added">สร้างกลุ่ม %1$s และเพิ่ม %2$s แล้ว</string>
+  <string name="catalog_message_category_hidden">ซ่อนหมวดหมู่ %1$s แล้ว</string>
+  <string name="catalog_message_category_pinned">ปักหมุด %1$s แล้ว</string>
+  <string name="catalog_message_category_unpinned">เลิกปักหมุด %1$s แล้ว</string>
+  <string name="catalog_message_group_renamed">เปลี่ยนชื่อกลุ่มเป็น %1$s แล้ว</string>
+  <string name="catalog_message_group_deleted">ลบกลุ่ม %1$s แล้ว</string>
+  <string name="catalog_error_group_name_required">ป้อนชื่อกลุ่ม</string>
+  <string name="catalog_error_group_name_reserved">\'รายการโปรด\' เป็นชื่อที่สงวนไว้</string>
+  <string name="movies_error_group_name_duplicate">มีกลุ่มภาพยนตร์ชื่อนี้อยู่แล้ว</string>
+  <string name="series_error_group_name_duplicate">มีกลุ่มซีรีส์ชื่อนี้อยู่แล้ว</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">นำ %1$s ออกจากมุมมองที่บันทึกนี้แล้ว</string>
+  <string name="favorites_message_moved_to_group">ย้าย %1$s ไปยังกลุ่มที่เลือกแล้ว</string>
+  <string name="favorites_message_group_deleted">ลบกลุ่ม %1$s แล้ว</string>
+  <string name="favorites_error_move_failed">ไม่สามารถย้าย %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">ไม่สามารถรวม %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">ไม่สามารถบันทึกลำดับใหม่: %1$s</string>
+  <string name="favorites_error_unknown">ข้อผิดพลาดที่ไม่ทราบสาเหตุ</string>
+  <string name="favorites_subtitle_channel_number">ช่อง %1$d</string>
+  <string name="favorites_group_subtitle">กลุ่ม %1$s</string>
+  <string name="favorites_content_type_movie">ภาพยนตร์</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

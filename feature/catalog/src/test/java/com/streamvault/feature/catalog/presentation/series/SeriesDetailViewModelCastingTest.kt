@@ -397,6 +397,7 @@ class SeriesDetailViewModelCastingTest {
             .thenReturn(Result.success(ExternalRatings.unavailable()))
 
         return SeriesDetailViewModel(
+            appContext = mock(),
             savedStateHandle = SavedStateHandle(mapOf("seriesId" to series.id)),
             seriesRepository = seriesRepository,
             providerRepository = providerRepository,

@@ -99,7 +99,11 @@ import com.streamvault.feature.catalog.presentation.vod.VodBrowseDefaults
 import com.streamvault.feature.catalog.presentation.vod.VodSelectedCategoryFocus
 import com.streamvault.feature.catalog.presentation.vod.VodReorderMoveDirection
 import com.streamvault.feature.catalog.presentation.vod.shouldShowVodPreview
-import com.streamvault.feature.catalog.presentation.vod.vodActiveFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.libraryCountLabel
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterChips
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.rememberLibrarySortChips
+import com.streamvault.feature.catalog.presentation.components.rememberInlineLibrarySortChips
 import com.streamvault.feature.catalog.presentation.vod.vodReorderMoveDirection
 import kotlinx.coroutines.delay
 
@@ -680,7 +684,7 @@ private fun MoviesVodContent(
                             VodActionChip(
                                 key = "categories",
                                 label = stringResource(R.string.movies_categories_title),
-                                detail = "${visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }} groups",
+                                detail = libraryCountLabel(R.plurals.library_count_groups, visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }),
                                 onClick = { showCategoryPicker = true }
                             )
                         )
@@ -728,7 +732,7 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = "resume",
                                     label = stringResource(R.string.library_lens_continue),
-                                    detail = "${continueWatching.size} items",
+                                    detail = libraryCountLabel(R.plurals.library_count_items, continueWatching.size),
                                     onClick = onOpenContinueWatching
                                 )
                             )
@@ -738,7 +742,7 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = MovieLibraryLens.TOP_RATED.name,
                                     label = stringResource(R.string.library_lens_top_rated),
-                                    detail = "${topRatedMovies.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, topRatedMovies.size),
                                     onClick = onOpenTopRated
                                 )
                             )
@@ -748,7 +752,7 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = MovieLibraryLens.FRESH.name,
                                     label = stringResource(R.string.library_lens_fresh_movies),
-                                    detail = "${freshMovies.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, freshMovies.size),
                                     onClick = onOpenFresh
                                 )
                             )
@@ -921,13 +925,13 @@ private fun MoviesVodContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_movies),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = movieFilterChips(),
+            filterChips = rememberLibraryFilterChips(),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = movieSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -976,7 +980,7 @@ private fun MoviesVodContent(
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val inlineSortChips = remember { inlineMovieSortChips() }
+                val inlineSortChips = rememberInlineLibrarySortChips()
                 // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
                 val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
                 VodFilterRow(
@@ -1004,7 +1008,7 @@ private fun MoviesVodContent(
                     categoryName = categoryTitle,
                     onCategoryClick = { showCategoryPicker = true },
                     moreLabel = stringResource(R.string.library_action_filters_sort),
-                    moreValue = vodActiveFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
+                    moreValue = rememberLibraryFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
                     onMoreClick = { showBrowseOptions = true },
                     trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
                         listOf(
@@ -1253,13 +1257,13 @@ private fun MoviesVodClassicContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_movies),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = movieFilterChips(),
+            filterChips = rememberLibraryFilterChips(),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = movieSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -1454,7 +1458,7 @@ private fun MoviesVodClassicContent(
                         VodActionChip(
                             key = "browse_options",
                             label = stringResource(R.string.library_action_filters_sort),
-                            detail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy),
+                            detail = rememberLibraryFilterSortDetail(selectedFilterType, selectedSortBy),
                             onClick = { showBrowseOptions = true }
                         )
                     )
@@ -1621,39 +1625,3 @@ private fun movieLibraryLensLabel(lens: MovieLibraryLens): String =
         MovieLibraryLens.TOP_RATED -> stringResource(R.string.library_lens_top_rated)
         MovieLibraryLens.FRESH -> stringResource(R.string.library_lens_fresh_movies)
     }
-
-private fun movieFilterChips(): List<SelectionChip> {
-    return listOf(
-        SelectionChip(LibraryFilterType.ALL.name, "All"),
-        SelectionChip(LibraryFilterType.FAVORITES.name, "Favorites"),
-        SelectionChip(LibraryFilterType.IN_PROGRESS.name, "Resume"),
-        SelectionChip(LibraryFilterType.UNWATCHED.name, "Unwatched"),
-        SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Recent"),
-        SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
-    )
-}
-
-// The sorts offered as chips on the grid row; the dialog keeps the full list.
-private fun inlineMovieSortChips(): List<SelectionChip> {
-    val byKey = movieSortChips().associateBy { it.key }
-    return listOf(LibrarySortBy.RELEASE, LibrarySortBy.TITLE, LibrarySortBy.RATING).mapNotNull { byKey[it.name] }
-}
-
-private fun movieSortChips(): List<SelectionChip> {
-    return LibrarySortBy.entries.map { sort ->
-        SelectionChip(
-            key = sort.name,
-            label = when (sort) {
-                LibrarySortBy.LIBRARY -> "Library Order"
-                LibrarySortBy.TITLE -> "A-Z"
-                LibrarySortBy.RELEASE -> "Newest"
-                LibrarySortBy.UPDATED -> "Recently Updated"
-                LibrarySortBy.RATING -> "Rating"
-                LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-            }
-        )
-    }
-}
-
-
-

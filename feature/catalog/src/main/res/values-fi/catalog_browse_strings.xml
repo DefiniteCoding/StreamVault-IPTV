@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Kaikki</string>
+  <string name="library_chip_favorites">Suosikit</string>
+  <string name="library_chip_resume">Jatka</string>
+  <string name="library_chip_unwatched">Katsomatta</string>
+  <string name="library_chip_recent">Viimeaikaiset</string>
+  <string name="library_chip_updated">Päivitetyt</string>
+  <string name="library_chip_top_rated">Parhaiten arvioidut</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Kirjaston järjestys</string>
+  <string name="library_chip_sort_title">A–Z</string>
+  <string name="library_chip_sort_newest">Uusin</string>
+  <string name="library_chip_sort_recently_updated">Äskettäin päivitetty</string>
+  <string name="library_chip_sort_updated_short">Päivitetty</string>
+  <string name="library_chip_sort_rating">Arvosana</string>
+  <string name="library_chip_sort_recent_activity">Viimeisin toiminta</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d ryhmä</item>
+    <item quantity="other">%d ryhmää</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d kohde</item>
+    <item quantity="other">%d kohdetta</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d valinta</item>
+    <item quantity="other">%d valintaa</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d tallennettu kohde</item>
+    <item quantity="other">%d tallennettua kohdetta</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Elokuvien lataus epäonnistui</string>
+  <string name="series_error_load_failed">Sarjojen lataus epäonnistui</string>
+  <string name="movie_detail_error_load_failed">Elokuvan tietojen lataus epäonnistui</string>
+  <string name="series_detail_error_load_failed">Sarjan tietojen lataus epäonnistui</string>
+  <string name="catalog_error_no_active_provider">Ei aktiivista palveluntarjoajaa</string>
+  <string name="catalog_message_moved_back_to_live">”%1$s” siirrettiin takaisin Live-TV:hen</string>
+  <string name="catalog_message_group_created">Ryhmä %1$s luotu</string>
+  <string name="catalog_message_group_created_and_added">Ryhmä %1$s luotu ja lisätty: %2$s</string>
+  <string name="catalog_message_category_hidden">Luokka %1$s piilotettu</string>
+  <string name="catalog_message_category_pinned">Kiinnitetty: %1$s</string>
+  <string name="catalog_message_category_unpinned">Kiinnitys poistettu: %1$s</string>
+  <string name="catalog_message_group_renamed">Ryhmän uusi nimi: %1$s</string>
+  <string name="catalog_message_group_deleted">Ryhmä %1$s poistettu</string>
+  <string name="catalog_error_group_name_required">Anna ryhmän nimi</string>
+  <string name="catalog_error_group_name_reserved">Nimi Suosikit on varattu</string>
+  <string name="movies_error_group_name_duplicate">Samanniminen elokuvaryhmä on jo olemassa</string>
+  <string name="series_error_group_name_duplicate">Samanniminen sarjaryhmä on jo olemassa</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">%1$s poistettu tästä tallennetusta näkymästä.</string>
+  <string name="favorites_message_moved_to_group">%1$s siirretty valittuun ryhmään.</string>
+  <string name="favorites_message_group_deleted">Ryhmä %1$s poistettu.</string>
+  <string name="favorites_error_move_failed">Kohteen %1$s siirto epäonnistui: %2$s</string>
+  <string name="favorites_error_merge_failed">Kohteen %1$s yhdistäminen epäonnistui: %2$s</string>
+  <string name="favorites_error_reorder_failed">Uuden järjestyksen tallennus epäonnistui: %1$s</string>
+  <string name="favorites_error_unknown">Tuntematon virhe</string>
+  <string name="favorites_subtitle_channel_number">Kanava %1$d</string>
+  <string name="favorites_group_subtitle">Ryhmä %1$s</string>
+  <string name="favorites_content_type_movie">Elokuva</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

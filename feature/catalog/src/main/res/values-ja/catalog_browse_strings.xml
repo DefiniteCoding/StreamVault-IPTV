@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">すべて</string>
+  <string name="library_chip_favorites">お気に入り</string>
+  <string name="library_chip_resume">再開</string>
+  <string name="library_chip_unwatched">未視聴</string>
+  <string name="library_chip_recent">最近</string>
+  <string name="library_chip_updated">更新済み</string>
+  <string name="library_chip_top_rated">高評価</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">ライブラリ順</string>
+  <string name="library_chip_sort_title">名前順</string>
+  <string name="library_chip_sort_newest">最新</string>
+  <string name="library_chip_sort_recently_updated">最近更新</string>
+  <string name="library_chip_sort_updated_short">更新済み</string>
+  <string name="library_chip_sort_rating">評価</string>
+  <string name="library_chip_sort_recent_activity">最近のアクティビティ</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d件のグループ</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d件</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d件のおすすめ</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">保存済み%d件</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">映画の読み込みに失敗しました</string>
+  <string name="series_error_load_failed">シリーズの読み込みに失敗しました</string>
+  <string name="movie_detail_error_load_failed">映画の詳細の読み込みに失敗しました</string>
+  <string name="series_detail_error_load_failed">シリーズの詳細の読み込みに失敗しました</string>
+  <string name="catalog_error_no_active_provider">有効なプロバイダがありません</string>
+  <string name="catalog_message_moved_back_to_live">「%1$s」をライブTVに戻しました</string>
+  <string name="catalog_message_group_created">グループ「%1$s」を作成しました</string>
+  <string name="catalog_message_group_created_and_added">グループ「%1$s」を作成し、%2$sを追加しました</string>
+  <string name="catalog_message_category_hidden">カテゴリ「%1$s」を非表示にしました</string>
+  <string name="catalog_message_category_pinned">「%1$s」を固定しました</string>
+  <string name="catalog_message_category_unpinned">「%1$s」の固定を解除しました</string>
+  <string name="catalog_message_group_renamed">グループ名を「%1$s」に変更しました</string>
+  <string name="catalog_message_group_deleted">グループ「%1$s」を削除しました</string>
+  <string name="catalog_error_group_name_required">グループ名を入力してください</string>
+  <string name="catalog_error_group_name_reserved">「お気に入り」は予約済みです</string>
+  <string name="movies_error_group_name_duplicate">同じ名前の映画グループがすでに存在します</string>
+  <string name="series_error_group_name_duplicate">同じ名前のシリーズグループがすでに存在します</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">この保存済みビューから%1$sを削除しました。</string>
+  <string name="favorites_message_moved_to_group">%1$sを選択したグループに移動しました。</string>
+  <string name="favorites_message_group_deleted">グループ「%1$s」を削除しました。</string>
+  <string name="favorites_error_move_failed">%1$sを移動できません: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$sを統合できません: %2$s</string>
+  <string name="favorites_error_reorder_failed">並べ替えを保存できません: %1$s</string>
+  <string name="favorites_error_unknown">不明なエラー</string>
+  <string name="favorites_subtitle_channel_number">チャンネル %1$d</string>
+  <string name="favorites_group_subtitle">%1$sグループ</string>
+  <string name="favorites_content_type_movie">映画</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Všetko</string>
+  <string name="library_chip_favorites">Obľúbené</string>
+  <string name="library_chip_resume">Pokračovať</string>
+  <string name="library_chip_unwatched">Nepozreté</string>
+  <string name="library_chip_recent">Nedávne</string>
+  <string name="library_chip_updated">Aktualizované</string>
+  <string name="library_chip_top_rated">Najlepšie hodnotené</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Poradie knižnice</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Najnovšie</string>
+  <string name="library_chip_sort_recently_updated">Nedávno aktualizované</string>
+  <string name="library_chip_sort_updated_short">Aktualizované</string>
+  <string name="library_chip_sort_rating">Hodnotenie</string>
+  <string name="library_chip_sort_recent_activity">Nedávna aktivita</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d skupina</item>
+    <item quantity="few">%d skupiny</item>
+    <item quantity="many">%d skupiny</item>
+    <item quantity="other">%d skupín</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d položka</item>
+    <item quantity="few">%d položky</item>
+    <item quantity="many">%d položky</item>
+    <item quantity="other">%d položiek</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d tip</item>
+    <item quantity="few">%d tipy</item>
+    <item quantity="many">%d tipu</item>
+    <item quantity="other">%d tipov</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d uložená položka</item>
+    <item quantity="few">%d uložené položky</item>
+    <item quantity="many">%d uloženej položky</item>
+    <item quantity="other">%d uložených položiek</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Filmy sa nepodarilo načítať</string>
+  <string name="series_error_load_failed">Seriály sa nepodarilo načítať</string>
+  <string name="movie_detail_error_load_failed">Podrobnosti o filme sa nepodarilo načítať</string>
+  <string name="series_detail_error_load_failed">Podrobnosti o seriáli sa nepodarilo načítať</string>
+  <string name="catalog_error_no_active_provider">Žiadny aktívny poskytovateľ</string>
+  <string name="catalog_message_moved_back_to_live">Presunuté späť do televízie naživo: „%1$s“</string>
+  <string name="catalog_message_group_created">Skupina %1$s bola vytvorená</string>
+  <string name="catalog_message_group_created_and_added">Skupina %1$s bola vytvorená a pridané: %2$s</string>
+  <string name="catalog_message_category_hidden">Kategória %1$s bola skrytá</string>
+  <string name="catalog_message_category_pinned">Pripnuté: %1$s</string>
+  <string name="catalog_message_category_unpinned">Odpnuté: %1$s</string>
+  <string name="catalog_message_group_renamed">Skupina bola premenovaná na %1$s</string>
+  <string name="catalog_message_group_deleted">Skupina %1$s bola odstránená</string>
+  <string name="catalog_error_group_name_required">Zadajte názov skupiny</string>
+  <string name="catalog_error_group_name_reserved">Názov Obľúbené je vyhradený</string>
+  <string name="movies_error_group_name_duplicate">Skupina filmov s týmto názvom už existuje</string>
+  <string name="series_error_group_name_duplicate">Skupina seriálov s týmto názvom už existuje</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">%1$s bolo odstránené z tohto uloženého zobrazenia.</string>
+  <string name="favorites_message_moved_to_group">%1$s bolo presunuté do vybranej skupiny.</string>
+  <string name="favorites_message_group_deleted">Skupina %1$s bola odstránená.</string>
+  <string name="favorites_error_move_failed">Položku %1$s sa nepodarilo presunúť: %2$s</string>
+  <string name="favorites_error_merge_failed">Položku %1$s sa nepodarilo zlúčiť: %2$s</string>
+  <string name="favorites_error_reorder_failed">Nové poradie sa nepodarilo uložiť: %1$s</string>
+  <string name="favorites_error_unknown">Neznáma chyba</string>
+  <string name="favorites_subtitle_channel_number">Kanál %1$d</string>
+  <string name="favorites_group_subtitle">Skupina %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

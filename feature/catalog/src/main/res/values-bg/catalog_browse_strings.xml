@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Филтърни чипове -->
+  <string name="library_chip_all">Всички</string>
+  <string name="library_chip_favorites">Любими</string>
+  <string name="library_chip_resume">Продължи</string>
+  <string name="library_chip_unwatched">Негледано</string>
+  <string name="library_chip_recent">Скорошни</string>
+  <string name="library_chip_updated">Обновени</string>
+  <string name="library_chip_top_rated">Най-високо оценени</string>
+
+  <!-- Чипове за сортиране -->
+  <string name="library_chip_sort_library_order">Ред на библиотеката</string>
+  <string name="library_chip_sort_title">А-Я</string>
+  <string name="library_chip_sort_newest">Най-нови</string>
+  <string name="library_chip_sort_recently_updated">Скорошни промени</string>
+  <string name="library_chip_sort_updated_short">Обновени</string>
+  <string name="library_chip_sort_rating">Оценка</string>
+  <string name="library_chip_sort_recent_activity">Скорошна активност</string>
+
+  <!-- Броячи под плочките и в запазените секции -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d група</item>
+    <item quantity="other">%d групи</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d елемент</item>
+    <item quantity="other">%d елемента</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d избор</item>
+    <item quantity="other">%d избора</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d запазен елемент</item>
+    <item quantity="other">%d запазени елемента</item>
+  </plurals>
+
+  <!-- Съобщения за филми, сериали и управление на групи -->
+  <string name="movies_error_load_failed">Филмите не можаха да се заредят</string>
+  <string name="series_error_load_failed">Сериалите не можаха да се заредят</string>
+  <string name="movie_detail_error_load_failed">Подробностите за филма не можаха да се заредят</string>
+  <string name="series_detail_error_load_failed">Подробностите за сериала не можаха да се заредят</string>
+  <string name="catalog_error_no_active_provider">Няма активен доставчик</string>
+  <string name="catalog_message_moved_back_to_live">„%1$s“ е върнато в ТВ на живо</string>
+  <string name="catalog_message_group_created">Създадена е група %1$s</string>
+  <string name="catalog_message_group_created_and_added">Създадена е група %1$s и е добавено: %2$s</string>
+  <string name="catalog_message_category_hidden">Категорията %1$s е скрита</string>
+  <string name="catalog_message_category_pinned">Закачено: %1$s</string>
+  <string name="catalog_message_category_unpinned">Откачено: %1$s</string>
+  <string name="catalog_message_group_renamed">Групата е преименувана на %1$s</string>
+  <string name="catalog_message_group_deleted">Групата %1$s е изтрита</string>
+  <string name="catalog_error_group_name_required">Въведете име на групата</string>
+  <string name="catalog_error_group_name_reserved">„Любими“ е запазено име</string>
+  <string name="movies_error_group_name_duplicate">Група с филми с това име вече съществува</string>
+  <string name="series_error_group_name_duplicate">Група със сериали с това име вече съществува</string>
+
+  <!-- Съобщения и етикети за запазената библиотека -->
+  <string name="favorites_message_removed_from_view">%1$s е премахнато от този запазен изглед.</string>
+  <string name="favorites_message_moved_to_group">%1$s е преместено в избраната група.</string>
+  <string name="favorites_message_group_deleted">Групата %1$s е изтрита.</string>
+  <string name="favorites_error_move_failed">%1$s не може да бъде преместено: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s не може да бъде обединено: %2$s</string>
+  <string name="favorites_error_reorder_failed">Редът не може да бъде запазен: %1$s</string>
+  <string name="favorites_error_unknown">Неизвестна грешка</string>
+  <string name="favorites_subtitle_channel_number">Канал %1$d</string>
+  <string name="favorites_group_subtitle">Група: %1$s</string>
+  <string name="favorites_content_type_movie">Филм</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

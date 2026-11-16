@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Semua</string>
+  <string name="library_chip_favorites">Favorit</string>
+  <string name="library_chip_resume">Lanjutkan</string>
+  <string name="library_chip_unwatched">Belum ditonton</string>
+  <string name="library_chip_recent">Terbaru</string>
+  <string name="library_chip_updated">Diperbarui</string>
+  <string name="library_chip_top_rated">Nilai Tertinggi</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Urutan Perpustakaan</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Terbaru</string>
+  <string name="library_chip_sort_recently_updated">Baru Diperbarui</string>
+  <string name="library_chip_sort_updated_short">Diperbarui</string>
+  <string name="library_chip_sort_rating">Peringkat</string>
+  <string name="library_chip_sort_recent_activity">Aktivitas Terbaru</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d grup</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d item</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d pilihan</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d item tersimpan</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Gagal memuat film</string>
+  <string name="series_error_load_failed">Gagal memuat serial</string>
+  <string name="movie_detail_error_load_failed">Gagal memuat detail film</string>
+  <string name="series_detail_error_load_failed">Gagal memuat detail serial</string>
+  <string name="catalog_error_no_active_provider">Tidak ada penyedia aktif</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\' dikembalikan ke TV Langsung</string>
+  <string name="catalog_message_group_created">Grup %1$s dibuat</string>
+  <string name="catalog_message_group_created_and_added">Grup %1$s dibuat dan %2$s ditambahkan</string>
+  <string name="catalog_message_category_hidden">Kategori %1$s disembunyikan</string>
+  <string name="catalog_message_category_pinned">%1$s disematkan</string>
+  <string name="catalog_message_category_unpinned">Sematan %1$s dilepas</string>
+  <string name="catalog_message_group_renamed">Nama grup diubah menjadi %1$s</string>
+  <string name="catalog_message_group_deleted">Grup %1$s dihapus</string>
+  <string name="catalog_error_group_name_required">Masukkan nama grup</string>
+  <string name="catalog_error_group_name_reserved">\'Favorit\' adalah nama yang dicadangkan</string>
+  <string name="movies_error_group_name_duplicate">Grup film dengan nama itu sudah ada</string>
+  <string name="series_error_group_name_duplicate">Grup serial dengan nama itu sudah ada</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">%1$s dihapus dari tampilan tersimpan ini.</string>
+  <string name="favorites_message_moved_to_group">%1$s dipindahkan ke grup yang dipilih.</string>
+  <string name="favorites_message_group_deleted">Grup %1$s dihapus.</string>
+  <string name="favorites_error_move_failed">Tidak dapat memindahkan %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Tidak dapat menggabungkan %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Tidak dapat menyimpan urutan baru: %1$s</string>
+  <string name="favorites_error_unknown">Kesalahan tidak diketahui</string>
+  <string name="favorites_subtitle_channel_number">Saluran %1$d</string>
+  <string name="favorites_group_subtitle">Grup %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>
