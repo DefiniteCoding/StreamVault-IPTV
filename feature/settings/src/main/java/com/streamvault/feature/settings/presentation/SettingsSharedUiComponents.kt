@@ -48,7 +48,10 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.settings.R
+import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.FocusSpec
+import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.theme.OnBackground
 import com.streamvault.core.ui.theme.OnSurfaceDim
@@ -84,42 +87,79 @@ fun SettingsOverviewStat(
     }
 }
 
+enum class SettingsChipTone {
+    /** Legacy accent-tinted chip with a resting hairline; screens move off it one at a time (rule 19). */
+    Tinted,
+    Primary,
+    Secondary
+}
+
 @Composable
 fun CompactSettingsActionChip(
     label: String,
     accent: Color,
     enabled: Boolean = true,
+    tone: SettingsChipTone = SettingsChipTone.Tinted,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    TvClickableSurface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = modifier,
-        shape = ClickableSurfaceDefaults.shape(SettingsDetailShapes.Control),
-        colors = ClickableSurfaceDefaults.colors(
+    val colors = when (tone) {
+        SettingsChipTone.Primary -> ClickableSurfaceDefaults.colors(
+            containerColor = BrowseColors.Brand,
+            contentColor = BrowseColors.OnPrimary,
+            focusedContainerColor = BrowseColors.BrandStrong,
+            focusedContentColor = contentOnColor(BrowseColors.BrandStrong),
+            disabledContainerColor = BrowseColors.ControlContainer,
+            disabledContentColor = BrowseColors.TextDisabled
+        )
+        SettingsChipTone.Secondary -> ClickableSurfaceDefaults.colors(
+            containerColor = BrowseColors.SurfaceAccent,
+            contentColor = BrowseColors.TextPrimary,
+            focusedContainerColor = BrowseColors.SurfaceAccent,
+            focusedContentColor = BrowseColors.TextPrimary,
+            disabledContainerColor = BrowseColors.ControlContainer,
+            disabledContentColor = BrowseColors.TextDisabled
+        )
+        SettingsChipTone.Tinted -> ClickableSurfaceDefaults.colors(
             containerColor = accent.copy(alpha = if (enabled) 0.14f else 0.08f),
             contentColor = accent.copy(alpha = if (enabled) 1f else 0.42f),
             focusedContainerColor = accent.copy(alpha = if (enabled) 0.28f else 0.08f),
             focusedContentColor = accent.copy(alpha = if (enabled) 1f else 0.42f),
             disabledContainerColor = accent.copy(alpha = 0.08f),
             disabledContentColor = accent.copy(alpha = 0.42f)
-        ),
-        border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, com.streamvault.core.ui.design.AppColors.Divider),
-                shape = SettingsDetailShapes.Control
-            ),
-            focusedBorder = Border(
-                border = BorderStroke(FocusSpec.BorderWidth, com.streamvault.core.ui.theme.FocusBorder),
-                shape = SettingsDetailShapes.Control
+        )
+    }
+    val labelColor = when (tone) {
+        SettingsChipTone.Tinted -> accent.copy(alpha = if (enabled) 1f else 0.42f)
+        else -> Color.Unspecified
+    }
+    TvClickableSurface(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = modifier,
+        shape = ClickableSurfaceDefaults.shape(SettingsDetailShapes.Control),
+        colors = colors,
+        border = if (tone == SettingsChipTone.Tinted) {
+            ClickableSurfaceDefaults.border(
+                border = Border(
+                    border = BorderStroke(1.dp, com.streamvault.core.ui.design.AppColors.Divider),
+                    shape = SettingsDetailShapes.Control
+                ),
+                focusedBorder = Border(
+                    border = BorderStroke(FocusSpec.BorderWidth, com.streamvault.core.ui.theme.FocusBorder),
+                    shape = SettingsDetailShapes.Control
+                )
             )
-        ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+        } else {
+            selectableFocusBorder(SettingsDetailShapes.Control)
+        },
+        scale = ClickableSurfaceDefaults.scale(
+            focusedScale = if (tone == SettingsChipTone.Tinted) 1f else FocusSpec.FocusedScale
+        )
     ) {
         Text(
             text = label,
-            color = accent.copy(alpha = if (enabled) 1f else 0.42f),
+            color = labelColor,
             style = MaterialTheme.typography.labelMedium,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
         )

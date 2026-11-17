@@ -73,6 +73,7 @@ public fun LazyListScope.providerSection(
             CompactSettingsActionChip(
                 label = stringResource(R.string.settings_add_provider),
                 accent = Primary,
+                tone = SettingsChipTone.Secondary,
                 onClick = onAddProvider,
                 modifier = if (targetItemId == "sources.add") targetFocusModifier else Modifier,
             )
