@@ -148,6 +148,7 @@ fun LiveHomeScreen(
     var showSplitManagerDialog by rememberSaveable { mutableStateOf(false) }
     var pendingSplitPlannerChannel by remember { mutableStateOf<Channel?>(null) }
     var showAddQuickFilterDialog by rememberSaveable { mutableStateOf(false) }
+    var showQuickFiltersDialog by rememberSaveable { mutableStateOf(false) }
     var showHiddenCategoriesDialog by rememberSaveable { mutableStateOf(false) }
     var showHiddenChannelsDialog by rememberSaveable { mutableStateOf(false) }
     var showChannelMoveDialog by remember { mutableStateOf(false) }
@@ -210,7 +211,7 @@ fun LiveHomeScreen(
     }
 
         val hasOverlay = showPinDialog || showSplitManagerDialog || pendingSplitPlannerChannel != null ||
-        showAddQuickFilterDialog || showHiddenCategoriesDialog || showHiddenChannelsDialog ||
+        showAddQuickFilterDialog || showQuickFiltersDialog || showHiddenCategoriesDialog || showHiddenChannelsDialog ||
         phoneOrderLaunch != null || uiState.showDialog || uiState.showDeleteGroupDialog ||
         uiState.showRenameGroupDialog || uiState.selectedCategoryForOptions != null ||
         isReorderMode
@@ -221,6 +222,7 @@ fun LiveHomeScreen(
         when {
             phoneOrderLaunch != null -> phoneOrderLaunch = null
             showAddQuickFilterDialog -> showAddQuickFilterDialog = false
+            showQuickFiltersDialog -> showQuickFiltersDialog = false
             showHiddenCategoriesDialog -> showHiddenCategoriesDialog = false
             showHiddenChannelsDialog -> showHiddenChannelsDialog = false
             showPinDialog -> {
@@ -317,6 +319,53 @@ fun LiveHomeScreen(
     }
 
     val hiddenChannelsLiveTv by viewModel.hiddenChannelsLiveTv.collectAsStateWithLifecycle()
+
+    if (showQuickFiltersDialog) {
+        val activeCategoryFilter = uiState.activeCategoryFilter
+        LiveQuickFiltersDialog(
+            title = stringResource(R.string.home_quick_filters_button),
+            subtitle = when {
+                uiState.categorySearchQuery.isBlank() -> stringResource(R.string.home_quick_filters_showing_all)
+                activeCategoryFilter != null -> stringResource(R.string.home_quick_filters_active, activeCategoryFilter)
+                else -> stringResource(R.string.home_quick_filters_manual_search, uiState.categorySearchQuery)
+            },
+            closeLabel = stringResource(R.string.hidden_categories_dialog_close),
+            savedFilters = uiState.savedCategoryFilters,
+            categorySearchQuery = uiState.categorySearchQuery,
+            activeFilter = activeCategoryFilter,
+            hiddenCategoriesButtonLabel = uiState.hiddenLiveCategories
+                .takeIf { it.isNotEmpty() }
+                ?.let { stringResource(R.string.live_quick_filter_hidden_categories, it.size) },
+            hiddenChannelsButtonLabel = hiddenChannelsLiveTv
+                .takeIf { it.isNotEmpty() }
+                ?.let { stringResource(R.string.live_quick_filter_hidden_channels, it.size) },
+            chipTitle = stringResource(R.string.home_quick_filters_title),
+            allLabel = stringResource(R.string.home_quick_filters_all),
+            emptyLabel = stringResource(R.string.home_quick_filters_empty),
+            addChipLabel = stringResource(R.string.home_quick_filters_add_chip),
+            onShowHiddenCategories = {
+                showQuickFiltersDialog = false
+                showHiddenCategoriesDialog = true
+            },
+            onShowHiddenChannels = {
+                showQuickFiltersDialog = false
+                showHiddenChannelsDialog = true
+            },
+            onAddFilter = {
+                showQuickFiltersDialog = false
+                showAddQuickFilterDialog = true
+            },
+            onAllSelected = {
+                showQuickFiltersDialog = false
+                viewModel.clearCategorySearchQuery()
+            },
+            onSavedFilterSelected = { filter ->
+                showQuickFiltersDialog = false
+                viewModel.applySavedCategoryFilter(filter)
+            },
+            onDismiss = { showQuickFiltersDialog = false }
+        )
+    }
 
     LaunchedEffect(hiddenChannelsLiveTv.isEmpty()) {
         if (showHiddenChannelsDialog && hiddenChannelsLiveTv.isEmpty()) {
@@ -440,6 +489,7 @@ fun LiveHomeScreen(
                         }
                         .toList()
                 }
+                val listCategories = remember(visibleCategories) { visibleCategories.withoutFilterPillCategories() }
                 val isCategoryLocked: (Category) -> Boolean = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
                     { category -> isLiveHomeCategoryLocked(category, uiState.parentalControlLevel, uiState.unlockedCategoryIds) }
                 }
@@ -564,7 +614,7 @@ fun LiveHomeScreen(
                         ?.takeIf { categoryId -> visibleCategories.any { it.id == categoryId } }
                         ?: (unlockedVisibleCategories.firstOrNull() ?: visibleCategories.firstOrNull())?.id
                     val targetIndex = targetCategoryId?.let { categoryId ->
-                        visibleCategories.indexOfFirst { it.id == categoryId }
+                        listCategories.indexOfFirst { it.id == categoryId }
                     } ?: -1
                     if (targetIndex >= 0) {
                         kotlinx.coroutines.delay(80)
@@ -579,7 +629,7 @@ fun LiveHomeScreen(
                     if (!restored) {
                         val fallbackCategoryId = (unlockedVisibleCategories.firstOrNull() ?: visibleCategories.firstOrNull())?.id
                         if (fallbackCategoryId != targetCategoryId) {
-                            val fallbackIndex = visibleCategories.indexOfFirst { it.id == fallbackCategoryId }
+                            val fallbackIndex = listCategories.indexOfFirst { it.id == fallbackCategoryId }
                             if (fallbackIndex >= 0) {
                                 categoryListState.animateScrollToItem(fallbackIndex)
                             }
@@ -621,6 +671,13 @@ fun LiveHomeScreen(
                         focusRestoreNonce++
                     }
                     viewModel.consumeInitialChannelFocusRequest()
+                }
+
+                // Pill categories have no list row, so closing their options returns focus to the pill, not the first channel.
+                fun openPillCategoryOptions(category: Category) {
+                    lastFocusedCategoryId = category.id
+                    preferredRestoreTarget = FocusRestoreTarget.CATEGORY.name
+                    viewModel.showCategoryOptions(category)
                 }
 
                 LaunchedEffect(
@@ -724,9 +781,44 @@ fun LiveHomeScreen(
                         }
                     }
                 ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                if (!isReorderMode) {
+                    val favoritesCategory = remember(uiState.categories) {
+                        uiState.categories.firstOrNull { it.id == VirtualCategoryIds.FAVORITES }
+                    }
+                    val recentCategory = remember(uiState.categories) {
+                        uiState.categories.firstOrNull { it.id == VirtualCategoryIds.RECENT }
+                    }
+                    LiveFilterPillRow(
+                        favorites = favoritesCategory,
+                        recent = recentCategory,
+                        selectedCategoryId = uiState.selectedCategory?.id,
+                        activeCategoryFilter = uiState.activeCategoryFilter,
+                        showQuickFilters = shouldShowQuickFiltersPill(
+                            uiState.liveTvQuickFilterVisibilityMode,
+                            uiState.savedCategoryFilters
+                        ),
+                        categoryFocusRequesters = categoryFocusRequesters,
+                        onCategory = { category ->
+                            if (isCategoryLocked(category)) {
+                                pendingUnlockCategory = category
+                                showPinDialog = true
+                            } else {
+                                val collapsed = collapseCategorySidebarForSelection()
+                                viewModel.selectCategory(category)
+                                pendingCategoryContentJumpCategoryId = category.id.takeIf { collapsed }
+                            }
+                        },
+                        onFocusedCategory = { lastFocusedCategoryId = it.id },
+                        onCategoryOptions = ::openPillCategoryOptions,
+                        onQuickFilters = { showQuickFiltersDialog = true },
+                        onGuide = { onNavigate(LiveRoutePatterns.EPG) }
+                    )
+                }
                 Row(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .weight(1f)
                         .onPreviewKeyEvent { event ->
                             if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
                             if (hasOverlay || isReorderMode) return@onPreviewKeyEvent false
@@ -814,43 +906,14 @@ fun LiveHomeScreen(
                             onCategorySearchQueryChanged = viewModel::updateCategorySearchQuery,
                             categorySearchFocusRequester = categorySearchFocusRequester,
                             categorySearchPlaceholder = stringResource(R.string.home_search_categories),
-                            quickFilterVisibilityMode = uiState.liveTvQuickFilterVisibilityMode,
-                            savedCategoryFilters = uiState.savedCategoryFilters,
-                            activeCategoryFilter = uiState.activeCategoryFilter,
-                            hiddenCategoriesButtonLabel = uiState.hiddenLiveCategories
-                                .takeIf { it.isNotEmpty() }
-                                ?.let { stringResource(R.string.live_quick_filter_hidden_categories, it.size) },
-                            hiddenChannelsButtonLabel = hiddenChannelsLiveTv
-                                .takeIf { it.isNotEmpty() }
-                                ?.let { stringResource(R.string.live_quick_filter_hidden_channels, it.size) },
-                            quickFiltersButtonTitle = stringResource(R.string.home_quick_filters_button),
-                            quickFiltersTitle = stringResource(R.string.home_quick_filters_title),
-                            quickFiltersShowLabel = stringResource(R.string.home_quick_filters_show),
-                            quickFiltersHideLabel = stringResource(R.string.home_quick_filters_hide),
-                            quickFiltersShowingAllLabel = stringResource(R.string.home_quick_filters_showing_all),
-                            quickFiltersActiveLabel = uiState.activeCategoryFilter?.let { filter ->
-                                stringResource(R.string.home_quick_filters_active, filter)
-                            } ?: "",
-                            quickFiltersManualSearchLabel = stringResource(
-                                R.string.home_quick_filters_manual_search,
-                                uiState.categorySearchQuery
-                            ),
-                            quickFiltersAllLabel = stringResource(R.string.home_quick_filters_all),
-                            quickFiltersEmptyLabel = stringResource(R.string.home_quick_filters_empty),
-                            quickFiltersAddChipLabel = stringResource(R.string.home_quick_filters_add_chip),
                             noSourceLabel = stringResource(R.string.playlist_no_provider),
                             selectedLabel = stringResource(R.string.label_selected),
                             unavailableLabel = stringResource(R.string.live_source_unavailable_short),
-                            isReorderMode = isReorderMode,
-                            onShowHiddenCategories = { showHiddenCategoriesDialog = true },
-                            onShowHiddenChannels = { showHiddenChannelsDialog = true },
-                            onAddFilter = { showAddQuickFilterDialog = true },
-                            onAllSelected = viewModel::clearCategorySearchQuery,
-                            onSavedFilterSelected = viewModel::applySavedCategoryFilter
+                            isReorderMode = isReorderMode
                         )
 
                         LiveCategoryListHost(
-                            categories = visibleCategories,
+                            categories = listCategories,
                             categoryFocusRequesters = categoryFocusRequesters,
                             state = categoryListState,
                             itemContent = { category, categoryFocusRequester ->
@@ -968,7 +1031,10 @@ fun LiveHomeScreen(
                             isReorderMode = isReorderMode,
                             showCategoriesButton = isCategorySidebarHidden,
                             onShowCategories = ::revealCategorySidebar,
-                            showCategoriesContentDescription = stringResource(R.string.home_show_categories)
+                            showCategoriesContentDescription = stringResource(R.string.home_show_categories),
+                            onOptions = uiState.selectedCategory
+                                ?.takeIf { isFilterPillCategory(it.id) && !isReorderMode }
+                                ?.let { category -> { openPillCategoryOptions(category) } }
                         )
 
                         Crossfade(
@@ -1138,6 +1204,7 @@ fun LiveHomeScreen(
                                 .fillMaxHeight()
                         )
                     }
+                }
                 }
                 }
                 }

@@ -7,6 +7,10 @@ import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import com.streamvault.core.ui.design.FocusSafeLazyRow
@@ -41,6 +45,10 @@ data class LiveChipRowItem(
     val key: String,
     val label: String,
     val supportingText: String? = null,
+    val count: Int? = null,
+    val focusRequester: FocusRequester? = null,
+    val onFocused: () -> Unit = {},
+    val onLongClick: (() -> Unit)? = null,
     val onClick: () -> Unit
 )
 
@@ -107,14 +115,18 @@ fun LiveChipRowSection(
             items(items = chips, key = { it.key }, contentType = { "live_selection_chip" }) { chip ->
                 val selected = chip.key == selectedKey
                 var wasFocused by remember(chip.key) { mutableStateOf(false) }
-                val requester = remember(chip.key) { FocusRequester() }
+                val requester = remember(chip.key, chip.focusRequester) { chip.focusRequester ?: FocusRequester() }
                 Surface(
                     onClick = { sounds.playSelect(); chip.onClick() },
+                    onLongClick = chip.onLongClick,
                     modifier = Modifier
                         .focusRequester(requester)
                         .mouseClickable(focusRequester = requester, onClick = { sounds.playSelect(); chip.onClick() })
                         .onFocusChanged {
-                            if (it.isFocused && !wasFocused) sounds.playNavigate()
+                            if (it.isFocused && !wasFocused) {
+                                sounds.playNavigate()
+                                chip.onFocused()
+                            }
                             wasFocused = it.isFocused
                         },
                     // Secondary control: filled at rest, no stroke. Selected keeps its fill when focused; the ring carries focus.
@@ -132,7 +144,16 @@ fun LiveChipRowSection(
                         modifier = Modifier.padding(horizontal = chipHorizontalPadding.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        Text(text = chip.label, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = chip.label, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            chip.count?.let { count ->
+                                Text(
+                                    text = count.toString(),
+                                    style = LocalAppTypeTokens.current.labelNumeric,
+                                    modifier = Modifier.padding(start = LocalAppSpacing.current.sm)
+                                )
+                            }
+                        }
                         chip.supportingText?.takeIf { it.isNotBlank() }?.let {
                             Text(text = it, style = supportingTextStyle, color = if (selected || wasFocused) Color.Unspecified else BrowseColors.TextSecondary, maxLines = supportingTextMaxLines, overflow = TextOverflow.Ellipsis)
                         }
