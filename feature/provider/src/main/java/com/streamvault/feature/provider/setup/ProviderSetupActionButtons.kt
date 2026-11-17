@@ -75,7 +75,7 @@ private fun ProviderActionButton(
             containerColor = when {
                 isLoading -> SurfaceHighlight
                 isPrimary -> Primary
-                else -> BrowseColors.ControlContainer
+                else -> BrowseColors.SurfaceAccent
             },
             focusedContainerColor = when {
                 isLoading -> SurfaceHighlight

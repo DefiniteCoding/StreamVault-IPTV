@@ -125,8 +125,8 @@ class BrowsePaletteContrastTest {
         }
     }
 
-    // Setup screens: one filled-brand primary, every other action a controlContainer secondary that fills
-    // with surfaceEmphasis on focus. Labels and the focus ring must hold on all three containers.
+    // Setup screens: one filled-brand primary, every other action a surfaceAccent secondary (the shared
+    // secondary fill) that changes fill on focus. Labels and the focus ring must hold on all three containers.
     @Test
     fun primaryAndSecondaryActionLabelsAndFocusRingAreReadable() {
         allThemeIds.forEach { id ->
@@ -143,6 +143,22 @@ class BrowsePaletteContrastTest {
             assertTrue("$id textPrimary on surfaceEmphasis was $focused", focused >= 4.5f)
             val ring = contrast(browse.focus, browse.surfaceEmphasis)
             assertTrue("$id focus ring on surfaceEmphasis was $ring", ring >= 3f)
+        }
+    }
+
+    // Settings provider card: Sync/Connect primary, accent-tinted secondaries, red Delete that fills red on focus.
+    @Test
+    fun providerCardActionsAreReadableInEveryTheme() {
+        allThemeIds.forEach { id ->
+            val browse = AppPalette.forTheme(id).forBrowsing()
+            val secondary = contrast(browse.textPrimary, browse.surfaceAccent)
+            assertTrue("$id textPrimary on surfaceAccent was $secondary", secondary >= 4.5f)
+            val deleteRest = contrast(browse.live, browse.surfaceElevated)
+            assertTrue("$id live on surfaceElevated was $deleteRest", deleteRest >= 4.5f)
+            val deleteFocused = contrast(contentOnColor(browse.live), browse.live)
+            assertTrue("$id label on live fill was $deleteFocused", deleteFocused >= 4.5f)
+            val ring = contrast(browse.focus, browse.surfaceElevated)
+            assertTrue("$id focus ring on surfaceElevated was $ring", ring >= 3f)
         }
     }
 

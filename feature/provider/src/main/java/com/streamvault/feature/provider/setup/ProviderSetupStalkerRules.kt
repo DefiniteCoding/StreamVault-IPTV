@@ -174,7 +174,7 @@ internal fun RequestRuleActionButton(
             .semantics { contentDescription = text },
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = com.streamvault.core.ui.design.BrowseColors.ControlContainer,
+            containerColor = com.streamvault.core.ui.design.BrowseColors.SurfaceAccent,
             focusedContainerColor = SurfaceHighlight
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),

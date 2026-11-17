@@ -52,7 +52,7 @@ internal fun ImportOptionsButton(
             .semantics { contentDescription = text },
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Artwork),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = com.streamvault.core.ui.design.BrowseColors.ControlContainer,
+            containerColor = com.streamvault.core.ui.design.BrowseColors.SurfaceAccent,
             focusedContainerColor = SurfaceHighlight
         ),
         border = ClickableSurfaceDefaults.border(

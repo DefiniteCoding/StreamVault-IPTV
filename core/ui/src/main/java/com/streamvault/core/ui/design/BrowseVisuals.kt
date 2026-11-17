@@ -72,21 +72,24 @@ fun selectableSurfaceColors(selected: Boolean) = ClickableSurfaceDefaults.colors
     focusedContentColor = if (selected) BrowseColors.OnSelectedContainer else BrowseColors.TextPrimary,
 )
 
-/** Secondary button: filled at rest with no stroke, brighter fill on focus (the ring carries the focus state). */
+/**
+ * Secondary button: a tonal accent fill with no stroke. A neutral grey fill read as disabled next to the
+ * primary, so the fill carries the theme accent; the focus ring and scale carry the focus state.
+ */
 @Composable
 fun secondaryButtonColors() = ButtonDefaults.colors(
-    containerColor = BrowseColors.ControlContainer,
+    containerColor = BrowseColors.SurfaceAccent,
     contentColor = BrowseColors.TextPrimary,
     focusedContainerColor = BrowseColors.SurfaceAccent,
     focusedContentColor = BrowseColors.TextPrimary,
-    disabledContainerColor = BrowseColors.ControlContainer,
+    disabledContainerColor = BrowseColors.SurfaceAccent,
     disabledContentColor = BrowseColors.TextDisabled,
 )
 
 /** Secondary clickable surface: same look as [secondaryButtonColors] for Surface-based controls. */
 @Composable
 fun secondarySurfaceColors() = ClickableSurfaceDefaults.colors(
-    containerColor = BrowseColors.ControlContainer,
+    containerColor = BrowseColors.SurfaceAccent,
     contentColor = BrowseColors.TextPrimary,
     focusedContainerColor = BrowseColors.SurfaceAccent,
     focusedContentColor = BrowseColors.TextPrimary,
