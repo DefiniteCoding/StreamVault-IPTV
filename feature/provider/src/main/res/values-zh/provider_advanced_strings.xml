@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">门户网址</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin 媒体服务器</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">覆盖 User-Agent（可选）</string>
+  <string name="setup_adv_headers_stalker_placeholder">请求头（API，可选，Header: Value | HeaderToRemove:）</string>
+  <string name="setup_adv_headers_custom_placeholder">自定义请求头（可选，Header: Value | Header2: Value）</string>
+
+  <string name="setup_guide_source_title">节目指南来源</string>
+  <string name="setup_guide_source_helper">选择此提供商使用其自带的节目指南、你分配的外部 XMLTV 来源，还是完全不使用节目指南。</string>
+  <string name="setup_guide_policy_auto_title">自动</string>
+  <string name="setup_guide_policy_auto_description">保持当前的混合行为：外部 XMLTV 可覆盖提供商的节目指南数据，未匹配的频道仍可回退使用提供商的节目指南。</string>
+  <string name="setup_guide_policy_external_title">仅使用外部 EPG</string>
+  <string name="setup_guide_policy_external_description">仅使用已分配的外部 XMLTV 来源。未匹配的频道将没有节目指南数据。</string>
+  <string name="setup_guide_policy_provider_title">仅使用提供商 EPG</string>
+  <string name="setup_guide_policy_provider_description">忽略为此提供商分配的外部 XMLTV 来源，仅使用提供商的节目指南路径。</string>
+  <string name="setup_guide_policy_disabled_title">停用节目指南数据</string>
+  <string name="setup_guide_policy_disabled_description">不为此提供商导入或匹配节目指南数据。</string>
+
+  <string name="setup_logo_source_title">频道标志</string>
+  <string name="setup_logo_source_helper">选择频道标志来自提供商、匹配的 EPG 频道图标，还是严格只用单一来源。</string>
+  <string name="setup_logo_policy_supplier_preferred_title">优先提供商标志</string>
+  <string name="setup_logo_policy_supplier_preferred_description">有提供商标志时使用它，否则回退到匹配的 EPG 图标。</string>
+  <string name="setup_logo_policy_epg_preferred_title">优先 EPG 标志</string>
+  <string name="setup_logo_policy_epg_preferred_description">先使用匹配的 EPG 图标，否则回退到提供商标志。</string>
+  <string name="setup_logo_policy_supplier_only_title">仅提供商标志</string>
+  <string name="setup_logo_policy_supplier_only_description">此提供商始终使用提供商标志。</string>
+  <string name="setup_logo_policy_epg_only_title">仅 EPG 标志</string>
+  <string name="setup_logo_policy_epg_only_description">此提供商始终使用匹配的 EPG 图标。</string>
+
+  <string name="setup_stalker_auth_title">Stalker 认证模式</string>
+  <string name="setup_stalker_auth_helper">默认为自动检测。仅当门户需要凭据或 MAG + 账号混合登录时才更改。</string>
+  <string name="setup_stalker_auth_auto_title">自动检测</string>
+  <string name="setup_stalker_auth_auto_description">先尝试门户最可能使用的认证流程，如果其他 Stalker 模式更合适则重试一次。</string>
+  <string name="setup_stalker_auth_mac_only_title">仅 MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">使用 MAG 风格的 MAC 认证，不登录门户账号。</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + 凭据</string>
+  <string name="setup_stalker_auth_mac_credentials_description">保留 MAG 身份，并为要求更严格的门户添加门户账号凭据。</string>
+  <string name="setup_stalker_auth_credentials_only_title">仅凭据</string>
+  <string name="setup_stalker_auth_credentials_only_description">即使 MAC 地址为可选或被忽略，也使用门户账号凭据。</string>
+
+  <string name="setup_stalker_username_optional_placeholder">门户用户名（可选）</string>
+  <string name="setup_stalker_username_placeholder">门户用户名</string>
+  <string name="setup_stalker_password_optional_placeholder">门户密码（可选）</string>
+  <string name="setup_stalker_password_placeholder">门户密码</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG 类型（可选）</string>
+  <string name="setup_stalker_timezone_placeholder">时区（可选）</string>
+  <string name="setup_stalker_locale_placeholder">区域设置（可选）</string>
+  <string name="setup_stalker_serial_placeholder">序列号（可选）</string>
+  <string name="setup_stalker_device_id_placeholder">设备 ID（可选）</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2（可选）</string>
+  <string name="setup_stalker_signature_placeholder">签名（可选）</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker 兼容性</string>
+  <string name="setup_stalker_compat_section_helper">针对难缠的 MAG/Stalker 服务器的门户专用覆盖项。除非服务器需要，否则请留空。</string>
+  <string name="setup_stalker_hw_version_placeholder">覆盖 hw_version（可选）</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent（API，可选）</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent（播放器，可选）</string>
+  <string name="setup_stalker_player_headers_placeholder">请求头（播放器，可选，Header: Value | HeaderToRemove:）</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent 链接</string>
+  <string name="setup_stalker_link_ethernet">以太网</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">使用 HTTP 代理</string>
+  <string name="setup_stalker_proxy_helper">仅适用于 Stalker API 和播放。</string>
+  <string name="setup_stalker_proxy_host_placeholder">代理主机</string>
+  <string name="setup_stalker_proxy_port_placeholder">代理端口</string>
+
+  <string name="setup_stalker_selector_title">兼容性</string>
+  <string name="setup_stalker_protocol_button">协议：%1$s</string>
+  <string name="setup_stalker_protocol_auto">自动</string>
+  <string name="setup_stalker_protocol_classic_mag">经典 MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">型号：%1$s</string>
+  <string name="setup_stalker_model_automatic">自动</string>
+  <string name="setup_stalker_profile_experimental">%1$s（实验性）</string>
+  <string name="setup_stalker_experimental_note">实验性配置需要抓取或手动填写的身份字段，并且不会参与自动发现。</string>
+  <string name="setup_stalker_profile_custom">自定义配置</string>
+
+  <string name="setup_stalker_rules_title">请求规则</string>
+  <string name="setup_stalker_rules_helper">按操作匹配、拦截调用或覆盖参数。留空的值会移除参数。</string>
+  <string name="setup_stalker_rules_add">添加规则</string>
+  <string name="setup_stalker_rule_number">规则 %1$d</string>
+  <string name="setup_stalker_rule_delete">删除</string>
+  <string name="setup_stalker_rule_action_placeholder">操作，例如 get_profile</string>
+  <string name="setup_stalker_rule_block">拦截此请求</string>
+  <string name="setup_stalker_rule_block_warning">警告：拦截 %1$s 可能导致无法登录。</string>
+  <string name="setup_stalker_rule_params_placeholder">覆盖参数：name=value | remove_me=</string>
+</resources>

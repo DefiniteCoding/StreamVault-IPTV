@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL порталу</string>
+  <string name="setup_jellyfin_source_subtitle">Медіасервер Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Перевизначення User-Agent (необов’язково)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Заголовки (API, необов’язково, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Власні заголовки (необов’язково, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Джерело телегіда</string>
+  <string name="setup_guide_source_helper">Виберіть, що використовує цей провайдер: телегід постачальника, призначені зовнішні джерела XMLTV або жодного телегіда.</string>
+  <string name="setup_guide_policy_auto_title">Авто</string>
+  <string name="setup_guide_policy_auto_description">Зберегти поточну змішану поведінку: зовнішній XMLTV може перевизначати дані постачальника, а канали без збігів усе ще можуть отримувати дані від постачальника.</string>
+  <string name="setup_guide_policy_external_title">Лише зовнішній EPG</string>
+  <string name="setup_guide_policy_external_description">Використовувати лише призначені зовнішні джерела XMLTV. Канали без збігів залишаються без даних телегіда.</string>
+  <string name="setup_guide_policy_provider_title">Лише EPG постачальника</string>
+  <string name="setup_guide_policy_provider_description">Ігнорувати призначені зовнішні джерела XMLTV для цього провайдера й використовувати лише шляхи телегіда постачальника.</string>
+  <string name="setup_guide_policy_disabled_title">Вимкнути дані телегіда</string>
+  <string name="setup_guide_policy_disabled_description">Не імпортувати й не зіставляти дані телегіда для цього провайдера.</string>
+
+  <string name="setup_logo_source_title">Логотипи каналів</string>
+  <string name="setup_logo_source_helper">Виберіть, звідки беруться логотипи каналів: від постачальника, зі значка зіставленого каналу EPG або лише з одного джерела.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Спочатку логотипи постачальника</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Використовувати логотип постачальника, якщо він є, інакше значок зіставленого каналу EPG.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Надавати перевагу логотипам EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Спочатку використовувати значок зіставленого каналу EPG, потім логотип постачальника.</string>
+  <string name="setup_logo_policy_supplier_only_title">Лише логотипи постачальника</string>
+  <string name="setup_logo_policy_supplier_only_description">Завжди використовувати логотипи постачальника для цього провайдера.</string>
+  <string name="setup_logo_policy_epg_only_title">Лише логотипи EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Завжди використовувати значки зіставлених каналів EPG для цього провайдера.</string>
+
+  <string name="setup_stalker_auth_title">Режим автентифікації Stalker</string>
+  <string name="setup_stalker_auth_helper">Типово працює автовизначення. Змінюйте його, лише якщо порталу потрібні облікові дані або змішаний вхід MAG + обліковий запис.</string>
+  <string name="setup_stalker_auth_auto_title">Автовизначення</string>
+  <string name="setup_stalker_auth_auto_description">Спершу спробувати найімовірніший спосіб автентифікації порталу й повторити один раз, якщо краще підходить інший режим Stalker.</string>
+  <string name="setup_stalker_auth_mac_only_title">Лише MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Використовувати MAC-автентифікацію в стилі MAG без входу в обліковий запис порталу.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + облікові дані</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Зберегти ідентифікатор MAG і додати облікові дані порталу для суворіших порталів.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Лише облікові дані</string>
+  <string name="setup_stalker_auth_credentials_only_description">Використовувати облікові дані порталу, навіть якщо MAC-адреса необов’язкова або ігнорується.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Ім’я користувача порталу (необов’язково)</string>
+  <string name="setup_stalker_username_placeholder">Ім’я користувача порталу</string>
+  <string name="setup_stalker_password_optional_placeholder">Пароль порталу (необов’язково)</string>
+  <string name="setup_stalker_password_placeholder">Пароль порталу</string>
+  <string name="setup_stalker_mag_type_placeholder">Тип MAG (необов’язково)</string>
+  <string name="setup_stalker_timezone_placeholder">Часовий пояс (необов’язково)</string>
+  <string name="setup_stalker_locale_placeholder">Локаль (необов’язково)</string>
+  <string name="setup_stalker_serial_placeholder">Серійний номер (необов’язково)</string>
+  <string name="setup_stalker_device_id_placeholder">ID пристрою (необов’язково)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (необов’язково)</string>
+  <string name="setup_stalker_signature_placeholder">Підпис (необов’язково)</string>
+
+  <string name="setup_stalker_compat_section_title">Сумісність Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Перевизначення для окремих порталів із вибагливими серверами MAG/Stalker. Залишайте поля порожніми, якщо сервер їх не потребує.</string>
+  <string name="setup_stalker_hw_version_placeholder">Перевизначення hw_version (необов’язково)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, необов’язково)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (плеєр, необов’язково)</string>
+  <string name="setup_stalker_player_headers_placeholder">Заголовки (плеєр, необов’язково, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Підключення X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Використовувати HTTP-проксі</string>
+  <string name="setup_stalker_proxy_helper">Застосовується лише до API Stalker і відтворення.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Хост проксі</string>
+  <string name="setup_stalker_proxy_port_placeholder">Порт проксі</string>
+
+  <string name="setup_stalker_selector_title">Сумісність</string>
+  <string name="setup_stalker_protocol_button">Протокол: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Авто</string>
+  <string name="setup_stalker_protocol_classic_mag">Класичний MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Модель: %1$s</string>
+  <string name="setup_stalker_model_automatic">Автоматично</string>
+  <string name="setup_stalker_profile_experimental">%1$s (експериментально)</string>
+  <string name="setup_stalker_experimental_note">Експериментальним профілям потрібні перехоплені або введені вручну ідентифікаційні поля, і їх виключено з автоматичного пошуку.</string>
+  <string name="setup_stalker_profile_custom">Власний профіль</string>
+
+  <string name="setup_stalker_rules_title">Правила запитів</string>
+  <string name="setup_stalker_rules_helper">Зіставляйте за дією, блокуйте виклики або перевизначайте параметри. Порожні значення видаляють параметри.</string>
+  <string name="setup_stalker_rules_add">Додати правило</string>
+  <string name="setup_stalker_rule_number">Правило %1$d</string>
+  <string name="setup_stalker_rule_delete">Видалити</string>
+  <string name="setup_stalker_rule_action_placeholder">Дія, напр. get_profile</string>
+  <string name="setup_stalker_rule_block">Блокувати цей запит</string>
+  <string name="setup_stalker_rule_block_warning">Увага: блокування %1$s може унеможливити вхід.</string>
+  <string name="setup_stalker_rule_params_placeholder">Перевизначення параметрів: name=value | remove_me=</string>
+</resources>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL e portalit</string>
+  <string name="setup_jellyfin_source_subtitle">Server media Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Mbishkrim i User-Agent (opsionale)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Header-at (API, opsionale, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Header-at e personalizuara (opsionale, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Burimi i guidës</string>
+  <string name="setup_guide_source_helper">Zgjidh nëse ky ofrues përdor guidën e ofruesit, burimet e jashtme XMLTV të caktuara, apo aspak guidë.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Mban sjelljen e tanishme të përzier: XMLTV i jashtëm mund të mbishkruajë të dhënat e ofruesit, ndërsa kanalet pa përputhje mund të përdorin prapë të dhënat e ofruesit.</string>
+  <string name="setup_guide_policy_external_title">Vetëm EPG e jashtme</string>
+  <string name="setup_guide_policy_external_description">Përdor vetëm burimet e jashtme XMLTV të caktuara. Kanalet pa përputhje mbeten pa të dhëna guide.</string>
+  <string name="setup_guide_policy_provider_title">Vetëm EPG e ofruesit</string>
+  <string name="setup_guide_policy_provider_description">Injoron burimet e jashtme XMLTV të caktuara për këtë ofrues dhe përdor vetëm shtigjet e guidës së ofruesit.</string>
+  <string name="setup_guide_policy_disabled_title">Çaktivizo të dhënat e guidës</string>
+  <string name="setup_guide_policy_disabled_description">Mos importo dhe mos përputh të dhëna guide për këtë ofrues.</string>
+
+  <string name="setup_logo_source_title">Logot e kanaleve</string>
+  <string name="setup_logo_source_helper">Zgjidh nëse logot e kanaleve vijnë nga ofruesi, nga ikona e kanalit EPG të përputhur apo nga një burim i vetëm i rreptë.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Logot e ofruesit së pari</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Përdor logon e ofruesit kur ekziston, pastaj ikonën e kanalit EPG të përputhur.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Prefero logot e EPG-së</string>
+  <string name="setup_logo_policy_epg_preferred_description">Përdor së pari ikonën e kanalit EPG të përputhur, pastaj logon e ofruesit.</string>
+  <string name="setup_logo_policy_supplier_only_title">Vetëm logot e ofruesit</string>
+  <string name="setup_logo_policy_supplier_only_description">Përdor gjithmonë logot e ofruesit për këtë ofrues.</string>
+  <string name="setup_logo_policy_epg_only_title">Vetëm logot e EPG-së</string>
+  <string name="setup_logo_policy_epg_only_description">Përdor gjithmonë ikonat e kanaleve EPG të përputhura për këtë ofrues.</string>
+
+  <string name="setup_stalker_auth_title">Mënyra e autentikimit Stalker</string>
+  <string name="setup_stalker_auth_helper">Zbulimi automatik është i parazgjedhur. Ndryshoje vetëm kur portali kërkon kredenciale ose hyrje të përzier MAG + llogari.</string>
+  <string name="setup_stalker_auth_auto_title">Zbulim automatik</string>
+  <string name="setup_stalker_auth_auto_description">Provon së pari rrjedhën më të mundshme të autentikimit të portalit dhe riprovon një herë nëse një mënyrë tjetër Stalker përshtatet më mirë.</string>
+  <string name="setup_stalker_auth_mac_only_title">Vetëm MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Përdor autentikim MAC në stilin MAG pa hyrje me llogari portali.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + kredenciale</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Mban identitetin MAG dhe shton kredencialet e llogarisë së portalit për portale më të rrepta.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Vetëm kredenciale</string>
+  <string name="setup_stalker_auth_credentials_only_description">Përdor kredencialet e llogarisë së portalit edhe nëse adresa MAC është opsionale ose injorohet.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Emri i përdoruesit të portalit (opsionale)</string>
+  <string name="setup_stalker_username_placeholder">Emri i përdoruesit të portalit</string>
+  <string name="setup_stalker_password_optional_placeholder">Fjalëkalimi i portalit (opsionale)</string>
+  <string name="setup_stalker_password_placeholder">Fjalëkalimi i portalit</string>
+  <string name="setup_stalker_mag_type_placeholder">Lloji MAG (opsionale)</string>
+  <string name="setup_stalker_timezone_placeholder">Zona kohore (opsionale)</string>
+  <string name="setup_stalker_locale_placeholder">Lokalizimi (opsionale)</string>
+  <string name="setup_stalker_serial_placeholder">Numri serial (opsionale)</string>
+  <string name="setup_stalker_device_id_placeholder">ID e pajisjes (opsionale)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opsionale)</string>
+  <string name="setup_stalker_signature_placeholder">Nënshkrimi (opsionale)</string>
+
+  <string name="setup_stalker_compat_section_title">Përputhshmëria me Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Mbishkrime për portale të veçanta me serverë MAG/Stalker kokëfortë. Lëri fushat bosh nëse serveri nuk i kërkon.</string>
+  <string name="setup_stalker_hw_version_placeholder">Mbishkrim i hw_version (opsionale)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opsionale)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (luajtësi, opsionale)</string>
+  <string name="setup_stalker_player_headers_placeholder">Header-at (luajtësi, opsionale, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Lidhja X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Përdor proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Vlen vetëm për API-n e Stalker dhe luajtjen.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Hosti i proxy-t</string>
+  <string name="setup_stalker_proxy_port_placeholder">Porta e proxy-t</string>
+
+  <string name="setup_stalker_selector_title">Përputhshmëria</string>
+  <string name="setup_stalker_protocol_button">Protokolli: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG klasik</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modeli: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatik</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperimental)</string>
+  <string name="setup_stalker_experimental_note">Profilet eksperimentale kërkojnë fusha identiteti të kapura ose të futura manualisht dhe përjashtohen nga zbulimi automatik.</string>
+  <string name="setup_stalker_profile_custom">Profil i personalizuar</string>
+
+  <string name="setup_stalker_rules_title">Rregullat e kërkesave</string>
+  <string name="setup_stalker_rules_helper">Përputh sipas veprimit, blloko thirrjet ose mbishkruaj parametrat. Vlerat bosh heqin parametrat.</string>
+  <string name="setup_stalker_rules_add">Shto rregull</string>
+  <string name="setup_stalker_rule_number">Rregulli %1$d</string>
+  <string name="setup_stalker_rule_delete">Fshi</string>
+  <string name="setup_stalker_rule_action_placeholder">Veprimi, p.sh. get_profile</string>
+  <string name="setup_stalker_rule_block">Blloko këtë kërkesë</string>
+  <string name="setup_stalker_rule_block_warning">Kujdes: bllokimi i %1$s mund të pengojë hyrjen.</string>
+  <string name="setup_stalker_rule_params_placeholder">Mbishkrim parametrash: name=value | remove_me=</string>
+</resources>

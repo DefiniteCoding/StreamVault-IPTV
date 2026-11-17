@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portal-URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin-mediaserver</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Åsidosätt User-Agent (valfritt)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Headers (API, valfritt, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Egna headers (valfritt, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Guidekälla</string>
+  <string name="setup_guide_source_helper">Välj om leverantören ska använda sin egen guide, dina tilldelade externa XMLTV-källor eller ingen guide alls.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Behåll det nuvarande blandade beteendet: extern XMLTV kan åsidosätta leverantörens guide-data, och kanaler utan matchning kan fortfarande falla tillbaka på leverantören.</string>
+  <string name="setup_guide_policy_external_title">Endast extern EPG</string>
+  <string name="setup_guide_policy_external_description">Använd bara tilldelade externa XMLTV-källor. Kanaler utan matchning förblir utan guide-data.</string>
+  <string name="setup_guide_policy_provider_title">Endast leverantörens EPG</string>
+  <string name="setup_guide_policy_provider_description">Ignorera tilldelade externa XMLTV-källor för den här leverantören och använd bara leverantörens guidesökvägar.</string>
+  <string name="setup_guide_policy_disabled_title">Inaktivera guide-data</string>
+  <string name="setup_guide_policy_disabled_description">Importera eller bearbeta inte guide-data för den här leverantören.</string>
+
+  <string name="setup_logo_source_title">Kanallogotyper</string>
+  <string name="setup_logo_source_helper">Välj om kanallogotyper kommer från leverantören, den matchade EPG-kanalens ikon eller en enda strikt källa.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Leverantörens logotyper först</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Använd leverantörens logotyp om den finns, annars den matchade EPG-ikonen.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Föredra EPG-logotyper</string>
+  <string name="setup_logo_policy_epg_preferred_description">Använd först den matchade EPG-ikonen, annars leverantörens logotyp.</string>
+  <string name="setup_logo_policy_supplier_only_title">Endast leverantörens logotyper</string>
+  <string name="setup_logo_policy_supplier_only_description">Använd alltid leverantörens logotyper för den här leverantören.</string>
+  <string name="setup_logo_policy_epg_only_title">Endast EPG-logotyper</string>
+  <string name="setup_logo_policy_epg_only_description">Använd alltid matchade EPG-ikoner för den här leverantören.</string>
+
+  <string name="setup_stalker_auth_title">Stalker-autentiseringsläge</string>
+  <string name="setup_stalker_auth_helper">Automatisk identifiering är standard. Åsidosätt det bara om portalen kräver inloggningsuppgifter eller ett blandat inloggningsflöde med MAG + konto.</string>
+  <string name="setup_stalker_auth_auto_title">Identifiera automatiskt</string>
+  <string name="setup_stalker_auth_auto_description">Prova portalens troliga inloggningsflöde först och försök en gång till om ett annat Stalker-läge passar bättre.</string>
+  <string name="setup_stalker_auth_mac_only_title">Endast MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Använd MAC-autentisering i MAG-stil utan kontoinloggning på portalen.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + inloggningsuppgifter</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Behåll MAG-identiteten och lägg till portalkontots inloggningsuppgifter för striktare portaler.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Endast inloggningsuppgifter</string>
+  <string name="setup_stalker_auth_credentials_only_description">Använd portalkontots inloggningsuppgifter även om MAC-adressen är valfri eller ignoreras.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portalanvändarnamn (valfritt)</string>
+  <string name="setup_stalker_username_placeholder">Portalanvändarnamn</string>
+  <string name="setup_stalker_password_optional_placeholder">Portallösenord (valfritt)</string>
+  <string name="setup_stalker_password_placeholder">Portallösenord</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG-typ (valfritt)</string>
+  <string name="setup_stalker_timezone_placeholder">Tidszon (valfritt)</string>
+  <string name="setup_stalker_locale_placeholder">Språk och region (valfritt)</string>
+  <string name="setup_stalker_serial_placeholder">Serienummer (valfritt)</string>
+  <string name="setup_stalker_device_id_placeholder">Enhets-ID (valfritt)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (valfritt)</string>
+  <string name="setup_stalker_signature_placeholder">Signatur (valfritt)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker-kompatibilitet</string>
+  <string name="setup_stalker_compat_section_helper">Portalspecifika åsidosättningar för kinkiga MAG/Stalker-servrar. Lämna fälten tomma om inte en server kräver dem.</string>
+  <string name="setup_stalker_hw_version_placeholder">Åsidosätt hw_version (valfritt)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, valfritt)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (Spelare, valfritt)</string>
+  <string name="setup_stalker_player_headers_placeholder">Headers (Spelare, valfritt, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent-länk</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Använd HTTP-proxy</string>
+  <string name="setup_stalker_proxy_helper">Gäller bara Stalker-API och uppspelning.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxyvärd</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxyport</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilitet</string>
+  <string name="setup_stalker_protocol_button">Protokoll: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">Klassisk MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modell: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatisk</string>
+  <string name="setup_stalker_profile_experimental">%1$s (experimentell)</string>
+  <string name="setup_stalker_experimental_note">Experimentella profiler kräver inspelade eller manuellt angivna identitetsfält och ingår inte i automatisk identifiering.</string>
+  <string name="setup_stalker_profile_custom">Anpassad profil</string>
+
+  <string name="setup_stalker_rules_title">Begäranregler</string>
+  <string name="setup_stalker_rules_helper">Matcha på åtgärd, blockera anrop eller åsidosätt parametrar. Tomma värden tar bort parametrar.</string>
+  <string name="setup_stalker_rules_add">Lägg till regel</string>
+  <string name="setup_stalker_rule_number">Regel %1$d</string>
+  <string name="setup_stalker_rule_delete">Ta bort</string>
+  <string name="setup_stalker_rule_action_placeholder">Åtgärd, t.ex. get_profile</string>
+  <string name="setup_stalker_rule_block">Blockera den här begäran</string>
+  <string name="setup_stalker_rule_block_warning">Varning: att blockera %1$s kan hindra inloggning.</string>
+  <string name="setup_stalker_rule_params_placeholder">Åsidosätt parametrar: name=value | remove_me=</string>
+</resources>

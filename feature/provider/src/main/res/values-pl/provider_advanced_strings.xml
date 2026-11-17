@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Adres URL portalu</string>
+  <string name="setup_jellyfin_source_subtitle">Serwer multimediów Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Nadpisanie User-Agent (opcjonalne)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Nagłówki (API, opcjonalne, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Własne nagłówki (opcjonalne, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Źródło przewodnika</string>
+  <string name="setup_guide_source_helper">Wybierz, czy ten dostawca ma używać przewodnika od swojego operatora, przypisanych zewnętrznych źródeł XMLTV, czy w ogóle bez przewodnika.</string>
+  <string name="setup_guide_policy_auto_title">Automatycznie</string>
+  <string name="setup_guide_policy_auto_description">Zachowaj obecne działanie mieszane: zewnętrzne XMLTV może nadpisać dane przewodnika operatora, a niedopasowane kanały mogą nadal korzystać z danych zapasowych operatora.</string>
+  <string name="setup_guide_policy_external_title">Tylko zewnętrzne EPG</string>
+  <string name="setup_guide_policy_external_description">Używaj tylko przypisanych zewnętrznych źródeł XMLTV. Niedopasowane kanały zostaną bez danych przewodnika.</string>
+  <string name="setup_guide_policy_provider_title">Tylko EPG operatora</string>
+  <string name="setup_guide_policy_provider_description">Ignoruj przypisane zewnętrzne źródła XMLTV dla tego dostawcy i używaj tylko ścieżek przewodnika operatora.</string>
+  <string name="setup_guide_policy_disabled_title">Wyłącz dane przewodnika</string>
+  <string name="setup_guide_policy_disabled_description">Nie importuj ani nie dopasowuj danych przewodnika dla tego dostawcy.</string>
+
+  <string name="setup_logo_source_title">Logo kanałów</string>
+  <string name="setup_logo_source_helper">Wybierz, czy logo kanałów pochodzą od operatora, z ikony dopasowanego kanału EPG, czy z jednego ścisłego źródła.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Najpierw logo operatora</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Użyj logo operatora, jeśli istnieje, a w przeciwnym razie dopasowanej ikony EPG.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Preferuj logo z EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Najpierw użyj dopasowanej ikony EPG, a w przeciwnym razie logo operatora.</string>
+  <string name="setup_logo_policy_supplier_only_title">Tylko logo operatora</string>
+  <string name="setup_logo_policy_supplier_only_description">Zawsze używaj logo operatora dla tego dostawcy.</string>
+  <string name="setup_logo_policy_epg_only_title">Tylko logo z EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Zawsze używaj dopasowanych ikon EPG dla tego dostawcy.</string>
+
+  <string name="setup_stalker_auth_title">Tryb uwierzytelniania Stalker</string>
+  <string name="setup_stalker_auth_helper">Domyślnie działa autowykrywanie. Zmień to tylko wtedy, gdy portal wymaga danych logowania lub mieszanego logowania MAG + konto.</string>
+  <string name="setup_stalker_auth_auto_title">Autowykrywanie</string>
+  <string name="setup_stalker_auth_auto_description">Najpierw wypróbuj najbardziej prawdopodobny sposób uwierzytelniania portalu i powtórz raz, jeśli lepiej pasuje inny tryb Stalker.</string>
+  <string name="setup_stalker_auth_mac_only_title">Tylko MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Użyj uwierzytelniania MAC w stylu MAG bez logowania na konto portalu.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + dane logowania</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Zachowaj tożsamość MAG i dodaj dane logowania do konta portalu dla bardziej restrykcyjnych portali.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Tylko dane logowania</string>
+  <string name="setup_stalker_auth_credentials_only_description">Użyj danych logowania do konta portalu, nawet jeśli adres MAC jest opcjonalny lub ignorowany.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Nazwa użytkownika portalu (opcjonalne)</string>
+  <string name="setup_stalker_username_placeholder">Nazwa użytkownika portalu</string>
+  <string name="setup_stalker_password_optional_placeholder">Hasło do portalu (opcjonalne)</string>
+  <string name="setup_stalker_password_placeholder">Hasło do portalu</string>
+  <string name="setup_stalker_mag_type_placeholder">Typ MAG (opcjonalne)</string>
+  <string name="setup_stalker_timezone_placeholder">Strefa czasowa (opcjonalne)</string>
+  <string name="setup_stalker_locale_placeholder">Język i region (opcjonalne)</string>
+  <string name="setup_stalker_serial_placeholder">Numer seryjny (opcjonalne)</string>
+  <string name="setup_stalker_device_id_placeholder">Identyfikator urządzenia (opcjonalne)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opcjonalne)</string>
+  <string name="setup_stalker_signature_placeholder">Podpis (opcjonalne)</string>
+
+  <string name="setup_stalker_compat_section_title">Zgodność Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Nadpisania dla konkretnych portali i opornych serwerów MAG/Stalker. Pozostaw pola puste, chyba że serwer ich wymaga.</string>
+  <string name="setup_stalker_hw_version_placeholder">Nadpisanie hw_version (opcjonalne)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opcjonalne)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (odtwarzacz, opcjonalne)</string>
+  <string name="setup_stalker_player_headers_placeholder">Nagłówki (odtwarzacz, opcjonalne, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Łącze X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Użyj proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Dotyczy tylko API Stalker i odtwarzania.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Host proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Port proxy</string>
+
+  <string name="setup_stalker_selector_title">Zgodność</string>
+  <string name="setup_stalker_protocol_button">Protokół: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automatycznie</string>
+  <string name="setup_stalker_protocol_classic_mag">Klasyczny MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatycznie</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperymentalne)</string>
+  <string name="setup_stalker_experimental_note">Profile eksperymentalne wymagają przechwyconych lub ręcznie wpisanych pól tożsamości i są wyłączone z automatycznego wykrywania.</string>
+  <string name="setup_stalker_profile_custom">Profil niestandardowy</string>
+
+  <string name="setup_stalker_rules_title">Reguły żądań</string>
+  <string name="setup_stalker_rules_helper">Dopasuj według akcji, blokuj wywołania lub nadpisuj parametry. Puste wartości usuwają parametry.</string>
+  <string name="setup_stalker_rules_add">Dodaj regułę</string>
+  <string name="setup_stalker_rule_number">Reguła %1$d</string>
+  <string name="setup_stalker_rule_delete">Usuń</string>
+  <string name="setup_stalker_rule_action_placeholder">Akcja, np. get_profile</string>
+  <string name="setup_stalker_rule_block">Zablokuj to żądanie</string>
+  <string name="setup_stalker_rule_block_warning">Uwaga: zablokowanie %1$s może uniemożliwić logowanie.</string>
+  <string name="setup_stalker_rule_params_placeholder">Nadpisanie parametrów: name=value | remove_me=</string>
+</resources>

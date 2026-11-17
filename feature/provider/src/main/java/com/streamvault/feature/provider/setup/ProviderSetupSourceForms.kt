@@ -91,7 +91,7 @@ internal fun StalkerProviderForm(
     ProviderTextField(
         value = serverUrl,
         onValueChange = onServerUrlChange,
-        placeholder = "Portal URL",
+        placeholder = stringResource(R.string.setup_portal_url_placeholder),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.None,
             autoCorrectEnabled = false,

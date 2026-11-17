@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL portal</string>
+  <string name="setup_jellyfin_source_subtitle">Server media Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Suprascriere User-Agent (opțional)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Anteturi (API, opțional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Anteturi personalizate (opțional, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Sursa ghidului</string>
+  <string name="setup_guide_source_helper">Alegeți dacă acest furnizor folosește ghidul propriu, sursele XMLTV externe atribuite sau niciun ghid.</string>
+  <string name="setup_guide_policy_auto_title">Automat</string>
+  <string name="setup_guide_policy_auto_description">Păstrați comportamentul mixt actual: XMLTV extern poate suprascrie datele ghidului furnizorului, iar canalele nepotrivite pot folosi în continuare datele de rezervă ale furnizorului.</string>
+  <string name="setup_guide_policy_external_title">Doar EPG extern</string>
+  <string name="setup_guide_policy_external_description">Folosiți doar sursele XMLTV externe atribuite. Canalele nepotrivite rămân fără date de ghid.</string>
+  <string name="setup_guide_policy_provider_title">Doar EPG-ul furnizorului</string>
+  <string name="setup_guide_policy_provider_description">Ignorați sursele XMLTV externe atribuite pentru acest furnizor și folosește doar căile ghidului furnizorului.</string>
+  <string name="setup_guide_policy_disabled_title">Dezactivează datele ghidului</string>
+  <string name="setup_guide_policy_disabled_description">Nu importați și nu potriviți datele ghidului pentru acest furnizor.</string>
+
+  <string name="setup_logo_source_title">Sigle canale</string>
+  <string name="setup_logo_source_helper">Alegeți dacă siglele canalelor provin de la furnizor, din pictograma canalului EPG potrivit sau dintr-o singură sursă strictă.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Întâi siglele furnizorului</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Folosiți sigla furnizorului dacă există, apoi pictograma EPG potrivită.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Preferă siglele din EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Folosiți întâi pictograma EPG potrivită, apoi sigla furnizorului.</string>
+  <string name="setup_logo_policy_supplier_only_title">Doar siglele furnizorului</string>
+  <string name="setup_logo_policy_supplier_only_description">Folosiți întotdeauna siglele furnizorului pentru acest furnizor.</string>
+  <string name="setup_logo_policy_epg_only_title">Doar siglele din EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Folosiți întotdeauna pictogramele EPG potrivite pentru acest furnizor.</string>
+
+  <string name="setup_stalker_auth_title">Mod de autentificare Stalker</string>
+  <string name="setup_stalker_auth_helper">Detectarea automată este implicită. Suprascrieți-o doar când portalul cere date de autentificare sau o autentificare mixtă MAG + cont.</string>
+  <string name="setup_stalker_auth_auto_title">Detectare automată</string>
+  <string name="setup_stalker_auth_auto_description">Încercați mai întâi fluxul de autentificare probabil al portalului și reîncercați o dată dacă se potrivește mai bine alt mod Stalker.</string>
+  <string name="setup_stalker_auth_mac_only_title">Doar MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Folosiți autentificarea MAC în stil MAG, fără autentificare în contul portalului.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + date de autentificare</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Păstrați identitatea MAG și adăugați datele contului de portal pentru portalurile mai stricte.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Doar date de autentificare</string>
+  <string name="setup_stalker_auth_credentials_only_description">Folosiți datele contului de portal chiar dacă adresa MAC este opțională sau ignorată.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Nume de utilizator portal (opțional)</string>
+  <string name="setup_stalker_username_placeholder">Nume de utilizator portal</string>
+  <string name="setup_stalker_password_optional_placeholder">Parolă portal (opțional)</string>
+  <string name="setup_stalker_password_placeholder">Parolă portal</string>
+  <string name="setup_stalker_mag_type_placeholder">Tip MAG (opțional)</string>
+  <string name="setup_stalker_timezone_placeholder">Fus orar (opțional)</string>
+  <string name="setup_stalker_locale_placeholder">Limbă și regiune (opțional)</string>
+  <string name="setup_stalker_serial_placeholder">Număr de serie (opțional)</string>
+  <string name="setup_stalker_device_id_placeholder">ID dispozitiv (opțional)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opțional)</string>
+  <string name="setup_stalker_signature_placeholder">Semnătură (opțional)</string>
+
+  <string name="setup_stalker_compat_section_title">Compatibilitate Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Suprascrieri specifice portalului pentru servere MAG/Stalker dificile. Lăsați câmpurile goale, cu excepția cazului în care serverul le cere.</string>
+  <string name="setup_stalker_hw_version_placeholder">Suprascriere hw_version (opțional)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opțional)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (player, opțional)</string>
+  <string name="setup_stalker_player_headers_placeholder">Anteturi (player, opțional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Legătură X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Folosește proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Se aplică doar API-ului Stalker și redării.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Gazdă proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Port proxy</string>
+
+  <string name="setup_stalker_selector_title">Compatibilitate</string>
+  <string name="setup_stalker_protocol_button">Protocol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automat</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG clasic</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automat</string>
+  <string name="setup_stalker_profile_experimental">%1$s (experimental)</string>
+  <string name="setup_stalker_experimental_note">Profilurile experimentale necesită câmpuri de identitate capturate sau introduse manual și sunt excluse din descoperirea automată.</string>
+  <string name="setup_stalker_profile_custom">Profil personalizat</string>
+
+  <string name="setup_stalker_rules_title">Reguli pentru cereri</string>
+  <string name="setup_stalker_rules_helper">Potrivire după acțiune, blocare apeluri sau suprascriere parametri. Valorile goale elimină parametrii.</string>
+  <string name="setup_stalker_rules_add">Adaugă regulă</string>
+  <string name="setup_stalker_rule_number">Regula %1$d</string>
+  <string name="setup_stalker_rule_delete">Ștergeți</string>
+  <string name="setup_stalker_rule_action_placeholder">Acțiune, ex. get_profile</string>
+  <string name="setup_stalker_rule_block">Blochează această cerere</string>
+  <string name="setup_stalker_rule_block_warning">Atenție: blocarea %1$s poate împiedica autentificarea.</string>
+  <string name="setup_stalker_rule_params_placeholder">Suprascriere parametri: name=value | remove_me=</string>
+</resources>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portal URL\'si</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin medya sunucusu</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agent geçersiz kılma (isteğe bağlı)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Başlıklar (API, isteğe bağlı, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Özel başlıklar (isteğe bağlı, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Kılavuz kaynağı</string>
+  <string name="setup_guide_source_helper">Bu sağlayıcının tedarikçi kılavuzunu mu, size atanmış harici XMLTV kaynaklarını mı kullanacağını, yoksa hiç kılavuz kullanmayacağını seçin.</string>
+  <string name="setup_guide_policy_auto_title">Otomatik</string>
+  <string name="setup_guide_policy_auto_description">Mevcut karma davranış korunur: harici XMLTV, tedarikçi kılavuz verilerinin yerine geçebilir ve eşleşmeyen kanallar yine tedarikçi yedeğini kullanabilir.</string>
+  <string name="setup_guide_policy_external_title">Yalnızca harici EPG kullan</string>
+  <string name="setup_guide_policy_external_description">Yalnızca atanmış harici XMLTV kaynakları kullanılır. Eşleşmeyen kanallar kılavuz verisi olmadan kalır.</string>
+  <string name="setup_guide_policy_provider_title">Yalnızca tedarikçi EPG\'sini kullan</string>
+  <string name="setup_guide_policy_provider_description">Bu sağlayıcı için atanmış harici XMLTV kaynakları yok sayılır ve yalnızca tedarikçi kılavuz yolları kullanılır.</string>
+  <string name="setup_guide_policy_disabled_title">Kılavuz verilerini devre dışı bırak</string>
+  <string name="setup_guide_policy_disabled_description">Bu sağlayıcı için kılavuz verileri içe aktarılmaz veya eşleştirilmez.</string>
+
+  <string name="setup_logo_source_title">Kanal logoları</string>
+  <string name="setup_logo_source_helper">Kanal logolarının tedarikçiden, eşleşen EPG kanal simgesinden veya tek ve katı bir kaynaktan gelmesini seçin.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Önce tedarikçi logoları</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Tedarikçi logosu varsa kullanılır, yoksa eşleşen EPG simgesine geçilir.</string>
+  <string name="setup_logo_policy_epg_preferred_title">EPG logolarını tercih et</string>
+  <string name="setup_logo_policy_epg_preferred_description">Önce eşleşen EPG simgesi kullanılır, yoksa tedarikçi logosuna geçilir.</string>
+  <string name="setup_logo_policy_supplier_only_title">Yalnızca tedarikçi logoları</string>
+  <string name="setup_logo_policy_supplier_only_description">Bu sağlayıcı için her zaman tedarikçi logoları kullanılır.</string>
+  <string name="setup_logo_policy_epg_only_title">Yalnızca EPG logoları</string>
+  <string name="setup_logo_policy_epg_only_description">Bu sağlayıcı için her zaman eşleşen EPG simgeleri kullanılır.</string>
+
+  <string name="setup_stalker_auth_title">Stalker kimlik doğrulama modu</string>
+  <string name="setup_stalker_auth_helper">Otomatik algılama varsayılandır. Yalnızca portal kimlik bilgileri veya karma MAG + hesap girişi gerektiriyorsa değiştirin.</string>
+  <string name="setup_stalker_auth_auto_title">Otomatik algıla</string>
+  <string name="setup_stalker_auth_auto_description">Önce portalın olası kimlik doğrulama akışı denenir; farklı bir Stalker modu daha uygunsa bir kez daha denenir.</string>
+  <string name="setup_stalker_auth_mac_only_title">Yalnızca MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Portal hesabıyla giriş yapmadan MAG tarzı MAC kimlik doğrulaması kullanılır.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + kimlik bilgileri</string>
+  <string name="setup_stalker_auth_mac_credentials_description">MAG kimliği korunur ve daha katı portallar için portal hesabı kimlik bilgileri eklenir.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Yalnızca kimlik bilgileri</string>
+  <string name="setup_stalker_auth_credentials_only_description">MAC adresi isteğe bağlı olsa veya yok sayılsa bile portal hesabı kimlik bilgileri kullanılır.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portal kullanıcı adı (isteğe bağlı)</string>
+  <string name="setup_stalker_username_placeholder">Portal kullanıcı adı</string>
+  <string name="setup_stalker_password_optional_placeholder">Portal parolası (isteğe bağlı)</string>
+  <string name="setup_stalker_password_placeholder">Portal parolası</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG Türü (isteğe bağlı)</string>
+  <string name="setup_stalker_timezone_placeholder">Saat dilimi (isteğe bağlı)</string>
+  <string name="setup_stalker_locale_placeholder">Yerel ayar (isteğe bağlı)</string>
+  <string name="setup_stalker_serial_placeholder">Seri numarası (isteğe bağlı)</string>
+  <string name="setup_stalker_device_id_placeholder">Cihaz kimliği (isteğe bağlı)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (isteğe bağlı)</string>
+  <string name="setup_stalker_signature_placeholder">İmza (isteğe bağlı)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker uyumluluğu</string>
+  <string name="setup_stalker_compat_section_helper">İnatçı MAG/Stalker sunucuları için portala özel geçersiz kılmalar. Sunucu gerektirmedikçe alanları boş bırakın.</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version geçersiz kılma (isteğe bağlı)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, isteğe bağlı)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (Oynatıcı, isteğe bağlı)</string>
+  <string name="setup_stalker_player_headers_placeholder">Başlıklar (Oynatıcı, isteğe bağlı, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent bağlantısı</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">HTTP proxy kullan</string>
+  <string name="setup_stalker_proxy_helper">Yalnızca Stalker API\'sine ve oynatmaya uygulanır.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxy ana bilgisayarı</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxy bağlantı noktası</string>
+
+  <string name="setup_stalker_selector_title">Uyumluluk</string>
+  <string name="setup_stalker_protocol_button">Protokol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Otomatik</string>
+  <string name="setup_stalker_protocol_classic_mag">Klasik MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Otomatik</string>
+  <string name="setup_stalker_profile_experimental">%1$s (deneysel)</string>
+  <string name="setup_stalker_experimental_note">Deneysel profiller yakalanmış veya elle girilmiş kimlik alanları gerektirir ve otomatik keşfin dışında tutulur.</string>
+  <string name="setup_stalker_profile_custom">Özel profil</string>
+
+  <string name="setup_stalker_rules_title">İstek kuralları</string>
+  <string name="setup_stalker_rules_helper">Eylemle eşleştirin, çağrıları engelleyin veya parametreleri geçersiz kılın. Boş değerler parametreleri kaldırır.</string>
+  <string name="setup_stalker_rules_add">Kural ekle</string>
+  <string name="setup_stalker_rule_number">Kural %1$d</string>
+  <string name="setup_stalker_rule_delete">Sil</string>
+  <string name="setup_stalker_rule_action_placeholder">Eylem, örn. get_profile</string>
+  <string name="setup_stalker_rule_block">Bu isteği engelle</string>
+  <string name="setup_stalker_rule_block_warning">Uyarı: %1$s engellenirse giriş yapılamayabilir.</string>
+  <string name="setup_stalker_rule_params_placeholder">Parametre geçersiz kılmaları: name=value | remove_me=</string>
+</resources>

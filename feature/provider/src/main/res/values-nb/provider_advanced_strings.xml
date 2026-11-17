@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portal-URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin-mediaserver</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Overstyr User-Agent (valgfritt)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Headers (API, valgfritt, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Egendefinerte headers (valgfritt, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Guidekilde</string>
+  <string name="setup_guide_source_helper">Velg om denne leverandøren bruker sin egen guide, dine tildelte eksterne XMLTV-kilder eller ingen guide i det hele tatt.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Behold dagens blandede oppførsel: ekstern XMLTV kan overstyre leverandørens guide-data, og kanaler uten treff kan fortsatt falle tilbake til leverandøren.</string>
+  <string name="setup_guide_policy_external_title">Bruk bare ekstern EPG</string>
+  <string name="setup_guide_policy_external_description">Bruk bare tildelte eksterne XMLTV-kilder. Kanaler uten treff forblir uten guide-data.</string>
+  <string name="setup_guide_policy_provider_title">Bruk bare leverandørens EPG</string>
+  <string name="setup_guide_policy_provider_description">Ignorer tildelte eksterne XMLTV-kilder for denne leverandøren, og bruk bare leverandørens guidebaner.</string>
+  <string name="setup_guide_policy_disabled_title">Deaktiver guide-data</string>
+  <string name="setup_guide_policy_disabled_description">Ikke importer eller behandle guide-data for denne leverandøren.</string>
+
+  <string name="setup_logo_source_title">Kanallogoer</string>
+  <string name="setup_logo_source_helper">Velg om kanallogoer kommer fra leverandøren, ikonet til den matchede EPG-kanalen eller én enkelt streng kilde.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Leverandørlogoer først</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Bruk leverandørens logo hvis den finnes, ellers det matchede EPG-ikonet.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Foretrekk EPG-logoer</string>
+  <string name="setup_logo_policy_epg_preferred_description">Bruk det matchede EPG-ikonet først, ellers leverandørens logo.</string>
+  <string name="setup_logo_policy_supplier_only_title">Bare leverandørlogoer</string>
+  <string name="setup_logo_policy_supplier_only_description">Bruk alltid leverandørlogoer for denne leverandøren.</string>
+  <string name="setup_logo_policy_epg_only_title">Bare EPG-logoer</string>
+  <string name="setup_logo_policy_epg_only_description">Bruk alltid matchede EPG-ikoner for denne leverandøren.</string>
+
+  <string name="setup_stalker_auth_title">Stalker-autentiseringsmodus</string>
+  <string name="setup_stalker_auth_helper">Automatisk gjenkjenning er standard. Overstyr den bare hvis portalen krever legitimasjon eller en blandet innlogging med MAG + konto.</string>
+  <string name="setup_stalker_auth_auto_title">Gjenkjenn automatisk</string>
+  <string name="setup_stalker_auth_auto_description">Prøv portalens sannsynlige autentiseringsflyt først, og prøv på nytt én gang hvis en annen Stalker-modus passer bedre.</string>
+  <string name="setup_stalker_auth_mac_only_title">Bare MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Bruk MAG-lignende MAC-autentisering uten kontoinnlogging på portalen.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + legitimasjon</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Behold MAG-identiteten og legg til legitimasjon for portalkontoen for strengere portaler.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Bare legitimasjon</string>
+  <string name="setup_stalker_auth_credentials_only_description">Bruk legitimasjon for portalkontoen selv om MAC-adressen er valgfri eller ignoreres.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portalbrukernavn (valgfritt)</string>
+  <string name="setup_stalker_username_placeholder">Portalbrukernavn</string>
+  <string name="setup_stalker_password_optional_placeholder">Portalpassord (valgfritt)</string>
+  <string name="setup_stalker_password_placeholder">Portalpassord</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG-type (valgfritt)</string>
+  <string name="setup_stalker_timezone_placeholder">Tidssone (valgfritt)</string>
+  <string name="setup_stalker_locale_placeholder">Språkinnstilling (valgfritt)</string>
+  <string name="setup_stalker_serial_placeholder">Serienummer (valgfritt)</string>
+  <string name="setup_stalker_device_id_placeholder">Enhets-ID (valgfritt)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (valgfritt)</string>
+  <string name="setup_stalker_signature_placeholder">Signatur (valgfritt)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker-kompatibilitet</string>
+  <string name="setup_stalker_compat_section_helper">Portalspesifikke overstyringer for gjenstridige MAG/Stalker-servere. La feltene stå tomme med mindre en server trenger dem.</string>
+  <string name="setup_stalker_hw_version_placeholder">Overstyr hw_version (valgfritt)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, valgfritt)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (spiller, valgfritt)</string>
+  <string name="setup_stalker_player_headers_placeholder">Headers (spiller, valgfritt, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent-lenke</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Bruk HTTP-proxy</string>
+  <string name="setup_stalker_proxy_helper">Gjelder bare Stalker-API og avspilling.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxyvert</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxyport</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilitet</string>
+  <string name="setup_stalker_protocol_button">Protokoll: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">Klassisk MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modell: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatisk</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperimentell)</string>
+  <string name="setup_stalker_experimental_note">Eksperimentelle profiler krever innhentede eller manuelt oppgitte identitetsfelt og utelates fra automatisk oppdagelse.</string>
+  <string name="setup_stalker_profile_custom">Egendefinert profil</string>
+
+  <string name="setup_stalker_rules_title">Forespørselsregler</string>
+  <string name="setup_stalker_rules_helper">Match på handling, blokker kall eller overstyr parametere. Tomme verdier fjerner parametere.</string>
+  <string name="setup_stalker_rules_add">Legg til regel</string>
+  <string name="setup_stalker_rule_number">Regel %1$d</string>
+  <string name="setup_stalker_rule_delete">Slett</string>
+  <string name="setup_stalker_rule_action_placeholder">Handling, f.eks. get_profile</string>
+  <string name="setup_stalker_rule_block">Blokker denne forespørselen</string>
+  <string name="setup_stalker_rule_block_warning">Advarsel: Blokkering av %1$s kan hindre innlogging.</string>
+  <string name="setup_stalker_rule_params_placeholder">Overstyr parametere: name=value | remove_me=</string>
+</resources>

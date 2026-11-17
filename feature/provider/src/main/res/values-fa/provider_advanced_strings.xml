@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">نشانی پورتال</string>
+  <string name="setup_jellyfin_source_subtitle">سرور رسانه Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">بازنویسی User-Agent (اختیاری)</string>
+  <string name="setup_adv_headers_stalker_placeholder">هدرها (API، اختیاری، Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">هدرهای سفارشی (اختیاری، Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">منبع راهنما</string>
+  <string name="setup_guide_source_helper">انتخاب کنید که این ارائه‌دهنده از راهنمای تأمین‌کننده، منابع XMLTV خارجی تخصیص‌یافته به شما، یا هیچ راهنمایی استفاده کند.</string>
+  <string name="setup_guide_policy_auto_title">خودکار</string>
+  <string name="setup_guide_policy_auto_description">رفتار ترکیبی فعلی حفظ می‌شود: XMLTV خارجی می‌تواند داده‌های راهنمای تأمین‌کننده را بازنویسی کند و کانال‌های بدون تطابق همچنان ممکن است از جایگزین تأمین‌کننده استفاده کنند.</string>
+  <string name="setup_guide_policy_external_title">فقط EPG خارجی</string>
+  <string name="setup_guide_policy_external_description">فقط از منابع XMLTV خارجی تخصیص‌یافته استفاده می‌شود. کانال‌های بدون تطابق بدون داده راهنما می‌مانند.</string>
+  <string name="setup_guide_policy_provider_title">فقط EPG تأمین‌کننده</string>
+  <string name="setup_guide_policy_provider_description">منابع XMLTV خارجی تخصیص‌یافته برای این ارائه‌دهنده نادیده گرفته می‌شوند و فقط مسیرهای راهنمای تأمین‌کننده استفاده می‌شوند.</string>
+  <string name="setup_guide_policy_disabled_title">غیرفعال کردن داده‌های راهنما</string>
+  <string name="setup_guide_policy_disabled_description">داده‌های راهنما برای این ارائه‌دهنده وارد یا تطبیق داده نمی‌شوند.</string>
+
+  <string name="setup_logo_source_title">لوگوی کانال‌ها</string>
+  <string name="setup_logo_source_helper">انتخاب کنید لوگوی کانال‌ها از تأمین‌کننده، از نماد کانال EPG منطبق، یا از یک منبع واحد و سخت‌گیرانه بیاید.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">ابتدا لوگوهای تأمین‌کننده</string>
+  <string name="setup_logo_policy_supplier_preferred_description">در صورت وجود از لوگوی تأمین‌کننده استفاده می‌شود، سپس نماد EPG منطبق.</string>
+  <string name="setup_logo_policy_epg_preferred_title">اولویت با لوگوهای EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">ابتدا نماد EPG منطبق استفاده می‌شود، سپس لوگوی تأمین‌کننده.</string>
+  <string name="setup_logo_policy_supplier_only_title">فقط لوگوهای تأمین‌کننده</string>
+  <string name="setup_logo_policy_supplier_only_description">همیشه از لوگوهای تأمین‌کننده برای این ارائه‌دهنده استفاده می‌شود.</string>
+  <string name="setup_logo_policy_epg_only_title">فقط لوگوهای EPG</string>
+  <string name="setup_logo_policy_epg_only_description">همیشه از نمادهای EPG منطبق برای این ارائه‌دهنده استفاده می‌شود.</string>
+
+  <string name="setup_stalker_auth_title">حالت احراز هویت Stalker</string>
+  <string name="setup_stalker_auth_helper">تشخیص خودکار پیش‌فرض است. فقط زمانی آن را تغییر دهید که پورتال به اطلاعات کاربری یا ورود ترکیبی MAG و حساب نیاز دارد.</string>
+  <string name="setup_stalker_auth_auto_title">تشخیص خودکار</string>
+  <string name="setup_stalker_auth_auto_description">ابتدا روند احراز هویت محتمل پورتال امتحان می‌شود و اگر حالت Stalker دیگری مناسب‌تر باشد، یک بار دیگر تلاش می‌شود.</string>
+  <string name="setup_stalker_auth_mac_only_title">فقط MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">از احراز هویت MAC به سبک MAG بدون ورود با حساب پورتال استفاده می‌شود.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + اطلاعات کاربری</string>
+  <string name="setup_stalker_auth_mac_credentials_description">هویت MAG حفظ می‌شود و اطلاعات کاربری حساب پورتال برای پورتال‌های سخت‌گیرتر افزوده می‌شود.</string>
+  <string name="setup_stalker_auth_credentials_only_title">فقط اطلاعات کاربری</string>
+  <string name="setup_stalker_auth_credentials_only_description">حتی اگر نشانی MAC اختیاری باشد یا نادیده گرفته شود، از اطلاعات کاربری حساب پورتال استفاده می‌شود.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">نام کاربری پورتال (اختیاری)</string>
+  <string name="setup_stalker_username_placeholder">نام کاربری پورتال</string>
+  <string name="setup_stalker_password_optional_placeholder">رمز عبور پورتال (اختیاری)</string>
+  <string name="setup_stalker_password_placeholder">رمز عبور پورتال</string>
+  <string name="setup_stalker_mag_type_placeholder">نوع MAG (اختیاری)</string>
+  <string name="setup_stalker_timezone_placeholder">منطقه زمانی (اختیاری)</string>
+  <string name="setup_stalker_locale_placeholder">زبان و منطقه (اختیاری)</string>
+  <string name="setup_stalker_serial_placeholder">شماره سریال (اختیاری)</string>
+  <string name="setup_stalker_device_id_placeholder">شناسه دستگاه (اختیاری)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (اختیاری)</string>
+  <string name="setup_stalker_signature_placeholder">امضا (اختیاری)</string>
+
+  <string name="setup_stalker_compat_section_title">سازگاری Stalker</string>
+  <string name="setup_stalker_compat_section_helper">بازنویسی‌های ویژه پورتال برای سرورهای MAG/Stalker سخت‌گیر. فیلدها را خالی بگذارید، مگر اینکه سرور به آن‌ها نیاز داشته باشد.</string>
+  <string name="setup_stalker_hw_version_placeholder">بازنویسی hw_version (اختیاری)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API، اختیاری)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (پخش‌کننده، اختیاری)</string>
+  <string name="setup_stalker_player_headers_placeholder">هدرها (پخش‌کننده، اختیاری، Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">پیوند X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">استفاده از پروکسی HTTP</string>
+  <string name="setup_stalker_proxy_helper">فقط برای API Stalker و پخش اعمال می‌شود.</string>
+  <string name="setup_stalker_proxy_host_placeholder">میزبان پروکسی</string>
+  <string name="setup_stalker_proxy_port_placeholder">درگاه پروکسی</string>
+
+  <string name="setup_stalker_selector_title">سازگاری</string>
+  <string name="setup_stalker_protocol_button">پروتکل: %1$s</string>
+  <string name="setup_stalker_protocol_auto">خودکار</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG کلاسیک</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">مدل: %1$s</string>
+  <string name="setup_stalker_model_automatic">خودکار</string>
+  <string name="setup_stalker_profile_experimental">%1$s (آزمایشی)</string>
+  <string name="setup_stalker_experimental_note">نمایه‌های آزمایشی به فیلدهای هویتی ضبط‌شده یا دستی نیاز دارند و از کشف خودکار کنار گذاشته می‌شوند.</string>
+  <string name="setup_stalker_profile_custom">نمایه سفارشی</string>
+
+  <string name="setup_stalker_rules_title">قوانین درخواست</string>
+  <string name="setup_stalker_rules_helper">بر اساس عملیات تطبیق دهید، فراخوانی‌ها را مسدود کنید یا پارامترها را بازنویسی کنید. مقدارهای خالی پارامترها را حذف می‌کنند.</string>
+  <string name="setup_stalker_rules_add">افزودن قانون</string>
+  <string name="setup_stalker_rule_number">قانون %1$d</string>
+  <string name="setup_stalker_rule_delete">حذف</string>
+  <string name="setup_stalker_rule_action_placeholder">عملیات، مثلاً get_profile</string>
+  <string name="setup_stalker_rule_block">مسدود کردن این درخواست</string>
+  <string name="setup_stalker_rule_block_warning">هشدار: مسدود کردن %1$s می‌تواند مانع ورود شود.</string>
+  <string name="setup_stalker_rule_params_placeholder">بازنویسی پارامترها: name=value | remove_me=</string>
+</resources>

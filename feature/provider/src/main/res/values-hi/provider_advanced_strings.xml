@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">पोर्टल URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin मीडिया सर्वर</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agent ओवरराइड (वैकल्पिक)</string>
+  <string name="setup_adv_headers_stalker_placeholder">हेडर (API, वैकल्पिक, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">कस्टम हेडर (वैकल्पिक, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">गाइड स्रोत</string>
+  <string name="setup_guide_source_helper">चुनें कि यह प्रदाता आपूर्तिकर्ता के गाइड का उपयोग करे, आपके असाइन किए बाहरी XMLTV स्रोतों का, या किसी गाइड का नहीं।</string>
+  <string name="setup_guide_policy_auto_title">ऑटो</string>
+  <string name="setup_guide_policy_auto_description">मौजूदा मिश्रित व्यवहार बनाए रखें: बाहरी XMLTV आपूर्तिकर्ता के गाइड डेटा को ओवरराइड कर सकता है, और बिना मेल वाले चैनल अब भी आपूर्तिकर्ता के फ़ॉलबैक का उपयोग कर सकते हैं।</string>
+  <string name="setup_guide_policy_external_title">केवल बाहरी EPG उपयोग करें</string>
+  <string name="setup_guide_policy_external_description">केवल असाइन किए गए बाहरी XMLTV स्रोत उपयोग करें। बिना मेल वाले चैनलों के पास गाइड डेटा नहीं रहेगा।</string>
+  <string name="setup_guide_policy_provider_title">केवल आपूर्तिकर्ता EPG उपयोग करें</string>
+  <string name="setup_guide_policy_provider_description">इस प्रदाता के लिए असाइन किए गए बाहरी XMLTV स्रोतों को अनदेखा करें और केवल आपूर्तिकर्ता के गाइड पथ उपयोग करें।</string>
+  <string name="setup_guide_policy_disabled_title">गाइड डेटा बंद करें</string>
+  <string name="setup_guide_policy_disabled_description">इस प्रदाता के लिए गाइड डेटा इंपोर्ट या मैच न करें।</string>
+
+  <string name="setup_logo_source_title">चैनल लोगो</string>
+  <string name="setup_logo_source_helper">चुनें कि चैनल लोगो आपूर्तिकर्ता से आएँ, मेल खाने वाले EPG चैनल आइकन से, या किसी एक सख़्त स्रोत से।</string>
+  <string name="setup_logo_policy_supplier_preferred_title">पहले आपूर्तिकर्ता लोगो</string>
+  <string name="setup_logo_policy_supplier_preferred_description">आपूर्तिकर्ता का लोगो उपलब्ध हो तो उसे उपयोग करें, फिर मेल खाने वाले EPG आइकन पर जाएँ।</string>
+  <string name="setup_logo_policy_epg_preferred_title">EPG लोगो को प्राथमिकता दें</string>
+  <string name="setup_logo_policy_epg_preferred_description">पहले मेल खाने वाला EPG आइकन उपयोग करें, फिर आपूर्तिकर्ता के लोगो पर जाएँ।</string>
+  <string name="setup_logo_policy_supplier_only_title">केवल आपूर्तिकर्ता लोगो</string>
+  <string name="setup_logo_policy_supplier_only_description">इस प्रदाता के लिए हमेशा आपूर्तिकर्ता लोगो उपयोग करें।</string>
+  <string name="setup_logo_policy_epg_only_title">केवल EPG लोगो</string>
+  <string name="setup_logo_policy_epg_only_description">इस प्रदाता के लिए हमेशा मेल खाने वाले EPG आइकन उपयोग करें।</string>
+
+  <string name="setup_stalker_auth_title">Stalker ऑथ मोड</string>
+  <string name="setup_stalker_auth_helper">ऑटो-डिटेक्ट डिफ़ॉल्ट है। इसे तभी बदलें जब पोर्टल को क्रेडेंशियल चाहिए हों या MAG + खाता मिश्रित लॉगिन प्रवाह चाहिए।</string>
+  <string name="setup_stalker_auth_auto_title">ऑटो-डिटेक्ट</string>
+  <string name="setup_stalker_auth_auto_description">पहले पोर्टल का संभावित ऑथ प्रवाह आज़माएँ और कोई दूसरा Stalker मोड बेहतर बैठे तो एक बार फिर कोशिश करें।</string>
+  <string name="setup_stalker_auth_mac_only_title">केवल MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">पोर्टल खाता लॉगिन के बिना MAG-शैली MAC ऑथेंटिकेशन उपयोग करें।</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + क्रेडेंशियल</string>
+  <string name="setup_stalker_auth_mac_credentials_description">MAG पहचान बनाए रखें और सख़्त पोर्टलों के लिए पोर्टल खाते के क्रेडेंशियल जोड़ें।</string>
+  <string name="setup_stalker_auth_credentials_only_title">केवल क्रेडेंशियल</string>
+  <string name="setup_stalker_auth_credentials_only_description">MAC पता वैकल्पिक हो या अनदेखा किया जाए, तब भी पोर्टल खाते के क्रेडेंशियल उपयोग करें।</string>
+
+  <string name="setup_stalker_username_optional_placeholder">पोर्टल उपयोगकर्ता नाम (वैकल्पिक)</string>
+  <string name="setup_stalker_username_placeholder">पोर्टल उपयोगकर्ता नाम</string>
+  <string name="setup_stalker_password_optional_placeholder">पोर्टल पासवर्ड (वैकल्पिक)</string>
+  <string name="setup_stalker_password_placeholder">पोर्टल पासवर्ड</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG प्रकार (वैकल्पिक)</string>
+  <string name="setup_stalker_timezone_placeholder">समय क्षेत्र (वैकल्पिक)</string>
+  <string name="setup_stalker_locale_placeholder">भाषा और क्षेत्र (वैकल्पिक)</string>
+  <string name="setup_stalker_serial_placeholder">सीरियल नंबर (वैकल्पिक)</string>
+  <string name="setup_stalker_device_id_placeholder">डिवाइस ID (वैकल्पिक)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (वैकल्पिक)</string>
+  <string name="setup_stalker_signature_placeholder">सिग्नेचर (वैकल्पिक)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker संगतता</string>
+  <string name="setup_stalker_compat_section_helper">अड़ियल MAG/Stalker सर्वरों के लिए पोर्टल-विशिष्ट ओवरराइड। जब तक सर्वर को ज़रूरत न हो, फ़ील्ड खाली छोड़ें।</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version ओवरराइड (वैकल्पिक)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, वैकल्पिक)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (प्लेयर, वैकल्पिक)</string>
+  <string name="setup_stalker_player_headers_placeholder">हेडर (प्लेयर, वैकल्पिक, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent लिंक</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">HTTP प्रॉक्सी उपयोग करें</string>
+  <string name="setup_stalker_proxy_helper">केवल Stalker API और प्लेबैक पर लागू होता है।</string>
+  <string name="setup_stalker_proxy_host_placeholder">प्रॉक्सी होस्ट</string>
+  <string name="setup_stalker_proxy_port_placeholder">प्रॉक्सी पोर्ट</string>
+
+  <string name="setup_stalker_selector_title">संगतता</string>
+  <string name="setup_stalker_protocol_button">प्रोटोकॉल: %1$s</string>
+  <string name="setup_stalker_protocol_auto">ऑटो</string>
+  <string name="setup_stalker_protocol_classic_mag">क्लासिक MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">मॉडल: %1$s</string>
+  <string name="setup_stalker_model_automatic">स्वचालित</string>
+  <string name="setup_stalker_profile_experimental">%1$s (प्रयोगात्मक)</string>
+  <string name="setup_stalker_experimental_note">प्रयोगात्मक प्रोफ़ाइल के लिए कैप्चर किए गए या मैन्युअल पहचान फ़ील्ड चाहिए, और वे स्वचालित खोज से बाहर रखे जाते हैं।</string>
+  <string name="setup_stalker_profile_custom">कस्टम प्रोफ़ाइल</string>
+
+  <string name="setup_stalker_rules_title">अनुरोध नियम</string>
+  <string name="setup_stalker_rules_helper">कार्रवाई से मिलान करें, कॉल ब्लॉक करें या पैरामीटर ओवरराइड करें। खाली मान पैरामीटर हटा देते हैं।</string>
+  <string name="setup_stalker_rules_add">नियम जोड़ें</string>
+  <string name="setup_stalker_rule_number">नियम %1$d</string>
+  <string name="setup_stalker_rule_delete">हटाएँ</string>
+  <string name="setup_stalker_rule_action_placeholder">कार्रवाई, जैसे get_profile</string>
+  <string name="setup_stalker_rule_block">इस अनुरोध को ब्लॉक करें</string>
+  <string name="setup_stalker_rule_block_warning">चेतावनी: %1$s को ब्लॉक करने से लॉगिन रुक सकता है।</string>
+  <string name="setup_stalker_rule_params_placeholder">पैरामीटर ओवरराइड: name=value | remove_me=</string>
+</resources>

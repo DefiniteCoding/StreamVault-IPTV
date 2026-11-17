@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL del portale</string>
+  <string name="setup_jellyfin_source_subtitle">Server multimediale Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Sostituisci User-Agent (facoltativo)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Header (API, facoltativo, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Header personalizzati (facoltativo, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Fonte della guida</string>
+  <string name="setup_guide_source_helper">Scegli se questo provider usa la guida del fornitore, le fonti XMLTV esterne assegnate o nessuna guida.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Mantieni il comportamento misto attuale: l\'XMLTV esterno può sovrascrivere i dati della guida del fornitore e i canali senza corrispondenza possono comunque usare quelli del fornitore.</string>
+  <string name="setup_guide_policy_external_title">Usa solo EPG esterno</string>
+  <string name="setup_guide_policy_external_description">Usa solo le fonti XMLTV esterne assegnate. I canali senza corrispondenza restano senza dati della guida.</string>
+  <string name="setup_guide_policy_provider_title">Usa solo EPG del fornitore</string>
+  <string name="setup_guide_policy_provider_description">Ignora le fonti XMLTV esterne assegnate per questo provider e usa solo i percorsi della guida del fornitore.</string>
+  <string name="setup_guide_policy_disabled_title">Disattiva dati della guida</string>
+  <string name="setup_guide_policy_disabled_description">Non importare né risolvere i dati della guida per questo provider.</string>
+
+  <string name="setup_logo_source_title">Loghi dei canali</string>
+  <string name="setup_logo_source_helper">Scegli se i loghi dei canali provengono dal fornitore, dall\'icona del canale EPG associato o da un\'unica fonte rigida.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Prima i loghi del fornitore</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Usa il logo del fornitore se esiste, altrimenti l\'icona EPG associata.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Preferisci loghi EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Usa prima l\'icona EPG associata, altrimenti il logo del fornitore.</string>
+  <string name="setup_logo_policy_supplier_only_title">Solo loghi del fornitore</string>
+  <string name="setup_logo_policy_supplier_only_description">Usa sempre i loghi del fornitore per questo provider.</string>
+  <string name="setup_logo_policy_epg_only_title">Solo loghi EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Usa sempre le icone EPG associate per questo provider.</string>
+
+  <string name="setup_stalker_auth_title">Modalità di autenticazione Stalker</string>
+  <string name="setup_stalker_auth_helper">Il rilevamento automatico è l\'impostazione predefinita. Sostituiscilo solo se il portale richiede credenziali o un accesso misto MAG + account.</string>
+  <string name="setup_stalker_auth_auto_title">Rilevamento automatico</string>
+  <string name="setup_stalker_auth_auto_description">Prova prima il probabile flusso di autenticazione del portale e riprova una volta se un\'altra modalità Stalker è più adatta.</string>
+  <string name="setup_stalker_auth_mac_only_title">Solo MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Usa l\'autenticazione MAC in stile MAG senza accesso con account del portale.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + credenziali</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Mantieni l\'identità MAG e aggiungi le credenziali dell\'account del portale per i portali più restrittivi.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Solo credenziali</string>
+  <string name="setup_stalker_auth_credentials_only_description">Usa le credenziali dell\'account del portale anche se l\'indirizzo MAC è facoltativo o ignorato.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Nome utente del portale (facoltativo)</string>
+  <string name="setup_stalker_username_placeholder">Nome utente del portale</string>
+  <string name="setup_stalker_password_optional_placeholder">Password del portale (facoltativo)</string>
+  <string name="setup_stalker_password_placeholder">Password del portale</string>
+  <string name="setup_stalker_mag_type_placeholder">Tipo MAG (facoltativo)</string>
+  <string name="setup_stalker_timezone_placeholder">Fuso orario (facoltativo)</string>
+  <string name="setup_stalker_locale_placeholder">Impostazioni locali (facoltativo)</string>
+  <string name="setup_stalker_serial_placeholder">Numero di serie (facoltativo)</string>
+  <string name="setup_stalker_device_id_placeholder">ID dispositivo (facoltativo)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (facoltativo)</string>
+  <string name="setup_stalker_signature_placeholder">Firma (facoltativo)</string>
+
+  <string name="setup_stalker_compat_section_title">Compatibilità Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Sostituzioni specifiche del portale per server MAG/Stalker ostici. Lascia vuoti i campi se un server non li richiede.</string>
+  <string name="setup_stalker_hw_version_placeholder">Sostituisci hw_version (facoltativo)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, facoltativo)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (player, facoltativo)</string>
+  <string name="setup_stalker_player_headers_placeholder">Header (player, facoltativo, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Link X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Usa proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Si applica solo all\'API Stalker e alla riproduzione.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Host proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Porta proxy</string>
+
+  <string name="setup_stalker_selector_title">Compatibilità</string>
+  <string name="setup_stalker_protocol_button">Protocollo: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG classico</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modello: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatico</string>
+  <string name="setup_stalker_profile_experimental">%1$s (sperimentale)</string>
+  <string name="setup_stalker_experimental_note">I profili sperimentali richiedono campi identità acquisiti o inseriti manualmente e sono esclusi dal rilevamento automatico.</string>
+  <string name="setup_stalker_profile_custom">Profilo personalizzato</string>
+
+  <string name="setup_stalker_rules_title">Regole di richiesta</string>
+  <string name="setup_stalker_rules_helper">Associa per azione, blocca le chiamate o sovrascrivi i parametri. I valori vuoti rimuovono i parametri.</string>
+  <string name="setup_stalker_rules_add">Aggiungi regola</string>
+  <string name="setup_stalker_rule_number">Regola %1$d</string>
+  <string name="setup_stalker_rule_delete">Elimina</string>
+  <string name="setup_stalker_rule_action_placeholder">Azione, ad es. get_profile</string>
+  <string name="setup_stalker_rule_block">Blocca questa richiesta</string>
+  <string name="setup_stalker_rule_block_warning">Attenzione: il blocco di %1$s può impedire l\'accesso.</string>
+  <string name="setup_stalker_rule_params_placeholder">Sostituisci i parametri: name=value | remove_me=</string>
+</resources>

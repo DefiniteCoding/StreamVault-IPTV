@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portaalin URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin-mediapalvelin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agentin ohitus (valinnainen)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Otsikot (API, valinnainen, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Omat otsikot (valinnainen, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Oppaan lähde</string>
+  <string name="setup_guide_source_helper">Valitse, käyttääkö tämä palveluntarjoaja toimittajan opasta, määrittämiäsi ulkoisia XMLTV-lähteitä vai ei opasta lainkaan.</string>
+  <string name="setup_guide_policy_auto_title">Automaattinen</string>
+  <string name="setup_guide_policy_auto_description">Säilytä nykyinen sekatoiminta: ulkoinen XMLTV voi ohittaa toimittajan opastiedot, ja kanavat ilman vastinetta voivat silti käyttää toimittajan varatietoja.</string>
+  <string name="setup_guide_policy_external_title">Vain ulkoinen EPG</string>
+  <string name="setup_guide_policy_external_description">Käytä vain määritettyjä ulkoisia XMLTV-lähteitä. Kanavat ilman vastinetta jäävät ilman opastietoja.</string>
+  <string name="setup_guide_policy_provider_title">Vain toimittajan EPG</string>
+  <string name="setup_guide_policy_provider_description">Ohita tämän palveluntarjoajan määritetyt ulkoiset XMLTV-lähteet ja käytä vain toimittajan oppaan polkuja.</string>
+  <string name="setup_guide_policy_disabled_title">Poista opastiedot käytöstä</string>
+  <string name="setup_guide_policy_disabled_description">Älä tuo tai yhdistä opastietoja tälle palveluntarjoajalle.</string>
+
+  <string name="setup_logo_source_title">Kanavalogot</string>
+  <string name="setup_logo_source_helper">Valitse, tulevatko kanavalogot toimittajalta, vastaavan EPG-kanavan kuvakkeesta vai yhdestä tiukasta lähteestä.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Toimittajan logot ensin</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Käytä toimittajan logoa, jos se on olemassa, muuten vastaavaa EPG-kuvaketta.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Suosi EPG-logoja</string>
+  <string name="setup_logo_policy_epg_preferred_description">Käytä ensin vastaavaa EPG-kuvaketta, muuten toimittajan logoa.</string>
+  <string name="setup_logo_policy_supplier_only_title">Vain toimittajan logot</string>
+  <string name="setup_logo_policy_supplier_only_description">Käytä tälle palveluntarjoajalle aina toimittajan logoja.</string>
+  <string name="setup_logo_policy_epg_only_title">Vain EPG-logot</string>
+  <string name="setup_logo_policy_epg_only_description">Käytä tälle palveluntarjoajalle aina vastaavia EPG-kuvakkeita.</string>
+
+  <string name="setup_stalker_auth_title">Stalker-todennustila</string>
+  <string name="setup_stalker_auth_helper">Automaattinen tunnistus on oletus. Ohita se vain, jos portaali vaatii tunnistetiedot tai sekamuotoisen MAG + tili -kirjautumisen.</string>
+  <string name="setup_stalker_auth_auto_title">Automaattinen tunnistus</string>
+  <string name="setup_stalker_auth_auto_description">Kokeile ensin portaalin todennäköistä todennustapaa ja yritä kerran uudelleen, jos toinen Stalker-tila sopii paremmin.</string>
+  <string name="setup_stalker_auth_mac_only_title">Vain MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Käytä MAG-tyylistä MAC-todennusta ilman portaalitilin kirjautumista.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + tunnistetiedot</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Säilytä MAG-identiteetti ja lisää portaalitilin tunnistetiedot tiukempia portaaleja varten.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Vain tunnistetiedot</string>
+  <string name="setup_stalker_auth_credentials_only_description">Käytä portaalitilin tunnistetietoja, vaikka MAC-osoite olisi valinnainen tai sitä ei huomioitaisi.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portaalin käyttäjätunnus (valinnainen)</string>
+  <string name="setup_stalker_username_placeholder">Portaalin käyttäjätunnus</string>
+  <string name="setup_stalker_password_optional_placeholder">Portaalin salasana (valinnainen)</string>
+  <string name="setup_stalker_password_placeholder">Portaalin salasana</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG-tyyppi (valinnainen)</string>
+  <string name="setup_stalker_timezone_placeholder">Aikavyöhyke (valinnainen)</string>
+  <string name="setup_stalker_locale_placeholder">Kieli ja alue (valinnainen)</string>
+  <string name="setup_stalker_serial_placeholder">Sarjanumero (valinnainen)</string>
+  <string name="setup_stalker_device_id_placeholder">Laitetunnus (valinnainen)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (valinnainen)</string>
+  <string name="setup_stalker_signature_placeholder">Allekirjoitus (valinnainen)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker-yhteensopivuus</string>
+  <string name="setup_stalker_compat_section_helper">Portaalikohtaiset ohitukset hankalille MAG/Stalker-palvelimille. Jätä kentät tyhjiksi, ellei palvelin tarvitse niitä.</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version-ohitus (valinnainen)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, valinnainen)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (soitin, valinnainen)</string>
+  <string name="setup_stalker_player_headers_placeholder">Otsikot (soitin, valinnainen, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent-yhteys</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Käytä HTTP-välityspalvelinta</string>
+  <string name="setup_stalker_proxy_helper">Koskee vain Stalker-rajapintaa ja toistoa.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Välityspalvelimen isäntä</string>
+  <string name="setup_stalker_proxy_port_placeholder">Välityspalvelimen portti</string>
+
+  <string name="setup_stalker_selector_title">Yhteensopivuus</string>
+  <string name="setup_stalker_protocol_button">Protokolla: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automaattinen</string>
+  <string name="setup_stalker_protocol_classic_mag">Perinteinen MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Malli: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automaattinen</string>
+  <string name="setup_stalker_profile_experimental">%1$s (kokeellinen)</string>
+  <string name="setup_stalker_experimental_note">Kokeelliset profiilit vaativat tallennetut tai käsin syötetyt identiteettikentät, ja ne jätetään pois automaattisesta etsinnästä.</string>
+  <string name="setup_stalker_profile_custom">Oma profiili</string>
+
+  <string name="setup_stalker_rules_title">Pyyntösäännöt</string>
+  <string name="setup_stalker_rules_helper">Täsmää toiminnon mukaan, estä kutsuja tai ohita parametreja. Tyhjät arvot poistavat parametrit.</string>
+  <string name="setup_stalker_rules_add">Lisää sääntö</string>
+  <string name="setup_stalker_rule_number">Sääntö %1$d</string>
+  <string name="setup_stalker_rule_delete">Poista</string>
+  <string name="setup_stalker_rule_action_placeholder">Toiminto, esim. get_profile</string>
+  <string name="setup_stalker_rule_block">Estä tämä pyyntö</string>
+  <string name="setup_stalker_rule_block_warning">Varoitus: kohteen %1$s estäminen voi estää kirjautumisen.</string>
+  <string name="setup_stalker_rule_params_placeholder">Parametrien ohitus: name=value | remove_me=</string>
+</resources>

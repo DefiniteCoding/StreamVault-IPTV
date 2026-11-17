@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL πύλης</string>
+  <string name="setup_jellyfin_source_subtitle">Διακομιστής πολυμέσων Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Παράκαμψη User-Agent (προαιρετικό)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Κεφαλίδες (API, προαιρετικό, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Προσαρμοσμένες κεφαλίδες (προαιρετικό, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Πηγή οδηγού</string>
+  <string name="setup_guide_source_helper">Επιλέξτε αν αυτός ο πάροχος θα χρησιμοποιεί τον οδηγό του προμηθευτή, τις εξωτερικές πηγές XMLTV που έχετε αντιστοιχίσει ή κανέναν οδηγό.</string>
+  <string name="setup_guide_policy_auto_title">Αυτόματα</string>
+  <string name="setup_guide_policy_auto_description">Διατήρηση της τρέχουσας μικτής συμπεριφοράς: το εξωτερικό XMLTV μπορεί να αντικαταστήσει τα δεδομένα οδηγού του προμηθευτή και τα κανάλια χωρίς αντιστοίχιση μπορούν να χρησιμοποιούν εφεδρικά δεδομένα του προμηθευτή.</string>
+  <string name="setup_guide_policy_external_title">Μόνο εξωτερικό EPG</string>
+  <string name="setup_guide_policy_external_description">Χρήση μόνο των εξωτερικών πηγών XMLTV που έχουν αντιστοιχιστεί. Τα κανάλια χωρίς αντιστοίχιση μένουν χωρίς δεδομένα οδηγού.</string>
+  <string name="setup_guide_policy_provider_title">Μόνο EPG προμηθευτή</string>
+  <string name="setup_guide_policy_provider_description">Παράβλεψη των εξωτερικών πηγών XMLTV για αυτόν τον πάροχο και χρήση μόνο των διαδρομών οδηγού του προμηθευτή.</string>
+  <string name="setup_guide_policy_disabled_title">Απενεργοποίηση δεδομένων οδηγού</string>
+  <string name="setup_guide_policy_disabled_description">Να μην γίνεται εισαγωγή ή αντιστοίχιση δεδομένων οδηγού για αυτόν τον πάροχο.</string>
+
+  <string name="setup_logo_source_title">Λογότυπα καναλιών</string>
+  <string name="setup_logo_source_helper">Επιλέξτε αν τα λογότυπα καναλιών προέρχονται από τον προμηθευτή, από το εικονίδιο του αντίστοιχου καναλιού EPG ή από μία αυστηρή πηγή.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Πρώτα λογότυπα προμηθευτή</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Χρήση του λογότυπου του προμηθευτή αν υπάρχει, αλλιώς του αντίστοιχου εικονιδίου EPG.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Προτίμηση λογοτύπων EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Χρήση πρώτα του αντίστοιχου εικονιδίου EPG, αλλιώς του λογότυπου του προμηθευτή.</string>
+  <string name="setup_logo_policy_supplier_only_title">Μόνο λογότυπα προμηθευτή</string>
+  <string name="setup_logo_policy_supplier_only_description">Πάντα χρήση των λογοτύπων του προμηθευτή για αυτόν τον πάροχο.</string>
+  <string name="setup_logo_policy_epg_only_title">Μόνο λογότυπα EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Πάντα χρήση των αντίστοιχων εικονιδίων EPG για αυτόν τον πάροχο.</string>
+
+  <string name="setup_stalker_auth_title">Λειτουργία ταυτοποίησης Stalker</string>
+  <string name="setup_stalker_auth_helper">Η αυτόματη ανίχνευση είναι η προεπιλογή. Αλλάξτε την μόνο όταν η πύλη απαιτεί διαπιστευτήρια ή μικτή σύνδεση MAG + λογαριασμού.</string>
+  <string name="setup_stalker_auth_auto_title">Αυτόματη ανίχνευση</string>
+  <string name="setup_stalker_auth_auto_description">Δοκιμή πρώτα της πιθανής ροής ταυτοποίησης της πύλης και μία νέα προσπάθεια αν ταιριάζει καλύτερα άλλη λειτουργία Stalker.</string>
+  <string name="setup_stalker_auth_mac_only_title">Μόνο MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Χρήση ταυτοποίησης MAC τύπου MAG χωρίς σύνδεση σε λογαριασμό πύλης.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + διαπιστευτήρια</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Διατήρηση της ταυτότητας MAG και προσθήκη διαπιστευτηρίων λογαριασμού πύλης για πιο αυστηρές πύλες.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Μόνο διαπιστευτήρια</string>
+  <string name="setup_stalker_auth_credentials_only_description">Χρήση διαπιστευτηρίων λογαριασμού πύλης ακόμη και αν η διεύθυνση MAC είναι προαιρετική ή αγνοείται.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Όνομα χρήστη πύλης (προαιρετικό)</string>
+  <string name="setup_stalker_username_placeholder">Όνομα χρήστη πύλης</string>
+  <string name="setup_stalker_password_optional_placeholder">Κωδικός πρόσβασης πύλης (προαιρετικό)</string>
+  <string name="setup_stalker_password_placeholder">Κωδικός πρόσβασης πύλης</string>
+  <string name="setup_stalker_mag_type_placeholder">Τύπος MAG (προαιρετικό)</string>
+  <string name="setup_stalker_timezone_placeholder">Ζώνη ώρας (προαιρετικό)</string>
+  <string name="setup_stalker_locale_placeholder">Γλώσσα και περιοχή (προαιρετικό)</string>
+  <string name="setup_stalker_serial_placeholder">Σειριακός αριθμός (προαιρετικό)</string>
+  <string name="setup_stalker_device_id_placeholder">Αναγνωριστικό συσκευής (προαιρετικό)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (προαιρετικό)</string>
+  <string name="setup_stalker_signature_placeholder">Υπογραφή (προαιρετικό)</string>
+
+  <string name="setup_stalker_compat_section_title">Συμβατότητα Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Παρακάμψεις ανά πύλη για δύσκολους διακομιστές MAG/Stalker. Αφήστε τα πεδία κενά, εκτός αν τα χρειάζεται ο διακομιστής.</string>
+  <string name="setup_stalker_hw_version_placeholder">Παράκαμψη hw_version (προαιρετικό)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, προαιρετικό)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (αναπαραγωγή, προαιρετικό)</string>
+  <string name="setup_stalker_player_headers_placeholder">Κεφαλίδες (αναπαραγωγή, προαιρετικό, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Σύνδεσμος X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Χρήση διαμεσολαβητή HTTP</string>
+  <string name="setup_stalker_proxy_helper">Ισχύει μόνο για το API του Stalker και την αναπαραγωγή.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Κεντρικός υπολογιστής proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Θύρα proxy</string>
+
+  <string name="setup_stalker_selector_title">Συμβατότητα</string>
+  <string name="setup_stalker_protocol_button">Πρωτόκολλο: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Αυτόματα</string>
+  <string name="setup_stalker_protocol_classic_mag">Κλασικό MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Μοντέλο: %1$s</string>
+  <string name="setup_stalker_model_automatic">Αυτόματα</string>
+  <string name="setup_stalker_profile_experimental">%1$s (πειραματικό)</string>
+  <string name="setup_stalker_experimental_note">Τα πειραματικά προφίλ απαιτούν πεδία ταυτότητας που έχουν καταγραφεί ή εισαχθεί χειροκίνητα και εξαιρούνται από την αυτόματη εύρεση.</string>
+  <string name="setup_stalker_profile_custom">Προσαρμοσμένο προφίλ</string>
+
+  <string name="setup_stalker_rules_title">Κανόνες αιτημάτων</string>
+  <string name="setup_stalker_rules_helper">Αντιστοίχιση ανά ενέργεια, αποκλεισμός κλήσεων ή παράκαμψη παραμέτρων. Οι κενές τιμές αφαιρούν παραμέτρους.</string>
+  <string name="setup_stalker_rules_add">Προσθήκη κανόνα</string>
+  <string name="setup_stalker_rule_number">Κανόνας %1$d</string>
+  <string name="setup_stalker_rule_delete">Διαγραφή</string>
+  <string name="setup_stalker_rule_action_placeholder">Ενέργεια, π.χ. get_profile</string>
+  <string name="setup_stalker_rule_block">Αποκλεισμός αυτού του αιτήματος</string>
+  <string name="setup_stalker_rule_block_warning">Προειδοποίηση: ο αποκλεισμός του %1$s μπορεί να εμποδίσει τη σύνδεση.</string>
+  <string name="setup_stalker_rule_params_placeholder">Παράκαμψη παραμέτρων: name=value | remove_me=</string>
+</resources>

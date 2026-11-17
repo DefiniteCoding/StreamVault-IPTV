@@ -90,7 +90,7 @@ internal fun SourceTypeSelectorPanel(
             if (!isEditing || sourceType == SourceType.JELLYFIN) {
                 SourceTypeCard(
                     title = androidx.compose.ui.res.stringResource(R.string.setup_tab_jellyfin),
-                    subtitle = "Jellyfin media server",
+                    subtitle = stringResource(R.string.setup_jellyfin_source_subtitle),
                     selected = sourceType == SourceType.JELLYFIN,
                     enabled = !isEditing,
                     onClick = { onSelect(SourceType.JELLYFIN) }

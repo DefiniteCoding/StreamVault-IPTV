@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">כתובת פורטל</string>
+  <string name="setup_jellyfin_source_subtitle">שרת מדיה Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">עקיפת User-Agent (אופציונלי)</string>
+  <string name="setup_adv_headers_stalker_placeholder">כותרות (API, אופציונלי, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">כותרות מותאמות אישית (אופציונלי, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">מקור המדריך</string>
+  <string name="setup_guide_source_helper">בחרו אם ספק זה משתמש במדריך של הספק, במקורות XMLTV חיצוניים שהוקצו לכם, או ללא מדריך כלל.</string>
+  <string name="setup_guide_policy_auto_title">אוטומטי</string>
+  <string name="setup_guide_policy_auto_description">שמירה על ההתנהגות המעורבת הנוכחית: XMLTV חיצוני יכול לעקוף נתוני מדריך של הספק, וערוצים ללא התאמה עשויים עדיין להשתמש בגיבוי מהספק.</string>
+  <string name="setup_guide_policy_external_title">EPG חיצוני בלבד</string>
+  <string name="setup_guide_policy_external_description">שימוש במקורות XMLTV חיצוניים שהוקצו בלבד. ערוצים ללא התאמה נשארים ללא נתוני מדריך.</string>
+  <string name="setup_guide_policy_provider_title">EPG של הספק בלבד</string>
+  <string name="setup_guide_policy_provider_description">התעלמות ממקורות XMLTV חיצוניים שהוקצו לספק זה ושימוש בנתיבי המדריך של הספק בלבד.</string>
+  <string name="setup_guide_policy_disabled_title">השבתת נתוני מדריך</string>
+  <string name="setup_guide_policy_disabled_description">לא לייבא ולא להתאים נתוני מדריך עבור ספק זה.</string>
+
+  <string name="setup_logo_source_title">לוגו הערוצים</string>
+  <string name="setup_logo_source_helper">בחרו אם לוגו הערוצים מגיע מהספק, מסמל ערוץ ה-EPG התואם, או ממקור יחיד וקפדני.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">לוגו הספק קודם</string>
+  <string name="setup_logo_policy_supplier_preferred_description">שימוש בלוגו הספק כשהוא קיים, ואחרת חזרה לסמל ה-EPG התואם.</string>
+  <string name="setup_logo_policy_epg_preferred_title">העדפת לוגו EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">שימוש בסמל ה-EPG התואם תחילה, ואחרת חזרה ללוגו הספק.</string>
+  <string name="setup_logo_policy_supplier_only_title">לוגו הספק בלבד</string>
+  <string name="setup_logo_policy_supplier_only_description">שימוש תמיד בלוגו הספק עבור ספק זה.</string>
+  <string name="setup_logo_policy_epg_only_title">לוגו EPG בלבד</string>
+  <string name="setup_logo_policy_epg_only_description">שימוש תמיד בסמלי EPG תואמים עבור ספק זה.</string>
+
+  <string name="setup_stalker_auth_title">מצב אימות Stalker</string>
+  <string name="setup_stalker_auth_helper">זיהוי אוטומטי הוא ברירת המחדל. שנו זאת רק אם הפורטל דורש פרטי התחברות או תהליך כניסה משולב של MAG וחשבון.</string>
+  <string name="setup_stalker_auth_auto_title">זיהוי אוטומטי</string>
+  <string name="setup_stalker_auth_auto_description">ניסיון ראשון בתהליך האימות הסביר של הפורטל, וניסיון חוזר אחד אם מצב Stalker אחר מתאים יותר.</string>
+  <string name="setup_stalker_auth_mac_only_title">MAC בלבד</string>
+  <string name="setup_stalker_auth_mac_only_description">שימוש באימות MAC בסגנון MAG ללא כניסה לחשבון בפורטל.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + פרטי התחברות</string>
+  <string name="setup_stalker_auth_mac_credentials_description">שמירת זהות ה-MAG והוספת פרטי חשבון הפורטל עבור פורטלים מחמירים יותר.</string>
+  <string name="setup_stalker_auth_credentials_only_title">פרטי התחברות בלבד</string>
+  <string name="setup_stalker_auth_credentials_only_description">שימוש בפרטי חשבון הפורטל גם אם כתובת ה-MAC אופציונלית או שמתעלמים ממנה.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">שם משתמש בפורטל (אופציונלי)</string>
+  <string name="setup_stalker_username_placeholder">שם משתמש בפורטל</string>
+  <string name="setup_stalker_password_optional_placeholder">סיסמה בפורטל (אופציונלי)</string>
+  <string name="setup_stalker_password_placeholder">סיסמה בפורטל</string>
+  <string name="setup_stalker_mag_type_placeholder">סוג MAG (אופציונלי)</string>
+  <string name="setup_stalker_timezone_placeholder">אזור זמן (אופציונלי)</string>
+  <string name="setup_stalker_locale_placeholder">שפה ואזור (אופציונלי)</string>
+  <string name="setup_stalker_serial_placeholder">מספר סידורי (אופציונלי)</string>
+  <string name="setup_stalker_device_id_placeholder">מזהה מכשיר (אופציונלי)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (אופציונלי)</string>
+  <string name="setup_stalker_signature_placeholder">חתימה (אופציונלי)</string>
+
+  <string name="setup_stalker_compat_section_title">תאימות Stalker</string>
+  <string name="setup_stalker_compat_section_helper">עקיפות ייעודיות לפורטל עבור שרתי MAG/Stalker עקשנים. השאירו שדות ריקים אלא אם השרת זקוק להם.</string>
+  <string name="setup_stalker_hw_version_placeholder">עקיפת hw_version (אופציונלי)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, אופציונלי)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (נגן, אופציונלי)</string>
+  <string name="setup_stalker_player_headers_placeholder">כותרות (נגן, אופציונלי, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">קישור X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">שימוש בפרוקסי HTTP</string>
+  <string name="setup_stalker_proxy_helper">חל על ה-API של Stalker ועל ההפעלה בלבד.</string>
+  <string name="setup_stalker_proxy_host_placeholder">מארח פרוקסי</string>
+  <string name="setup_stalker_proxy_port_placeholder">יציאת פרוקסי</string>
+
+  <string name="setup_stalker_selector_title">תאימות</string>
+  <string name="setup_stalker_protocol_button">פרוטוקול: %1$s</string>
+  <string name="setup_stalker_protocol_auto">אוטומטי</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG קלאסי</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">דגם: %1$s</string>
+  <string name="setup_stalker_model_automatic">אוטומטי</string>
+  <string name="setup_stalker_profile_experimental">%1$s (ניסיוני)</string>
+  <string name="setup_stalker_experimental_note">פרופילים ניסיוניים דורשים שדות זהות שנלכדו או הוזנו ידנית, ואינם נכללים בגילוי האוטומטי.</string>
+  <string name="setup_stalker_profile_custom">פרופיל מותאם אישית</string>
+
+  <string name="setup_stalker_rules_title">כללי בקשות</string>
+  <string name="setup_stalker_rules_helper">התאמה לפי פעולה, חסימת קריאות או עקיפת פרמטרים. ערכים ריקים מסירים פרמטרים.</string>
+  <string name="setup_stalker_rules_add">הוסף כלל</string>
+  <string name="setup_stalker_rule_number">כלל %1$d</string>
+  <string name="setup_stalker_rule_delete">מחק</string>
+  <string name="setup_stalker_rule_action_placeholder">פעולה, למשל get_profile</string>
+  <string name="setup_stalker_rule_block">חסום בקשה זו</string>
+  <string name="setup_stalker_rule_block_warning">אזהרה: חסימת %1$s עלולה למנוע התחברות.</string>
+  <string name="setup_stalker_rule_params_placeholder">עקיפת פרמטרים: name=value | remove_me=</string>
+</resources>
