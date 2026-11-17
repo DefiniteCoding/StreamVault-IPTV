@@ -4,6 +4,8 @@ import com.streamvault.core.ui.design.secondarySurfaceColors
 import com.streamvault.core.ui.design.browsePrimaryButtonColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
 import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.core.ui.design.selectableSurfaceColors
 import androidx.compose.foundation.BorderStroke
@@ -279,6 +281,7 @@ fun CategoryItem(
     onFocusChanged: (Boolean) -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val spacing = LocalAppSpacing.current
 
     TvClickableSurface(
         onClick = onClick,
@@ -329,15 +332,15 @@ fun CategoryItem(
 
             Text(
                 text = category.count.toString(),
-                style = MaterialTheme.typography.labelMedium,
-                modifier = Modifier.padding(start = 10.dp)
+                style = LocalAppTypeTokens.current.labelNumeric,
+                modifier = Modifier.padding(start = spacing.sm)
             )
 
             if (isLocked) {
                 Text(
                     text = stringResource(R.string.home_locked_short),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(start = 8.dp)
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = spacing.xs)
                 )
             }
         }

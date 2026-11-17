@@ -1,6 +1,7 @@
 package com.streamvault.feature.live.presentation.components
 
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.LocalAppTypeTokens
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -37,6 +38,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -112,9 +114,10 @@ fun LiveChannelRowSurface(
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         colors = ClickableSurfaceDefaults.colors(containerColor = AppColors.SurfaceElevated, focusedContainerColor = AppColors.SurfaceEmphasis),
+        // No stroke at rest (rule 14): the ring is the only stroke, and the container change carries focus with it.
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(
-                border = BorderStroke(if (isDragging) 4.dp else FocusSpec.BorderWidth, if (isDragging) AppColors.Warning else AppColors.Focus),
+                border = BorderStroke(if (isDragging) 4.dp else FocusSpec.SelectableRingWidth, if (isDragging) AppColors.Warning else AppColors.Focus),
                 shape = BrowseShapes.Control
             )
         )
@@ -182,13 +185,29 @@ fun LiveChannelRowCard(
                         if (hasArchive) StatusPill(label = catchUpLabel, containerColor = AppColors.Brand)
                     }
                 }
-                Text(text = buildString { channel.number.takeIf { it > 0 }?.let { append(it.toString().padStart(2, '0')); append("  ") } ?: append("--  "); append(channel.name) }, style = if (dense) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.titleSmall, color = AppColors.TextPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = channel.number.takeIf { it > 0 }?.toString()?.padStart(2, '0') ?: "--",
+                        style = LocalAppTypeTokens.current.labelNumeric,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1
+                    )
+                    // Provider channel names mix scripts; Content direction aligns each name to its own first strong character.
+                    Text(
+                        text = channel.name,
+                        style = (if (dense) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.titleSmall).copy(textDirection = TextDirection.Content),
+                        color = AppColors.TextPrimary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
                 channel.currentProgram?.let { program ->
-                    Text(text = program.title, style = if (dense) MaterialTheme.typography.labelMedium else MaterialTheme.typography.bodySmall, color = AppColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    Text(text = program.title, style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     if (!dense) {
                         LinearProgressIndicator(progress = { liveChannelProgressFraction(nowMs, program.startTime, program.endTime) }, modifier = Modifier.fillMaxWidth().height(2.dp).clip(BrowseShapes.Control), color = AppColors.Info, trackColor = AppColors.SurfaceEmphasis)
                     }
-                } ?: Text(text = noScheduleLabel, style = if (dense) MaterialTheme.typography.labelMedium else MaterialTheme.typography.bodySmall, color = AppColors.TextTertiary)
+                } ?: Text(text = noScheduleLabel, style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary)
             }
         }
     }
