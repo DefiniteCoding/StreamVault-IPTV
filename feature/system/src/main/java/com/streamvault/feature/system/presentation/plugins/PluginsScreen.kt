@@ -12,7 +12,6 @@ import com.streamvault.core.ui.design.browsePanel
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.text.KeyboardActions
@@ -65,7 +64,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.Border
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
@@ -85,10 +83,10 @@ import com.streamvault.core.ui.components.shell.ExtensionsEmptyState
 import com.streamvault.core.ui.components.shell.ExtensionsSectionTabs
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
+import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.design.focusRingButtonBorder
+import com.streamvault.core.ui.design.secondaryButtonColors
 import com.streamvault.core.ui.interaction.TvButton
-import com.streamvault.core.ui.design.browse.FocusBorder
-import com.streamvault.core.ui.design.browse.OnSurface
-import com.streamvault.core.ui.design.browse.Primary
 
 @Composable
 fun PluginsScreen(
@@ -255,8 +253,7 @@ internal fun PluginsContent(
                                     AdaptiveRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                         PluginButton(
                                             enabled = !uiState.isInstalling,
-                                            onClick = onShowInstallUrlDialog,
-                                            tone = PluginButtonTone.Primary
+                                            onClick = onShowInstallUrlDialog
                                         ) { Text(stringResource(R.string.plugins_install_url)) }
                                         PluginButton(
                                             enabled = !uiState.isInstalling,
@@ -379,22 +376,8 @@ private fun PluginButton(
 ) {
     val shape = RoundedCornerShape(8.dp)
     val colors = when (tone) {
-        PluginButtonTone.Primary -> ButtonDefaults.colors(
-            containerColor = Primary,
-            contentColor = AppColors.OnPrimary,
-            focusedContainerColor = Primary.copy(alpha = 0.88f),
-            focusedContentColor = AppColors.OnPrimary,
-            disabledContainerColor = AppColors.SurfaceEmphasis.copy(alpha = 0.56f),
-            disabledContentColor = AppColors.TextDisabled
-        )
-        PluginButtonTone.Secondary -> ButtonDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = OnSurface,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedContentColor = OnSurface,
-            disabledContainerColor = AppColors.SurfaceEmphasis.copy(alpha = 0.56f),
-            disabledContentColor = AppColors.TextDisabled
-        )
+        PluginButtonTone.Primary -> browsePrimaryButtonColors()
+        PluginButtonTone.Secondary -> secondaryButtonColors()
     }
 
     TvButton(
@@ -403,12 +386,7 @@ private fun PluginButton(
         enabled = enabled,
         shape = ButtonDefaults.shape(shape),
         colors = colors,
-        border = ButtonDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(FocusSpec.BorderWidth, FocusBorder),
-                shape = shape
-            )
-        ),
+        border = focusRingButtonBorder(shape),
         scale = ButtonDefaults.scale(focusedScale = FocusSpec.FocusedScale),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             horizontal = 20.dp,
@@ -470,10 +448,13 @@ private fun PluginInstallUrlDialog(
                     focusedTextColor = AppColors.TextPrimary,
                     unfocusedTextColor = AppColors.TextPrimary,
                     disabledTextColor = AppColors.TextSecondary,
-                    focusedBorderColor = AppColors.Brand,
-                    unfocusedBorderColor = AppColors.Outline,
-                    disabledBorderColor = AppColors.Outline.copy(alpha = 0.4f),
-                    focusedLabelColor = AppColors.Brand,
+                    focusedContainerColor = AppColors.ControlContainer,
+                    unfocusedContainerColor = AppColors.ControlContainer,
+                    disabledContainerColor = AppColors.ControlContainer,
+                    focusedBorderColor = AppColors.Focus,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    focusedLabelColor = AppColors.TextSecondary,
                     unfocusedLabelColor = AppColors.TextSecondary,
                     disabledLabelColor = AppColors.TextTertiary,
                     cursorColor = AppColors.Brand
@@ -925,11 +906,15 @@ private fun PluginConfigurationTextField(
             focusedTextColor = AppColors.TextPrimary,
             unfocusedTextColor = AppColors.TextPrimary,
             disabledTextColor = AppColors.TextSecondary,
-            focusedBorderColor = AppColors.Brand,
-            unfocusedBorderColor = AppColors.Outline,
-            disabledBorderColor = AppColors.Outline.copy(alpha = 0.4f),
+            focusedContainerColor = AppColors.ControlContainer,
+            unfocusedContainerColor = AppColors.ControlContainer,
+            disabledContainerColor = AppColors.ControlContainer,
+            errorContainerColor = AppColors.ControlContainer,
+            focusedBorderColor = AppColors.Focus,
+            unfocusedBorderColor = Color.Transparent,
+            disabledBorderColor = Color.Transparent,
             errorBorderColor = AppColors.Live,
-            focusedLabelColor = AppColors.Brand,
+            focusedLabelColor = AppColors.TextSecondary,
             unfocusedLabelColor = AppColors.TextSecondary,
             disabledLabelColor = AppColors.TextTertiary,
             cursorColor = AppColors.Brand
