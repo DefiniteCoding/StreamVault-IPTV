@@ -55,13 +55,8 @@ internal fun XtreamLiveSyncModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -119,13 +114,8 @@ internal fun StalkerAuthModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -194,13 +184,8 @@ internal fun EpgSyncModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -297,13 +282,8 @@ internal fun PolicyOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {

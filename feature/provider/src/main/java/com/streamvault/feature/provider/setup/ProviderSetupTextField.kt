@@ -147,8 +147,7 @@ internal fun ProviderTextField(
         if (revealedPasswordIndex == idx) revealedPasswordIndex = null
     }
 
-    val borderColor by animateColorAsState(if (isFocused) Primary else SurfaceHighlight, tween(150), label = "border")
-    val bgColor     by animateColorAsState(if (isFocused) Surface  else SurfaceElevated, tween(150), label = "bg")
+    val bgColor     by animateColorAsState(if (isFocused) Surface  else com.streamvault.core.ui.design.BrowseColors.ControlContainer, tween(150), label = "bg")
 
     Box(
         modifier = modifier
@@ -247,7 +246,7 @@ internal fun ProviderTextField(
                 Row(
                     modifier = Modifier
                         .background(bgColor, RoundedCornerShape(10.dp))
-                        .border(if (isFocused) 2.dp else 1.dp, borderColor, RoundedCornerShape(10.dp))
+                        .then(if (isFocused) Modifier.border(2.dp, FocusBorder, RoundedCornerShape(10.dp)) else Modifier)
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {

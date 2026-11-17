@@ -87,7 +87,7 @@ private fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
             focusedContainerColor = SurfaceHighlight
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (isSelected) Primary.copy(alpha = 0.4f) else SurfaceHighlight)),
+            border = Border.None,
             focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
         )
     ) {

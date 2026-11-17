@@ -213,13 +213,8 @@ internal fun AdvancedProviderOptionsSection(
                 focusedContainerColor = Primary.copy(alpha = 0.24f)
             ),
             border = ClickableSurfaceDefaults.border(
-                border = Border(
-                    BorderStroke(
-                        1.dp,
-                        if (showAdvancedOptions) Primary.copy(alpha = 0.45f) else SurfaceHighlight
-                    )
-                ),
-                focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                border = Border.None,
+                focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
             ),
             scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
         ) {
@@ -269,13 +264,8 @@ internal fun AdvancedProviderOptionsSection(
                             focusedContainerColor = Primary.copy(alpha = 0.22f)
                         ),
                         border = ClickableSurfaceDefaults.border(
-                            border = Border(
-                                BorderStroke(
-                                    1.dp,
-                                    if (uiState.m3uVodClassificationEnabled) Primary.copy(alpha = 0.4f) else SurfaceHighlight
-                                )
-                            ),
-                            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                            border = Border.None,
+                            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
                         ),
                         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                     ) {
@@ -667,13 +657,8 @@ internal fun AdvancedProviderOptionsSection(
                             focusedContainerColor = Primary.copy(alpha = 0.22f)
                         ),
                         border = ClickableSurfaceDefaults.border(
-                            border = Border(
-                                BorderStroke(
-                                    1.dp,
-                                    if (stalkerProxyEnabled) Primary.copy(alpha = 0.4f) else SurfaceHighlight
-                                )
-                            ),
-                            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                            border = Border.None,
+                            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
                         ),
                         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                     ) {

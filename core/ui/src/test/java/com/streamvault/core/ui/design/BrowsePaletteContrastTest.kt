@@ -125,6 +125,23 @@ class BrowsePaletteContrastTest {
         }
     }
 
+    // Setup screens: one filled-brand primary, every other action a controlContainer secondary that fills
+    // with surfaceEmphasis on focus. Labels and the focus ring must hold on all three containers.
+    @Test
+    fun primaryAndSecondaryActionLabelsAndFocusRingAreReadable() {
+        allThemeIds.forEach { id ->
+            val browse = AppPalette.forTheme(id).forBrowsing()
+            val primary = contrast(browse.onPrimary, browse.brand)
+            assertTrue("$id onPrimary on brand was $primary", primary >= 4.5f)
+            val rest = contrast(browse.textPrimary, browse.controlContainer)
+            assertTrue("$id textPrimary on controlContainer was $rest", rest >= 4.5f)
+            val focused = contrast(browse.textPrimary, browse.surfaceEmphasis)
+            assertTrue("$id textPrimary on surfaceEmphasis was $focused", focused >= 4.5f)
+            val ring = contrast(browse.focus, browse.surfaceEmphasis)
+            assertTrue("$id focus ring on surfaceEmphasis was $ring", ring >= 3f)
+        }
+    }
+
     @Test
     fun focusedUnselectedLabelIsReadableOnAccentFill() {
         allThemeIds.forEach { id ->

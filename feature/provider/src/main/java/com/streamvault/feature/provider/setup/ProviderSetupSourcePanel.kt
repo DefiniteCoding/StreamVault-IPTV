@@ -34,7 +34,7 @@ internal fun SourceTypeSelectorPanel(
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
                 text = isEditLabel,
@@ -127,12 +127,12 @@ internal fun SourceTypeCard(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.28f) else SurfaceHighlight
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (selected) Primary.copy(alpha = 0.5f) else SurfaceHighlight)),
+            border = Border.None,
             focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
         )
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)
         ) {
             Row(

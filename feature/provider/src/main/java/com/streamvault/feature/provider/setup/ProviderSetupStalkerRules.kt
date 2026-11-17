@@ -40,17 +40,17 @@ internal fun StalkerLinkOptionButton(
         modifier = Modifier.mouseClickable(onClick = onClick),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) Primary.copy(alpha = 0.18f) else Surface,
+            containerColor = if (selected) Primary.copy(alpha = 0.18f) else com.streamvault.core.ui.design.BrowseColors.ControlContainer,
             focusedContainerColor = Primary.copy(alpha = 0.28f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (selected) Primary else SurfaceHighlight)),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Text(
-            text = text,
+            text = if (selected) "\u2713 $text" else text,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             style = MaterialTheme.typography.bodySmall,
             color = TextPrimary
@@ -174,18 +174,13 @@ internal fun RequestRuleActionButton(
             .semantics { contentDescription = text },
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (compact) SurfaceHighlight.copy(alpha = 0.9f) else Primary,
-            focusedContainerColor = if (compact) SurfaceHighlight else PrimaryLight
+            containerColor = com.streamvault.core.ui.design.BrowseColors.ControlContainer,
+            focusedContainerColor = SurfaceHighlight
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow.None),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (compact) SurfaceHighlight.copy(alpha = 0.8f) else PrimaryLight
-                )
-            ),
+            border = Border.None,
             focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         )
     ) {
