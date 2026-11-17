@@ -437,8 +437,10 @@ fun PremiumDialogActionButton(
                     else -> dialogPalette.textPrimary
                 }
             } else dialogPalette.focus,
-            disabledContainerColor = dialogPalette.surface.copy(alpha = 0.85f),
-            disabledContentColor = dialogPalette.textDisabled
+            // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
+            disabledContainerColor = dialogPalette.surfaceAccent,
+            // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
+            disabledContentColor = if (LocalBrowseVisuals.current) dialogPalette.textTertiary else dialogPalette.textSecondary
         ),
         border = ButtonDefaults.border(
             focusedBorder = androidx.tv.material3.Border(
@@ -492,8 +494,10 @@ fun PremiumDialogFooterButton(
                     else -> dialogPalette.textPrimary
                 }
             } else dialogPalette.focus,
-            disabledContainerColor = dialogPalette.surface.copy(alpha = 0.85f),
-            disabledContentColor = dialogPalette.textDisabled
+            // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
+            disabledContainerColor = dialogPalette.surfaceAccent,
+            // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
+            disabledContentColor = if (LocalBrowseVisuals.current) dialogPalette.textTertiary else dialogPalette.textSecondary
         ),
         border = ButtonDefaults.border(
             focusedBorder = androidx.tv.material3.Border(

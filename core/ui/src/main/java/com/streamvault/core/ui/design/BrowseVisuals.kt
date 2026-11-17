@@ -57,6 +57,9 @@ fun browsePrimaryButtonColors() = ButtonDefaults.colors(
     contentColor = BrowseColors.OnPrimary,
     focusedContainerColor = BrowseColors.BrandStrong,
     focusedContentColor = contentOnColor(BrowseColors.BrandStrong),
+    // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the surface.
+    disabledContainerColor = BrowseColors.SurfaceAccent,
+    disabledContentColor = BrowseColors.TextTertiary,
 )
 
 /**
@@ -83,7 +86,7 @@ fun secondaryButtonColors() = ButtonDefaults.colors(
     focusedContainerColor = BrowseColors.SurfaceAccent,
     focusedContentColor = BrowseColors.TextPrimary,
     disabledContainerColor = BrowseColors.SurfaceAccent,
-    disabledContentColor = BrowseColors.TextDisabled,
+    disabledContentColor = BrowseColors.TextTertiary,
 )
 
 /** Secondary clickable surface: same look as [secondaryButtonColors] for Surface-based controls. */
