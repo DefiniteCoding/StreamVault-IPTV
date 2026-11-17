@@ -707,7 +707,7 @@ private fun PluginConfigurationHeader(
         }
         if (configuration.validationErrors.isNotEmpty()) {
             Text(
-                text = "Some plugin settings need attention before saving.",
+                text = stringResource(R.string.plugins_settings_need_attention),
                 style = MaterialTheme.typography.bodySmall,
                 color = AppColors.Live
             )
@@ -952,7 +952,7 @@ private fun PluginConfigurationActions(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Actions",
+            text = stringResource(R.string.plugins_actions),
             style = MaterialTheme.typography.titleSmall,
             color = AppColors.TextPrimary
         )

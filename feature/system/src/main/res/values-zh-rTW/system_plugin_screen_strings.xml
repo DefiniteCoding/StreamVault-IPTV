@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_actions">操作</string>
+  <string name="plugins_settings_need_attention">儲存前，部分外掛程式設定需要處理。</string>
+</resources>

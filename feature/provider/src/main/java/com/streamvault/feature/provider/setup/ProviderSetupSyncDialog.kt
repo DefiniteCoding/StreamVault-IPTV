@@ -45,8 +45,8 @@ fun SyncProgressDialog(
             generateJellyfinQuickConnectQrCode(serverUrl, quickConnectCode)
         }
         PremiumDialog(
-            title = "Quick Connect",
-            subtitle = "Enter this code on your Jellyfin server",
+            title = stringResource(R.string.setup_jellyfin_quick_connect),
+            subtitle = stringResource(R.string.setup_jellyfin_quick_connect_subtitle),
             onDismissRequest = {},
             widthFraction = 0.38f,
             heightFraction = null,
@@ -66,7 +66,7 @@ fun SyncProgressDialog(
                         ) {
                             Image(
                                 bitmap = qrCodeBitmap.asImageBitmap(),
-                                contentDescription = "Quick Connect QR Code",
+                                contentDescription = stringResource(R.string.setup_jellyfin_quick_connect_qr_description),
                                 modifier = Modifier.fillMaxSize()
                             )
                         }

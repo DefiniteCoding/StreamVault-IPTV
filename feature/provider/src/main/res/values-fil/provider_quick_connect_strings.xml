@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_jellyfin_quick_connect_subtitle">Ilagay ang code na ito sa iyong Jellyfin server</string>
+  <string name="setup_jellyfin_quick_connect_qr_description">QR code ng Quick Connect</string>
+</resources>

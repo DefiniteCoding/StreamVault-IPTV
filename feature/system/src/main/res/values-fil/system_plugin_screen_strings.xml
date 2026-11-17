@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_actions">Mga aksyon</string>
+  <string name="plugins_settings_need_attention">May ilang setting ng plugin na kailangang suriin bago i-save.</string>
+</resources>

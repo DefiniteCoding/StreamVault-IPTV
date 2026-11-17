@@ -162,7 +162,7 @@ public fun SettingsProviderManagementDialogs(
                         )
                     }
                     Text(
-                        text = uiState.deleteProviderProgressMessage ?: "Deleting provider...",
+                        text = uiState.deleteProviderProgressMessage ?: stringResource(R.string.settings_deleting_provider),
                         color = OnSurfaceDim
                     )
                 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_jellyfin_quick_connect_subtitle">Jellyfin 서버에 이 코드를 입력하세요</string>
+  <string name="setup_jellyfin_quick_connect_qr_description">Quick Connect QR 코드</string>
+</resources>

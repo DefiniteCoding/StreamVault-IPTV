@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_jellyfin_quick_connect_subtitle">Zadajte tento kód na svojom serveri Jellyfin</string>
+  <string name="setup_jellyfin_quick_connect_qr_description">QR kód služby Quick Connect</string>
+</resources>
