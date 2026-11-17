@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_stalker_card_hint">入口網站 URL 加供應商的 MAC 位址。</string>
+</resources>

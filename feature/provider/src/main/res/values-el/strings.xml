@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Ενημερώστε τα στοιχεία του παρόχου IPTV</string>
     <string name="setup_add_desc">Προσθέστε τον πάροχο IPTV σας</string>
     <string name="setup_shell_eyebrow">Εγγραφή παρόχου</string>
-    <string name="setup_shell_subtitle">Χρησιμοποιήστε Xtream ή M3U. Μπορείτε να το αλλάξετε αργότερα.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U ή Jellyfin. Αλλάξτε το αργότερα στις Ρυθμίσεις.</string>
     <string name="setup_form_subtitle">Επιλέξτε πηγή, εισαγάγετε τα στοιχεία και συνεχίστε. Μπορείτε να το διαχειριστείτε αργότερα από τις Ρυθμίσεις.</string>
     <string name="setup_source_type_label">Τύπος πηγής</string>
     <string name="setup_info_xtream_title">Χρησιμοποιήστε Xtream όταν υπάρχουν διαθέσιμα διαπιστευτήρια</string>
-    <string name="setup_info_xtream_body">Ιδανικό όταν έχετε διακομιστή, χρήστη και κωδικό.</string>
+    <string name="setup_info_xtream_body">Ιδανικό για διακομιστή, χρήστη και κωδικό.</string>
     <string name="setup_info_m3u_title">Χρησιμοποιήστε M3U για λίστες αναπαραγωγής με URL ή αρχείο</string>
     <string name="setup_info_m3u_body">Χρησιμοποιήστε σύνδεσμο λίστας αναπαραγωγής ή εισαγάγετε τοπικό αρχείο.</string>
-    <string name="setup_info_manage_title">Μπορείτε να διαχειριστείτε τους παρόχους αργότερα</string>
-    <string name="setup_info_manage_body">Ανανέωση, επεξεργασία ή αντικατάσταση αργότερα από τις Ρυθμίσεις.</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">Λίστα αναπαραγωγής M3U</string>
     <string name="setup_name_hint">Όνομα λίστας αναπαραγωγής (Προαιρετικό)</string>

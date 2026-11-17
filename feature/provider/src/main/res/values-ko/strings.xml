@@ -12,15 +12,13 @@
     <string name="setup_update_desc">IPTV 제공업체 정보를 업데이트하세요</string>
     <string name="setup_add_desc">IPTV 제공업체를 추가하세요</string>
     <string name="setup_shell_eyebrow">제공업체 설정</string>
-    <string name="setup_shell_subtitle">Xtream 또는 M3U를 사용하세요. 나중에 변경할 수 있습니다.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U 또는 Jellyfin. 나중에 설정에서 수정하거나 교체할 수 있습니다.</string>
     <string name="setup_form_subtitle">소스를 선택하고 정보를 입력한 뒤 계속하세요. 나중에 설정에서 관리할 수 있습니다.</string>
     <string name="setup_source_type_label">소스 유형</string>
     <string name="setup_info_xtream_title">자격 증명이 있으면 Xtream을 사용하세요</string>
-    <string name="setup_info_xtream_body">서버, 사용자명, 비밀번호가 있을 때 가장 적합합니다.</string>
+    <string name="setup_info_xtream_body">서버, 사용자명, 비밀번호가 있을 때 최적.</string>
     <string name="setup_info_m3u_title">URL 또는 파일 기반 재생목록에는 M3U 사용</string>
     <string name="setup_info_m3u_body">재생목록 링크를 사용하거나 로컬 파일을 가져오세요.</string>
-    <string name="setup_info_manage_title">공급자는 나중에 관리할 수 있습니다</string>
-    <string name="setup_info_manage_body">나중에 설정에서 새로고침, 수정 또는 교체할 수 있습니다.</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">M3U 재생목록</string>
     <string name="setup_name_hint">재생목록 이름(선택 사항)</string>

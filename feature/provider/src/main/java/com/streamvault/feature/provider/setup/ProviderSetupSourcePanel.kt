@@ -44,7 +44,9 @@ internal fun SourceTypeSelectorPanel(
             Text(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_shell_subtitle),
                 style = MaterialTheme.typography.bodySmall,
-                color = OnSurfaceDim
+                color = OnSurfaceDim,
+                maxLines = 3,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
             )
             Text(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_source_type_label),
@@ -63,7 +65,7 @@ internal fun SourceTypeSelectorPanel(
             if (!isEditing || sourceType == SourceType.STALKER) {
                 SourceTypeCard(
                     title = androidx.compose.ui.res.stringResource(R.string.setup_stalker),
-                    subtitle = androidx.compose.ui.res.stringResource(R.string.setup_info_stalker_body),
+                    subtitle = androidx.compose.ui.res.stringResource(R.string.setup_stalker_card_hint),
                     selected = sourceType == SourceType.STALKER,
                     enabled = !isEditing,
                     onClick = { onSelect(SourceType.STALKER) }
@@ -104,17 +106,6 @@ internal fun SourceTypeSelectorPanel(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-            Spacer(modifier = Modifier.weight(1f))
-            Text(
-                text = androidx.compose.ui.res.stringResource(R.string.setup_info_manage_title),
-                style = MaterialTheme.typography.bodySmall,
-                color = OnSurfaceDim
-            )
-            Text(
-                text = androidx.compose.ui.res.stringResource(R.string.setup_info_manage_body),
-                style = MaterialTheme.typography.bodySmall,
-                color = OnSurfaceDim.copy(alpha = 0.55f)
-            )
         }
     }
 }

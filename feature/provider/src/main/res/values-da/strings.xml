@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Opdater dine IPTV-udbyderoplysninger</string>
     <string name="setup_add_desc">Tilføj din IPTV-udbyder</string>
     <string name="setup_shell_eyebrow">Udbyder onboarding</string>
-    <string name="setup_shell_subtitle">Brug Xtream eller M3U. Du kan ændre det senere.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U eller Jellyfin. Rediger senere i Indstillinger.</string>
     <string name="setup_form_subtitle">Vælg en kilde, indtast oplysningerne, og fortsæt. Du kan administrere det senere i Indstillinger.</string>
     <string name="setup_source_type_label">Kildetype</string>
     <string name="setup_info_xtream_title">Brug Xtream, når legitimationsoplysninger er tilgængelige</string>
-    <string name="setup_info_xtream_body">Bedst når du har server, bruger og adgangskode.</string>
+    <string name="setup_info_xtream_body">Bedst til server, bruger og adgangskode.</string>
     <string name="setup_info_m3u_title">Brug M3U til URL- eller filbaserede afspilningslister</string>
     <string name="setup_info_m3u_body">Brug et afspilningslistelink, eller importer en lokal fil.</string>
-    <string name="setup_info_manage_title">Du kan administrere udbydere senere</string>
-    <string name="setup_info_manage_body">Opdater, rediger eller erstat det senere fra Indstillinger.</string>
     <string name="setup_xtream">Xtream-koder</string>
     <string name="setup_m3u">M3U afspilningsliste</string>
     <string name="setup_name_hint">Playlistenavn (valgfrit)</string>

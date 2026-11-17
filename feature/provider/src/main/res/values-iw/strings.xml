@@ -12,15 +12,13 @@
     <string name="setup_update_desc">עדכן את פרטי ספק ה-IPTV שלך</string>
     <string name="setup_add_desc">הוסף את ספק ה-IPTV שלך</string>
     <string name="setup_shell_eyebrow">כניסת ספק</string>
-    <string name="setup_shell_subtitle">השתמש ב-Xtream או M3U. אתה יכול לשנות את זה מאוחר יותר.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U או Jellyfin. אפשר לערוך או להחליף אותו מאוחר יותר בהגדרות.</string>
     <string name="setup_form_subtitle">בחר מקור, הזן את הפרטים והמשך. תוכל לנהל אותו מאוחר יותר מהגדרות.</string>
     <string name="setup_source_type_label">סוג מקור</string>
     <string name="setup_info_xtream_title">השתמש ב-Xtream כאשר אישורים זמינים</string>
-    <string name="setup_info_xtream_body">הכי טוב כשיש לך שרת, משתמש וסיסמה.</string>
+    <string name="setup_info_xtream_body">הכי טוב לשרת, משתמש וסיסמה.</string>
     <string name="setup_info_m3u_title">השתמש ב-M3U עבור רשימות השמעה מבוססות-URL או קבצים</string>
     <string name="setup_info_m3u_body">השתמש בקישור לפלייליסט או ייבא קובץ מקומי.</string>
-    <string name="setup_info_manage_title">תוכל לנהל ספקים מאוחר יותר</string>
-    <string name="setup_info_manage_body">רענן, ערוך או החלף אותו מאוחר יותר מההגדרות.</string>
     <string name="setup_xtream">קודי Xtream</string>
     <string name="setup_m3u">רשימת השמעה של M3U</string>
     <string name="setup_name_hint">שם רשימת השמעה (אופציונלי)</string>

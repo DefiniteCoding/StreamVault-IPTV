@@ -12,15 +12,13 @@
     <string name="setup_update_desc">更新您的 IPTV 提供商详情</string>
     <string name="setup_add_desc">添加您的 IPTV 提供商</string>
     <string name="setup_shell_eyebrow">提供商入驻</string>
-    <string name="setup_shell_subtitle">使用 Xtream 或 M3U。之后可更改。</string>
+    <string name="setup_shell_subtitle">Xtream、Stalker、M3U 或 Jellyfin。之后可在设置中编辑或替换。</string>
     <string name="setup_form_subtitle">选择来源，输入详细信息，然后继续。之后可在设置中管理。</string>
     <string name="setup_source_type_label">来源类型</string>
     <string name="setup_info_xtream_title">有凭据时使用 Xtream</string>
-    <string name="setup_info_xtream_body">适用于有服务器、用户名和密码的情况。</string>
+    <string name="setup_info_xtream_body">适合有服务器、用户名和密码时使用。</string>
     <string name="setup_info_m3u_title">URL 或文件播放列表请使用 M3U</string>
     <string name="setup_info_m3u_body">使用播放列表链接或导入本地文件。</string>
-    <string name="setup_info_manage_title">之后可管理提供商</string>
-    <string name="setup_info_manage_body">之后可在设置中刷新、编辑或替换。</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">M3U 播放列表</string>
     <string name="setup_name_hint">播放列表名称（可选）</string>

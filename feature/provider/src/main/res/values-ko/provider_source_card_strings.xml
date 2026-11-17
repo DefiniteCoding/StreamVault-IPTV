@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_stalker_card_hint">포털 URL과 공급자의 MAC 주소.</string>
+</resources>

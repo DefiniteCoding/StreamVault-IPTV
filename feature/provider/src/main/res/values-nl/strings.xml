@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Update de gegevens van uw IPTV-provider</string>
     <string name="setup_add_desc">Voeg uw IPTV-provider toe</string>
     <string name="setup_shell_eyebrow">Aanbieder onboarding</string>
-    <string name="setup_shell_subtitle">Gebruik Xtream of M3U. Je kunt het later wijzigen.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U of Jellyfin. Bewerk later in Instellingen.</string>
     <string name="setup_form_subtitle">Kies een bron, voer de details in en ga verder. Je kunt het later beheren via Instellingen.</string>
     <string name="setup_source_type_label">Brontype</string>
     <string name="setup_info_xtream_title">Gebruik Xtream als er inloggegevens beschikbaar zijn</string>
-    <string name="setup_info_xtream_body">Het beste als u een server, gebruiker en wachtwoord hebt.</string>
+    <string name="setup_info_xtream_body">Ideaal voor server, gebruiker, wachtwoord.</string>
     <string name="setup_info_m3u_title">Gebruik M3U voor URL- of op bestanden gebaseerde afspeellijsten</string>
     <string name="setup_info_m3u_body">Gebruik een afspeellijstlink of importeer een lokaal bestand.</string>
-    <string name="setup_info_manage_title">U kunt providers later beheren</string>
-    <string name="setup_info_manage_body">Vernieuw, bewerk of vervang het later via Instellingen.</string>
     <string name="setup_xtream">Xstream-codes</string>
     <string name="setup_m3u">M3U-afspeellijst</string>
     <string name="setup_name_hint">Naam afspeellijst (optioneel)</string>

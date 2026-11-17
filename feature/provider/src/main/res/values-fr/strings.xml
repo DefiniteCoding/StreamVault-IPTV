@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Mettez à jour les détails de votre fournisseur IPTV</string>
     <string name="setup_add_desc">Ajoutez votre fournisseur IPTV</string>
     <string name="setup_shell_eyebrow">Intégration des fournisseurs</string>
-    <string name="setup_shell_subtitle">Utilisez Xtream ou M3U. Vous pourrez le modifier plus tard.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U ou Jellyfin. Modifiez-le plus tard dans Paramètres.</string>
     <string name="setup_form_subtitle">Choisissez une source, saisissez les détails, puis continuez. Vous pourrez la gérer plus tard dans les Paramètres.</string>
     <string name="setup_source_type_label">Type de source</string>
     <string name="setup_info_xtream_title">Utilisez Xtream lorsque les informations d’identification sont disponibles</string>
-    <string name="setup_info_xtream_body">Mieux encore, lorsque vous disposez d’un serveur, d’un utilisateur et d’un mot de passe.</string>
+    <string name="setup_info_xtream_body">Pour serveur, utilisateur et mot de passe.</string>
     <string name="setup_info_m3u_title">Utiliser M3U pour les listes de lecture basées sur des URL ou des fichiers</string>
     <string name="setup_info_m3u_body">Utilisez un lien de playlist ou importez un fichier local.</string>
-    <string name="setup_info_manage_title">Vous pourrez gérer les fournisseurs plus tard</string>
-    <string name="setup_info_manage_body">Actualisez-la, modifiez-la ou remplacez-la plus tard dans les Paramètres.</string>
     <string name="setup_xtream">Codes Xtream</string>
     <string name="setup_m3u">Liste de lecture M3U</string>
     <string name="setup_name_hint">Nom de la liste de lecture (facultatif)</string>
