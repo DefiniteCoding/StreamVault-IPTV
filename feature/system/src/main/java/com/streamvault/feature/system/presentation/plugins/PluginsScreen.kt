@@ -48,10 +48,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -396,6 +404,7 @@ private fun PluginButton(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PluginInstallUrlDialog(
     installUrl: String,
@@ -430,12 +439,24 @@ private fun PluginInstallUrlDialog(
         widthFraction = 0.5f,
         heightFraction = null,
         content = {
+            // Read inside the dialog: a focus manager from outside it drives the page behind the window.
+            val focusManager = LocalFocusManager.current
             OutlinedTextField(
                 value = installUrl,
                 onValueChange = onInstallUrlChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .focusRequester(focusRequester)
+                    // The soft keyboard consumes D-pad Down before normal key handling, even when hidden,
+                    // which left the footer buttons unreachable. Intercept it ahead of the keyboard.
+                    .onPreInterceptKeyBeforeSoftKeyboard { event ->
+                        val isDown = event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown
+                        if (isDown) {
+                            keyboardController?.hide()
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                        isDown
+                    },
                 enabled = !isInstalling,
                 singleLine = true,
                 label = { androidx.compose.material3.Text(stringResource(R.string.plugins_install_url_label)) },
