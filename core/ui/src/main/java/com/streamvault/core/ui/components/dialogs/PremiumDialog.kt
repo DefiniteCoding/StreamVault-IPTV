@@ -427,16 +427,17 @@ fun PremiumDialogActionButton(
             // A focused primary stays filled brand; the ring carries the focus state.
             focusedContainerColor = when {
                 destructive -> dialogPalette.live
-                emphasized -> dialogPalette.brandStrong
+                emphasized -> dialogPalette.brand
                 else -> dialogPalette.surfaceAccent
             },
-            focusedContentColor = if (LocalBrowseVisuals.current) {
-                when {
+            focusedContentColor = when {
+                emphasized -> contentColor
+                LocalBrowseVisuals.current -> when {
                     destructive -> contentOnColor(dialogPalette.live)
-                    emphasized -> contentOnColor(dialogPalette.brandStrong)
                     else -> dialogPalette.textPrimary
                 }
-            } else dialogPalette.focus,
+                else -> dialogPalette.focus
+            },
             // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
             disabledContainerColor = dialogPalette.surfaceAccent,
             // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
@@ -484,16 +485,17 @@ fun PremiumDialogFooterButton(
             // A focused primary stays filled brand; the ring carries the focus state.
             focusedContainerColor = when {
                 destructive -> dialogPalette.live
-                emphasized -> dialogPalette.brandStrong
+                emphasized -> dialogPalette.brand
                 else -> dialogPalette.surfaceAccent
             },
-            focusedContentColor = if (LocalBrowseVisuals.current) {
-                when {
+            focusedContentColor = when {
+                emphasized -> contentColor
+                LocalBrowseVisuals.current -> when {
                     destructive -> contentOnColor(dialogPalette.live)
-                    emphasized -> contentOnColor(dialogPalette.brandStrong)
                     else -> dialogPalette.textPrimary
                 }
-            } else dialogPalette.focus,
+                else -> dialogPalette.focus
+            },
             // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
             disabledContainerColor = dialogPalette.surfaceAccent,
             // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.

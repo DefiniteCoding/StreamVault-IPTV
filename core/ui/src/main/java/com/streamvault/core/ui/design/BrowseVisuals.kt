@@ -55,8 +55,8 @@ fun contentOnColor(color: Color): Color = if (color.luminance() > 0.179f) Color.
 fun browsePrimaryButtonColors() = ButtonDefaults.colors(
     containerColor = BrowseColors.Brand,
     contentColor = BrowseColors.OnPrimary,
-    focusedContainerColor = BrowseColors.BrandStrong,
-    focusedContentColor = contentOnColor(BrowseColors.BrandStrong),
+    focusedContainerColor = BrowseColors.Brand,
+    focusedContentColor = BrowseColors.OnPrimary,
     // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the surface.
     disabledContainerColor = BrowseColors.SurfaceAccent,
     disabledContentColor = BrowseColors.TextTertiary,
