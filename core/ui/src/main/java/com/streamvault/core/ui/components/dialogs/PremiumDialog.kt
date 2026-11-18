@@ -381,7 +381,8 @@ internal fun premiumDialogButtonColors(
 ): PremiumDialogButtonColors {
     val content = when {
         destructive -> palette.textPrimary
-        emphasized -> if (browseVisuals) palette.onPrimary else Color.Black
+        // Picked from the fill, so it holds 4.5:1 on every brand (fixed black fell to 3.3:1 on light).
+        emphasized -> contentOnColor(palette.brand)
         else -> palette.textPrimary
     }
     return PremiumDialogButtonColors(
@@ -399,7 +400,9 @@ internal fun premiumDialogButtonColors(
         },
         focusedContent = when {
             emphasized -> content
-            browseVisuals -> if (destructive) contentOnColor(palette.live) else palette.textPrimary
+            // The focus color on the solid live fill was 2.5:1 to 2.8:1 in app mode.
+            destructive -> contentOnColor(palette.live)
+            browseVisuals -> palette.textPrimary
             else -> palette.focus
         },
         // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
