@@ -76,6 +76,8 @@ private const val ENTRIES_ABOVE_SELECTED_ON_ENTRY = 3
 public fun SettingsNavigationRail(
     selectedCategory: Int,
     focusRequester: FocusRequester,
+    requestEntryFocus: Boolean = false,
+    onEntryFocusRequested: () -> Unit = {},
     onCategorySelected: (Int) -> Unit,
     onBack: () -> Unit = {},
     onSearch: () -> Unit = {},
@@ -86,7 +88,14 @@ public fun SettingsNavigationRail(
     val colors = SettingsDesignTokens.colors(AppColors.current)
     var selectedEntryPlaced by remember(compact, selectedCategory) { mutableStateOf(false) }
     LaunchedEffect(compact, selectedCategory, selectedEntryPlaced) {
-        if (compact && selectedEntryPlaced) focusRequester.requestFocus()
+        if (!selectedEntryPlaced) return@LaunchedEffect
+        if (compact) {
+            focusRequester.requestFocus()
+        } else if (requestEntryFocus) {
+            // Screen entry on TV: the user picks a category before focus moves into its items.
+            focusRequester.requestFocus()
+            onEntryFocusRequested()
+        }
     }
     val entry: @Composable (SettingsCategory) -> Unit = { category ->
         val isSelected = selectedCategory == category.legacyId

@@ -109,6 +109,8 @@ public fun SettingsScreen(
     var settingsSearchQuery by rememberSaveable { mutableStateOf("") }
     var searchRequestId by rememberSaveable { mutableLongStateOf(0L) }
     var categorySelectionId by rememberSaveable { mutableLongStateOf(0L) }
+    var enterContentRequested by rememberSaveable { mutableStateOf(false) }
+    var railEntryFocusHandled by rememberSaveable { mutableStateOf(false) }
     var currentSettingsPage by remember { mutableStateOf<SettingsPage?>(null) }
     var openOpenSubtitlesSignInPending by rememberSaveable {
         mutableStateOf(openOpenSubtitlesSignIn)
@@ -620,9 +622,12 @@ public fun SettingsScreen(
                 SettingsNavigationRail(
                     selectedCategory = dialogState.selectedCategory,
                     focusRequester = settingsNavFocusRequester,
+                    requestEntryFocus = !railEntryFocusHandled,
+                    onEntryFocusRequested = { railEntryFocusHandled = true },
                     onCategorySelected = {
                         dialogState.selectedCategory = it
                         categorySelectionId += 1L
+                        enterContentRequested = true
                         if (compact) {
                             compactPane = SettingsCompactPane.CONTENT
                         }
@@ -723,6 +728,9 @@ public fun SettingsScreen(
                     restorePageRequestId = restorePageRequestId,
                     onPageChanged = { currentSettingsPage = it },
                     categorySelectionId = categorySelectionId,
+                    railFocusRequester = settingsNavFocusRequester,
+                    enterContentRequested = enterContentRequested,
+                    onContentEntered = { enterContentRequested = false },
                 )
             }
         }
