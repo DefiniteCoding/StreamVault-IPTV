@@ -41,6 +41,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.isVodTitleLocked
+import com.streamvault.feature.catalog.presentation.components.firstUnlockedHeroTitle
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
@@ -458,16 +460,18 @@ private fun SeriesVodContent(
     }
     val isSeriesLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { series: Series ->
-            val categoryId = series.categoryId
-            (series.isAdult || series.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = series.isAdult,
+                isUserProtected = series.isUserProtected,
+                categoryId = series.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
     val heroSeries = remember(freshSeries, topRatedSeries, favoriteSeries, isSeriesLocked) {
-        listOf(freshSeries, topRatedSeries, favoriteSeries)
-            .firstNotNullOfOrNull { row -> row.firstOrNull { !isSeriesLocked(it) } }
+        firstUnlockedHeroTitle(listOf(freshSeries, topRatedSeries, favoriteSeries), isSeriesLocked)
     }
     val focusedHeroSeries = remember { mutableStateOf<Series?>(null) }
     val onPosterFocused = remember(isSeriesLocked) {
@@ -1240,10 +1244,13 @@ private fun SeriesVodClassicContent(
     }
     val isSeriesLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { series: Series ->
-            val categoryId = series.categoryId
-            (series.isAdult || series.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = series.isAdult,
+                isUserProtected = series.isUserProtected,
+                categoryId = series.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick

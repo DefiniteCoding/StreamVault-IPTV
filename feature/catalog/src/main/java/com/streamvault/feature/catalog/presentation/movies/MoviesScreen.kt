@@ -40,6 +40,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.isVodTitleLocked
+import com.streamvault.feature.catalog.presentation.components.firstUnlockedHeroTitle
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
@@ -457,16 +459,18 @@ private fun MoviesVodContent(
     }
     val isMovieLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { movie: Movie ->
-            val categoryId = movie.categoryId
-            (movie.isAdult || movie.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = movie.isAdult,
+                isUserProtected = movie.isUserProtected,
+                categoryId = movie.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
     val heroMovie = remember(freshMovies, topRatedMovies, favoriteMovies, isMovieLocked) {
-        listOf(freshMovies, topRatedMovies, favoriteMovies)
-            .firstNotNullOfOrNull { row -> row.firstOrNull { !isMovieLocked(it) } }
+        firstUnlockedHeroTitle(listOf(freshMovies, topRatedMovies, favoriteMovies), isMovieLocked)
     }
     val focusedHeroMovie = remember { mutableStateOf<Movie?>(null) }
     val onPosterFocused = remember(isMovieLocked) {
@@ -1214,10 +1218,13 @@ private fun MoviesVodClassicContent(
     }
     val isMovieLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { movie: Movie ->
-            val categoryId = movie.categoryId
-            (movie.isAdult || movie.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = movie.isAdult,
+                isUserProtected = movie.isUserProtected,
+                categoryId = movie.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick

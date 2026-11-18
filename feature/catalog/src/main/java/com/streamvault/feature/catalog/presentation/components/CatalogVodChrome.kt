@@ -220,17 +220,36 @@ data class VodHeroModel(
 )
 
 // Provider genre fields are comma or slash separated lists; the hero shows the first.
-private fun firstGenre(genre: String?): String? =
+internal fun firstGenre(genre: String?): String? =
     genre?.split(',', '/')?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }
 
-private fun releaseYear(releaseDate: String?): String? =
-    releaseDate?.let { Regex("""\d{4}""").find(it)?.value }
+private val YearPattern = Regex("""\d{4}""")
 
-private fun heroMetadata(rating: Float, year: String?, genre: String?): List<String> = listOfNotNull(
+internal fun releaseYear(releaseDate: String?): String? =
+    releaseDate?.let { YearPattern.find(it)?.value }
+
+internal fun heroMetadata(rating: Float, year: String?, genre: String?): List<String> = listOfNotNull(
     formatVodRatingLabel(rating).takeIf { rating > 0f },
     year?.takeIf { it.isNotBlank() },
     firstGenre(genre)
 )
+
+// Parental levels 1 and 2 lock adult or protected titles until their category is unlocked. Level 3 hides them from
+// the category list instead, so nothing reaches a title-level check.
+internal fun isVodTitleLocked(
+    isAdult: Boolean,
+    isUserProtected: Boolean,
+    categoryId: Long?,
+    parentalControlLevel: Int,
+    unlockedCategoryIds: Set<Long>
+): Boolean =
+    (isAdult || isUserProtected) &&
+        parentalControlLevel in 1..2 &&
+        (categoryId == null || kotlin.math.abs(categoryId) !in unlockedCategoryIds)
+
+// A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+internal fun <T : Any> firstUnlockedHeroTitle(rows: List<List<T>>, isLocked: (T) -> Boolean): T? =
+    rows.firstNotNullOfOrNull { row -> row.firstOrNull { !isLocked(it) } }
 
 // The shelf rows load a slim projection with no backdrop and no plot, and the provider list API carries no backdrop
 // for movies, so the poster is the only artwork every title has.
