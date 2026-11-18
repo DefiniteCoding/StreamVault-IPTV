@@ -81,6 +81,7 @@ import com.streamvault.core.ui.components.shell.AppMessageState
 import com.streamvault.core.ui.components.shell.LocalTopBarContentInset
 import com.streamvault.core.ui.components.shell.LocalTopBarDownTarget
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.components.shell.AppSectionHeader
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.feature.catalog.presentation.time.LocalCatalogTimeFormat
 import com.streamvault.feature.catalog.presentation.time.createCatalogDateTimeFormat
@@ -550,9 +551,9 @@ private fun DashboardShortcutCard(
         else -> 170.dp
     }
     val accentColor = when (shortcut.type) {
-        DashboardShortcutType.FAVORITES -> Color(0xFFFFC857)
-        DashboardShortcutType.RECENT -> Color(0xFF4FD1C5)
-        DashboardShortcutType.LAST_GROUP -> Color(0xFF60A5FA)
+        DashboardShortcutType.FAVORITES -> AppColors.Warning
+        DashboardShortcutType.RECENT -> AppColors.Success
+        DashboardShortcutType.LAST_GROUP -> AppColors.Info
         DashboardShortcutType.CUSTOM_GROUP -> Primary
     }
 
@@ -566,11 +567,8 @@ private fun DashboardShortcutCard(
             containerColor = SurfaceElevated,
             focusedContainerColor = SurfaceHighlight
         ),
+        // No resting stroke (rule 14): the dot and label identify the card, the ring is the focus state only.
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, accentColor.copy(alpha = 0.28f)),
-                shape = BrowseShapes.Control
-            ),
             focusedBorder = Border(
                 border = BorderStroke(2.dp, FocusBorder),
                 shape = BrowseShapes.Control
@@ -839,34 +837,14 @@ private fun FavoriteChannelsRow(
     onChannelClick: (Channel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
+        AppSectionHeader(
+            title = title,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
-            )
-            TvClickableSurface(
-                onClick = onSeeAll,
-                shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                colors = ClickableSurfaceDefaults.colors(
-                    containerColor = Primary.copy(alpha = 0.12f),
-                    focusedContainerColor = Primary.copy(alpha = 0.22f),
-                    contentColor = TextTertiary
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.category_see_all),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
-        }
+            actionLabel = stringResource(R.string.category_see_all),
+            onActionClick = onSeeAll
+        )
 
         FocusSafeLazyRow(
             contentPadding = PaddingValues(horizontal = 20.dp),
