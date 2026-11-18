@@ -1,6 +1,7 @@
 package com.streamvault.feature.provider.setup
 
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.TvInitialFocus
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -14,12 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.provider.R
+import com.streamvault.core.ui.components.AppDialogButton
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.progress.extractProgressFraction
 import com.streamvault.core.ui.components.shell.StatusPill
@@ -44,6 +46,9 @@ fun SyncProgressDialog(
         val qrCodeBitmap = remember(quickConnectCode, serverUrl) {
             generateJellyfinQuickConnectQrCode(serverUrl, quickConnectCode)
         }
+        // Cancel is the dialog's only action, so it takes initial focus (rule 17).
+        val cancelFocusRequester = remember { FocusRequester() }
+        TvInitialFocus(cancelFocusRequester, enabled = onCancel != null)
         PremiumDialog(
             title = stringResource(R.string.setup_jellyfin_quick_connect),
             subtitle = stringResource(R.string.setup_jellyfin_quick_connect_subtitle),
@@ -74,7 +79,7 @@ fun SyncProgressDialog(
                     Text(
                         text = stringResource(R.string.setup_jellyfin_quick_connect_code, quickConnectCode),
                         style = MaterialTheme.typography.headlineMedium,
-                        color = Color.White
+                        color = TextPrimary
                     )
                     Text(
                         text = message,
@@ -83,9 +88,12 @@ fun SyncProgressDialog(
                         textAlign = TextAlign.Center
                     )
                     if (onCancel != null) {
-                        TextButton(onClick = onCancel) {
-                            Text(stringResource(R.string.setup_sync_cancel), color = Color.White)
-                        }
+                        AppDialogButton(
+                            text = stringResource(R.string.setup_sync_cancel),
+                            onClick = onCancel,
+                            primary = false,
+                            focusRequester = cancelFocusRequester
+                        )
                     }
                 }
             }

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.*
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.provider.R
+import com.streamvault.core.ui.components.inputFieldColors
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.design.browse.*
@@ -59,6 +60,8 @@ internal fun ProviderTextField(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
     val isFocused = hasContainerFocus || hasInputFocus
+    val browsePalette = com.streamvault.core.ui.design.BrowseColors.current
+    val colors = remember(browsePalette, isFocused) { inputFieldColors(browsePalette, isFocused) }
     val passwordVisibilityDescription = if (isPassword) {
         androidx.compose.ui.res.stringResource(
             if (isPasswordVisible) R.string.setup_hide_password else R.string.setup_show_password
@@ -238,16 +241,16 @@ internal fun ProviderTextField(
             readOnly = isTelevisionDevice && !acceptsInput,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = OnBackground),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = colors.text),
             visualTransformation = when {
                 !isPassword || isPasswordVisible -> VisualTransformation.None
                 else -> RevealingPasswordVisualTransformation(revealedPasswordIndex)
             },
-            cursorBrush = SolidColor(Primary),
+            cursorBrush = SolidColor(colors.cursor),
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier
-                        .background(com.streamvault.core.ui.design.BrowseColors.ControlContainer, RoundedCornerShape(10.dp))
+                        .background(colors.container, RoundedCornerShape(10.dp))
                         .then(if (isFocused) Modifier.border(2.dp, FocusBorder, RoundedCornerShape(10.dp)) else Modifier)
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
@@ -257,7 +260,7 @@ internal fun ProviderTextField(
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (fieldValue.text.isEmpty()) {
-                            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium, color = OnSurfaceDim)
+                            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium, color = colors.placeholder)
                         }
                         innerTextField()
                     }
@@ -293,7 +296,7 @@ internal fun ProviderTextField(
                         ) {
                             PasswordVisibilityGlyph(
                                 isVisible = isPasswordVisible,
-                                tint = if (isFocused) Primary else OnSurfaceDim,
+                                tint = colors.icon,
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }

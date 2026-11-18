@@ -17,6 +17,15 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.ui.text.font.FontWeight
+import androidx.tv.material3.Icon
+import com.streamvault.core.ui.design.BrowseColors
+import com.streamvault.core.ui.design.BrowseFocusSpec
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.tv.material3.Text
 import com.streamvault.feature.provider.R
 import com.streamvault.core.ui.interaction.mouseClickable
@@ -34,13 +43,16 @@ internal fun SourceTypeTabRow(
     sourceType: SourceType,
     isEditing: Boolean,
     onSelect: (SourceType) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    selectedFocusRequester: FocusRequester? = null
 ) {
+    val selectedFocusModifier = if (selectedFocusRequester != null) Modifier.focusRequester(selectedFocusRequester) else Modifier
     Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         if (!isEditing || sourceType == SourceType.XTREAM) {
             TabButton(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_xtream),
                 isSelected = sourceType == SourceType.XTREAM,
+                modifier = if (sourceType == SourceType.XTREAM) selectedFocusModifier else Modifier,
                 onClick = { if (!isEditing) onSelect(SourceType.XTREAM) }
             )
         }
@@ -48,6 +60,7 @@ internal fun SourceTypeTabRow(
             TabButton(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_stalker),
                 isSelected = sourceType == SourceType.STALKER,
+                modifier = if (sourceType == SourceType.STALKER) selectedFocusModifier else Modifier,
                 onClick = { if (!isEditing) onSelect(SourceType.STALKER) }
             )
         }
@@ -55,6 +68,7 @@ internal fun SourceTypeTabRow(
             TabButton(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_tab_url),
                 isSelected = sourceType == SourceType.M3U_URL,
+                modifier = if (sourceType == SourceType.M3U_URL) selectedFocusModifier else Modifier,
                 onClick = { if (!isEditing) onSelect(SourceType.M3U_URL) }
             )
         }
@@ -62,6 +76,7 @@ internal fun SourceTypeTabRow(
             TabButton(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_tab_file),
                 isSelected = sourceType == SourceType.M3U_FILE,
+                modifier = if (sourceType == SourceType.M3U_FILE) selectedFocusModifier else Modifier,
                 onClick = { if (!isEditing) onSelect(SourceType.M3U_FILE) }
             )
         }
@@ -69,6 +84,7 @@ internal fun SourceTypeTabRow(
             TabButton(
                 text = androidx.compose.ui.res.stringResource(R.string.setup_tab_jellyfin),
                 isSelected = sourceType == SourceType.JELLYFIN,
+                modifier = if (sourceType == SourceType.JELLYFIN) selectedFocusModifier else Modifier,
                 onClick = { if (!isEditing) onSelect(SourceType.JELLYFIN) }
             )
         }
@@ -76,19 +92,20 @@ internal fun SourceTypeTabRow(
 }
 
 @Composable
-private fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
+private fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     var isFocused by remember { mutableStateOf(false) }
     Surface(
         onClick = onClick,
-        modifier = Modifier.onFocusEvent { isFocused = it.hasFocus }.mouseClickable(onClick = onClick),
+        modifier = modifier.onFocusEvent { isFocused = it.hasFocus }.mouseClickable(onClick = onClick),
         shape = ClickableSurfaceDefaults.shape(androidx.compose.foundation.shape.RoundedCornerShape(10.dp)),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (isSelected) Primary.copy(alpha = 0.2f) else SurfaceColor,
-            focusedContainerColor = SurfaceHighlight
+            containerColor = if (isSelected) BrowseColors.SelectedContainer else SurfaceColor,
+            focusedContainerColor = if (isSelected) BrowseColors.SelectedContainer else SurfaceHighlight
         ),
+        // No resting stroke; the ring is the focus state. Selection is the tonal fill plus a check, never color alone.
         border = ClickableSurfaceDefaults.border(
             border = Border.None,
-            focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+            focusedBorder = Border(BorderStroke(BrowseFocusSpec.SelectableRingWidth, FocusBorder))
         )
     ) {
         Row(
@@ -96,10 +113,14 @@ private fun TabButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            if (isSelected) {
+                Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(16.dp), tint = BrowseColors.OnSelectedContainer)
+            }
             Text(
                 text = text,
                 style = MaterialTheme.typography.bodySmall,
-                color = if (isSelected) Primary else if (isFocused) TextPrimary else OnSurface
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                color = if (isSelected) BrowseColors.OnSelectedContainer else if (isFocused) TextPrimary else OnSurface
             )
         }
     }

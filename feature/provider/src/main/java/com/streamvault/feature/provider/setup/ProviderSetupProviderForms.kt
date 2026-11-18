@@ -34,6 +34,7 @@ import com.streamvault.domain.model.StalkerProtocolPreference
 @Composable
 internal fun ProviderFormContent(
     sourceType: SourceType,
+    firstFieldModifier: Modifier = Modifier,
     uiState: ProviderSetupState,
     pairingState: ProviderQrPairingState,
     name: String,
@@ -187,6 +188,7 @@ internal fun ProviderFormContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ProviderTextField(
+                modifier = firstFieldModifier,
                 value = name,
                 onValueChange = onNameChange,
                 placeholder = stringResource(R.string.setup_name_hint)

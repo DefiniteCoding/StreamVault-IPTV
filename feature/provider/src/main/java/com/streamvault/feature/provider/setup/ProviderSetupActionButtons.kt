@@ -22,6 +22,7 @@ import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.design.browse.FocusBorder
 import com.streamvault.core.ui.design.browse.OnBackground
+import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.browse.Primary
 import com.streamvault.core.ui.design.browse.SurfaceHighlight
 import com.streamvault.core.ui.design.browse.TextPrimary
@@ -75,7 +76,7 @@ private fun ProviderActionButton(
             containerColor = when {
                 isLoading -> SurfaceHighlight
                 isPrimary -> Primary
-                else -> BrowseColors.SurfaceAccent
+                else -> BrowseColors.ControlContainer
             },
             focusedContainerColor = when {
                 isLoading -> SurfaceHighlight
@@ -83,7 +84,8 @@ private fun ProviderActionButton(
                 else -> SurfaceHighlight
             }
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        // Ring plus scale: a focused primary keeps its brand fill (rule 16), so the fill cannot carry focus.
+        scale = ClickableSurfaceDefaults.scale(focusedScale = BrowseFocusSpec.FocusedScale),
         glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow.None),
         border = ClickableSurfaceDefaults.border(
             border = Border.None,
