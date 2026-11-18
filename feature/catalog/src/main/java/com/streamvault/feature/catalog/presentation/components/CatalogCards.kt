@@ -62,7 +62,7 @@ import com.streamvault.feature.catalog.presentation.components.MoviePosterCard
 import com.streamvault.feature.catalog.presentation.components.SeriesPosterCard
 import com.streamvault.core.ui.components.shell.ArtworkPillAlpha
 import com.streamvault.core.ui.components.shell.StatusPill
-import com.streamvault.core.ui.components.shell.readableInkOn
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.feature.catalog.presentation.components.formatVodRatingLabel
 import com.streamvault.domain.playback.archivePlaybackCapability
 import com.streamvault.core.ui.design.browse.AccentAmber
@@ -328,7 +328,7 @@ fun ChannelCard(
                 StatusPill(
                     label = stringResource(R.string.card_live_badge),
                     containerColor = AccentRed,
-                    contentColor = readableInkOn(AccentRed),
+                    contentColor = contentOnColor(AccentRed),
                     cornerRadius = 4.dp,
                     horizontalPadding = 6.dp,
                     verticalPadding = 2.dp,

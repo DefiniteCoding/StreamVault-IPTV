@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.compositeOver
 import com.streamvault.core.ui.components.NON_TEXT_CONTRAST
 import com.streamvault.core.ui.components.TEXT_CONTRAST
 import com.streamvault.core.ui.components.checkEveryBrowsePalette
+import com.streamvault.core.ui.design.contentOnColor
 import org.junit.Test
 
 /**
@@ -44,7 +45,7 @@ class HomeSurfacesContrastTest {
             val catchUp = browse.brand.copy(alpha = ArtworkPillAlpha).compositeOver(artwork)
             expect("CATCH UP text over $where artwork", browse.onPrimary, catchUp, TEXT_CONTRAST)
             val live = browse.live.copy(alpha = ArtworkPillAlpha).compositeOver(artwork)
-            expect("LIVE text over $where artwork", readableInkOn(browse.live), live, TEXT_CONTRAST)
+            expect("LIVE text over $where artwork", contentOnColor(browse.live), live, TEXT_CONTRAST)
         }
     }
 

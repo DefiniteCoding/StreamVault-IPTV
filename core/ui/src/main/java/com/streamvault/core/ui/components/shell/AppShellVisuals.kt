@@ -77,7 +77,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -891,10 +890,6 @@ internal fun sectionActionColors(palette: AppPalette): PillColors = PillColors(
 // vintage brand fill enough to drop the ink below 4.5:1.
 const val ArtworkPillAlpha = 1f
 
-/** Black or white, whichever has the higher WCAG contrast on [container]. */
-fun readableInkOn(container: Color): Color =
-    if (container.luminance() > 0.179f) Color.Black else Color.White
-
 @Composable
 fun StatusPill(
     label: String,
@@ -938,7 +933,7 @@ fun StatusPill(
 /** What a badge is drawn on. Over artwork the ink stays bright in every theme; on a surface it follows the palette. */
 enum class BadgeTone { OverArtwork, OnSurface }
 
-// Over pure white artwork this keeps white text above 4.5:1 and the amber star above 3:1 with room to spare;
+// The one scrim alpha for text drawn over artwork or video (project rule 9 asks for at least 0.55). Over pure white artwork this keeps white text above 4.5:1 and the amber star above 3:1 with room to spare;
 // BadgePaletteContrastTest holds both. Alpha does not change the fill cost, so the margin is free on the TV GPU.
 const val BadgeScrimAlpha = 0.6f
 
