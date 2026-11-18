@@ -279,7 +279,6 @@ private fun SeriesDetailContent(
                     watchlisted = traktWatchlisted,
                     busy = traktWatchlistBusy,
                     onClick = onToggleTraktWatchlist,
-                    tertiary = true,
                 )
             }
             item {
@@ -289,14 +288,12 @@ private fun SeriesDetailContent(
                     busy = traktRatingBusy,
                     rating = traktUserRating,
                     onClick = onRateOnTrakt,
-                    tertiary = true,
                 )
             }
             item {
                 TraktCustomListActionButton(
                     item = series.traktShowListItem(),
                     additionalItems = series.traktNestedListItems(),
-                    tertiary = true,
                 )
             }
         }
@@ -707,7 +704,7 @@ private fun SeriesVersionSelector(
     }
 }
 
-/** Primary Play/Resume, secondary My list (Copy URL and Cast off TV only), then tertiary Trakt actions. */
+/** Primary Play/Resume, secondary My list (Copy URL and Cast off TV only), then secondary Trakt actions. */
 @Composable
 private fun SeriesDetailActions(
     series: Series,

@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -37,7 +36,6 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
@@ -105,8 +103,7 @@ fun DetailActionButton(
     primary: Boolean = false,
     enabled: Boolean = true,
     icon: ImageVector? = if (primary) Icons.Default.PlayArrow else null,
-    compact: Boolean = false,
-    tertiary: Boolean = false
+    compact: Boolean = false
 ) {
     TvButton(
         onClick = onClick,
@@ -120,19 +117,6 @@ fun DetailActionButton(
                 contentColor = AppColors.OnPrimary,
                 focusedContainerColor = AppColors.Brand,
                 focusedContentColor = AppColors.OnPrimary
-            )
-        } else if (tertiary) {
-            // These sit over hero artwork of any brightness, so the label cannot rely on the page background (dark
-            // ink vanished over dark art in the light theme). The pill carries a black scrim with white ink,
-            // which holds 4.5:1 even over white art, and keeps full ink at rest so it reads as active. Disabled
-            // drops to the muted over-glass ink; focus swaps the scrim for the accent fill together with the ring.
-            ButtonDefaults.colors(
-                containerColor = Color.Black.copy(alpha = BadgeScrimAlpha),
-                contentColor = Color.White,
-                focusedContainerColor = AppColors.SurfaceAccent,
-                focusedContentColor = AppColors.TextPrimary,
-                disabledContainerColor = Color.Black.copy(alpha = BadgeScrimAlpha),
-                disabledContentColor = AppColors.OnGlassOverVideo
             )
         } else {
             secondaryButtonColors()
