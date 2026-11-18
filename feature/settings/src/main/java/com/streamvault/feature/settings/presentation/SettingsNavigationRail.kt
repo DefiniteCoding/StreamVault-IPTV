@@ -58,15 +58,22 @@ internal val SettingsCategory.icon: ImageVector get() = when (this) {
  * otherwise leave the selected entry off screen. Scrolls once, on entry, and only when it is not visible.
  */
 @Composable
-private fun rememberRailListState(selectedCategory: Int, headerItemCount: Int): LazyListState {
+private fun rememberRailListState(
+    selectedCategory: Int,
+    headerItemCount: Int,
+    contentHasFocus: Boolean,
+): LazyListState {
     val listState = rememberLazyListState()
-    LaunchedEffect(Unit) {
+    suspend fun scrollSelectedIntoView() {
         val index = SettingsCategory.entries.indexOfFirst { it.legacyId == selectedCategory } + headerItemCount
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.isNotEmpty() }.first { it }
         if (listState.layoutInfo.visibleItemsInfo.none { it.index == index }) {
             listState.scrollToItem((index - ENTRIES_ABOVE_SELECTED_ON_ENTRY).coerceAtLeast(0))
         }
     }
+    LaunchedEffect(Unit) { scrollSelectedIntoView() }
+    // Left from the content targets the selected entry, which must be composed to take focus.
+    LaunchedEffect(contentHasFocus) { if (contentHasFocus) scrollSelectedIntoView() }
     return listState
 }
 
@@ -78,6 +85,7 @@ public fun SettingsNavigationRail(
     focusRequester: FocusRequester,
     requestEntryFocus: Boolean = false,
     onEntryFocusRequested: () -> Unit = {},
+    contentHasFocus: Boolean = false,
     onCategorySelected: (Int) -> Unit,
     onBack: () -> Unit = {},
     onSearch: () -> Unit = {},
@@ -136,7 +144,7 @@ public fun SettingsNavigationRail(
                 searchModifier = searchModifier,
             )
             LazyColumn(
-                state = rememberRailListState(selectedCategory, headerItemCount = 0),
+                state = rememberRailListState(selectedCategory, headerItemCount = 0, contentHasFocus = contentHasFocus),
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 contentPadding = PaddingValues(top = SettingsDesignTokens.space12, bottom = SettingsDesignTokens.space24),
                 verticalArrangement = Arrangement.spacedBy(SettingsDesignTokens.space4),
@@ -146,7 +154,7 @@ public fun SettingsNavigationRail(
         }
     } else {
         LazyColumn(
-            state = rememberRailListState(selectedCategory, headerItemCount = 1),
+            state = rememberRailListState(selectedCategory, headerItemCount = 1, contentHasFocus = contentHasFocus),
             modifier = Modifier.width(SettingsDesignTokens.railWidth).fillMaxHeight().background(colors.canvas),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 20.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)

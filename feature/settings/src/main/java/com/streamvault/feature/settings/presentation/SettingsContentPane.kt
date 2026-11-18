@@ -72,6 +72,7 @@ public fun SettingsContentPane(
     onPageChanged: (SettingsPage?) -> Unit = {},
     categorySelectionId: Long = 0L,
     railFocusRequester: FocusRequester? = null,
+    onContentFocusChanged: (Boolean) -> Unit = {},
     enterContentRequested: Boolean = false,
     onContentEntered: () -> Unit = {},
     openOpenSubtitlesSignIn: Boolean = false,
@@ -207,7 +208,7 @@ public fun SettingsContentPane(
                     // Left leaving the content goes to the selected sidebar item, not whichever item is level with the focus.
                     .then(
                         if (!compact && railFocusRequester != null) {
-                            Modifier.exitLeftTo(railFocusRequester)
+                            Modifier.exitLeftTo(railFocusRequester, onContentFocusChanged)
                         } else Modifier
                     )
                     .then(
@@ -531,8 +532,9 @@ private val SettingsScrollPositionsSaver = listSaver<MutableMap<String, Settings
 
 /** Focus group whose Left exit goes to [target]; navigation inside the group is unchanged. */
 @OptIn(ExperimentalComposeUiApi::class)
-private fun Modifier.exitLeftTo(target: FocusRequester): Modifier = this
+private fun Modifier.exitLeftTo(target: FocusRequester, onFocusChanged: (Boolean) -> Unit): Modifier = this
     .focusProperties {
         exit = { direction -> if (direction == FocusDirection.Left) target else FocusRequester.Default }
     }
+    .onFocusChanged { onFocusChanged(it.hasFocus) }
     .focusGroup()

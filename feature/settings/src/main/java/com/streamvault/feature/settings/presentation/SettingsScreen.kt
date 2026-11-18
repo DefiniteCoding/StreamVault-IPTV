@@ -111,6 +111,7 @@ public fun SettingsScreen(
     var categorySelectionId by rememberSaveable { mutableLongStateOf(0L) }
     var enterContentRequested by rememberSaveable { mutableStateOf(false) }
     var railEntryFocusHandled by rememberSaveable { mutableStateOf(false) }
+    var contentHasFocus by remember { mutableStateOf(false) }
     var currentSettingsPage by remember { mutableStateOf<SettingsPage?>(null) }
     var openOpenSubtitlesSignInPending by rememberSaveable {
         mutableStateOf(openOpenSubtitlesSignIn)
@@ -624,6 +625,7 @@ public fun SettingsScreen(
                     focusRequester = settingsNavFocusRequester,
                     requestEntryFocus = !railEntryFocusHandled,
                     onEntryFocusRequested = { railEntryFocusHandled = true },
+                    contentHasFocus = contentHasFocus,
                     onCategorySelected = {
                         dialogState.selectedCategory = it
                         categorySelectionId += 1L
@@ -729,6 +731,7 @@ public fun SettingsScreen(
                     onPageChanged = { currentSettingsPage = it },
                     categorySelectionId = categorySelectionId,
                     railFocusRequester = settingsNavFocusRequester,
+                    onContentFocusChanged = { contentHasFocus = it },
                     enterContentRequested = enterContentRequested,
                     onContentEntered = { enterContentRequested = false },
                 )
