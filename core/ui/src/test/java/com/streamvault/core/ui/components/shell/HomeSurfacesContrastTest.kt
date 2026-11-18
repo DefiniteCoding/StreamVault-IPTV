@@ -49,6 +49,15 @@ class HomeSurfacesContrastTest {
         }
     }
 
+    // The detail pages draw this pill over the backdrop, so it uses the same near-solid fill as the channel card pills.
+    @Test
+    fun `detail rating pill is readable on any artwork`() = checkEveryBrowsePalette { browse ->
+        ARTWORK_EXTREMES.forEach { (where, artwork) ->
+            val pill = browse.warning.copy(alpha = ArtworkPillAlpha).compositeOver(artwork)
+            expect("rating text over $where artwork", contentOnColor(browse.warning), pill, TEXT_CONTRAST)
+        }
+    }
+
     @Test
     fun `update notice and warning card text is readable on the panel`() = checkEveryBrowsePalette { browse ->
         expect("notice and warning title on panel", browse.textPrimary, browse.surfaceElevated, TEXT_CONTRAST)

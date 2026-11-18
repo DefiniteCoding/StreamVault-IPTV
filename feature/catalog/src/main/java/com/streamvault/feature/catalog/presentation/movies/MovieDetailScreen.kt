@@ -69,6 +69,7 @@ import com.streamvault.feature.catalog.presentation.time.formatPositionMs
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.core.ui.components.shell.ContentMetadataStrip
+import com.streamvault.core.ui.components.shell.ArtworkPillAlpha
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.contentOnColor
@@ -502,7 +503,8 @@ private fun MovieDetailHeroText(
                 StatusPill(
                     label = formatVodRatingLabel(it),
                     containerColor = AppColors.Warning,
-                    contentColor = contentOnColor(AppColors.Warning)
+                    contentColor = contentOnColor(AppColors.Warning),
+                    containerAlpha = ArtworkPillAlpha
                 )
             }
             movie.year?.takeIf { it.isNotBlank() }?.let {
