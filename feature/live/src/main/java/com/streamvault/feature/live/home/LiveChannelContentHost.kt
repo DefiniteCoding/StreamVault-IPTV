@@ -1,23 +1,22 @@
 package com.streamvault.feature.live.home
 
-import com.streamvault.core.ui.design.BrowseColors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
-import com.streamvault.core.ui.design.browse.OnBackground
-import com.streamvault.core.ui.design.browse.OnSurfaceDim
+import com.streamvault.core.ui.components.shell.AppMessageState
+import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.LocalAppSpacing
 
 @Composable
 fun LiveChannelContentHost(
@@ -35,73 +34,46 @@ fun LiveChannelContentHost(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when {
-            isLoading -> {
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    CircularProgressIndicator(color = BrowseColors.Brand)
-                    Text(
-                        text = loadingLabel,
-                        color = BrowseColors.TextSecondary,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
+            isLoading -> HomeLoadingPane(message = loadingLabel)
 
-            errorMessage != null -> {
-                Text(
-                    text = errorMessage,
-                    modifier = Modifier.align(Alignment.Center),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = OnBackground
-                )
-            }
+            // The view model already supplies the full sentence, so it is the card title.
+            errorMessage != null -> StateCard(title = errorMessage, subtitle = null)
 
-            !hasChannels -> {
-                Column(
-                    modifier = Modifier.align(Alignment.Center),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    if (isBlockedCategorySearch) {
-                        Icon(
-                            imageVector = Icons.Filled.Lock,
-                            contentDescription = null,
-                            tint = OnBackground,
-                            modifier = Modifier.size(34.dp)
-                        )
-                        Text(
-                            text = lockedLabel,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = OnBackground
-                        )
-                    } else {
-                        Text(
-                            text = noChannelsLabel,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = OnBackground
-                        )
-                    }
-                    Text(
-                        text = noChannelsSubtitle,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = OnSurfaceDim
-                    )
-                    if (!isBlockedCategorySearch) {
-                        additionalEmptyHint?.let { hint ->
-                            Text(
-                                text = hint,
-                                style = MaterialTheme.typography.bodySmall,
-                                color = OnSurfaceDim
-                            )
-                        }
-                    }
-                }
-            }
+            !hasChannels && isBlockedCategorySearch -> StateCard(
+                title = lockedLabel,
+                subtitle = noChannelsSubtitle,
+                showLockIcon = true
+            )
+
+            !hasChannels -> StateCard(
+                title = noChannelsLabel,
+                subtitle = listOfNotNull(noChannelsSubtitle, additionalEmptyHint).joinToString("\n")
+            )
 
             else -> channelContent()
         }
+    }
+}
+
+@Composable
+private fun BoxScope.StateCard(
+    title: String,
+    subtitle: String?,
+    showLockIcon: Boolean = false
+) {
+    Column(
+        modifier = Modifier.align(Alignment.Center).fillMaxWidth(0.8f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.sm)
+    ) {
+        if (showLockIcon) {
+            Icon(
+                imageVector = Icons.Filled.Lock,
+                contentDescription = null,
+                tint = AppColors.TextPrimary,
+                modifier = Modifier.size(34.dp)
+            )
+        }
+        AppMessageState(title = title, subtitle = subtitle)
     }
 }

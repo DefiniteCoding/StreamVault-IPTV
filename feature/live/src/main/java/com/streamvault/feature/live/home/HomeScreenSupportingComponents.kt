@@ -1,6 +1,7 @@
 package com.streamvault.feature.live.home
 
 import com.streamvault.core.ui.design.BrowseColors
+import com.streamvault.core.ui.design.LocalAppSpacing
 import android.app.Activity
 import android.view.WindowManager
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +32,7 @@ fun HomeLoadingPane(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+            verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.md)
         ) {
             androidx.compose.material3.CircularProgressIndicator(color = BrowseColors.Brand)
             Text(

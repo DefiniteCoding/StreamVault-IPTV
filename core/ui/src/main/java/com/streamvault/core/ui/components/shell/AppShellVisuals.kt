@@ -1042,7 +1042,7 @@ private fun BadgeText(text: String, style: TextStyle, color: Color) {
 @Composable
 fun AppMessageState(
     title: String,
-    subtitle: String,
+    subtitle: String? = null,
     modifier: Modifier = Modifier,
     action: (@Composable () -> Unit)? = null,
     shape: RoundedCornerShape? = null,
@@ -1072,7 +1072,9 @@ fun AppMessageState(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(text = title, style = titleStyle, color = titleColor, textAlign = titleTextAlign, modifier = Modifier.fillMaxWidth())
-            Text(text = subtitle, style = subtitleStyle, color = subtitleColor, textAlign = subtitleTextAlign, modifier = Modifier.fillMaxWidth())
+            if (subtitle != null) {
+                Text(text = subtitle, style = subtitleStyle, color = subtitleColor, textAlign = subtitleTextAlign, modifier = Modifier.fillMaxWidth())
+            }
             if (action != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 action()
