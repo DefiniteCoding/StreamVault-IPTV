@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
+import com.streamvault.core.ui.design.initialFocusTarget
 import com.streamvault.domain.model.VodFeaturedMode
 import com.streamvault.feature.settings.R
 
@@ -22,7 +23,7 @@ internal fun VodFeaturedMode.labelRes(series: Boolean): Int = when (this) {
 @Composable
 internal fun FeaturedCardSettings(uiState: SettingsUiState, viewModel: SettingsViewModel, targetItemId: String? = null, targetFocusModifier: Modifier = Modifier) {
     var editing by rememberSaveable { mutableStateOf<Boolean?>(null) }
-    val initialFocus = com.streamvault.core.ui.design.rememberInitialFocusModifier(
+    val initialFocus = Modifier.initialFocusTarget(
         key = "featured-settings", enabled = targetItemId == null,
     )
     listOf(false, true).forEach { series ->

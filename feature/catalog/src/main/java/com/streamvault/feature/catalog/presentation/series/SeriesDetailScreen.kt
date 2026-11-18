@@ -4,7 +4,7 @@ import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.contentOnColor
-import com.streamvault.core.ui.design.rememberInitialFocusModifier
+import com.streamvault.core.ui.design.initialFocusTarget
 import com.streamvault.core.ui.design.selectableFocusBorder
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -263,7 +263,7 @@ private fun SeriesDetailContent(
         }
     }
     // Rule 17: initial focus goes to Play/Resume, or to the first control (My list) when there is nothing to play.
-    val initialFocusModifier = rememberInitialFocusModifier(
+    val initialFocusModifier = Modifier.initialFocusTarget(
         key = series.id,
         tag = "SeriesDetailScreen",
         target = if (resumeEpisode != null) "Play button" else "My list button"
@@ -715,12 +715,14 @@ private fun SeriesDetailActions(
     onCopyUrl: () -> Unit,
     onCast: () -> Unit,
     onToggleFavorite: () -> Unit,
-    initialFocusModifier: Modifier,
     traktActions: LazyListScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    initialFocusModifier: Modifier = Modifier,
     edgeGutterStart: Dp = 0.dp,
     edgeGutterEnd: Dp = 0.dp
 ) {
     FocusSafeLazyRow(
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically,
         edgeGutterStart = edgeGutterStart,

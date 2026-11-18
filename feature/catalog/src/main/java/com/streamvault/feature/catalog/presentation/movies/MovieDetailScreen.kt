@@ -74,7 +74,7 @@ import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
-import com.streamvault.core.ui.design.rememberInitialFocusModifier
+import com.streamvault.core.ui.design.initialFocusTarget
 import com.streamvault.domain.model.ExternalRatings
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.VodMovieVariant
@@ -217,7 +217,7 @@ private fun MovieDetailContent(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val isTelevisionDevice = rememberIsTelevisionDevice()
-    val playButtonModifier = rememberInitialFocusModifier(
+    val playButtonModifier = Modifier.initialFocusTarget(
         key = movie.id,
         tag = "MovieDetailScreen",
         target = "Play button"
@@ -485,9 +485,9 @@ private fun MovieDetailHeroText(
     onCast: () -> Unit,
     onToggleFavorite: () -> Unit,
     onSelectVariant: (Long) -> Unit,
-    playButtonModifier: Modifier,
     onPlayTrailer: () -> Unit,
     modifier: Modifier = Modifier,
+    playButtonModifier: Modifier = Modifier,
     edgeGutterStart: Dp = 0.dp,
     edgeGutterEnd: Dp = 0.dp
 ) {

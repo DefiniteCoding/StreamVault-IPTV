@@ -653,12 +653,13 @@ private fun DashboardProviderWarningCard(
 @Composable
 private fun DashboardUpdateCard(
     notice: DashboardUpdateNotice,
-    primaryButtonModifier: Modifier,
     onOpenSettings: () -> Unit,
-    onInstallUpdate: () -> Unit
+    onInstallUpdate: () -> Unit,
+    modifier: Modifier = Modifier,
+    primaryButtonModifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 48.dp, vertical = 6.dp),
         shape = BrowseShapes.Panel,

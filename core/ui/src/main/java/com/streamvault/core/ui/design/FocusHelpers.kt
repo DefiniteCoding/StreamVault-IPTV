@@ -59,12 +59,12 @@ fun FocusRequester.requestFocusSafely(tag: String = FOCUS_TAG, target: String = 
 }
 
 /**
- * Modifier for an initial-focus target inside a lazy list. Focus is requested only after the node's first
+ * Marks this node as the initial-focus target inside a lazy list. Focus is requested only after the node's first
  * placement: lazy items attach during layout, and a request before placement makes the enclosing list
  * scroll to a rect that is not final yet (the page jumped down on screen entry).
  */
 @Composable
-fun rememberInitialFocusModifier(
+fun Modifier.initialFocusTarget(
     key: Any?,
     enabled: Boolean = true,
     tag: String = FOCUS_TAG,
@@ -77,7 +77,7 @@ fun rememberInitialFocusModifier(
             focusRequester.requestFocusSafely(tag = tag, target = target)
         }
     }
-    return Modifier
+    return this
         .focusRequester(focusRequester)
         .onGloballyPositioned { placed = true }
 }
