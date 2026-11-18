@@ -1,9 +1,11 @@
 package com.streamvault.core.ui.design
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor as TouchContentColor
+import androidx.compose.material3.MaterialTheme as TouchMaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
@@ -23,16 +25,14 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
-import com.streamvault.core.ui.accessibility.LocalReducedEffects
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.LocalContentColor as TvContentColor
-import androidx.compose.material3.LocalContentColor as TouchContentColor
-import androidx.compose.material3.MaterialTheme as TouchMaterialTheme
+import androidx.tv.material3.MaterialTheme
+import com.streamvault.core.ui.accessibility.LocalReducedEffects
 
 /** Browsing surfaces deliberately do not change the settings or VOD player palette. */
 internal fun AppPalette.forBrowsing(): AppPalette = copy(

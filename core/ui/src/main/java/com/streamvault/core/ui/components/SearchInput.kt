@@ -1,13 +1,12 @@
 package com.streamvault.core.ui.components
 
-import com.streamvault.core.ui.design.AppPalette
-import com.streamvault.core.ui.design.BrowseFocusSpec
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,7 +33,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.foundation.focusable
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -53,11 +51,13 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.BrowseColors
+import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalBrowseVisuals
+import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.theme.FocusBorder
 import com.streamvault.core.ui.theme.SurfaceElevated

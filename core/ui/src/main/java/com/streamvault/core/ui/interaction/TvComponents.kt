@@ -1,6 +1,5 @@
 package com.streamvault.core.ui.interaction
 
-import com.streamvault.core.ui.design.selectableFocusBorder
 import android.view.KeyEvent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonBorder
@@ -35,7 +35,7 @@ import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalBrowseVisuals
 import com.streamvault.core.ui.design.focusRingButtonBorder
 import com.streamvault.core.ui.design.secondaryButtonColors
-import androidx.compose.ui.unit.dp
+import com.streamvault.core.ui.design.selectableFocusBorder
 
 /**
  * Drop-in replacement for TV Material3 Surface(onClick) that automatically adds
