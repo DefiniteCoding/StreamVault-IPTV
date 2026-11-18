@@ -355,6 +355,70 @@ private fun ColumnScope.PremiumDialogScrollableBody(
     }
 }
 
+// The full-width action rows sit on a larger tinted area than the footer buttons, so their rest tint is stronger.
+private const val ActionButtonDestructiveAlpha = 0.22f
+private const val FooterButtonDestructiveAlpha = 0.18f
+
+internal data class PremiumDialogButtonColors(
+    val container: Color,
+    val content: Color,
+    val focusedContainer: Color,
+    val focusedContent: Color,
+    val disabledContainer: Color,
+    val disabledContent: Color
+)
+
+/**
+ * Resolves the button colors for one dialog button from [palette], so the rules live in one place and can be
+ * checked against every theme without a composition. [browseVisuals] selects the browse inks.
+ */
+internal fun premiumDialogButtonColors(
+    palette: AppPalette,
+    browseVisuals: Boolean,
+    destructive: Boolean,
+    emphasized: Boolean,
+    destructiveRestAlpha: Float
+): PremiumDialogButtonColors {
+    val content = when {
+        destructive -> palette.textPrimary
+        emphasized -> if (browseVisuals) palette.onPrimary else Color.Black
+        else -> palette.textPrimary
+    }
+    return PremiumDialogButtonColors(
+        container = when {
+            destructive -> palette.live.copy(alpha = destructiveRestAlpha)
+            emphasized -> palette.brand
+            else -> palette.controlContainer
+        },
+        content = content,
+        // A focused primary stays filled brand; the ring carries the focus state.
+        focusedContainer = when {
+            destructive -> palette.live
+            emphasized -> palette.brand
+            else -> palette.surfaceAccent
+        },
+        focusedContent = when {
+            emphasized -> content
+            browseVisuals -> if (destructive) contentOnColor(palette.live) else palette.textPrimary
+            else -> palette.focus
+        },
+        // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
+        disabledContainer = palette.surfaceAccent,
+        // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
+        disabledContent = if (browseVisuals) palette.textTertiary else palette.textSecondary
+    )
+}
+
+@Composable
+private fun PremiumDialogButtonColors.toButtonColors() = ButtonDefaults.colors(
+    containerColor = container,
+    contentColor = content,
+    focusedContainerColor = focusedContainer,
+    focusedContentColor = focusedContent,
+    disabledContainerColor = disabledContainer,
+    disabledContentColor = disabledContent
+)
+
 @Composable
 fun PremiumDialogActionButton(
     label: String,
@@ -365,44 +429,20 @@ fun PremiumDialogActionButton(
     emphasized: Boolean = false
 ) {
     val canInteract = LocalDialogCanInteract.current
-    val containerColor = when {
-        destructive -> dialogPalette.live.copy(alpha = 0.22f)
-        emphasized -> dialogPalette.brand
-        else -> dialogPalette.controlContainer
-    }
-    val contentColor = when {
-        destructive -> dialogPalette.textPrimary
-        emphasized -> if (LocalBrowseVisuals.current) dialogPalette.onPrimary else Color.Black
-        else -> dialogPalette.textPrimary
-    }
+    val buttonColors = premiumDialogButtonColors(
+        palette = dialogPalette,
+        browseVisuals = LocalBrowseVisuals.current,
+        destructive = destructive,
+        emphasized = emphasized,
+        destructiveRestAlpha = ActionButtonDestructiveAlpha
+    )
 
     Button(
         onClick = { if (canInteract) onClick() },
         enabled = enabled,
         modifier = modifier.fillMaxWidth().mouseClickable(enabled = enabled, onClick = { if (canInteract) onClick() }),
         shape = if (LocalBrowseVisuals.current) ButtonDefaults.shape(BrowseShapes.Control) else ButtonDefaults.shape(),
-        colors = ButtonDefaults.colors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            // A focused primary stays filled brand; the ring carries the focus state.
-            focusedContainerColor = when {
-                destructive -> dialogPalette.live
-                emphasized -> dialogPalette.brand
-                else -> dialogPalette.surfaceAccent
-            },
-            focusedContentColor = when {
-                emphasized -> contentColor
-                LocalBrowseVisuals.current -> when {
-                    destructive -> contentOnColor(dialogPalette.live)
-                    else -> dialogPalette.textPrimary
-                }
-                else -> dialogPalette.focus
-            },
-            // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
-            disabledContainerColor = dialogPalette.surfaceAccent,
-            // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
-            disabledContentColor = if (LocalBrowseVisuals.current) dialogPalette.textTertiary else dialogPalette.textSecondary
-        ),
+        colors = buttonColors.toButtonColors(),
         border = ButtonDefaults.border(
             focusedBorder = androidx.tv.material3.Border(
                 border = BorderStroke(if (LocalBrowseVisuals.current) BrowseFocusSpec.SelectableRingWidth else FocusSpec.BorderWidth, dialogPalette.focus)
@@ -427,40 +467,20 @@ fun PremiumDialogFooterButton(
     emphasized: Boolean = false
 ) {
     val canInteract = LocalDialogCanInteract.current
-    val containerColor = when {
-        destructive -> dialogPalette.live.copy(alpha = 0.18f)
-        emphasized -> dialogPalette.brand
-        else -> dialogPalette.controlContainer
-    }
-    val contentColor = if (emphasized) { if (LocalBrowseVisuals.current) dialogPalette.onPrimary else Color.Black } else dialogPalette.textPrimary
+    val buttonColors = premiumDialogButtonColors(
+        palette = dialogPalette,
+        browseVisuals = LocalBrowseVisuals.current,
+        destructive = destructive,
+        emphasized = emphasized,
+        destructiveRestAlpha = FooterButtonDestructiveAlpha
+    )
 
     Button(
         onClick = { if (canInteract) onClick() },
         enabled = enabled,
         modifier = modifier.mouseClickable(enabled = enabled, onClick = { if (canInteract) onClick() }),
         shape = if (LocalBrowseVisuals.current) ButtonDefaults.shape(BrowseShapes.Control) else ButtonDefaults.shape(),
-        colors = ButtonDefaults.colors(
-            containerColor = containerColor,
-            contentColor = contentColor,
-            // A focused primary stays filled brand; the ring carries the focus state.
-            focusedContainerColor = when {
-                destructive -> dialogPalette.live
-                emphasized -> dialogPalette.brand
-                else -> dialogPalette.surfaceAccent
-            },
-            focusedContentColor = when {
-                emphasized -> contentColor
-                LocalBrowseVisuals.current -> when {
-                    destructive -> contentOnColor(dialogPalette.live)
-                    else -> dialogPalette.textPrimary
-                }
-                else -> dialogPalette.focus
-            },
-            // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the dialog.
-            disabledContainerColor = dialogPalette.surfaceAccent,
-            // The browse palette already lifts textTertiary toward textSecondary; the raw app palette's is too dim.
-            disabledContentColor = if (LocalBrowseVisuals.current) dialogPalette.textTertiary else dialogPalette.textSecondary
-        ),
+        colors = buttonColors.toButtonColors(),
         border = ButtonDefaults.border(
             focusedBorder = androidx.tv.material3.Border(
                 border = BorderStroke(if (LocalBrowseVisuals.current) BrowseFocusSpec.SelectableRingWidth else FocusSpec.BorderWidth, dialogPalette.focus)
