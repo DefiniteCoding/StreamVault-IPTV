@@ -32,11 +32,11 @@ internal fun dialogButtonColors(palette: AppPalette, primary: Boolean): PillColo
         )
     } else {
         PillColors(
-            restContainer = palette.surfaceElevated,
+            restContainer = palette.controlContainer,
             restContent = palette.textPrimary,
-            selectedContainer = palette.surfaceElevated,
+            selectedContainer = palette.controlContainer,
             selectedContent = palette.textPrimary,
-            focusedContainer = palette.surfaceElevated,
+            focusedContainer = palette.controlContainer,
             focusedContent = palette.textPrimary,
             ring = palette.focus
         )
@@ -44,7 +44,7 @@ internal fun dialogButtonColors(palette: AppPalette, primary: Boolean): PillColo
 
 /**
  * Dialog action. A dialog has one [primary] button (filled brand) and any number of secondary ones (filled
- * surfaceElevated), per project rules 12 and 13. Set [focusRequester] on the button that takes initial focus.
+ * controlContainer), per project rules 12 and 13. Set [focusRequester] on the button that takes initial focus.
  */
 @Composable
 fun AppDialogButton(

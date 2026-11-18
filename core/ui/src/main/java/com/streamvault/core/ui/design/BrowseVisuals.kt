@@ -58,7 +58,7 @@ fun browsePrimaryButtonColors() = ButtonDefaults.colors(
     focusedContainerColor = BrowseColors.Brand,
     focusedContentColor = BrowseColors.OnPrimary,
     // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the surface.
-    disabledContainerColor = BrowseColors.SurfaceAccent,
+    disabledContainerColor = BrowseColors.ControlContainer,
     disabledContentColor = BrowseColors.TextTertiary,
 )
 
@@ -76,25 +76,26 @@ fun selectableSurfaceColors(selected: Boolean) = ClickableSurfaceDefaults.colors
 )
 
 /**
- * Secondary button: a tonal accent fill with no stroke. A neutral grey fill read as disabled next to the
- * primary, so the fill carries the theme accent; the focus ring and scale carry the focus state.
+ * Secondary button: the theme-tinted control fill with no stroke, the same fill inputs and chips rest on. It is the one
+ * secondary fill (rule 13); surfaceElevated is too close to the surface to read as a button, and surfaceAccent swings
+ * from 1.29:1 to 1.94:1 across themes. The focus ring and scale carry the focus state.
  */
 @Composable
 fun secondaryButtonColors() = ButtonDefaults.colors(
-    containerColor = BrowseColors.SurfaceAccent,
+    containerColor = BrowseColors.ControlContainer,
     contentColor = BrowseColors.TextPrimary,
-    focusedContainerColor = BrowseColors.SurfaceAccent,
+    focusedContainerColor = BrowseColors.ControlContainer,
     focusedContentColor = BrowseColors.TextPrimary,
-    disabledContainerColor = BrowseColors.SurfaceAccent,
+    disabledContainerColor = BrowseColors.ControlContainer,
     disabledContentColor = BrowseColors.TextTertiary,
 )
 
 /** Secondary clickable surface: same look as [secondaryButtonColors] for Surface-based controls. */
 @Composable
 fun secondarySurfaceColors() = ClickableSurfaceDefaults.colors(
-    containerColor = BrowseColors.SurfaceAccent,
+    containerColor = BrowseColors.ControlContainer,
     contentColor = BrowseColors.TextPrimary,
-    focusedContainerColor = BrowseColors.SurfaceAccent,
+    focusedContainerColor = BrowseColors.ControlContainer,
     focusedContentColor = BrowseColors.TextPrimary,
 )
 

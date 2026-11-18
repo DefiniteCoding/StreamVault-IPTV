@@ -35,11 +35,25 @@ class ActionButtonContrastTest {
         expect("primary fill against panel", primary.restContainer, browse.surface, NON_TEXT_CONTRAST)
     }
 
+    // The secondary has no stroke, so its fill is the only thing marking it as a button: the input floor applies.
+    @Test
+    fun `secondary fill and its focus ring stand out from the panel`() = checkEveryBrowsePalette { browse ->
+        val secondary = dialogButtonColors(browse, primary = false)
+        val floor = if (browse.isLight) LIGHT_CONTROL_FLOOR else DARK_CONTROL_FLOOR
+        expect("secondary fill against panel", secondary.restContainer, browse.surface, floor)
+        expect("focus ring against secondary fill", secondary.ring, secondary.focusedContainer, NON_TEXT_CONTRAST)
+    }
+
     // Rule 15: the focused primary must not look like a resting secondary, and the other way round.
     @Test
     fun `primary and secondary fills are distinguishable`() = checkEveryBrowsePalette { browse ->
         val primary = dialogButtonColors(browse, primary = true)
         val secondary = dialogButtonColors(browse, primary = false)
         expect("primary fill against secondary fill", primary.restContainer, secondary.restContainer, 1.5f)
+    }
+
+    private companion object {
+        const val DARK_CONTROL_FLOOR = 1.5f
+        const val LIGHT_CONTROL_FLOOR = 1.3f
     }
 }
