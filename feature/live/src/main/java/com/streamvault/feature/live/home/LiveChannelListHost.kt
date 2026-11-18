@@ -3,7 +3,6 @@ package com.streamvault.feature.live.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.streamvault.core.ui.design.FocusSafeLazyColumn
 import com.streamvault.domain.model.Channel
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -112,7 +112,7 @@ fun LiveChannelListHost(
         onDispose { onVisibleChannelWindowChanged(emptyList(), null) }
     }
 
-    LazyColumn(
+    FocusSafeLazyColumn(
         state = channelListState,
         modifier = modifier
             .fillMaxSize()

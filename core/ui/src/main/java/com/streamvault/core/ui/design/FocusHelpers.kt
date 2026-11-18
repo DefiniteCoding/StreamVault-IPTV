@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -224,6 +226,102 @@ fun FocusSafeLazyRow(
         content = content
     )
 }
+
+/** Height of the fade that tells the viewer a column continues past the top or bottom edge. */
+val MoreContentFadeHeight = 32.dp
+
+/**
+ * A [LazyColumn] for lists of focusable rows, with the two fixes a vertical list needs on TV:
+ *  - The first and last row keep their focus ring: [FocusOverflowPadding] is added above and below, because a
+ *    scrolling list clips along its scroll axis.
+ *  - While more rows exist past an edge, the list fades out over [fadeHeight] at that edge instead of cutting a row
+ *    in half. The focused row is scrolled clear of the fade zone, so the fade never covers the row being acted on.
+ *
+ * The fade is an offscreen mask, used only while the list can scroll. Pass a [fadeHeight] of 0 to skip it, with no
+ * modifier and no offscreen layer.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FocusSafeLazyColumn(
+    modifier: Modifier = Modifier,
+    state: LazyListState = rememberLazyListState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    fadeHeight: Dp = MoreContentFadeHeight,
+    content: LazyListScope.() -> Unit
+) {
+    val direction = LocalLayoutDirection.current
+    val fadePx = with(LocalDensity.current) { fadeHeight.toPx() }
+    val bringIntoViewSpec = remember(fadePx) { ClearOfFadeBringIntoViewSpec(fadePx) }
+    CompositionLocalProvider(LocalBringIntoViewSpec provides bringIntoViewSpec) {
+        LazyColumn(
+            modifier = modifier.then(
+                if (fadeHeight > 0.dp) Modifier.fadeWhenMoreContentVertically(state, fadeHeight) else Modifier
+            ),
+            state = state,
+            contentPadding = PaddingValues(
+                start = contentPadding.calculateLeftPadding(direction),
+                top = contentPadding.calculateTopPadding() + FocusOverflowPadding,
+                end = contentPadding.calculateRightPadding(direction),
+                bottom = contentPadding.calculateBottomPadding() + FocusOverflowPadding
+            ),
+            verticalArrangement = verticalArrangement,
+            content = content
+        )
+    }
+}
+
+/**
+ * Scrolls only when the focused row enters the fade zone at the top or bottom, and then just far enough to leave
+ * it. At the very start or end of the list there is nothing to scroll, and no fade is drawn there either.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+private class ClearOfFadeBringIntoViewSpec(private val fadePx: Float) : BringIntoViewSpec {
+    override fun calculateScrollDistance(offset: Float, size: Float, containerSize: Float): Float {
+        val zoneStart = fadePx
+        val zoneEnd = containerSize - fadePx
+        return when {
+            size > zoneEnd - zoneStart -> offset - zoneStart
+            offset < zoneStart -> offset - zoneStart
+            offset + size > zoneEnd -> offset + size - zoneEnd
+            else -> 0f
+        }
+    }
+}
+
+/**
+ * Masks the column to transparent over [fadeHeight] at each edge that has more items behind it. State is read in
+ * the draw phase, so scrolling never recomposes. Without more content nothing is masked and the layer is not
+ * offscreen.
+ */
+internal fun Modifier.fadeWhenMoreContentVertically(state: ScrollableState, fadeHeight: Dp): Modifier = this
+    .graphicsLayer {
+        compositingStrategy =
+            if (state.canScrollBackward || state.canScrollForward) CompositingStrategy.Offscreen
+            else CompositingStrategy.Auto
+    }
+    .drawWithContent {
+        drawContent()
+        val height = fadeHeight.toPx()
+        if (state.canScrollBackward) {
+            drawRect(
+                brush = Brush.verticalGradient(0f to Color.Transparent, 1f to Color.Black, startY = 0f, endY = height),
+                size = Size(size.width, height),
+                blendMode = BlendMode.DstIn
+            )
+        }
+        if (state.canScrollForward) {
+            drawRect(
+                brush = Brush.verticalGradient(
+                    0f to Color.Black, 1f to Color.Transparent,
+                    startY = size.height - height, endY = size.height
+                ),
+                topLeft = Offset(0f, size.height - height),
+                size = Size(size.width, height),
+                blendMode = BlendMode.DstIn
+            )
+        }
+    }
 
 /**
  * Grows the node by [start], [end] and [vertical] on each side while reporting its original size, so the room
