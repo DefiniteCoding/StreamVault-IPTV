@@ -10,7 +10,7 @@ data class AppPalette(
     val surfaceElevated: Color,
     val surfaceEmphasis: Color,
     val surfaceAccent: Color,
-    /** Resting fill of text inputs and secondary controls, tinted to the theme. At least 1.5:1 against canvas and surface in dark themes, 1.3:1 in light ones, since inputs have no stroke. */
+    /** Resting fill of secondary buttons and chips, tinted to the theme. At least 1.5:1 against canvas and surface in dark themes, 1.3:1 in light ones, since they have no stroke. Text inputs derive a stronger 3:1 fill from it, see restInputFieldColors. */
     val controlContainer: Color,
     /** Opaque tonal fill of a selected chip or row. It keeps this fill while focused, so selection never reads as a focus change. */
     val selectedContainer: Color,

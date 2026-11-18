@@ -38,6 +38,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -57,6 +59,7 @@ import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalBrowseVisuals
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.theme.FocusBorder
@@ -301,13 +304,48 @@ fun inputFieldColors(palette: AppPalette, focused: Boolean): InputFieldColors =
             cursor = palette.onSelectedContainer
         )
     } else {
-        InputFieldColors(
-            container = palette.controlContainer,
-            text = palette.textPrimary,
-            placeholder = palette.textSecondary,
-            icon = palette.textSecondary,
-            cursor = palette.brand
-        )
+        restInputFieldColors(palette)
     }
+
+private const val INPUT_FILL_CONTRAST = 3f
+private const val INPUT_VALUE_CONTRAST = 5f
+private const val INPUT_PLACEHOLDER_CONTRAST = 4.5f
+private const val SHADE_STEP = 0.01f
+
+// An input has no stroke at rest (rule 14), so its fill alone marks it and holds 3:1 (rule 7) against the canvas and
+// the surface it sits on. controlContainer stays the lighter fill of buttons and chips, which carry a label.
+// Ink is then pulled toward the strongest ink the fill allows, because textSecondary falls under 4.5:1 on it.
+internal fun restInputFieldColors(palette: AppPalette): InputFieldColors {
+    val container = shadeUntil(palette.controlContainer, palette.textPrimary) {
+        contrastRatio(it, palette.canvas) >= INPUT_FILL_CONTRAST && contrastRatio(it, palette.surface) >= INPUT_FILL_CONTRAST
+    }
+    val strongest = contentOnColor(container)
+    val value = shadeUntil(palette.textPrimary, strongest) { contrastRatio(it, container) >= INPUT_VALUE_CONTRAST }
+    val placeholder = shadeUntil(palette.textSecondary, value) { contrastRatio(it, container) >= INPUT_PLACEHOLDER_CONTRAST }
+    return InputFieldColors(
+        container = container,
+        text = value,
+        placeholder = placeholder,
+        icon = placeholder,
+        cursor = if (contrastRatio(palette.brand, container) >= INPUT_FILL_CONTRAST) palette.brand else value
+    )
+}
+
+// First color on the way from [from] to [to] that satisfies [accepts]; [to] when none does.
+private inline fun shadeUntil(from: Color, to: Color, accepts: (Color) -> Boolean): Color {
+    var step = 0f
+    var shade = from
+    while (!accepts(shade) && step < 1f) {
+        step = minOf(1f, step + SHADE_STEP)
+        shade = lerp(from, to, step)
+    }
+    return shade
+}
+
+private fun contrastRatio(first: Color, second: Color): Float {
+    val firstLuminance = first.luminance()
+    val secondLuminance = second.luminance()
+    return (maxOf(firstLuminance, secondLuminance) + 0.05f) / (minOf(firstLuminance, secondLuminance) + 0.05f)
+}
 
 internal fun shouldConsumeSearchInputBack(acceptsInput: Boolean): Boolean = acceptsInput

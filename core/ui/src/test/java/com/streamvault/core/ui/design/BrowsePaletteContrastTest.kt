@@ -190,22 +190,6 @@ class BrowsePaletteContrastTest {
                     assertTrue("$id controlContainer on $name was $ratio", ratio >= floor)
                 }
             }
-            // The Search screen hero panel is a browse elevated surface; the field only needs to stay visible on it.
-            val onElevated = contrast(raw.controlContainer, browse.surfaceElevated)
-            assertTrue("$id controlContainer on browse surfaceElevated was $onElevated", onElevated >= 1.25f)
-        }
-    }
-
-    @Test
-    fun fieldTextAndRingAreReadableOnControlContainer() {
-        allThemeIds.forEach { id ->
-            val palette = AppPalette.forTheme(id)
-            val placeholder = contrast(palette.textSecondary, palette.controlContainer)
-            val typed = contrast(palette.textPrimary, palette.controlContainer)
-            val ring = contrast(palette.focus, palette.controlContainer)
-            assertTrue("$id placeholder on controlContainer was $placeholder", placeholder >= 4.5f)
-            assertTrue("$id typed text on controlContainer was $typed", typed >= 4.5f)
-            assertTrue("$id focus ring on controlContainer was $ring", ring >= 3f)
         }
     }
 
