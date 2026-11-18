@@ -805,7 +805,7 @@ private fun ReplaceSlotDialog(
         parentalControlLevel in 1..2 && (cat.isAdult || cat.isUserProtected)
 
     PremiumDialog(
-        title = if (selectedCategory == null) stringResource(R.string.multiview_replace_title) else selectedCategory.name,
+        title = if (selectedCategory == null) stringResource(R.string.multiview_replace_title) else selectedCategory.localizedName(),
         subtitle = if (selectedCategory == null) stringResource(R.string.multiview_picker_subtitle) else null,
         onDismissRequest = onDismiss,
         widthFraction = 0.62f,
@@ -852,7 +852,7 @@ private fun ReplaceSlotDialog(
                 }
                 selectedCategory == null -> {
                     val filtered = if (catSearch.isBlank()) pickerState.categories
-                        else pickerState.categories.filter { it.name.contains(catSearch, ignoreCase = true) }
+                        else pickerState.categories.filter { it.localizedName().contains(catSearch, ignoreCase = true) }
                     if (filtered.isEmpty()) {
                         Text(
                             text = stringResource(R.string.multiview_no_categories),
