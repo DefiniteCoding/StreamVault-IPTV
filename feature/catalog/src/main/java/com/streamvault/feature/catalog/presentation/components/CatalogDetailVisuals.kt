@@ -226,31 +226,14 @@ fun DetailFavoriteButton(
     onToggle: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TvIconButton(
-        onClick = onToggle,
-        modifier = modifier.size(48.dp),
-        scale = ButtonDefaults.scale(focusedScale = 1f),
-        shape = ButtonDefaults.shape(shape = CircleShape),
-        border = ButtonDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(BrowseFocusSpec.SelectableRingWidth, AppColors.Focus),
-                shape = CircleShape
-            )
+    SecondaryCircleIconButton(
+        imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+        contentDescription = stringResource(
+            if (isFavorite) R.string.favorites_remove else R.string.favorites_add
         ),
-        colors = ButtonDefaults.colors(
-            containerColor = AppColors.ControlContainer,
-            contentColor = AppColors.TextPrimary,
-            focusedContainerColor = AppColors.SurfaceAccent,
-            focusedContentColor = AppColors.TextPrimary
-        )
-    ) {
-        Icon(
-            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-            contentDescription = stringResource(
-                if (isFavorite) R.string.favorites_remove else R.string.favorites_add
-            )
-        )
-    }
+        onClick = onToggle,
+        modifier = modifier
+    )
 }
 
 /** Version picker entry: selected is the tonal container (never a second filled-brand button next to Play). */
