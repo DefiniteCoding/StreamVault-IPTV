@@ -31,18 +31,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -58,9 +51,11 @@ import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.FocusOverflowPadding
 import com.streamvault.core.ui.design.FocusSpec
 import com.streamvault.core.ui.design.LocalBrowseVisuals
 import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.fadeWhenMoreContentVertically
 import com.streamvault.core.ui.design.requestFocusSafely
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
@@ -70,44 +65,12 @@ import kotlinx.coroutines.launch
 
 internal val LocalDialogCanInteract = compositionLocalOf { true }
 
-/**
- * Fades the content itself at an edge that has more to scroll, as a cue. A mask is used instead of a color overlay
- * because the dialog background is a gradient and no single overlay color matches it. The offscreen layer is
- * limited to the scroll viewport.
- */
-@Composable
-private fun Modifier.fadeScrollEdges(canScrollUp: () -> Boolean, canScrollDown: () -> Boolean): Modifier {
-    val fadePx = with(LocalDensity.current) { ScrollFadeHeight.toPx() }
-    // A brush gradient spans the whole draw scope unless its end is given, so the ramp is pinned to the band height.
-    val fadeIn = remember(fadePx) {
-        Brush.verticalGradient(listOf(Color.Transparent, Color.Black), startY = 0f, endY = fadePx)
-    }
-    val fadeOut = remember(fadePx) {
-        Brush.verticalGradient(listOf(Color.Black, Color.Transparent), startY = 0f, endY = fadePx)
-    }
-    return graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            // Gradients are laid out from the draw origin, so the bottom band is drawn inside translate().
-            val band = Size(size.width, fadePx.coerceAtMost(size.height / 2))
-            if (canScrollUp()) {
-                drawRect(fadeIn, size = band, blendMode = BlendMode.DstIn)
-            }
-            if (canScrollDown()) {
-                translate(top = size.height - band.height) {
-                    drawRect(fadeOut, size = band, blendMode = BlendMode.DstIn)
-                }
-            }
-        }
-}
-
-// Room around the scrolled content for a focus ring, which draws outside its item and would otherwise be cut by the clip.
-private val ScrollRingInset = 8.dp
 private val ScrollFadeHeight = 16.dp
 
 /**
  * Grows the clip bounds by [inset] on every side without changing the space the node takes in its parent, so
- * the dialog layout stays as designed while rings at the viewport edge keep their full stroke.
+ * the dialog layout stays as designed while rings at the viewport edge keep their full stroke. Unlike the shared
+ * `bleed` in FocusHelpers it also widens the height budget, so the viewport keeps its full [maxHeight].
  */
 private fun Modifier.clipBleed(inset: Dp): Modifier = layout { measurable, constraints ->
     val bleed = inset.roundToPx()
@@ -352,7 +315,7 @@ private fun ColumnScope.PremiumDialogScrollableBody(
             .weight(1f, fill = false)
             .heightIn(max = maxHeight)
             .fillMaxWidth()
-            .clipBleed(ScrollRingInset)
+            .clipBleed(FocusOverflowPadding)
             .focusGroup()
             .then(
                 // Bodies with a hint hold text that cannot take focus, so the D-pad has to scroll them. Elsewhere
@@ -363,14 +326,11 @@ private fun ColumnScope.PremiumDialogScrollableBody(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .fadeScrollEdges(
-                    canScrollUp = { canScrollUp },
-                    canScrollDown = { canScrollDown }
-                )
+                .fadeWhenMoreContentVertically(scrollState, ScrollFadeHeight)
                 .verticalScroll(scrollState)
         ) {
             Column(
-                modifier = Modifier.padding(ScrollRingInset),
+                modifier = Modifier.padding(FocusOverflowPadding),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 content = content
             )
