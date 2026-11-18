@@ -2,11 +2,12 @@ package com.streamvault.core.ui.components
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import org.junit.Test
 
 /**
  * Pairs drawn by the series detail episode card (CatalogEpisodeRowCard.kt, `EpisodeCard`) on the browse palette.
- * The badge is white over a 55% black scrim, so its worst case is white artwork under the scrim.
+ * The badge is white over a the badge scrim scrim, so its worst case is white artwork under the scrim.
  */
 class EpisodeCardContrastTest {
 
@@ -18,8 +19,8 @@ class EpisodeCardContrastTest {
 
     @Test
     fun `episode badge is readable over the lightest possible artwork`() = checkEveryBrowsePalette { _ ->
-        val scrimOverWhiteArt = Color.Black.copy(alpha = BADGE_SCRIM_ALPHA).compositeOver(Color.White)
-        expect("white badge text on 55% black over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
+        val scrimOverWhiteArt = Color.Black.copy(alpha = BadgeScrimAlpha).compositeOver(Color.White)
+        expect("white badge text on the badge scrim over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
     }
 
     @Test
@@ -51,16 +52,13 @@ class EpisodeCardContrastTest {
 
     @Test
     fun `tertiary detail action label is readable over the lightest possible artwork`() = checkEveryBrowsePalette { _ ->
-        val scrimOverWhiteArt = Color.Black.copy(alpha = BADGE_SCRIM_ALPHA).compositeOver(Color.White)
-        expect("white label on 55% black over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
+        val scrimOverWhiteArt = Color.Black.copy(alpha = BadgeScrimAlpha).compositeOver(Color.White)
+        expect("white label on the badge scrim over white art", Color.White, scrimOverWhiteArt, TEXT_CONTRAST)
     }
 
     private companion object {
         // A card body cannot reach the 3:1 of meaningful UI without turning into a slab; this floor only keeps it
         // from melting into the page (surfaceElevated measured 1.07 to 1.41:1, 1.12 on amoled_black).
         const val CARD_SEPARATION = 1.15f
-
-        // Mirrors OVER_ARTWORK_SCRIM_ALPHA in the catalog module, which core:ui cannot depend on.
-        const val BADGE_SCRIM_ALPHA = 0.55f
     }
 }

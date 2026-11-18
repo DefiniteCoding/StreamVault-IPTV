@@ -37,6 +37,7 @@ import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
@@ -45,9 +46,6 @@ import com.streamvault.core.ui.design.secondaryButtonColors
 import com.streamvault.core.ui.interaction.TvButton
 import com.streamvault.core.ui.interaction.TvIconButton
 import com.streamvault.feature.catalog.R
-
-/** Black scrim behind text drawn over artwork or video: the minimum that keeps white text at 4.5:1 over white art. */
-internal const val OVER_ARTWORK_SCRIM_ALPHA = 0.55f
 
 private val detailPanelShape = RoundedCornerShape(20.dp)
 private val detailControlShape = RoundedCornerShape(11.dp)
@@ -125,15 +123,15 @@ fun DetailActionButton(
             )
         } else if (tertiary) {
             // These sit over hero artwork of any brightness, so the label cannot rely on the page background (dark
-            // ink vanished over dark art in the light theme). The pill carries a 55% black scrim with white ink,
+            // ink vanished over dark art in the light theme). The pill carries a black scrim with white ink,
             // which holds 4.5:1 even over white art, and keeps full ink at rest so it reads as active. Disabled
             // drops to the muted over-glass ink; focus swaps the scrim for the accent fill together with the ring.
             ButtonDefaults.colors(
-                containerColor = Color.Black.copy(alpha = OVER_ARTWORK_SCRIM_ALPHA),
+                containerColor = Color.Black.copy(alpha = BadgeScrimAlpha),
                 contentColor = Color.White,
                 focusedContainerColor = AppColors.SurfaceAccent,
                 focusedContentColor = AppColors.TextPrimary,
-                disabledContainerColor = Color.Black.copy(alpha = OVER_ARTWORK_SCRIM_ALPHA),
+                disabledContainerColor = Color.Black.copy(alpha = BadgeScrimAlpha),
                 disabledContentColor = AppColors.OnGlassOverVideo
             )
         } else {

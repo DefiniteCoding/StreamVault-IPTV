@@ -71,6 +71,7 @@ import com.streamvault.core.ui.design.AppMotion
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.interaction.rememberTvInteractionSounds
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.components.shell.ContentMetadataStrip
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.domain.playback.archivePlaybackCapability
@@ -343,7 +344,7 @@ fun LiveChannelRowSurface(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(10.dp)
-                        .background(Color.Black.copy(alpha = 0.55f), RoundedCornerShape(4.dp))
+                        .background(Color.Black.copy(alpha = BadgeScrimAlpha), RoundedCornerShape(4.dp))
                         .padding(4.dp)
                 ) {
                     Icon(
@@ -443,7 +444,7 @@ fun EpisodeCard(
                             contentScale = ContentScale.Crop
                         )
                     }
-                    // Scrim limited to the badge: 55% black keeps white text above 4.5:1 even over white art.
+                    // Scrim limited to the badge: the badge scrim keeps white text above 4.5:1 even over white art.
                     Text(
                         text = stringResource(R.string.label_episode, episode.episodeNumber),
                         style = MaterialTheme.typography.bodyMedium,
@@ -453,7 +454,7 @@ fun EpisodeCard(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(8.dp)
-                            .background(Color.Black.copy(alpha = OVER_ARTWORK_SCRIM_ALPHA), RoundedCornerShape(6.dp))
+                            .background(Color.Black.copy(alpha = BadgeScrimAlpha), RoundedCornerShape(6.dp))
                             .padding(horizontal = 8.dp, vertical = 3.dp)
                     )
                     if (showProgress) {

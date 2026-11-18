@@ -1,5 +1,6 @@
 package com.streamvault.feature.live.home
 
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.design.secondarySurfaceColors
 import com.streamvault.core.ui.design.browsePrimaryButtonColors
 import com.streamvault.core.ui.design.BrowseFocusSpec
@@ -253,7 +254,7 @@ private fun PreviewTuningCaption(modifier: Modifier = Modifier) {
     val spacing = LocalAppSpacing.current
     Row(
         modifier = modifier
-            .background(Color.Black.copy(alpha = 0.62f), BrowseShapes.Control)
+            .background(Color.Black.copy(alpha = BadgeScrimAlpha), BrowseShapes.Control)
             .padding(horizontal = spacing.sm, vertical = spacing.xs),
         horizontalArrangement = Arrangement.spacedBy(spacing.xs),
         verticalAlignment = Alignment.CenterVertically
