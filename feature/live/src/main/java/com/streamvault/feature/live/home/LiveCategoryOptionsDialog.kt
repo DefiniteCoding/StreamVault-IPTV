@@ -1,6 +1,9 @@
 package com.streamvault.feature.live.home
 
+import com.streamvault.core.ui.design.BrowseFocusSpec
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.focusRingButtonBorder
+import com.streamvault.core.ui.design.secondaryButtonColors
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
@@ -250,14 +253,9 @@ fun LiveCategoryOptionsDialog(
                         onClick = safeDismiss,
                         modifier = Modifier.mouseClickable(onClick = safeDismiss),
                         shape = ButtonDefaults.shape(BrowseShapes.Control),
-                        colors = ButtonDefaults.colors(
-                            containerColor = BrowseColors.ControlContainer,
-                            focusedContainerColor = BrowseColors.SurfaceAccent,
-                            contentColor = BrowseColors.TextPrimary,
-                            focusedContentColor = BrowseColors.TextPrimary
-                        ),
+                        colors = secondaryButtonColors(),
                         border = focusRingButtonBorder(BrowseShapes.Control),
-                        scale = ButtonDefaults.scale(focusedScale = 1f)
+                        scale = ButtonDefaults.scale(focusedScale = BrowseFocusSpec.FocusedScale)
                     ) {
                         Text(labels.cancel)
                     }
@@ -277,11 +275,12 @@ private fun LiveCategoryOptionsAction(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().mouseClickable(onClick = onClick),
         shape = ButtonDefaults.shape(BrowseShapes.Control),
+        // A destructive row looks the same at rest and focused unless focus changes its fill, so focus takes the solid Live fill.
         colors = ButtonDefaults.colors(
             containerColor = if (destructive) MaterialTheme.colorScheme.errorContainer else BrowseColors.ControlContainer,
-            focusedContainerColor = if (destructive) MaterialTheme.colorScheme.errorContainer else BrowseColors.SurfaceAccent,
+            focusedContainerColor = if (destructive) BrowseColors.Live else BrowseColors.SurfaceAccent,
             contentColor = if (destructive) MaterialTheme.colorScheme.onErrorContainer else BrowseColors.TextPrimary,
-            focusedContentColor = if (destructive) MaterialTheme.colorScheme.onErrorContainer else BrowseColors.TextPrimary
+            focusedContentColor = if (destructive) contentOnColor(BrowseColors.Live) else BrowseColors.TextPrimary
         ),
         border = focusRingButtonBorder(BrowseShapes.Control),
         scale = ButtonDefaults.scale(focusedScale = 1f)
