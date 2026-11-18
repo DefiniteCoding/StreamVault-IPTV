@@ -90,7 +90,7 @@ fun rememberInitialFocusModifier(
  * edge while moving down, so the zone keeps a margin on both sides.
  */
 @OptIn(ExperimentalFoundationApi::class)
-private object ComfortZoneBringIntoViewSpec : BringIntoViewSpec {
+internal object ComfortZoneBringIntoViewSpec : BringIntoViewSpec {
     private const val MARGIN_FRACTION = 0.2f
 
     override fun calculateScrollDistance(offset: Float, size: Float, containerSize: Float): Float {
@@ -259,12 +259,7 @@ fun FocusSafeLazyColumn(
                 if (fadeHeight > 0.dp) Modifier.fadeWhenMoreContentVertically(state, fadeHeight) else Modifier
             ),
             state = state,
-            contentPadding = PaddingValues(
-                start = contentPadding.calculateLeftPadding(direction),
-                top = contentPadding.calculateTopPadding() + FocusOverflowPadding,
-                end = contentPadding.calculateRightPadding(direction),
-                bottom = contentPadding.calculateBottomPadding() + FocusOverflowPadding
-            ),
+            contentPadding = contentPadding.withFocusOverflow(direction),
             verticalArrangement = verticalArrangement,
             content = content
         )
@@ -276,7 +271,7 @@ fun FocusSafeLazyColumn(
  * it. At the very start or end of the list there is nothing to scroll, and no fade is drawn there either.
  */
 @OptIn(ExperimentalFoundationApi::class)
-private class ClearOfFadeBringIntoViewSpec(private val fadePx: Float) : BringIntoViewSpec {
+internal class ClearOfFadeBringIntoViewSpec(private val fadePx: Float) : BringIntoViewSpec {
     override fun calculateScrollDistance(offset: Float, size: Float, containerSize: Float): Float {
         val zoneStart = fadePx
         val zoneEnd = containerSize - fadePx
@@ -381,6 +376,14 @@ internal fun Modifier.fadeWhenMoreContent(state: ScrollableState, edgeInset: Dp,
             )
         }
     }
+
+// PaddingValues(start, end) already follows the layout direction, so feed it start and end, not left and right.
+internal fun PaddingValues.withFocusOverflow(direction: LayoutDirection): PaddingValues = PaddingValues(
+    start = calculateStart(direction),
+    top = calculateTopPadding() + FocusOverflowPadding,
+    end = calculateEnd(direction),
+    bottom = calculateBottomPadding() + FocusOverflowPadding
+)
 
 private fun PaddingValues.calculateStart(direction: LayoutDirection): Dp =
     if (direction == LayoutDirection.Ltr) calculateLeftPadding(direction) else calculateRightPadding(direction)
