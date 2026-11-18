@@ -140,7 +140,7 @@ fun DetailActionButton(
             secondaryButtonColors()
         },
         border = focusRingButtonBorder(detailControlShape),
-        scale = ButtonDefaults.scale(focusedScale = 1f),
+        scale = ButtonDefaults.scale(focusedScale = BrowseFocusSpec.FocusedScale),
         contentPadding = PaddingValues(
             horizontal = if (compact) 12.dp else 18.dp,
             vertical = if (compact) 8.dp else 11.dp
