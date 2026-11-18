@@ -46,10 +46,11 @@ class ActionButtonContrastTest {
 
     // Rule 15: the focused primary must not look like a resting secondary, and the other way round.
     @Test
-    fun `primary and secondary fills are distinguishable`() = checkEveryBrowsePalette { browse ->
+    fun `focused fills are distinguishable from the other role's resting fill`() = checkEveryBrowsePalette { browse ->
         val primary = dialogButtonColors(browse, primary = true)
         val secondary = dialogButtonColors(browse, primary = false)
-        expect("primary fill against secondary fill", primary.restContainer, secondary.restContainer, 1.5f)
+        expect("focused primary against resting secondary", primary.focusedContainer, secondary.restContainer, 1.5f)
+        expect("focused secondary against resting primary", secondary.focusedContainer, primary.restContainer, 1.5f)
     }
 
     private companion object {
