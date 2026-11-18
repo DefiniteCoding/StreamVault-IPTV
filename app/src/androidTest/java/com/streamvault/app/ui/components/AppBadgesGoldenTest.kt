@@ -101,9 +101,9 @@ class AppBadgesGoldenTest {
     }
 
     @Composable
-    private fun BadgeSet(labels: BadgeLabels, tone: BadgeTone, backdrop: Modifier) {
+    private fun BadgeSet(labels: BadgeLabels, tone: BadgeTone, modifier: Modifier) {
         Column(
-            modifier = backdrop.padding(16.dp),
+            modifier = modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             QualityBadge(text = labels.quality, tone = tone)

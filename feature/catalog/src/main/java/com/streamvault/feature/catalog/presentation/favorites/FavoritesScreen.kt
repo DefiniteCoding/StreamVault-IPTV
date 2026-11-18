@@ -51,6 +51,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,6 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
-import androidx.compose.ui.platform.LocalContext
 import com.streamvault.feature.catalog.R
 import com.streamvault.feature.catalog.presentation.components.SelectionChip
 import com.streamvault.feature.catalog.presentation.components.SelectionChipRow
@@ -106,7 +106,7 @@ fun FavoritesScreen(
     val reducedMotionEnabled = rememberReducedMotionEnabled()
     val homeShelfGlobalTitle = stringResource(R.string.saved_preset_home_shelf_global_title)
     val homeShelfGlobalSubtitle = stringResource(R.string.saved_preset_home_shelf_global_subtitle)
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val configuration = LocalConfiguration.current
     val providerScopedSections = remember(
         uiState.sections,

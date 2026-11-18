@@ -458,7 +458,7 @@ fun ProviderSetupScreen(
                     )
                     ProviderFormContent(
                         sourceType = sourceType,
-                        firstFieldModifier = Modifier.focusRequester(firstFieldFocusRequester),
+                        firstFieldFocusRequester = firstFieldFocusRequester,
                         uiState = uiState,
                         pairingState = pairingState,
                         name = name, onNameChange = { name = ProviderInputSanitizer.sanitizeProviderNameForEditing(it) },
@@ -526,7 +526,7 @@ fun ProviderSetupScreen(
                     )
                     ProviderFormContent(
                         sourceType = sourceType,
-                        firstFieldModifier = Modifier.focusRequester(firstFieldFocusRequester),
+                        firstFieldFocusRequester = firstFieldFocusRequester,
                         uiState = uiState,
                         pairingState = pairingState,
                         name = name, onNameChange = { name = ProviderInputSanitizer.sanitizeProviderNameForEditing(it) },

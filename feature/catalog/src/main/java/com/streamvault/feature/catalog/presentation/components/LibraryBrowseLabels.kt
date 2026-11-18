@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.pluralStringResource
 import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
@@ -52,7 +52,7 @@ internal fun LibrarySortBy.labelRes(short: Boolean = false): Int = when (this) {
 
 @Composable
 fun rememberLibraryFilterChips(recentAsUpdated: Boolean = false): List<SelectionChip> {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val configuration = LocalConfiguration.current
     return remember(configuration, recentAsUpdated) {
         FilterChipOrder.map { filter ->
@@ -63,7 +63,7 @@ fun rememberLibraryFilterChips(recentAsUpdated: Boolean = false): List<Selection
 
 @Composable
 fun rememberLibrarySortChips(): List<SelectionChip> {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val configuration = LocalConfiguration.current
     return remember(configuration) {
         LibrarySortBy.entries.map { sort ->
@@ -78,7 +78,7 @@ fun rememberLibraryFilterSortDetail(
     sort: LibrarySortBy,
     recentAsUpdated: Boolean = false
 ): String? {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val configuration = LocalConfiguration.current
     return remember(filter, sort, recentAsUpdated, configuration) {
         vodActiveFilterSortDetail(filter, sort, recentAsUpdated, resources::getString)

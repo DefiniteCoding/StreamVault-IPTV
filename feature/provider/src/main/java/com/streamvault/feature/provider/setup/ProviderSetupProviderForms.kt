@@ -12,6 +12,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -34,7 +36,7 @@ import com.streamvault.domain.model.StalkerProtocolPreference
 @Composable
 internal fun ProviderFormContent(
     sourceType: SourceType,
-    firstFieldModifier: Modifier = Modifier,
+    firstFieldFocusRequester: FocusRequester,
     uiState: ProviderSetupState,
     pairingState: ProviderQrPairingState,
     name: String,
@@ -188,7 +190,7 @@ internal fun ProviderFormContent(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             ProviderTextField(
-                modifier = firstFieldModifier,
+                modifier = Modifier.focusRequester(firstFieldFocusRequester),
                 value = name,
                 onValueChange = onNameChange,
                 placeholder = stringResource(R.string.setup_name_hint)

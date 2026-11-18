@@ -391,9 +391,9 @@ private fun TopNavigationBar(
     brand: (@Composable () -> Unit)?,
     search: TopBarSearch?,
     actions: (@Composable RowScope.() -> Unit)?,
+    modifier: Modifier = Modifier,
     brandScrim: Boolean = false,
-    downTarget: TopBarDownTarget? = null,
-    modifier: Modifier = Modifier
+    downTarget: TopBarDownTarget? = null
 ) {
     val spacing = LocalAppSpacing.current
     val scrollState = rememberScrollState()

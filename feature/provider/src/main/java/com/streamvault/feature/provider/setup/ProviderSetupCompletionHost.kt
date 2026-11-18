@@ -27,6 +27,7 @@ internal fun ProviderSetupCompletionLayer(
     cleanupImportedFiles: suspend (java.io.File, Set<String>, Int) -> Unit = ::cleanupOldImportedM3uFilesAsync
 ) {
     val context = LocalContext.current
+    val savedSyncPendingMessage = stringResource(R.string.setup_completion_saved_sync_pending)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(uiState.onboardingCompletion, uiState.completionWarning, uiState.pendingCombinedAttachProfileId) {
         if (
@@ -34,11 +35,7 @@ internal fun ProviderSetupCompletionLayer(
             uiState.pendingCombinedAttachProfileId == null
         ) {
             if (uiState.completionWarning != null) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.setup_completion_saved_sync_pending),
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(context, savedSyncPendingMessage, Toast.LENGTH_LONG).show()
             }
             val previousLocal = uiState.m3uUrl.takeIf { it.startsWith("file://") }
             val selectedLocal = selectedM3uUrl.takeIf { it.startsWith("file://") }
