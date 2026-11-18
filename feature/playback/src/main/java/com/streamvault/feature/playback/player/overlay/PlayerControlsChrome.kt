@@ -1642,7 +1642,6 @@ private fun PlayerQuickActionRows(
 
     if (singleRow) {
         val actions = rows.flatten()
-        // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
         FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(end = 4.dp),

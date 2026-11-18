@@ -43,8 +43,9 @@ internal fun appChipColors(palette: AppPalette): PillColors = PillColors(
 )
 
 /**
- * Single-choice filter chip. Selection shows as the tonal fill plus a check icon, so it never relies on color alone;
- * when a selected chip is focused the focus fill replaces the tonal one and the check carries the selection.
+ * Single-choice filter chip. Selection shows as the tonal fill plus a check icon, so it never relies on color alone.
+ * A focused selected chip keeps its tonal fill, because the label contrast margin on it is thin in some themes; the
+ * ring and scale carry focus and the check carries selection.
  * The check takes the leading icon's slot, so a chip with [leadingIcon] keeps its width when selected.
  */
 @Composable

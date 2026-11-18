@@ -481,7 +481,6 @@ fun ChannelInfoOverlay(
                 )
             }
 
-            // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
             FocusSafeLazyRow(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -1121,7 +1120,6 @@ private fun ChannelInfoActionMenuTray(
                 color = Primary,
                 fontWeight = FontWeight.Bold
             )
-            // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
             FocusSafeLazyRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,

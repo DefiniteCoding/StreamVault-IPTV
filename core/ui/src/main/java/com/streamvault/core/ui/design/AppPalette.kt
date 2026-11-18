@@ -12,7 +12,9 @@ data class AppPalette(
     val surfaceAccent: Color,
     /** Resting fill of text inputs and secondary controls, tinted to the theme. At least 1.5:1 against canvas and surface in dark themes, 1.3:1 in light ones, since inputs have no stroke. */
     val controlContainer: Color,
+    /** Opaque tonal fill of a selected chip or row. It keeps this fill while focused, so selection never reads as a focus change. */
     val selectedContainer: Color,
+    /** Label and icon ink on [selectedContainer]. */
     val onSelectedContainer: Color,
     val brand: Color,
     val brandMuted: Color,
@@ -50,11 +52,13 @@ data class AppPalette(
     val glassSheen: Color,
     /** Selected top-nav pill. Neutral, opaque, at least 3:1 against both glass tiers and the focus fill, so it never reads as focused. */
     val navSelected: Color,
+    /** Label ink on [navSelected]. */
     val onNavSelected: Color,
     /** Ink on a [focus] fill. */
     val onFocus: Color,
     /** Focus fill and ring on the dark tier. Differs from [focus] only in light themes, whose focus is near-black. */
     val focusOverVideo: Color,
+    /** Ink on a [focusOverVideo] fill. */
     val onFocusOverVideo: Color,
     /** Resting label ink on the dark tier. */
     val onGlassOverVideo: Color,

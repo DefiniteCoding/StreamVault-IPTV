@@ -108,6 +108,7 @@ internal object ComfortZoneBringIntoViewSpec : BringIntoViewSpec {
     }
 }
 
+/** Scrolls a focused item into a comfort zone instead of the nearest edge; see [ComfortZoneBringIntoViewSpec]. */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ComfortZoneScrollOnFocus(content: @Composable () -> Unit) {

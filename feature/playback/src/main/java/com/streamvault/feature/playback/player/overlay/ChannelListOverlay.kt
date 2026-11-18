@@ -130,7 +130,6 @@ fun ChannelListOverlay(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
-                        // No fade: this row draws over video, and a new offscreen layer there needs a measured TV GPU frame time first.
                         FocusSafeLazyRow(
                             contentPadding = PaddingValues(spacing.xs),
                             horizontalArrangement = Arrangement.spacedBy(spacing.xs),

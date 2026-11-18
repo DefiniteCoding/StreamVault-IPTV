@@ -301,7 +301,7 @@ val LocalTopBarContentInset = compositionLocalOf { 0.dp }
 /**
  * Where Down from the top bar goes on a screen whose content scrolls under the bar. Rows under the glass still count
  * as "below" for the focus search, so without an explicit target Down stalls on them. The screen sets [requester] to
- * its initial focus target (plan 4.4: Down from the bar goes to the screen's initial target).
+ * its initial focus target.
  */
 class TopBarDownTarget {
     var requester: FocusRequester? = null
@@ -314,11 +314,13 @@ private val TopNavFadeWidth = 32.dp
 private val TopNavIconSize = 18.dp
 // Same height as a tab: titleSmall line height (20) plus xs padding above and below.
 private val TopNavSearchPillSize = 36.dp
+// How far the brand scrim runs under the tab pill, so the hard right edge of its gradient is hidden behind it.
+private val TopNavScrimTabOverlap = 40.dp
 
 /**
  * Fades the canvas in behind the brand mark and search pill so the logo keeps its contrast while rows scroll under
  * the bar. The tab pill is opaque glass and needs nothing. Limited to this region on purpose: a full-width gradient
- * cost about 1.1 ms of GPU p50 on the TV (2026-11-14 A/B), this one covers a fraction of the pixels. Drawn in the
+ * cost about 1.1 ms of GPU p50 when measured on the TV, this one covers a fraction of the pixels. Drawn in the
  * draw phase with no layer, and it is not focusable.
  */
 private fun Modifier.brandScrim(canvas: Color, extraEnd: Dp, topInset: Dp, bottomInset: Dp, startInset: Dp): Modifier =
@@ -420,12 +422,11 @@ private fun TopNavigationBar(
             val canvas = BrowseColors.current.canvas
             Box(
                 modifier = if (brandScrim) {
-                    // Covers the search pill and the gaps around it, and runs 40dp under the tab pill so the
-                    // hard right edge of the gradient is hidden behind it.
+                    // Covers the search pill and the gaps around it.
                     val searchWidth = if (search != null) TopBarHeight + spacing.sm else 0.dp
                     Modifier.brandScrim(
                         canvas = canvas,
-                        extraEnd = spacing.sm + searchWidth + 40.dp,
+                        extraEnd = spacing.sm + searchWidth + TopNavScrimTabOverlap,
                         topInset = spacing.md,
                         bottomInset = spacing.sm,
                         startInset = spacing.md
