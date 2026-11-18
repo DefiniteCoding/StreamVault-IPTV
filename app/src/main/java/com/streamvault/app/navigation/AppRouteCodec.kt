@@ -66,7 +66,7 @@ internal object AppRouteCodec {
                 add("openTrakt=true")
             }
         }.takeIf { it.isNotEmpty() }
-            ?.joinToString(prefix = "${AppRoutePatterns.SETTINGS}?")
+            ?.joinToString(separator = "&", prefix = "${AppRoutePatterns.SETTINGS}?")
             ?: AppRoutePatterns.SETTINGS
         AppDestination.Plugins -> AppRoutePatterns.PLUGINS
         AppDestination.Addons -> AppRoutePatterns.ADDONS

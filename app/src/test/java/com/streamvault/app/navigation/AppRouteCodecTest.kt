@@ -75,4 +75,27 @@ class AppRouteCodecTest {
         ).isEqualTo(AppDestination.SeriesDetail(42L, AppDestination.Home))
         assertThat(AppRouteCodec.decodeLegacyExternalRoute("settings")).isNull()
     }
+
+    @Test
+    fun settingsRouteRoundTripsOpenTraktAlongsideOtherFlags() {
+        val cases = mapOf(
+            AppDestination.Settings() to "settings",
+            AppDestination.Settings(openTrakt = true) to "settings?openTrakt=true",
+            AppDestination.Settings(openOpenSubtitlesSignIn = true, openTrakt = true) to
+                "settings?openOpenSubtitlesSignIn=true&openTrakt=true",
+            AppDestination.Settings(backupUri = "content://backup/1", openTrakt = true) to
+                "settings?backupUri=content%3A%2F%2Fbackup%2F1&openTrakt=true"
+        )
+
+        cases.forEach { (destination, route) ->
+            assertThat(AppRouteCodec.encode(destination)).isEqualTo(route)
+            assertThat(AppRouteCodec.decode(route)).isEqualTo(destination)
+        }
+    }
+
+    @Test
+    fun settingsRouteTreatsAMalformedOpenTraktFlagAsOff() {
+        assertThat(AppRouteCodec.decode("settings?openTrakt=yes"))
+            .isEqualTo(AppDestination.Settings(openTrakt = false))
+    }
 }
