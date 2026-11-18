@@ -39,6 +39,7 @@ import com.streamvault.core.ui.components.AppDialogButton
 import com.streamvault.core.ui.components.dialogs.AppAlertDialog
 import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
 import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.requestFocusSafely
 import com.streamvault.core.ui.design.browse.SurfaceElevated
 import com.streamvault.core.ui.design.browse.TextPrimary
 import com.streamvault.core.ui.design.browse.TextSecondary
@@ -110,7 +111,10 @@ fun ContinueWatchingRow(
         handoff = null
         // The dialog window is still leaving; wait a frame so focus is not taken back from the card.
         withFrameNanos { }
-        pending.focusId?.let { cardRequesters[it]?.requestFocus() }
+        // The neighbour may have scrolled out of the lazy row, leaving a requester with no attached node.
+        pending.focusId?.let {
+            cardRequesters[it]?.requestFocusSafely(tag = "ContinueWatchingRow", target = "Neighbour card")
+        }
     }
 
     Column(modifier = modifier.fillMaxWidth().suppressParentVerticalScroll()) {

@@ -164,7 +164,10 @@ fun DashboardScreen(
         recentRemovalHandoff = null
         // The menu window is still leaving; wait a frame so focus is not taken back from the card.
         withFrameNanos { }
-        neighborId?.let { recentChannelRequesters[it]?.requestFocus() }
+        // The neighbour may have scrolled out of the lazy row, leaving a requester with no attached node.
+        neighborId?.let {
+            recentChannelRequesters[it]?.requestFocusSafely(tag = "DashboardScreen", target = "Neighbour recent channel")
+        }
     }
 
     LaunchedEffect(uiState.userMessage) {

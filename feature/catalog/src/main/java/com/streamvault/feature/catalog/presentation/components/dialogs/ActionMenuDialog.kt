@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,6 +23,7 @@ import com.streamvault.core.ui.components.dialogs.AppDialog
 import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.requestFocusSafely
 import kotlinx.coroutines.delay
 
 // The long press that opens the menu ends with a key-up on the first row; ignore input until it has settled.
@@ -44,7 +46,9 @@ fun ActionMenuDialog(
     var canInteract by remember { mutableStateOf(false) }
     val firstEntryFocusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
-        firstEntryFocusRequester.requestFocus()
+        // The dialog node attaches on its first frame; a request before that throws.
+        withFrameNanos { }
+        firstEntryFocusRequester.requestFocusSafely(tag = "ActionMenuDialog", target = "First menu entry")
         delay(InteractionDelayMs)
         canInteract = true
     }
