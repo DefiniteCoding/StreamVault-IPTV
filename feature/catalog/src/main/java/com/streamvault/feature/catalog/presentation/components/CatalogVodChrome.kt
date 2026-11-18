@@ -319,9 +319,10 @@ fun VodFocusHero(
     // the panel clipped. Asking for the whole hero (padding included) keeps it fully visible while its button is focused.
     val heroInView = remember { BringIntoViewRequester() }
     val scope = rememberCoroutineScope()
-    Box(modifier = Modifier.bringIntoViewRequester(heroInView)) {
+    // The requester comes first so the caller's padding stays inside the area it reveals.
+    Box(modifier = Modifier.bringIntoViewRequester(heroInView).then(modifier)) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
                 .height(HeroHeight)
