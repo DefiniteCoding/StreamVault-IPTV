@@ -164,7 +164,7 @@ fun SearchInput(
     val palette = if (modern) BrowseColors.current else AppColors.current
     val searchShape = if (modern) BrowseShapes.Control else RoundedCornerShape(12.dp)
     val interactionSource = remember { MutableInteractionSource() }
-    val colors = remember(palette, isFocused) { searchInputColors(palette, isFocused) }
+    val colors = remember(palette, isFocused) { inputFieldColors(palette, isFocused) }
 
     Box(
         modifier = modifier
@@ -282,8 +282,8 @@ fun SearchInput(
     }
 }
 
-/** Ink and fill of the search field. Focus takes the tonal selected fill (the Focus ring is drawn on top), so every ink flips to [AppPalette.onSelectedContainer]. */
-internal data class SearchInputColors(
+/** Ink and fill of a text input (search and setup forms). Focus takes the tonal selected fill (the Focus ring is drawn on top), so every ink flips to [AppPalette.onSelectedContainer]. */
+data class InputFieldColors(
     val container: Color,
     val text: Color,
     val placeholder: Color,
@@ -291,9 +291,9 @@ internal data class SearchInputColors(
     val cursor: Color
 )
 
-internal fun searchInputColors(palette: AppPalette, focused: Boolean): SearchInputColors =
+fun inputFieldColors(palette: AppPalette, focused: Boolean): InputFieldColors =
     if (focused) {
-        SearchInputColors(
+        InputFieldColors(
             container = palette.selectedContainer,
             text = palette.onSelectedContainer,
             placeholder = palette.onSelectedContainer,
@@ -301,7 +301,7 @@ internal fun searchInputColors(palette: AppPalette, focused: Boolean): SearchInp
             cursor = palette.onSelectedContainer
         )
     } else {
-        SearchInputColors(
+        InputFieldColors(
             container = palette.controlContainer,
             text = palette.textPrimary,
             placeholder = palette.textSecondary,
