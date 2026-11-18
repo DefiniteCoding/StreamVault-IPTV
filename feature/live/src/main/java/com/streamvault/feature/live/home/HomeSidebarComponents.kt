@@ -300,7 +300,7 @@ private fun PreviewNowOnAirStrip(channel: Channel) {
             modifier = Modifier.size(40.dp),
             textStyle = MaterialTheme.typography.labelMedium
         )
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             if (program != null) {
                 Text(
                     text = stringResource(R.string.live_now_on_air),
@@ -309,12 +309,13 @@ private fun PreviewNowOnAirStrip(channel: Channel) {
                     maxLines = 1
                 )
             }
-            Text(
+            // The strip always describes the one channel in view, so its title scrolls without needing focus.
+            LiveFocusedMarqueeText(
                 text = program?.title ?: channel.name,
+                isFocused = true,
                 style = MaterialTheme.typography.titleMedium,
                 color = OnBackground,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                modifier = Modifier.fillMaxWidth()
             )
             if (program != null) {
                 Text(

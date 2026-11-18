@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.style.TextDirection
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
@@ -193,17 +192,16 @@ fun LiveChannelRowCard(
                         maxLines = 1
                     )
                     // Provider channel names mix scripts; Content direction aligns each name to its own first strong character.
-                    Text(
+                    LiveFocusedMarqueeText(
                         text = channel.name,
+                        isFocused = highlighted,
                         style = (if (dense) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.titleSmall).copy(textDirection = TextDirection.Content),
                         color = AppColors.TextPrimary,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
                 }
                 channel.currentProgram?.let { program ->
-                    Text(text = program.title, style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    LiveFocusedMarqueeText(text = program.title, isFocused = highlighted, style = MaterialTheme.typography.bodyMedium, color = AppColors.TextSecondary, modifier = Modifier.fillMaxWidth())
                     if (!dense) {
                         LinearProgressIndicator(progress = { liveChannelProgressFraction(nowMs, program.startTime, program.endTime) }, modifier = Modifier.fillMaxWidth().height(2.dp).clip(BrowseShapes.Control), color = AppColors.Info, trackColor = AppColors.SurfaceEmphasis)
                     }

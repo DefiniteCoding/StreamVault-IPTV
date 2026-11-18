@@ -45,8 +45,8 @@ fun LiveFocusedMarqueeText(
                 if (isFocused) {
                     Modifier.basicMarquee(
                         iterations = Int.MAX_VALUE,
-                        initialDelayMillis = 900,
-                        repeatDelayMillis = 1200,
+                        initialDelayMillis = 1000,
+                        repeatDelayMillis = 2000,
                         velocity = 24.dp,
                     )
                 } else {
