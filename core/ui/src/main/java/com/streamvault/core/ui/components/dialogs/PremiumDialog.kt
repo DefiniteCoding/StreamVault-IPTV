@@ -3,20 +3,20 @@ package com.streamvault.core.ui.components.dialogs
 import android.view.KeyEvent as AndroidKeyEvent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.focusGroup
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -31,42 +31,42 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.streamvault.core.ui.components.dialogs.AppDialog as Dialog
 import androidx.compose.ui.window.DialogProperties
-import kotlinx.coroutines.launch
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
-import com.streamvault.core.ui.device.rememberIsTelevisionDevice
-import com.streamvault.core.ui.design.requestFocusSafely
-import com.streamvault.core.ui.interaction.mouseClickable
+import com.streamvault.core.ui.components.dialogs.AppDialog as Dialog
 import com.streamvault.core.ui.design.AppColors
-import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.BrowseColors
-import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.BrowseFocusSpec
-import com.streamvault.core.ui.design.LocalBrowseVisuals
+import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.FocusSpec
+import com.streamvault.core.ui.design.LocalBrowseVisuals
+import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.device.rememberIsTelevisionDevice
+import com.streamvault.core.ui.interaction.mouseClickable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 internal val LocalDialogCanInteract = compositionLocalOf { true }
 
