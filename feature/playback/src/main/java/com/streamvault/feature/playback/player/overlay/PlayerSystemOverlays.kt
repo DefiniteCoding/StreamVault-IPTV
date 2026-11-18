@@ -29,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.animation.core.animateFloatAsState
@@ -56,6 +58,7 @@ import com.streamvault.core.ui.components.dialogs.AppDialog as Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -63,7 +66,9 @@ import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.streamvault.feature.playback.R
 import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.TvInitialFocus
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.feature.playback.player.PlayerNoticeAction
 import com.streamvault.feature.playback.player.PlayerNoticeState
 import com.streamvault.feature.playback.player.PlayerAudioVideoOffsetUiState
@@ -98,6 +103,7 @@ import com.streamvault.player.SUBTITLE_OFFSET_STEP_MS
 import java.util.Locale
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvButton
+import com.streamvault.core.ui.interaction.TvPrimaryButton
 import com.streamvault.core.ui.interaction.TvIconButton
 
 @Composable
@@ -189,6 +195,10 @@ fun PlayerErrorOverlay(
         if (contentType == "LIVE" && hasLastChannel) add(PlayerNoticeAction.LAST_CHANNEL)
     }
 
+    // Retry is the one primary action, so it takes initial focus (rule 17).
+    val retryFocusRequester = remember { FocusRequester() }
+    TvInitialFocus(retryFocusRequester)
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -211,34 +221,26 @@ fun PlayerErrorOverlay(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 recoveryActions.forEach { action ->
-                    TvClickableSurface(
-                        onClick = { onAction(action) },
-                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
-                        colors = ClickableSurfaceDefaults.colors(
-                            containerColor = if (action == PlayerNoticeAction.RETRY) Primary else Color.White.copy(alpha = 0.08f),
-                            focusedContainerColor = if (action == PlayerNoticeAction.RETRY) PrimaryLight else Color.White.copy(alpha = 0.18f)
-                        )
-                    ) {
-                        Text(
-                            text = playerNoticeActionLabel(action),
-                            color = if (action == PlayerNoticeAction.RETRY) OnBackground else Color.White,
-                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
-                        )
+                    val label = playerNoticeActionLabel(action)
+                    if (action == PlayerNoticeAction.RETRY) {
+                        TvPrimaryButton(
+                            onClick = { onAction(action) },
+                            modifier = Modifier.focusRequester(retryFocusRequester)
+                        ) {
+                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
+                    } else {
+                        TvButton(onClick = { onAction(action) }) {
+                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        }
                     }
                 }
                 onBack?.let { back ->
-                    TvClickableSurface(
-                        onClick = back,
-                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
-                        colors = ClickableSurfaceDefaults.colors(
-                            containerColor = Color.White.copy(alpha = 0.08f),
-                            focusedContainerColor = Color.White.copy(alpha = 0.18f)
-                        )
-                    ) {
+                    TvButton(onClick = back) {
                         Text(
                             text = stringResource(R.string.playback_back),
-                            color = Color.White,
-                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
@@ -1516,17 +1518,8 @@ fun PlayerEpisodeSelectionDialog(
                                                 contentColor = Color.White,
                                                 focusedContentColor = Color.White
                                             ),
-                                            border = ClickableSurfaceDefaults.border(
-                                                border = Border(
-                                                    border = androidx.compose.foundation.BorderStroke(
-                                                        1.dp,
-                                                        if (isSelectedSeason) AppColors.Brand else AppColors.Outline
-                                                    )
-                                                ),
-                                                focusedBorder = Border(
-                                                    border = androidx.compose.foundation.BorderStroke(2.dp, AppColors.Focus)
-                                                )
-                                            ),
+                                            // The ring is the only stroke (rule 14); selection shows as the fill plus a check.
+                                            border = selectableFocusBorder(RoundedCornerShape(16.dp)),
                                             scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
                                             modifier = Modifier
                                                 .then(
@@ -1538,13 +1531,26 @@ fun PlayerEpisodeSelectionDialog(
                                                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
                                                 verticalArrangement = Arrangement.spacedBy(2.dp)
                                             ) {
-                                                Text(
-                                                    text = season.name,
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    fontWeight = FontWeight.Bold,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                                ) {
+                                                    Text(
+                                                        text = season.name,
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        fontWeight = FontWeight.Bold,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis,
+                                                        modifier = Modifier.weight(1f, fill = false)
+                                                    )
+                                                    if (isSelectedSeason) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Check,
+                                                            contentDescription = stringResource(R.string.player_selected),
+                                                            modifier = Modifier.size(16.dp)
+                                                        )
+                                                    }
+                                                }
                                                 Text(
                                                     text = pluralStringResource(
                                                         R.plurals.player_episode_picker_episodes_count,
@@ -1617,17 +1623,7 @@ fun PlayerEpisodeSelectionDialog(
                                                 containerColor = if (isSelectedEpisode) AppColors.BrandMuted.copy(alpha = 0.62f) else AppColors.SurfaceElevated.copy(alpha = 0.44f),
                                                 focusedContainerColor = AppColors.Surface.copy(alpha = 0.74f)
                                             ),
-                                            border = ClickableSurfaceDefaults.border(
-                                                border = Border(
-                                                    border = androidx.compose.foundation.BorderStroke(
-                                                        1.dp,
-                                                        if (isSelectedEpisode) AppColors.Brand else AppColors.Outline
-                                                    )
-                                                ),
-                                                focusedBorder = Border(
-                                                    border = androidx.compose.foundation.BorderStroke(2.dp, AppColors.Focus)
-                                                )
-                                            ),
+                                            border = selectableFocusBorder(RoundedCornerShape(16.dp)),
                                             scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
                                             modifier = Modifier
                                                 .fillMaxWidth()
