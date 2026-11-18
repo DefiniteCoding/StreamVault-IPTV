@@ -146,6 +146,26 @@ class BrowsePaletteContrastTest {
         }
     }
 
+    // Disabled buttons stay visible: they share the secondary fill and keep a label that is dimmer than
+    // textPrimary but still at least 3:1, so a disabled primary does not vanish into the dialog.
+    @Test
+    fun disabledButtonsStayVisibleInEveryTheme() {
+        allThemeIds.forEach { id ->
+            // Dialog footers read the browse palette in browse mode (textTertiary) and the raw app palette
+            // otherwise (textSecondary, because its textTertiary is too dim on surfaceAccent).
+            listOf(
+                "browse" to AppPalette.forTheme(id).forBrowsing().let { it to it.textTertiary },
+                "app" to AppPalette.forTheme(id).let { it to it.textSecondary },
+            ).forEach { (kind, pair) ->
+                val (palette, disabledLabel) = pair
+                val label = contrast(disabledLabel, palette.surfaceAccent)
+                println("disabled label $id/$kind on surfaceAccent = $label")
+                assertTrue("$id/$kind disabled label on surfaceAccent was $label", label >= 3f)
+                assertTrue("$id/$kind disabled label must differ from the enabled label", disabledLabel != palette.textPrimary)
+            }
+        }
+    }
+
     // Settings provider card: Sync/Connect primary, accent-tinted secondaries, red Delete that fills red on focus.
     @Test
     fun providerCardActionsAreReadableInEveryTheme() {

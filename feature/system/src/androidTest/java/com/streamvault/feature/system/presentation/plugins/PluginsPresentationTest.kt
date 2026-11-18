@@ -2,7 +2,13 @@ package com.streamvault.feature.system.presentation.plugins
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.hasSetTextAction
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.isToggleable
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -65,6 +71,29 @@ class PluginsPresentationTest {
         assertThat(installUrlClicks).isEqualTo(1)
         assertThat(installFileClicks).isEqualTo(1)
         assertThat(refreshClicks).isEqualTo(1)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun installUrlDialogDpadDownLeavesTheField() {
+        composeRule.setContent {
+            StreamVaultTheme {
+                PluginsContent(
+                    uiState = PluginsUiState(isLoading = false),
+                    scaffold = testScaffold,
+                    showInstallUrlDialog = true,
+                    onShowInstallUrlDialog = {},
+                    onDismissInstallUrlDialog = {},
+                    onInstallFromFile = {},
+                    actions = noOpActions(),
+                )
+            }
+        }
+
+        composeRule.onNode(hasSetTextAction()).assertIsFocused()
+        composeRule.onNode(hasSetTextAction()).performKeyInput { pressKey(Key.DirectionDown) }
+
+        composeRule.onNode(hasText("Cancel") and hasClickAction()).assertIsFocused()
     }
 
     @Test

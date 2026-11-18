@@ -1,8 +1,7 @@
 package com.streamvault.feature.provider.setup
 
 import androidx.compose.foundation.*
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -147,8 +146,6 @@ internal fun ProviderTextField(
         if (revealedPasswordIndex == idx) revealedPasswordIndex = null
     }
 
-    val bgColor     by animateColorAsState(if (isFocused) Surface  else com.streamvault.core.ui.design.BrowseColors.ControlContainer, tween(150), label = "bg")
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -162,7 +159,12 @@ internal fun ProviderTextField(
                 }
             }
             .mouseClickable(focusRequester = containerFocusRequester, onClick = ::activateInput)
-            .clickable(onClick = ::activateInput)
+            // No indication: its focus overlay lightens the fill, and the focus ring already marks focus.
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = ::activateInput
+            )
             .focusable()
             .padding(0.dp)
     ) {
@@ -245,7 +247,7 @@ internal fun ProviderTextField(
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier
-                        .background(bgColor, RoundedCornerShape(10.dp))
+                        .background(com.streamvault.core.ui.design.BrowseColors.ControlContainer, RoundedCornerShape(10.dp))
                         .then(if (isFocused) Modifier.border(2.dp, FocusBorder, RoundedCornerShape(10.dp)) else Modifier)
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
