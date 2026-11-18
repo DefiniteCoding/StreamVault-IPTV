@@ -21,22 +21,18 @@
   <!-- Compteurs sous les tuiles d\'accueil et dans les sections enregistrées -->
   <plurals name="library_count_groups">
     <item quantity="one">%d groupe</item>
-    <item quantity="many">%d de groupes</item>
     <item quantity="other">%d groupes</item>
   </plurals>
   <plurals name="library_count_items">
     <item quantity="one">%d élément</item>
-    <item quantity="many">%d d\'éléments</item>
     <item quantity="other">%d éléments</item>
   </plurals>
   <plurals name="library_count_picks">
     <item quantity="one">%d sélection</item>
-    <item quantity="many">%d de sélections</item>
     <item quantity="other">%d sélections</item>
   </plurals>
   <plurals name="library_count_saved_items">
     <item quantity="one">%d élément enregistré</item>
-    <item quantity="many">%d d\'éléments enregistrés</item>
     <item quantity="other">%d éléments enregistrés</item>
   </plurals>
 

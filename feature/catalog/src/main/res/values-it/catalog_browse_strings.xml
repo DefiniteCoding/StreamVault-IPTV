@@ -21,22 +21,18 @@
   <!-- Conteggi sotto i riquadri iniziali e nelle sezioni salvate -->
   <plurals name="library_count_groups">
     <item quantity="one">%d gruppo</item>
-    <item quantity="many">%d di gruppi</item>
     <item quantity="other">%d gruppi</item>
   </plurals>
   <plurals name="library_count_items">
     <item quantity="one">%d elemento</item>
-    <item quantity="many">%d di elementi</item>
     <item quantity="other">%d elementi</item>
   </plurals>
   <plurals name="library_count_picks">
     <item quantity="one">%d selezione</item>
-    <item quantity="many">%d di selezioni</item>
     <item quantity="other">%d selezioni</item>
   </plurals>
   <plurals name="library_count_saved_items">
     <item quantity="one">%d elemento salvato</item>
-    <item quantity="many">%d di elementi salvati</item>
     <item quantity="other">%d elementi salvati</item>
   </plurals>
 

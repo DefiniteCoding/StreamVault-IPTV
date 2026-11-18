@@ -21,22 +21,18 @@
   <!-- Counts under landing tiles and saved sections -->
   <plurals name="library_count_groups">
     <item quantity="one">%d grupo</item>
-    <item quantity="many">%d de grupos</item>
     <item quantity="other">%d grupos</item>
   </plurals>
   <plurals name="library_count_items">
     <item quantity="one">%d elemento</item>
-    <item quantity="many">%d de elementos</item>
     <item quantity="other">%d elementos</item>
   </plurals>
   <plurals name="library_count_picks">
     <item quantity="one">%d selección</item>
-    <item quantity="many">%d de selecciones</item>
     <item quantity="other">%d selecciones</item>
   </plurals>
   <plurals name="library_count_saved_items">
     <item quantity="one">%d elemento guardado</item>
-    <item quantity="many">%d de elementos guardados</item>
     <item quantity="other">%d elementos guardados</item>
   </plurals>
 

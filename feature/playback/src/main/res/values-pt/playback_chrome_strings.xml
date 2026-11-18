@@ -8,17 +8,14 @@
     <string name="player_episode_picker_now_on">Agora em S%1$dE%2$d</string>
     <plurals name="player_episode_picker_seasons_count">
         <item quantity="one">%1$d temporada</item>
-        <item quantity="many">%1$d de temporadas</item>
         <item quantity="other">%1$d temporadas</item>
     </plurals>
     <plurals name="player_episode_picker_episodes_count">
         <item quantity="one">%1$d episódio</item>
-        <item quantity="many">%1$d de episódios</item>
         <item quantity="other">%1$d episódios</item>
     </plurals>
     <plurals name="player_episode_picker_episodes_ready">
         <item quantity="one">%1$d episódio pronto para reproduzir</item>
-        <item quantity="many">%1$d de episódios prontos para reproduzir</item>
         <item quantity="other">%1$d episódios prontos para reproduzir</item>
     </plurals>
 </resources>
