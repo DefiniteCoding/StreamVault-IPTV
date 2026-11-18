@@ -24,7 +24,6 @@
     <string name="home_locked_short">ЗАКЛЮЧЕНО</string>
     <string name="home_reorder_channels">Пренареждане на канали</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d слота</string>
-    <string name="live_preview_loading">Зареждане на прегледа…</string>
     <string name="live_preview_no_epg">Няма информация за програмата</string>
     <string name="live_preview_open_hint">Натиснете OK отново, за да отворите този канал</string>
     <string name="live_preview_placeholder_subtitle">В режим Pro първото натискане показва преглед на потока, а второто отваря пълно възпроизвеждане.</string>

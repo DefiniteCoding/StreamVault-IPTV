@@ -50,7 +50,6 @@
     <string name="home_locked_short">مقفل</string>
     <string name="home_reorder_channels">إعادة ترتيب القنوات</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d خانات</string>
-    <string name="live_preview_loading">جارٍ تحميل المعاينة…</string>
     <string name="live_preview_no_epg">لا توجد معلومات عن الجدول</string>
     <string name="live_preview_open_hint">اضغط «موافق» مرة أخرى لفتح هذه القناة</string>
     <string name="live_preview_placeholder_subtitle">في الوضع الاحترافي، النقرة الأولى تعرض معاينة البث، والنقرة الثانية تفتح التشغيل بكامل الشاشة.</string>

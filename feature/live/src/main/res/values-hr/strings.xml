@@ -24,7 +24,6 @@
     <string name="home_locked_short">ZAKLJUČANO</string>
     <string name="home_reorder_channels">Promijeni redoslijed kanala</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d mjesta</string>
-    <string name="live_preview_loading">Učitavanje pretpregleda…</string>
     <string name="live_preview_no_epg">Nema podataka o rasporedu</string>
     <string name="live_preview_open_hint">Pritisnite OK ponovno za otvaranje ovog kanala</string>
     <string name="live_preview_placeholder_subtitle">U Pro načinu rada prvi klik prikazuje pretpregled toka, a drugi otvara punu reprodukciju.</string>

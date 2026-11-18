@@ -24,7 +24,6 @@
     <string name="home_locked_short">قفل</string>
     <string name="home_reorder_channels">بازچینش کانال‌ها</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d جایگاه</string>
-    <string name="live_preview_loading">در حال بارگذاری پیش‌نمایش…</string>
     <string name="live_preview_no_epg">اطلاعات برنامه موجود نیست</string>
     <string name="live_preview_open_hint">برای باز کردن این کانال دوباره OK را فشار دهید</string>
     <string name="live_preview_placeholder_subtitle">در حالت Pro، کلیک اول پخش را پیش‌نمایش می‌دهد و کلیک دوم پخش کامل را باز می‌کند.</string>

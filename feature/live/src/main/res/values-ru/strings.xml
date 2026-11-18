@@ -50,7 +50,6 @@
     <string name="home_locked_short">ЗАБЛОК.</string>
     <string name="home_reorder_channels">Изменить порядок каналов</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d слотов</string>
-    <string name="live_preview_loading">Загрузка предпросмотра…</string>
     <string name="live_preview_no_epg">Нет данных программы</string>
     <string name="live_preview_open_hint">Нажмите OK еще раз, чтобы открыть этот канал</string>
     <string name="live_preview_placeholder_subtitle">В режиме Pro первый клик показывает предпросмотр потока, а второй открывает полное воспроизведение.</string>

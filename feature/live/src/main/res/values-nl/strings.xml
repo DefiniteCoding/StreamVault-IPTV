@@ -50,7 +50,6 @@
     <string name="home_locked_short">GESLOTEN</string>
     <string name="home_reorder_channels">Kanalen opnieuw rangschikken</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slots</string>
-    <string name="live_preview_loading">Voorvertoning laden…</string>
     <string name="live_preview_no_epg">Geen schema-informatie</string>
     <string name="live_preview_open_hint">Druk nogmaals op OK om dit kanaal te openen</string>
     <string name="live_preview_placeholder_subtitle">In de Pro-modus geeft de eerste klik een voorbeeld van de stream weer en de tweede klik opent de volledige weergave.</string>

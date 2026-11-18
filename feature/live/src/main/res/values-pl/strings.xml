@@ -50,7 +50,6 @@
     <string name="home_locked_short">ZABLOKOWANE</string>
     <string name="home_reorder_channels">Zmień kolejność kanałów</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slotów</string>
-    <string name="live_preview_loading">Ładowanie podglądu…</string>
     <string name="live_preview_no_epg">Brak informacji o harmonogramie</string>
     <string name="live_preview_open_hint">Naciśnij ponownie OK, aby otworzyć ten kanał</string>
     <string name="live_preview_placeholder_subtitle">W trybie Pro pierwsze kliknięcie wyświetla podgląd strumienia, a drugie kliknięcie otwiera pełne odtwarzanie.</string>

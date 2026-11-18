@@ -50,7 +50,6 @@
     <string name="home_locked_short">TERKUNCI</string>
     <string name="home_reorder_channels">Susun Ulang Saluran</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slot</string>
-    <string name="live_preview_loading">Memuat pratinjau…</string>
     <string name="live_preview_no_epg">Tidak ada informasi jadwal</string>
     <string name="live_preview_open_hint">Tekan OK lagi untuk membuka saluran ini</string>
     <string name="live_preview_placeholder_subtitle">Dalam mode Pro, klik pertama untuk melihat pratinjau streaming dan klik kedua untuk membuka pemutaran penuh.</string>

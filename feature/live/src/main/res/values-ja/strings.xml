@@ -50,7 +50,6 @@
     <string name="home_locked_short">ロック中</string>
     <string name="home_reorder_channels">チャンネルの並べ替え</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d スロット</string>
-    <string name="live_preview_loading">プレビューを読み込み中…</string>
     <string name="live_preview_no_epg">番組情報なし</string>
     <string name="live_preview_open_hint">もう一度OKを押すとこのチャンネルを開きます</string>
     <string name="live_preview_placeholder_subtitle">Proモードでは、1回目のクリックでストリームをプレビューし、2回目のクリックで全画面再生を開きます。</string>

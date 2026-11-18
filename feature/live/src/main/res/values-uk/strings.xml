@@ -50,7 +50,6 @@
     <string name="home_locked_short">ЗАБЛОКОВАНО</string>
     <string name="home_reorder_channels">Сортувати канали</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d слотів</string>
-    <string name="live_preview_loading">Завантаження попереднього перегляду…</string>
     <string name="live_preview_no_epg">Немає інформації про розклад</string>
     <string name="live_preview_open_hint">Натисніть OK ще раз, щоб відкрити цей канал</string>
     <string name="live_preview_placeholder_subtitle">У режимі Pro перше натискання показує попередній перегляд потоку, а друге відкриває повне відтворення.</string>

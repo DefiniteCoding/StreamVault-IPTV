@@ -50,7 +50,6 @@
     <string name="home_locked_short">GESPERRT</string>
     <string name="home_reorder_channels">Kanäle neu anordnen</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d Slots</string>
-    <string name="live_preview_loading">Vorschau wird geladen…</string>
     <string name="live_preview_no_epg">Keine Fahrplaninformationen</string>
     <string name="live_preview_open_hint">Drücken Sie OK erneut, um diesen Kanal zu öffnen</string>
     <string name="live_preview_placeholder_subtitle">Im Pro-Modus zeigt der erste Klick eine Vorschau des Streams, der zweite öffnet die Vollwiedergabe.</string>

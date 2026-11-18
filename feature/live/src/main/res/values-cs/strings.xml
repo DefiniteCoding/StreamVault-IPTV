@@ -50,7 +50,6 @@
     <string name="home_locked_short">ZAMKNUTO</string>
     <string name="home_reorder_channels">Uspořádat kanály</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slotů</string>
-    <string name="live_preview_loading">Načítání náhledu…</string>
     <string name="live_preview_no_epg">Žádné informace o programu</string>
     <string name="live_preview_open_hint">Stiskněte znovu OK pro otevření tohoto kanálu</string>
     <string name="live_preview_placeholder_subtitle">V režimu Pro první kliknutí zobrazí náhled streamu a druhé kliknutí otevře přehrávání na celou obrazovku.</string>

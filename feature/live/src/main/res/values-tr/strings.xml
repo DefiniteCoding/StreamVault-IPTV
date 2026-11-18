@@ -50,7 +50,6 @@
     <string name="home_locked_short">KİLİTLİ</string>
     <string name="home_reorder_channels">Kanalları Yeniden Sırala</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d yuva</string>
-    <string name="live_preview_loading">Önizleme yükleniyor…</string>
     <string name="live_preview_no_epg">Program bilgisi yok</string>
     <string name="live_preview_open_hint">Bu kanalı açmak için tekrar Tamam\'a basın</string>
     <string name="live_preview_placeholder_subtitle">Pro modunda, ilk tıklama yayını önizler; ikinci tıklama tam oynatmayı açar.</string>

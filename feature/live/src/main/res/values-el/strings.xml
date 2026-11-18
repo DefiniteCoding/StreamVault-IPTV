@@ -50,7 +50,6 @@
     <string name="home_locked_short">ΚΛΕΙΔΩΜΕΝΟ</string>
     <string name="home_reorder_channels">Αναδιάταξη καναλιών</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d θέσεις</string>
-    <string name="live_preview_loading">Φόρτωση προεπισκόπησης…</string>
     <string name="live_preview_no_epg">Δεν υπάρχουν πληροφορίες προγράμματος</string>
     <string name="live_preview_open_hint">Πατήστε ξανά OK για να ανοίξετε αυτό το κανάλι</string>
     <string name="live_preview_placeholder_subtitle">Στη λειτουργία Pro, το πρώτο κλικ κάνει προεπισκόπηση της ροής και το δεύτερο ανοίγει την πλήρη αναπαραγωγή.</string>

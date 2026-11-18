@@ -24,7 +24,6 @@
     <string name="home_locked_short">LOCKED</string>
     <string name="home_reorder_channels">चैनलों का क्रम बदलें</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d स्लॉट</string>
-    <string name="live_preview_loading">पूर्वावलोकन लोड हो रहा है…</string>
     <string name="live_preview_no_epg">कोई शेड्यूल जानकारी नहीं</string>
     <string name="live_preview_open_hint">इस चैनल को खोलने के लिए फिर OK दबाएँ</string>
     <string name="live_preview_placeholder_subtitle">प्रो मोड में, पहला क्लिक स्ट्रीम का पूर्वावलोकन करता है और दूसरा क्लिक पूर्ण प्लेबैक खोलता है।</string>

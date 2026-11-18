@@ -24,7 +24,6 @@
     <string name="home_locked_short">已鎖定</string>
     <string name="home_reorder_channels">重新排序頻道</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d 插槽</string>
-    <string name="live_preview_loading">正在載入預覽…</string>
     <string name="live_preview_no_epg">無節目表資訊</string>
     <string name="live_preview_open_hint">再次按下 OK 鍵以開啟此頻道</string>
     <string name="live_preview_placeholder_subtitle">在專業模式下，第一次點選會預覽串流，第二次點選則開啟完整播放。</string>

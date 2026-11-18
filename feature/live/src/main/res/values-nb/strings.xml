@@ -50,7 +50,6 @@
     <string name="home_locked_short">LÅST</string>
     <string name="home_reorder_channels">Omorganiser kanaler</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d plasser</string>
-    <string name="live_preview_loading">Laster forhåndsvisning…</string>
     <string name="live_preview_no_epg">Ingen tidsplaninformasjon</string>
     <string name="live_preview_open_hint">Trykk OK igjen for å åpne denne kanalen</string>
     <string name="live_preview_placeholder_subtitle">I Pro-modus viser første klikk en forhåndsvisning av strømmen, og andre klikk åpner full avspilling.</string>

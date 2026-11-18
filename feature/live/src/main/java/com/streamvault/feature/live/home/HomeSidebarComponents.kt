@@ -28,6 +28,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.streamvault.core.ui.image.ChannelLogoBadge
+import com.streamvault.core.ui.design.AppColors
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -187,40 +194,14 @@ fun LivePreviewPane(
                 }
 
                 if (isLoading && channel != null) {
-                    Row(
-                        modifier = Modifier
-                            .background(Color.Black.copy(alpha = 0.62f), BrowseShapes.Artwork)
-                            .padding(horizontal = 14.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CircularProgressIndicator(
-                            color = Primary,
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.live_preview_loading),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White
-                        )
-                    }
+                    PreviewTuningCaption(modifier = Modifier.align(Alignment.BottomStart).padding(LocalAppSpacing.current.xs))
                 }
             }
 
             if (channel != null) {
-                Text(
-                    text = channel.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = OnBackground
-                )
+                PreviewNowOnAirStrip(channel = channel)
                 channel.currentProgram?.let { program ->
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(
-                            text = program.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = OnBackground
-                        )
                         val appTimeFormat = LocalLiveTimeFormat.current
                         val timeFormat = remember(appTimeFormat) { appTimeFormat.createLiveTimeFormat() }
                         Text(
@@ -245,7 +226,7 @@ fun LivePreviewPane(
                                 text = program.description,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = OnSurface,
-                                maxLines = 4,
+                                maxLines = 3,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
@@ -260,6 +241,88 @@ fun LivePreviewPane(
                     text = stringResource(R.string.live_preview_open_hint),
                     style = MaterialTheme.typography.labelMedium,
                     color = Primary
+                )
+            }
+        }
+    }
+}
+
+/** Caption over the video corner while the stream tunes. The dot is a shape, so state does not rely on colour alone. */
+@Composable
+private fun PreviewTuningCaption(modifier: Modifier = Modifier) {
+    val spacing = LocalAppSpacing.current
+    Row(
+        modifier = modifier
+            .background(Color.Black.copy(alpha = 0.62f), BrowseShapes.Control)
+            .padding(horizontal = spacing.sm, vertical = spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(AppColors.Live, CircleShape)
+        )
+        Text(
+            text = stringResource(R.string.live_preview_tuning),
+            style = MaterialTheme.typography.labelMedium,
+            color = Color.White,
+            maxLines = 1
+        )
+    }
+}
+
+/** Kicker, logo and programme for the focused channel, sitting under the video and never behind it. */
+@Composable
+private fun PreviewNowOnAirStrip(channel: Channel) {
+    val spacing = LocalAppSpacing.current
+    val program = channel.currentProgram
+    val accent = AppColors.AccentSoft
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(BrowseShapes.Control)
+            .drawWithCache {
+                val brush = Brush.radialGradient(
+                    colors = listOf(accent, Color.Transparent),
+                    center = Offset.Zero,
+                    radius = size.width
+                )
+                onDrawBehind { drawRect(brush) }
+            }
+            .padding(horizontal = spacing.sm, vertical = spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ChannelLogoBadge(
+            channelName = channel.name,
+            logoUrl = channel.logoUrl,
+            modifier = Modifier.size(40.dp),
+            textStyle = MaterialTheme.typography.labelMedium
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            if (program != null) {
+                Text(
+                    text = stringResource(R.string.live_now_on_air),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = AppColors.TextSecondary,
+                    maxLines = 1
+                )
+            }
+            Text(
+                text = program?.title ?: channel.name,
+                style = MaterialTheme.typography.titleMedium,
+                color = OnBackground,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            if (program != null) {
+                Text(
+                    text = channel.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = OnSurfaceDim,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

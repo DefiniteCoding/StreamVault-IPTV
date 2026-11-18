@@ -50,7 +50,6 @@
     <string name="home_locked_short">已锁定</string>
     <string name="home_reorder_channels">重新排序频道</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d 插槽</string>
-    <string name="live_preview_loading">正在加载预览…</string>
     <string name="live_preview_no_epg">无节目单信息</string>
     <string name="live_preview_open_hint">再次按确定键打开此频道</string>
     <string name="live_preview_placeholder_subtitle">在专业模式下，第一次点击预览流，第二次点击打开完整播放。</string>

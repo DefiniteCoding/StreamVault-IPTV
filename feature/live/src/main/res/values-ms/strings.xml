@@ -24,7 +24,6 @@
     <string name="home_locked_short">TERKUNCI</string>
     <string name="home_reorder_channels">Susun Semula Saluran</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slot</string>
-    <string name="live_preview_loading">Memuatkan pratonton…</string>
     <string name="live_preview_no_epg">Tiada maklumat jadual</string>
     <string name="live_preview_open_hint">Tekan OK sekali lagi untuk membuka saluran ini</string>
     <string name="live_preview_placeholder_subtitle">Dalam mod Pro, klik pertama mempratonton strim dan klik kedua membuka main balik penuh.</string>

@@ -24,7 +24,6 @@
     <string name="home_locked_short">ЗАКЉУЧАНО</string>
     <string name="home_reorder_channels">Преуреди канале</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d места</string>
-    <string name="live_preview_loading">Учитавање прегледа…</string>
     <string name="live_preview_no_epg">Нема информација о програму</string>
     <string name="live_preview_open_hint">Притисните OK поново да отворите овај канал</string>
     <string name="live_preview_placeholder_subtitle">У Pro режиму први клик приказује преглед тока, а други отвара пуну репродукцију.</string>

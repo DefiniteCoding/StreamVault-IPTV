@@ -50,7 +50,6 @@
     <string name="home_locked_short">נעול</string>
     <string name="home_reorder_channels">סדר מחדש את הערוצים</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d חריצים</string>
-    <string name="live_preview_loading">טוען תצוגה מקדימה...</string>
     <string name="live_preview_no_epg">אין מידע על לוח זמנים</string>
     <string name="live_preview_open_hint">לחץ שוב על OK כדי לפתוח ערוץ זה</string>
     <string name="live_preview_placeholder_subtitle">במצב Pro, לחיצה ראשונה מציגה את הזרם ולחיצה שנייה פותחת הפעלה מלאה.</string>

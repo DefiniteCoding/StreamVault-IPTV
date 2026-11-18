@@ -50,7 +50,6 @@
     <string name="home_locked_short">잠김</string>
     <string name="home_reorder_channels">채널 순서 변경</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d 슬롯</string>
-    <string name="live_preview_loading">미리보기 불러오는 중…</string>
     <string name="live_preview_no_epg">일정 정보 없음</string>
     <string name="live_preview_open_hint">확인을 다시 누르면 이 채널을 엽니다</string>
     <string name="live_preview_placeholder_subtitle">Pro 모드에서는 첫 클릭으로 스트림을 미리 보고, 두 번째 클릭으로 전체 재생을 엽니다.</string>

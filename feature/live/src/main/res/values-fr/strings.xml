@@ -40,7 +40,6 @@
     <string name="home_locked_short">VERROUILLÉ</string>
     <string name="home_reorder_channels">Réorganiser les chaînes</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d emplacements</string>
-    <string name="live_preview_loading">Chargement de l’aperçu…</string>
     <string name="live_preview_no_epg">Aucune information sur les horaires</string>
     <string name="live_preview_open_hint">Appuyez à nouveau sur OK pour ouvrir cette chaîne</string>
     <string name="live_preview_placeholder_subtitle">En mode Pro, le premier clic prévisualise le flux et le second ouvre la lecture complète.</string>

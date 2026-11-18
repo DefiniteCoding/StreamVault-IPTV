@@ -50,7 +50,6 @@
     <string name="home_locked_short">ĐÃ KHÓA</string>
     <string name="home_reorder_channels">Sắp xếp lại kênh</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d vị trí</string>
-    <string name="live_preview_loading">Đang tải xem trước…</string>
     <string name="live_preview_no_epg">Không có thông tin lịch phát sóng</string>
     <string name="live_preview_open_hint">Nhấn OK lần nữa để mở kênh này</string>
     <string name="live_preview_placeholder_subtitle">Ở chế độ Pro, nhấn lần đầu để xem trước luồng và nhấn lần hai để mở phát toàn màn hình.</string>

@@ -50,7 +50,6 @@
     <string name="home_locked_short">BLOQUEADO</string>
     <string name="home_reorder_channels">Reordenar canales</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d ranuras</string>
-    <string name="live_preview_loading">Cargando vista previa…</string>
     <string name="live_preview_no_epg">Sin información de programación</string>
     <string name="live_preview_open_hint">Presione OK nuevamente para abrir este canal.</string>
     <string name="live_preview_placeholder_subtitle">En modo Pro, el primer clic previsualiza la transmisión y el segundo abre la reproducción completa.</string>

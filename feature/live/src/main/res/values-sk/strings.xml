@@ -24,7 +24,6 @@
     <string name="home_locked_short">ZAMKNUTÉ</string>
     <string name="home_reorder_channels">Usporiadať kanály</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slotov</string>
-    <string name="live_preview_loading">Načítava sa náhľad…</string>
     <string name="live_preview_no_epg">Žiadne informácie o programe</string>
     <string name="live_preview_open_hint">Znova stlačte OK pre otvorenie tohto kanála</string>
     <string name="live_preview_placeholder_subtitle">V režime Pro prvé kliknutie zobrazí náhľad streamu a druhé kliknutie otvorí úplné prehrávanie.</string>

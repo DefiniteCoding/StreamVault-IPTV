@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="live_preview_tuning">채널 연결 중…</string>
+    <string name="live_now_on_air">방송 중</string>
+</resources>

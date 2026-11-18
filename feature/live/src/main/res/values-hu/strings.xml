@@ -50,7 +50,6 @@
     <string name="home_locked_short">ZÁROLVA</string>
     <string name="home_reorder_channels">Csatornák átrendezése</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slot</string>
-    <string name="live_preview_loading">Előnézet betöltése…</string>
     <string name="live_preview_no_epg">Nincs műsorinformáció</string>
     <string name="live_preview_open_hint">Nyomja meg ismét az OK gombot a csatorna megnyitásához</string>
     <string name="live_preview_placeholder_subtitle">Pro módban az első kattintás előnézetet nyit, a második teljes lejátszást indít.</string>

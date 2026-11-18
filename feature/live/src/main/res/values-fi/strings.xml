@@ -50,7 +50,6 @@
     <string name="home_locked_short">LUKITTU</string>
     <string name="home_reorder_channels">Järjestä kanavat uudelleen</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d paikkaa</string>
-    <string name="live_preview_loading">Ladataan esikatselua…</string>
     <string name="live_preview_no_epg">Ei aikataulutietoja</string>
     <string name="live_preview_open_hint">Avaa tämä kanava painamalla OK-painiketta uudelleen</string>
     <string name="live_preview_placeholder_subtitle">Pro-tilassa ensimmäinen napsautus esikatselee streamia ja toinen napsautus avaa koko toiston.</string>

@@ -50,7 +50,6 @@
     <string name="home_locked_short">BLOCAT</string>
     <string name="home_reorder_channels">Reordonați canalele</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d sloturi</string>
-    <string name="live_preview_loading">Se încarcă previzualizarea...</string>
     <string name="live_preview_no_epg">Fără informații despre program</string>
     <string name="live_preview_open_hint">Apăsați din nou OK pentru a deschide acest canal</string>
     <string name="live_preview_placeholder_subtitle">În modul Pro, primul clic previzualizează fluxul, iar al doilea deschide redarea completă.</string>

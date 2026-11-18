@@ -50,7 +50,6 @@
     <string name="home_locked_short">BLOCCATO</string>
     <string name="home_reorder_channels">Riordina i canali</string>
     <string name="label_slots_count_dynamic">%1$d/%2$d slot</string>
-    <string name="live_preview_loading">Caricamento anteprima...</string>
     <string name="live_preview_no_epg">Nessuna informazione sul programma</string>
     <string name="live_preview_open_hint">Premere nuovamente OK per aprire questo canale</string>
     <string name="live_preview_placeholder_subtitle">In modalità Pro, il primo clic visualizza l\'anteprima dello streaming e il secondo clic apre la riproduzione completa.</string>
