@@ -30,6 +30,7 @@ import androidx.compose.ui.focus.focusRestorer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
@@ -55,7 +56,8 @@ private const val MinutesPerHour = 60
 private val CardWidth = 208.dp
 private val ArtHeight = 117.dp
 // Two caption lines (13sp title, 12sp meta) plus padding.
-private val CaptionHeight = 44.dp
+// Two 14sp caption lines (18sp line height each) plus the vertical padding.
+private val CaptionHeight = 52.dp
 
 /**
  * Whole minutes left in a title, rounded up so a nearly finished item reads "1m left", not "0m left".
@@ -320,7 +322,7 @@ private fun ContinueWatchingCard(
                 if (minutesLeft != null) {
                     Text(
                         text = timeLeftLabel(minutesLeft),
-                        style = MaterialTheme.typography.labelMedium,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = Color.White,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -352,14 +354,15 @@ private fun ContinueWatchingCard(
             ) {
                 Text(
                     text = history.title,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
                     color = TextPrimary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = metaLabel(history),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = TextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
