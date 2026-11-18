@@ -1,5 +1,6 @@
 package com.streamvault.core.ui.components
 
+import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.BrowseFocusSpec
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.activity.compose.BackHandler
@@ -37,6 +38,7 @@ import androidx.compose.foundation.focusable
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
@@ -58,12 +60,8 @@ import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalBrowseVisuals
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.theme.FocusBorder
-import com.streamvault.core.ui.theme.OnSurface
-import com.streamvault.core.ui.theme.OnSurfaceDim
-import com.streamvault.core.ui.theme.Primary
 import com.streamvault.core.ui.theme.SurfaceElevated
 import com.streamvault.core.ui.theme.SurfaceHighlight
-import com.streamvault.core.ui.theme.TextSecondary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -166,6 +164,7 @@ fun SearchInput(
     val palette = if (modern) BrowseColors.current else AppColors.current
     val searchShape = if (modern) BrowseShapes.Control else RoundedCornerShape(12.dp)
     val interactionSource = remember { MutableInteractionSource() }
+    val colors = remember(palette, isFocused) { searchInputColors(palette, isFocused) }
 
     Box(
         modifier = modifier
@@ -173,8 +172,8 @@ fun SearchInput(
             .heightIn(min = 56.dp)
             .focusRequester(focusRequester)
             .bringIntoViewRequester(bringIntoViewRequester)
-            .background(palette.controlContainer, searchShape)
-            // Rest state is a filled container with no stroke; the ring is the focus state only.
+            .background(colors.container, searchShape)
+            // Rest state is a filled container with no stroke; focus adds the ring on top of the focus fill.
             .then(
                 if (isFocused) Modifier.border(BrowseFocusSpec.SelectableRingWidth, palette.focus, searchShape)
                 else Modifier
@@ -209,7 +208,7 @@ fun SearchInput(
                     Text(
                         text = placeholder,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = colors.placeholder
                     )
                 }
 
@@ -247,9 +246,9 @@ fun SearchInput(
                                 keyboardController?.hide()
                             }
                         },
-                    textStyle = MaterialTheme.typography.bodySmall.copy(color = OnSurface),
+                    textStyle = MaterialTheme.typography.bodySmall.copy(color = colors.text),
                     singleLine = true,
-                    cursorBrush = SolidColor(Primary),
+                    cursorBrush = SolidColor(colors.cursor),
                     enabled = enabled,
                     readOnly = !acceptsInput,
                     keyboardOptions = KeyboardOptions(imeAction = imeAction),
@@ -270,11 +269,7 @@ fun SearchInput(
             Icon(
                 imageVector = if (value.isBlank()) Icons.Default.Search else Icons.Default.Close,
                 contentDescription = null,
-                tint = if (value.isBlank()) {
-                    if (isFocused) Primary else OnSurfaceDim
-                } else {
-                    OnSurface
-                },
+                tint = colors.icon,
                 modifier = Modifier
                     .padding(start = 6.dp)
                     .clickable(enabled = enabled && value.isNotBlank()) {
@@ -286,5 +281,33 @@ fun SearchInput(
         }
     }
 }
+
+/** Ink and fill of the search field. Focus takes the tonal selected fill (the Focus ring is drawn on top), so every ink flips to [AppPalette.onSelectedContainer]. */
+internal data class SearchInputColors(
+    val container: Color,
+    val text: Color,
+    val placeholder: Color,
+    val icon: Color,
+    val cursor: Color
+)
+
+internal fun searchInputColors(palette: AppPalette, focused: Boolean): SearchInputColors =
+    if (focused) {
+        SearchInputColors(
+            container = palette.selectedContainer,
+            text = palette.onSelectedContainer,
+            placeholder = palette.onSelectedContainer,
+            icon = palette.onSelectedContainer,
+            cursor = palette.onSelectedContainer
+        )
+    } else {
+        SearchInputColors(
+            container = palette.controlContainer,
+            text = palette.textPrimary,
+            placeholder = palette.textSecondary,
+            icon = palette.textSecondary,
+            cursor = palette.brand
+        )
+    }
 
 internal fun shouldConsumeSearchInputBack(acceptsInput: Boolean): Boolean = acceptsInput
