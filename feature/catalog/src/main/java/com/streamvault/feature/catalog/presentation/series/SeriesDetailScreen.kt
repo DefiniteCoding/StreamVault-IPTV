@@ -3,6 +3,7 @@ package com.streamvault.feature.catalog.presentation.series
 import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.rememberInitialFocusModifier
 import com.streamvault.core.ui.design.selectableFocusBorder
 import android.content.ClipData
@@ -389,7 +390,7 @@ private fun SeriesDetailContent(
                                         StatusPill(
                                             label = formatVodRatingLabel(it),
                                             containerColor = AppColors.Warning,
-                                            contentColor = Color.Black
+                                            contentColor = contentOnColor(AppColors.Warning)
                                         )
                                     }
                                     if (unwatchedEpisodeCount > 0) {
@@ -478,7 +479,7 @@ private fun SeriesDetailContent(
                                         StatusPill(
                                             label = formatVodRatingLabel(it),
                                             containerColor = AppColors.Warning,
-                                            contentColor = Color.Black
+                                            contentColor = contentOnColor(AppColors.Warning)
                                         )
                                     }
                                     if (unwatchedEpisodeCount > 0) {

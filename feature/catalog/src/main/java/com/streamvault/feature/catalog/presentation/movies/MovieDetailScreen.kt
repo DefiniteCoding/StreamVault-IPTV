@@ -71,6 +71,7 @@ import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.core.ui.components.shell.ContentMetadataStrip
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.core.ui.design.BrowseColors as AppColors
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.rememberInitialFocusModifier
@@ -501,7 +502,7 @@ private fun MovieDetailHeroText(
                 StatusPill(
                     label = formatVodRatingLabel(it),
                     containerColor = AppColors.Warning,
-                    contentColor = Color.Black
+                    contentColor = contentOnColor(AppColors.Warning)
                 )
             }
             movie.year?.takeIf { it.isNotBlank() }?.let {
