@@ -203,24 +203,24 @@ fun PlayerErrorOverlay(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // The message sits over video of any brightness, so it gets the dark over-video tier (black 85%, rule 9) on the
-        // card's area only, with its own ink (light themes would otherwise put dark ink on a black frame).
+        // The message sits over video of any brightness, so it gets an opaque theme-surface card (no blending, no
+        // overdraw) with the theme's own ink, ring and buttons; the dark over-video tier would hide the light themes' dark focus ring.
         Column(
             modifier = Modifier
-                .background(AppColors.GlassOverVideo, RoundedCornerShape(16.dp))
+                .background(AppColors.Surface, RoundedCornerShape(16.dp))
                 .padding(horizontal = 32.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = stringResource(R.string.player_error_title),
                 style = MaterialTheme.typography.titleMedium,
-                color = ErrorColor
+                color = AppColors.Live
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                color = AppColors.OnGlassOverVideo
+                color = AppColors.TextPrimary
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -260,7 +260,7 @@ fun PlayerErrorOverlay(
                     stringResource(R.string.player_error_back)
                 },
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.OnGlassOverVideo
+                color = AppColors.TextSecondary
             )
         }
     }

@@ -1,21 +1,20 @@
 package com.streamvault.core.ui.components
 
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
-import com.streamvault.core.ui.theme.ErrorColor
 import org.junit.Test
 
-/**
- * Pairs behind the player error overlay card: the dark over-video tier, worst case over a white frame.
- */
+/** Pairs on the player error overlay card: the opaque theme surface with theme ink, so the frame behind it never matters. */
 class ErrorOverlayContrastTest {
 
     @Test
-    fun `error overlay text is readable on the dark tier over any frame`() = checkEveryBrowsePalette { browse ->
-        listOf("white frame" to Color.White, "black frame" to Color.Black).forEach { (where, frame) ->
-            val card = browse.glassOverVideo.compositeOver(frame)
-            expect("message ink on card over $where", browse.onGlassOverVideo, card, TEXT_CONTRAST)
-            expect("error title on card over $where", ErrorColor, card, TEXT_CONTRAST)
-        }
+    fun `error overlay text and title are readable on the card`() = checkEveryBrowsePalette { browse ->
+        expect("message on card", browse.textPrimary, browse.surface, TEXT_CONTRAST)
+        expect("hint on card", browse.textSecondary, browse.surface, TEXT_CONTRAST)
+        expect("error title on card", browse.live, browse.surface, TEXT_CONTRAST)
+    }
+
+    @Test
+    fun `focus ring and buttons stand out from the card`() = checkEveryBrowsePalette { browse ->
+        expect("focus ring against card", browse.focus, browse.surface, NON_TEXT_CONTRAST)
+        expect("primary fill against card", browse.brand, browse.surface, NON_TEXT_CONTRAST)
     }
 }
