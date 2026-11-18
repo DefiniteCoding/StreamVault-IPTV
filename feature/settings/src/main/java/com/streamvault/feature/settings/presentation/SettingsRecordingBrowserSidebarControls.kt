@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
+import com.streamvault.core.ui.components.inputFieldColors
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -99,6 +100,9 @@ private fun RecordingBrowserSearchField(
     val inputFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var acceptsInput by remember(isTelevisionDevice) { mutableStateOf(!isTelevisionDevice) }
+    var hasFocus by remember { mutableStateOf(false) }
+    val palette = BrowseColors.current
+    val colors = remember(palette, hasFocus) { inputFieldColors(palette, hasFocus) }
 
     TvClickableSurface(
         onClick = {
@@ -108,11 +112,12 @@ private fun RecordingBrowserSearchField(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .focusRequester(searchFocusRequester),
+            .focusRequester(searchFocusRequester)
+            .onFocusChanged { hasFocus = it.hasFocus },
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = BrowseColors.ControlContainer,
-            focusedContainerColor = BrowseColors.ControlContainer
+            containerColor = colors.container,
+            focusedContainerColor = colors.container
         ),
         border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
@@ -126,15 +131,15 @@ private fun RecordingBrowserSearchField(
                 Text(
                     text = stringResource(R.string.settings_recording_search_hint),
                     style = MaterialTheme.typography.bodySmall,
-                    color = OnSurfaceDim
+                    color = colors.placeholder
                 )
             }
             BasicTextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
-                textStyle = MaterialTheme.typography.bodySmall.copy(color = OnBackground),
+                textStyle = MaterialTheme.typography.bodySmall.copy(color = colors.text),
                 singleLine = true,
-                cursorBrush = SolidColor(Primary),
+                cursorBrush = SolidColor(colors.cursor),
                 readOnly = isTelevisionDevice && !acceptsInput,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {

@@ -1,6 +1,7 @@
 package com.streamvault.feature.settings.presentation
 
 import androidx.compose.foundation.BorderStroke
+import com.streamvault.core.ui.design.selectableFocusBorder
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -345,10 +346,12 @@ public fun CreateCombinedM3uDialog(
                             modifier = Modifier.fillMaxWidth(),
                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
                             colors = ClickableSurfaceDefaults.colors(
-                                containerColor = if (isSelected) Primary.copy(alpha = 0.16f) else com.streamvault.core.ui.theme.SurfaceElevated,
-                                focusedContainerColor = Primary.copy(alpha = 0.24f)
+                                containerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected),
+                                focusedContainerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected)
                             ),
-                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+                            // The Checkbox carries selection; the ring and scale carry focus.
+                            border = selectableFocusBorder(RoundedCornerShape(12.dp)),
+                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -440,23 +443,12 @@ public fun AddCombinedProviderDialog(
                             modifier = Modifier.fillMaxWidth(),
                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
                             colors = ClickableSurfaceDefaults.colors(
-                                containerColor = if (isSelected) Primary.copy(alpha = 0.16f) else com.streamvault.core.ui.theme.SurfaceElevated,
-                                focusedContainerColor = Primary.copy(alpha = 0.22f)
+                                containerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected),
+                                focusedContainerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected)
                             ),
-                            border = ClickableSurfaceDefaults.border(
-                                border = Border(
-                                    border = BorderStroke(
-                                        1.dp,
-                                        if (isSelected) Primary.copy(alpha = 0.4f) else com.streamvault.core.ui.design.AppColors.Divider
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                                focusedBorder = Border(
-                                    border = BorderStroke(FocusSpec.BorderWidth, com.streamvault.core.ui.theme.FocusBorder),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                            ),
-                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+                            // No resting stroke (rule 14); the RadioButton carries selection, the ring and scale carry focus.
+                            border = selectableFocusBorder(RoundedCornerShape(12.dp)),
+                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f)
                         ) {
                             Row(
                                 modifier = Modifier

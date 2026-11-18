@@ -73,7 +73,7 @@ internal fun SettingsSingleChoiceDialog(
 internal fun choiceOptionContainer(palette: AppPalette, selected: Boolean): Color =
     if (selected) lerp(palette.surfaceAccent, palette.brand, 0.14f) else palette.surfaceAccent
 
-/** Focus is shown with a steady ring; selection is shown with a quiet theme tint and check. */
+/** Focus is shown with a steady ring and a small scale (the fill is shared with rest); selection is a quiet theme tint and check. */
 @Composable
 internal fun SettingsChoiceOption(
     label: String,
