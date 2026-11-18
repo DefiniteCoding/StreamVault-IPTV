@@ -46,7 +46,18 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.tv.material3.Button
+import androidx.tv.material3.Text as TvText
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.res.painterResource
+import com.streamvault.core.ui.design.BrowseVisualStyle
+import com.streamvault.core.ui.design.TvInitialFocus
+import com.streamvault.core.ui.interaction.TvButton
+import com.streamvault.core.ui.interaction.TvPrimaryButton
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -485,43 +496,77 @@ private fun DatabaseStartupScreen(
     onRetry: () -> Unit = {},
     onShareReport: () -> Unit = {}
 ) {
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize().padding(48.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            when (state) {
-                DatabaseStartupState.Opening -> {
-                    CircularProgressIndicator()
-                    Text(
-                        text = stringResource(R.string.startup_preparing_library),
-                        modifier = Modifier.padding(top = 24.dp),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-                is DatabaseStartupState.Failed -> {
-                    Text(
-                        text = stringResource(R.string.startup_failed_title),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = stringResource(R.string.startup_failed_message) + "\n" +
-                            stringResource(R.string.startup_failed_error_type, state.errorType),
-                        modifier = Modifier.padding(top = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                    Row(
-                        modifier = Modifier.padding(top = 28.dp),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Button(onClick = onRetry) { Text(stringResource(R.string.startup_retry)) }
-                        Button(onClick = onShareReport) { Text(stringResource(R.string.startup_share_report)) }
+    // The screen sits outside the app shell, so it opts into the browse button styling itself.
+    BrowseVisualStyle {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(48.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // The artwork carries its own navy ground, so the white wordmark stays legible in every theme.
+                Image(
+                    painter = painterResource(R.drawable.startup_logo),
+                    contentDescription = stringResource(R.string.app_name),
+                    modifier = Modifier
+                        .width(StartupLogoWidth)
+                        .padding(bottom = 32.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                )
+                when (state) {
+                    DatabaseStartupState.Opening -> {
+                        CircularProgressIndicator()
+                        Text(
+                            text = stringResource(R.string.startup_preparing_library),
+                            modifier = Modifier.padding(top = 24.dp),
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
+                    is DatabaseStartupState.Failed -> DatabaseStartupFailure(
+                        errorType = state.errorType,
+                        onRetry = onRetry,
+                        onShareReport = onShareReport
+                    )
+                    DatabaseStartupState.Ready -> Unit
                 }
-                DatabaseStartupState.Ready -> Unit
             }
         }
     }
 }
+
+@Composable
+private fun DatabaseStartupFailure(
+    errorType: String,
+    onRetry: () -> Unit,
+    onShareReport: () -> Unit
+) {
+    // Retry is the one primary action, so it takes initial focus (rule 17).
+    val retryFocusRequester = remember { FocusRequester() }
+    TvInitialFocus(retryFocusRequester)
+    Text(
+        text = stringResource(R.string.startup_failed_title),
+        style = MaterialTheme.typography.headlineSmall,
+        textAlign = TextAlign.Center
+    )
+    Text(
+        text = stringResource(R.string.startup_failed_message),
+        modifier = Modifier.padding(top = 16.dp),
+        textAlign = TextAlign.Center
+    )
+    Text(
+        text = stringResource(R.string.startup_failed_error_type, errorType),
+        textAlign = TextAlign.Center
+    )
+    Row(
+        modifier = Modifier.padding(top = 28.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // TvText, not material3 Text: only the TV text reads the button's content color (onPrimary on the brand fill).
+        TvPrimaryButton(onClick = onRetry, modifier = Modifier.focusRequester(retryFocusRequester)) {
+            TvText(stringResource(R.string.startup_retry))
+        }
+        TvButton(onClick = onShareReport) { TvText(stringResource(R.string.startup_share_report)) }
+    }
+}
+
+private val StartupLogoWidth = 300.dp
