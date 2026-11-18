@@ -203,7 +203,14 @@ fun PlayerErrorOverlay(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        // The message sits over video of any brightness, so it gets the dark over-video tier (black 85%, rule 9) on the
+        // card's area only, with its own ink (light themes would otherwise put dark ink on a black frame).
+        Column(
+            modifier = Modifier
+                .background(AppColors.GlassOverVideo, RoundedCornerShape(16.dp))
+                .padding(horizontal = 32.dp, vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 text = stringResource(R.string.player_error_title),
                 style = MaterialTheme.typography.titleMedium,
@@ -213,7 +220,7 @@ fun PlayerErrorOverlay(
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                color = OnSurface
+                color = AppColors.OnGlassOverVideo
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -253,7 +260,7 @@ fun PlayerErrorOverlay(
                     stringResource(R.string.player_error_back)
                 },
                 style = MaterialTheme.typography.bodySmall,
-                color = OnSurfaceDim
+                color = AppColors.OnGlassOverVideo
             )
         }
     }
@@ -1435,7 +1442,7 @@ fun PlayerEpisodeSelectionDialog(
                         Text(
                             text = stringResource(R.string.player_episodes),
                             style = MaterialTheme.typography.headlineSmall,
-                            color = Color.White,
+                            color = AppColors.TextPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
@@ -1495,13 +1502,13 @@ fun PlayerEpisodeSelectionDialog(
                                 Text(
                                     text = stringResource(R.string.series_seasons),
                                     style = MaterialTheme.typography.titleMedium,
-                                    color = Color.White,
+                                    color = AppColors.TextPrimary,
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
                                     text = stringResource(R.string.player_episode_picker_hint),
                                     style = MaterialTheme.typography.bodySmall,
-                                    color = AppColors.TextTertiary
+                                    color = AppColors.TextSecondary
                                 )
                                 LazyColumn(
                                     modifier = Modifier.fillMaxWidth(),
@@ -1513,14 +1520,15 @@ fun PlayerEpisodeSelectionDialog(
                                             onClick = { selectedSeasonNumber = season.seasonNumber },
                                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(16.dp)),
                                             colors = ClickableSurfaceDefaults.colors(
-                                                containerColor = if (isSelectedSeason) AppColors.BrandMuted.copy(alpha = 0.72f) else AppColors.SurfaceElevated.copy(alpha = 0.62f),
-                                                focusedContainerColor = AppColors.Surface.copy(alpha = 0.76f),
-                                                contentColor = Color.White,
-                                                focusedContentColor = Color.White
+                                                // Selected keeps the tonal selected fill when focused (ring and scale carry focus), as in selectableSurfaceColors.
+                                                containerColor = if (isSelectedSeason) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.62f),
+                                                focusedContainerColor = if (isSelectedSeason) AppColors.SelectedContainer else AppColors.Surface.copy(alpha = 0.76f),
+                                                contentColor = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextPrimary,
+                                                focusedContentColor = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextPrimary
                                             ),
                                             // The ring is the only stroke (rule 14); selection shows as the fill plus a check.
                                             border = selectableFocusBorder(RoundedCornerShape(16.dp)),
-                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
                                             modifier = Modifier
                                                 .then(
                                                     if (isSelectedSeason) Modifier.focusRequester(selectedSeasonFocusRequester) else Modifier
@@ -1558,7 +1566,7 @@ fun PlayerEpisodeSelectionDialog(
                                                         season.episodes.size
                                                     ),
                                                     style = MaterialTheme.typography.bodySmall,
-                                                    color = if (isSelectedSeason) AppColors.TextPrimary else AppColors.TextSecondary
+                                                    color = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextSecondary
                                                 )
                                             }
                                         }
@@ -1587,7 +1595,7 @@ fun PlayerEpisodeSelectionDialog(
                                         Text(
                                             text = selectedSeason.name,
                                             style = MaterialTheme.typography.titleMedium,
-                                            color = Color.White,
+                                            color = AppColors.TextPrimary,
                                             fontWeight = FontWeight.Bold
                                         )
                                         Text(
@@ -1620,11 +1628,11 @@ fun PlayerEpisodeSelectionDialog(
                                             onClick = { onSelectEpisode(episode) },
                                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(16.dp)),
                                             colors = ClickableSurfaceDefaults.colors(
-                                                containerColor = if (isSelectedEpisode) AppColors.BrandMuted.copy(alpha = 0.62f) else AppColors.SurfaceElevated.copy(alpha = 0.44f),
-                                                focusedContainerColor = AppColors.Surface.copy(alpha = 0.74f)
+                                                containerColor = if (isSelectedEpisode) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.44f),
+                                                focusedContainerColor = if (isSelectedEpisode) AppColors.SelectedContainer else AppColors.Surface.copy(alpha = 0.74f)
                                             ),
                                             border = selectableFocusBorder(RoundedCornerShape(16.dp)),
-                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .then(
@@ -1650,7 +1658,7 @@ fun PlayerEpisodeSelectionDialog(
                                                     Text(
                                                         text = stringResource(R.string.player_selected),
                                                         style = MaterialTheme.typography.labelSmall,
-                                                        color = AppColors.BrandStrong,
+                                                        color = AppColors.OnSelectedContainer,
                                                         modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 8.dp)
                                                     )
                                                 }
@@ -1675,13 +1683,13 @@ private fun PlayerEpisodeStatPill(
     Surface(
         shape = RoundedCornerShape(999.dp),
         colors = SurfaceDefaults.colors(
-            containerColor = if (accent) AppColors.BrandMuted.copy(alpha = 0.78f) else AppColors.SurfaceElevated.copy(alpha = 0.70f)
+            containerColor = if (accent) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.70f)
         )
     ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelSmall,
-            color = if (accent) AppColors.BrandStrong else AppColors.TextSecondary,
+            color = if (accent) AppColors.OnSelectedContainer else AppColors.TextSecondary,
             modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
         )
     }
@@ -1729,7 +1737,7 @@ private fun PlayerEpisodeListItem(
             Text(
                 text = episode.title,
                 style = MaterialTheme.typography.titleSmall,
-                color = Color.White,
+                color = if (selected) AppColors.OnSelectedContainer else AppColors.TextPrimary,
                 fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -1737,7 +1745,7 @@ private fun PlayerEpisodeListItem(
             Text(
                 text = buildEpisodeMetaLabel(episode),
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.TextSecondary,
+                color = if (selected) AppColors.OnSelectedContainer else AppColors.TextSecondary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -1745,7 +1753,7 @@ private fun PlayerEpisodeListItem(
                 Text(
                     text = plot,
                     style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.TextTertiary,
+                    color = if (selected) AppColors.OnSelectedContainer else AppColors.TextSecondary,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
