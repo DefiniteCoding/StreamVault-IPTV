@@ -49,6 +49,9 @@ fun <T : Any> CategoryRow(
     onItemFocused: ((T) -> Unit)? = null,
     // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
     edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset,
+    // Start/end inset of the header and the cards. Screens whose rows must line up with controls above pass 0.
+    contentInset: Dp = 20.dp,
+    headerTopPadding: Dp = 14.dp,
     itemContent: @Composable (T) -> Unit
 ) {
     val resolvedContentTypeSelector: (T) -> Any? = contentTypeSelector ?: { null }
@@ -61,7 +64,7 @@ fun <T : Any> CategoryRow(
     ) {
         val headerPadding = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 6.dp)
+            .padding(start = contentInset, end = contentInset, top = headerTopPadding, bottom = 6.dp)
         if (onSeeAll != null) {
             Row(
                 modifier = headerPadding,
@@ -97,7 +100,7 @@ fun <T : Any> CategoryRow(
         }
         FocusSafeLazyRow(
             modifier = Modifier.focusRestorer(),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp),
+            contentPadding = PaddingValues(horizontal = contentInset, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             edgeGutterStart = edgeGutter,
             edgeGutterEnd = edgeGutter
