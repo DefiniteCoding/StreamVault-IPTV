@@ -10,6 +10,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.foundation.MutatePriority
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.animate
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -113,6 +119,37 @@ internal object ComfortZoneBringIntoViewSpec : BringIntoViewSpec {
 @Composable
 fun ComfortZoneScrollOnFocus(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalBringIntoViewSpec provides ComfortZoneBringIntoViewSpec, content = content)
+}
+
+/**
+ * Scrolls [state] back to its first item whenever focus enters this node. The comfort zone leaves a focused item
+ * alone while it is inside the viewport, so the top CTA of a detail page can sit in view with the title above it
+ * clipped, and nothing focusable above it to pull the list further up.
+ */
+@Composable
+fun Modifier.scrollListToTopOnFocus(state: LazyListState): Modifier {
+    val scope = rememberCoroutineScope()
+    return onFocusChanged { focus ->
+        if (focus.hasFocus && state.canScrollBackward) scope.launch { state.animateToTop() }
+    }
+}
+
+private const val SCROLL_TO_TOP_MILLIS = 350
+
+// UserInput priority: the focus-driven bring-into-view that follows the focus change takes the same scroll lock at
+// default priority and would cancel a default-priority animation after its first frame.
+private suspend fun LazyListState.animateToTop() {
+    scroll(MutatePriority.UserInput) {
+        if (firstVisibleItemIndex > 0) {
+            scrollToItem(0)
+            return@scroll
+        }
+        var previous = 0f
+        animate(0f, -firstVisibleItemScrollOffset.toFloat(), animationSpec = tween(SCROLL_TO_TOP_MILLIS)) { value, _ ->
+            scrollBy(value - previous)
+            previous = value
+        }
+    }
 }
 
 @Composable

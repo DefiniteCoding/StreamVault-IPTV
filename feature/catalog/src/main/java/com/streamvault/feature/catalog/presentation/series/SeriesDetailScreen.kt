@@ -5,6 +5,7 @@ import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.initialFocusTarget
+import com.streamvault.core.ui.design.scrollListToTopOnFocus
 import com.streamvault.core.ui.design.selectableFocusBorder
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -343,8 +344,10 @@ private fun SeriesDetailContent(
                 )
         )
 
+        val listState = rememberLazyListState()
         ComfortZoneScrollOnFocus {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -360,179 +363,181 @@ private fun SeriesDetailContent(
                 }
 
                 item {
-                    if (compactLayout) {
-                        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                            Box(
-                                modifier = Modifier
-                                    .width(posterWidth)
-                                    .aspectRatio(2f / 3f)
-                                    .clip(BrowseShapes.Panel)
-                                    .background(AppColors.SurfaceElevated)
-                                    .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
-                            ) {
-                                AsyncImage(
-                                    model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
-                                    contentDescription = series.name,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(16.dp)
-                            ) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
-                                    series.rating.takeIf { it > 0f }?.let {
-                                        StatusPill(
-                                            label = formatVodRatingLabel(it),
-                                            containerColor = AppColors.Warning,
-                                            contentColor = contentOnColor(AppColors.Warning),
-                                            containerAlpha = ArtworkPillAlpha
-                                        )
-                                    }
-                                    if (unwatchedEpisodeCount > 0) {
-                                        StatusPill(
-                                            label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
-                                            containerColor = AppColors.SurfaceEmphasis
-                                        )
-                                    }
-                                }
-                                Text(
-                                    text = series.name,
-                                    style = MaterialTheme.typography.displayMedium,
-                                    color = AppColors.TextPrimary,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                ContentMetadataStrip(
-                                    values = listOf(
-                                        series.releaseDate.orEmpty(),
-                                        series.genre.orEmpty(),
-                                        selectedSeason?.name.orEmpty()
+                    Box(modifier = Modifier.scrollListToTopOnFocus(listState)) {
+                        if (compactLayout) {
+                            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(posterWidth)
+                                        .aspectRatio(2f / 3f)
+                                        .clip(BrowseShapes.Panel)
+                                        .background(AppColors.SurfaceElevated)
+                                        .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
+                                ) {
+                                    AsyncImage(
+                                        model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
+                                        contentDescription = series.name,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
                                     )
-                                )
-                                ExternalRatingsStrip(
-                                    ratings = externalRatings,
-                                    isLoading = isLoadingExternalRatings
-                                )
-                                SeriesVersionSelector(
-                                    variants = series.variants,
-                                    selectedVariantId = series.selectedVariantId ?: series.id,
-                                    onSelectVariant = onSelectVariant,
-                                    edgeGutterStart = screenGutter,
-                                    edgeGutterEnd = screenGutter
-                                )
-                                Text(
-                                    text = series.plot ?: stringResource(R.string.series_plot_fallback),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = AppColors.TextSecondary,
-                                    maxLines = 5,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                SeriesDetailActions(
-                                    series = series,
-                                    resumeEpisode = resumeEpisode,
-                                    isCasting = isCasting,
-                                    showCopyUrlAndCast = !isTelevisionDevice,
-                                    onResumeClick = onResumeClick,
-                                    onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
-                                    onCast = onCastResumeEpisode,
-                                    onToggleFavorite = onToggleFavorite,
-                                    initialFocusModifier = initialFocusModifier,
-                                    traktActions = traktActions,
-                                    edgeGutterStart = screenGutter,
-                                    edgeGutterEnd = screenGutter
-                                )
-                            }
-                        }
-                    } else {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(24.dp),
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .width(posterWidth)
-                                    .aspectRatio(2f / 3f)
-                                    .clip(BrowseShapes.Panel)
-                                    .background(AppColors.SurfaceElevated)
-                                    .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
-                            ) {
-                                AsyncImage(
-                                    model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
-                                    contentDescription = series.name,
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = ContentScale.Crop
-                                )
-                            }
-
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalArrangement = Arrangement.spacedBy(18.dp)
-                            ) {
-                                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
-                                    series.rating.takeIf { it > 0f }?.let {
-                                        StatusPill(
-                                            label = formatVodRatingLabel(it),
-                                            containerColor = AppColors.Warning,
-                                            contentColor = contentOnColor(AppColors.Warning),
-                                            containerAlpha = ArtworkPillAlpha
-                                        )
-                                    }
-                                    if (unwatchedEpisodeCount > 0) {
-                                        StatusPill(
-                                            label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
-                                            containerColor = AppColors.SurfaceEmphasis
-                                        )
-                                    }
                                 }
-                                Text(
-                                    text = series.name,
-                                    style = MaterialTheme.typography.displayMedium,
-                                    color = AppColors.TextPrimary,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                ContentMetadataStrip(
-                                    values = listOf(
-                                        series.releaseDate.orEmpty(),
-                                        series.genre.orEmpty(),
-                                        selectedSeason?.name.orEmpty()
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
+                                        series.rating.takeIf { it > 0f }?.let {
+                                            StatusPill(
+                                                label = formatVodRatingLabel(it),
+                                                containerColor = AppColors.Warning,
+                                                contentColor = contentOnColor(AppColors.Warning),
+                                                containerAlpha = ArtworkPillAlpha
+                                            )
+                                        }
+                                        if (unwatchedEpisodeCount > 0) {
+                                            StatusPill(
+                                                label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
+                                                containerColor = AppColors.SurfaceEmphasis
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = series.name,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        color = AppColors.TextPrimary,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
                                     )
-                                )
-                                ExternalRatingsStrip(
-                                    ratings = externalRatings,
-                                    isLoading = isLoadingExternalRatings
-                                )
-                                SeriesVersionSelector(
-                                    variants = series.variants,
-                                    selectedVariantId = series.selectedVariantId ?: series.id,
-                                    onSelectVariant = onSelectVariant,
-                                    edgeGutterEnd = screenGutter
-                                )
-                                Text(
-                                    text = series.plot ?: stringResource(R.string.series_plot_fallback),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = AppColors.TextSecondary,
-                                    maxLines = 5,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                SeriesDetailActions(
-                                    series = series,
-                                    resumeEpisode = resumeEpisode,
-                                    isCasting = isCasting,
-                                    showCopyUrlAndCast = !isTelevisionDevice,
-                                    onResumeClick = onResumeClick,
-                                    onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
-                                    onCast = onCastResumeEpisode,
-                                    onToggleFavorite = onToggleFavorite,
-                                    initialFocusModifier = initialFocusModifier,
-                                    traktActions = traktActions,
-                                    edgeGutterEnd = screenGutter
-                                )
+                                    ContentMetadataStrip(
+                                        values = listOf(
+                                            series.releaseDate.orEmpty(),
+                                            series.genre.orEmpty(),
+                                            selectedSeason?.name.orEmpty()
+                                        )
+                                    )
+                                    ExternalRatingsStrip(
+                                        ratings = externalRatings,
+                                        isLoading = isLoadingExternalRatings
+                                    )
+                                    SeriesVersionSelector(
+                                        variants = series.variants,
+                                        selectedVariantId = series.selectedVariantId ?: series.id,
+                                        onSelectVariant = onSelectVariant,
+                                        edgeGutterStart = screenGutter,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                    Text(
+                                        text = series.plot ?: stringResource(R.string.series_plot_fallback),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = AppColors.TextSecondary,
+                                        maxLines = 5,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    SeriesDetailActions(
+                                        series = series,
+                                        resumeEpisode = resumeEpisode,
+                                        isCasting = isCasting,
+                                        showCopyUrlAndCast = !isTelevisionDevice,
+                                        onResumeClick = onResumeClick,
+                                        onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
+                                        onCast = onCastResumeEpisode,
+                                        onToggleFavorite = onToggleFavorite,
+                                        initialFocusModifier = initialFocusModifier,
+                                        traktActions = traktActions,
+                                        edgeGutterStart = screenGutter,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                }
+                            }
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(posterWidth)
+                                        .aspectRatio(2f / 3f)
+                                        .clip(BrowseShapes.Panel)
+                                        .background(AppColors.SurfaceElevated)
+                                        .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
+                                ) {
+                                    AsyncImage(
+                                        model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
+                                        contentDescription = series.name,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                                ) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
+                                        series.rating.takeIf { it > 0f }?.let {
+                                            StatusPill(
+                                                label = formatVodRatingLabel(it),
+                                                containerColor = AppColors.Warning,
+                                                contentColor = contentOnColor(AppColors.Warning),
+                                                containerAlpha = ArtworkPillAlpha
+                                            )
+                                        }
+                                        if (unwatchedEpisodeCount > 0) {
+                                            StatusPill(
+                                                label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
+                                                containerColor = AppColors.SurfaceEmphasis
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = series.name,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        color = AppColors.TextPrimary,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    ContentMetadataStrip(
+                                        values = listOf(
+                                            series.releaseDate.orEmpty(),
+                                            series.genre.orEmpty(),
+                                            selectedSeason?.name.orEmpty()
+                                        )
+                                    )
+                                    ExternalRatingsStrip(
+                                        ratings = externalRatings,
+                                        isLoading = isLoadingExternalRatings
+                                    )
+                                    SeriesVersionSelector(
+                                        variants = series.variants,
+                                        selectedVariantId = series.selectedVariantId ?: series.id,
+                                        onSelectVariant = onSelectVariant,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                    Text(
+                                        text = series.plot ?: stringResource(R.string.series_plot_fallback),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = AppColors.TextSecondary,
+                                        maxLines = 5,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    SeriesDetailActions(
+                                        series = series,
+                                        resumeEpisode = resumeEpisode,
+                                        isCasting = isCasting,
+                                        showCopyUrlAndCast = !isTelevisionDevice,
+                                        onResumeClick = onResumeClick,
+                                        onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
+                                        onCast = onCastResumeEpisode,
+                                        onToggleFavorite = onToggleFavorite,
+                                        initialFocusModifier = initialFocusModifier,
+                                        traktActions = traktActions,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                }
                             }
                         }
                     }

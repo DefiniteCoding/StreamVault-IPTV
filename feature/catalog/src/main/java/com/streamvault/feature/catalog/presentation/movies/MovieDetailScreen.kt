@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -76,6 +77,7 @@ import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
 import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.initialFocusTarget
+import com.streamvault.core.ui.design.scrollListToTopOnFocus
 import com.streamvault.domain.model.ExternalRatings
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.VodMovieVariant
@@ -266,8 +268,10 @@ private fun MovieDetailContent(
                 )
         )
 
+        val listState = rememberLazyListState()
         ComfortZoneScrollOnFocus {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -283,74 +287,76 @@ private fun MovieDetailContent(
                 }
 
                 item {
-                    if (compactLayout) {
-                        Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                            MoviePoster(movie = movie, posterWidth = posterWidth)
-                            MovieDetailHeroText(
-                                movie = movie,
-                                edgeGutterStart = screenGutter,
-                                edgeGutterEnd = screenGutter,
-                                hasResume = hasResume,
-                                resumePositionMs = resumePositionMs,
-                                isCasting = isCasting,
-                                showCopyUrlAndCast = !isTelevisionDevice,
-                                externalRatings = externalRatings,
-                                isLoadingExternalRatings = isLoadingExternalRatings,
-                                onPlay = onPlay,
-                                onCopyUrl = {
-                                    coroutineScope.launch {
-                                        copyStreamUrlToClipboard(context, onCopyUrl())
-                                    }
-                                },
-                                onDownload = onDownload,
-                                onCast = onCast,
-                                onToggleFavorite = onToggleFavorite,
-                                onSelectVariant = onSelectVariant,
-                                playButtonModifier = playButtonModifier,
-                                onPlayTrailer = {
-                                    resolveTrailerUrl(movie.youtubeTrailer)?.let { trailerUrl ->
-                                        runCatching {
-                                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)))
+                    Box(modifier = Modifier.scrollListToTopOnFocus(listState)) {
+                        if (compactLayout) {
+                            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+                                MoviePoster(movie = movie, posterWidth = posterWidth)
+                                MovieDetailHeroText(
+                                    movie = movie,
+                                    edgeGutterStart = screenGutter,
+                                    edgeGutterEnd = screenGutter,
+                                    hasResume = hasResume,
+                                    resumePositionMs = resumePositionMs,
+                                    isCasting = isCasting,
+                                    showCopyUrlAndCast = !isTelevisionDevice,
+                                    externalRatings = externalRatings,
+                                    isLoadingExternalRatings = isLoadingExternalRatings,
+                                    onPlay = onPlay,
+                                    onCopyUrl = {
+                                        coroutineScope.launch {
+                                            copyStreamUrlToClipboard(context, onCopyUrl())
+                                        }
+                                    },
+                                    onDownload = onDownload,
+                                    onCast = onCast,
+                                    onToggleFavorite = onToggleFavorite,
+                                    onSelectVariant = onSelectVariant,
+                                    playButtonModifier = playButtonModifier,
+                                    onPlayTrailer = {
+                                        resolveTrailerUrl(movie.youtubeTrailer)?.let { trailerUrl ->
+                                            runCatching {
+                                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)))
+                                            }
                                         }
                                     }
-                                }
-                            )
-                        }
-                    } else {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(28.dp),
-                            verticalAlignment = Alignment.Bottom
-                        ) {
-                            MoviePoster(movie = movie, posterWidth = posterWidth)
-                            MovieDetailHeroText(
-                                movie = movie,
-                                edgeGutterEnd = screenGutter,
-                                hasResume = hasResume,
-                                resumePositionMs = resumePositionMs,
-                                isCasting = isCasting,
-                                showCopyUrlAndCast = !isTelevisionDevice,
-                                externalRatings = externalRatings,
-                                isLoadingExternalRatings = isLoadingExternalRatings,
-                                onPlay = onPlay,
-                                onCopyUrl = {
-                                    coroutineScope.launch {
-                                        copyStreamUrlToClipboard(context, onCopyUrl())
-                                    }
-                                },
-                                onDownload = onDownload,
-                                onCast = onCast,
-                                onToggleFavorite = onToggleFavorite,
-                                onSelectVariant = onSelectVariant,
-                                playButtonModifier = playButtonModifier,
-                                onPlayTrailer = {
-                                    resolveTrailerUrl(movie.youtubeTrailer)?.let { trailerUrl ->
-                                        runCatching {
-                                            context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)))
+                                )
+                            }
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(28.dp),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                MoviePoster(movie = movie, posterWidth = posterWidth)
+                                MovieDetailHeroText(
+                                    movie = movie,
+                                    edgeGutterEnd = screenGutter,
+                                    hasResume = hasResume,
+                                    resumePositionMs = resumePositionMs,
+                                    isCasting = isCasting,
+                                    showCopyUrlAndCast = !isTelevisionDevice,
+                                    externalRatings = externalRatings,
+                                    isLoadingExternalRatings = isLoadingExternalRatings,
+                                    onPlay = onPlay,
+                                    onCopyUrl = {
+                                        coroutineScope.launch {
+                                            copyStreamUrlToClipboard(context, onCopyUrl())
                                         }
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                    },
+                                    onDownload = onDownload,
+                                    onCast = onCast,
+                                    onToggleFavorite = onToggleFavorite,
+                                    onSelectVariant = onSelectVariant,
+                                    playButtonModifier = playButtonModifier,
+                                    onPlayTrailer = {
+                                        resolveTrailerUrl(movie.youtubeTrailer)?.let { trailerUrl ->
+                                            runCatching {
+                                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(trailerUrl)))
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
