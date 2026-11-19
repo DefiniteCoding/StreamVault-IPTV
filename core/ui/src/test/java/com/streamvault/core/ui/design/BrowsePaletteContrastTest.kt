@@ -194,6 +194,23 @@ class BrowsePaletteContrastTest {
     }
 
     @Test
+    fun sheetGlyphsAndRingsAreVisibleOnTheirRowFillsInEveryTheme() {
+        allThemeIds.forEach { id ->
+            val browse = AppPalette.forTheme(id).forBrowsing()
+            // Radio ring and unchecked box (textSecondary), checked box (brand) sit on controlContainer rows;
+            // the selected radio ring sits on selectedContainer. All are non-text UI, so 3:1.
+            val unselectedGlyph = contrast(browse.textSecondary, browse.controlContainer)
+            val checkedBox = contrast(browse.brand, browse.controlContainer)
+            val selectedGlyph = contrast(browse.onSelectedContainer, browse.selectedContainer)
+            val ringOnControl = contrast(browse.focus, browse.controlContainer)
+            assertTrue("$id textSecondary on controlContainer was $unselectedGlyph", unselectedGlyph >= 3f)
+            assertTrue("$id brand on controlContainer was $checkedBox", checkedBox >= 3f)
+            assertTrue("$id onSelectedContainer on selectedContainer was $selectedGlyph", selectedGlyph >= 3f)
+            assertTrue("$id focus ring on controlContainer was $ringOnControl", ringOnControl >= 3f)
+        }
+    }
+
+    @Test
     fun restingTextIsReadableOnCanvasAndSurfaceInEveryTheme() {
         allThemeIds.forEach { id ->
             val browse = AppPalette.forTheme(id).forBrowsing()

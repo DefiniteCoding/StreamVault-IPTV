@@ -230,6 +230,7 @@ val MoreContentFadeWidth = 56.dp
  * Pass a [fadeWidth] of 0 to skip it entirely, with no modifier and no offscreen layer: use that for rows drawn over
  * video, where a new offscreen layer needs a measured TV GPU frame time first.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FocusSafeLazyRow(
     modifier: Modifier = Modifier,
@@ -245,24 +246,34 @@ fun FocusSafeLazyRow(
     val direction = LocalLayoutDirection.current
     val bleedStart = FocusOverflowPadding + edgeGutterStart
     val bleedEnd = FocusOverflowPadding + edgeGutterEnd
-    LazyRow(
-        modifier = modifier
-            .bleed(start = bleedStart, end = bleedEnd, vertical = FocusOverflowPadding)
-            .then(
-                if (fadeWidth > 0.dp) Modifier.fadeWhenMoreContent(state, edgeInset = FocusOverflowPadding, fadeWidth = fadeWidth)
-                else Modifier
+    val startPadding = contentPadding.calculateStart(direction) + bleedStart
+    val endPadding = contentPadding.calculateEnd(direction) + bleedEnd
+    // A focused card stays where the row rests: scrolled to the viewport edge, the first card would lose its focus
+    // ring to the clip of the row, because the overflow room only exists beside the resting position.
+    val density = LocalDensity.current
+    val leftRoomPx = with(density) { (if (direction == LayoutDirection.Ltr) startPadding else endPadding).toPx() }
+    val rightRoomPx = with(density) { (if (direction == LayoutDirection.Ltr) endPadding else startPadding).toPx() }
+    val bringIntoViewSpec = remember(leftRoomPx, rightRoomPx) { ClearOfFadeBringIntoViewSpec(leftRoomPx, rightRoomPx) }
+    CompositionLocalProvider(LocalBringIntoViewSpec provides bringIntoViewSpec) {
+        LazyRow(
+            modifier = modifier
+                .bleed(start = bleedStart, end = bleedEnd, vertical = FocusOverflowPadding)
+                .then(
+                    if (fadeWidth > 0.dp) Modifier.fadeWhenMoreContent(state, edgeInset = FocusOverflowPadding, fadeWidth = fadeWidth)
+                    else Modifier
+                ),
+            state = state,
+            contentPadding = PaddingValues(
+                start = startPadding,
+                top = contentPadding.calculateTopPadding() + FocusOverflowPadding,
+                end = endPadding,
+                bottom = contentPadding.calculateBottomPadding() + FocusOverflowPadding
             ),
-        state = state,
-        contentPadding = PaddingValues(
-            start = contentPadding.calculateStart(direction) + bleedStart,
-            top = contentPadding.calculateTopPadding() + FocusOverflowPadding,
-            end = contentPadding.calculateEnd(direction) + bleedEnd,
-            bottom = contentPadding.calculateBottomPadding() + FocusOverflowPadding
-        ),
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = verticalAlignment,
-        content = content
-    )
+            horizontalArrangement = horizontalArrangement,
+            verticalAlignment = verticalAlignment,
+            content = content
+        )
+    }
 }
 
 /** Height of the fade that tells the viewer a column continues past the top or bottom edge. */
@@ -305,14 +316,18 @@ fun FocusSafeLazyColumn(
 }
 
 /**
- * Scrolls only when the focused row enters the fade zone at the top or bottom, and then just far enough to leave
- * it. At the very start or end of the list there is nothing to scroll, and no fade is drawn there either.
+ * Scrolls only when the focused item enters the zone [startInsetPx] / [endInsetPx] from the viewport edges, and then
+ * just far enough to leave it. At the very start or end of the list there is nothing to scroll, and no fade is drawn
+ * there either. Insets are physical (left and right for a row), whatever the layout direction.
  */
 @OptIn(ExperimentalFoundationApi::class)
-internal class ClearOfFadeBringIntoViewSpec(private val fadePx: Float) : BringIntoViewSpec {
+internal class ClearOfFadeBringIntoViewSpec(
+    private val startInsetPx: Float,
+    private val endInsetPx: Float = startInsetPx
+) : BringIntoViewSpec {
     override fun calculateScrollDistance(offset: Float, size: Float, containerSize: Float): Float {
-        val zoneStart = fadePx
-        val zoneEnd = containerSize - fadePx
+        val zoneStart = startInsetPx
+        val zoneEnd = containerSize - endInsetPx
         return when {
             size > zoneEnd - zoneStart -> offset - zoneStart
             offset < zoneStart -> offset - zoneStart
@@ -323,11 +338,23 @@ internal class ClearOfFadeBringIntoViewSpec(private val fadePx: Float) : BringIn
 }
 
 /**
+ * Makes scrollables below scroll a focused child clear of a [fadeWhenMoreContentVertically] zone of [fadeHeight],
+ * so the focused row is never drawn under the fade. [FocusSafeLazyColumn] does this itself.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ProvideClearOfFadeBringIntoView(fadeHeight: Dp, content: @Composable () -> Unit) {
+    val fadePx = with(LocalDensity.current) { fadeHeight.toPx() }
+    val bringIntoViewSpec = remember(fadePx) { ClearOfFadeBringIntoViewSpec(fadePx) }
+    CompositionLocalProvider(LocalBringIntoViewSpec provides bringIntoViewSpec, content = content)
+}
+
+/**
  * Masks the column to transparent over [fadeHeight] at each edge that has more items behind it. State is read in
  * the draw phase, so scrolling never recomposes. Without more content nothing is masked and the layer is not
  * offscreen.
  */
-internal fun Modifier.fadeWhenMoreContentVertically(state: ScrollableState, fadeHeight: Dp): Modifier = this
+fun Modifier.fadeWhenMoreContentVertically(state: ScrollableState, fadeHeight: Dp): Modifier = this
     .graphicsLayer {
         compositingStrategy =
             if (state.canScrollBackward || state.canScrollForward) CompositingStrategy.Offscreen
@@ -388,24 +415,26 @@ internal fun Modifier.fadeWhenMoreContent(state: ScrollableState, edgeInset: Dp,
     .drawWithContent {
         drawContent()
         val isLtr = layoutDirection == LayoutDirection.Ltr
-        val fadeLeft = if (isLtr) state.canScrollBackward else state.canScrollForward
-        val fadeRight = if (isLtr) state.canScrollForward else state.canScrollBackward
         val inset = edgeInset.toPx()
         val width = fadeWidth.toPx()
-        if (fadeLeft) {
+        val backward = state.backwardFadeStrength(width)
+        val forward = if (state.canScrollForward) 1f else 0f
+        val fadeLeft = if (isLtr) backward else forward
+        val fadeRight = if (isLtr) forward else backward
+        if (fadeLeft > 0f) {
             drawRect(
                 brush = Brush.horizontalGradient(
-                    0f to Color.Transparent, 1f to Color.Black,
+                    0f to Color.Black.copy(alpha = 1f - fadeLeft), 1f to Color.Black,
                     startX = inset, endX = inset + width
                 ),
                 size = Size(inset + width, size.height),
                 blendMode = BlendMode.DstIn
             )
         }
-        if (fadeRight) {
+        if (fadeRight > 0f) {
             drawRect(
                 brush = Brush.horizontalGradient(
-                    0f to Color.Black, 1f to Color.Transparent,
+                    0f to Color.Black, 1f to Color.Black.copy(alpha = 1f - fadeRight),
                     startX = size.width - inset - width, endX = size.width - inset
                 ),
                 topLeft = Offset(size.width - inset - width, 0f),
@@ -414,6 +443,16 @@ internal fun Modifier.fadeWhenMoreContent(state: ScrollableState, edgeInset: Dp,
             )
         }
     }
+
+/**
+ * 0 when nothing is hidden before the first item, 1 once a full [fadePx] is. A lazy list scrolled a few pixels off
+ * its start has not cut anything off yet, so the first card must not fade the moment focus nudges the row.
+ */
+private fun ScrollableState.backwardFadeStrength(fadePx: Float): Float = when {
+    !canScrollBackward -> 0f
+    this is LazyListState && firstVisibleItemIndex == 0 -> (firstVisibleItemScrollOffset / fadePx).coerceIn(0f, 1f)
+    else -> 1f
+}
 
 // PaddingValues(start, end) already follows the layout direction, so feed it start and end, not left and right.
 internal fun PaddingValues.withFocusOverflow(direction: LayoutDirection): PaddingValues = PaddingValues(

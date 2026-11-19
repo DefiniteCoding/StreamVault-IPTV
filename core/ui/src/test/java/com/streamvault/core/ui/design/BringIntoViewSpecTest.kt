@@ -39,7 +39,7 @@ class BringIntoViewSpecTest {
     }
 
     // Fade of 100 on a container of 1000 gives a clear zone of 100..900.
-    private val clearOfFade = ClearOfFadeBringIntoViewSpec(fadePx = 100f)
+    private val clearOfFade = ClearOfFadeBringIntoViewSpec(startInsetPx = 100f)
 
     @Test
     fun `clear of fade leaves an item between the fades`() {
@@ -59,5 +59,23 @@ class BringIntoViewSpecTest {
     @Test
     fun `clear of fade aligns an item taller than the zone to the top edge of the zone`() {
         assertThat(clearOfFade.distance(offset = 300f, size = 900f)).isEqualTo(200f)
+    }
+
+    // Row resting room of 60 on the left and 20 on the right gives a zone of 60..980.
+    private val rowRoom = ClearOfFadeBringIntoViewSpec(startInsetPx = 60f, endInsetPx = 20f)
+
+    @Test
+    fun `row room scrolls an item back to its resting position, not to the viewport edge`() {
+        assertThat(rowRoom.distance(offset = -40f, size = 100f)).isEqualTo(-100f)
+    }
+
+    @Test
+    fun `row room leaves an item at its resting position`() {
+        assertThat(rowRoom.distance(offset = 60f, size = 100f)).isEqualTo(0f)
+    }
+
+    @Test
+    fun `row room scrolls forward using the smaller end room`() {
+        assertThat(rowRoom.distance(offset = 900f, size = 100f)).isEqualTo(20f)
     }
 }
