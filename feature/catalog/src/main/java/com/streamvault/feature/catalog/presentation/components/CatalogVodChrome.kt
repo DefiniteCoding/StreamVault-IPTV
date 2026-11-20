@@ -95,13 +95,15 @@ import com.streamvault.core.ui.components.shell.AppSectionHeader
 fun VodSectionHeader(
     title: String,
     onSeeAll: (() -> Unit)? = null,
-    seeAllLabel: String = stringResource(R.string.action_see_all)
+    seeAllLabel: String = stringResource(R.string.action_see_all),
+    // A header inside a grid that already pads its content passes 0.dp so it lines up with the cards.
+    horizontalInset: Dp = 20.dp
 ) {
     AppSectionHeader(
         title = title,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp),
+            .padding(start = horizontalInset, end = horizontalInset, top = 14.dp, bottom = 8.dp),
         actionLabel = onSeeAll?.let { seeAllLabel },
         onActionClick = onSeeAll
     )
@@ -139,7 +141,8 @@ private val CategoryPillMaxWidth = 280.dp
 /**
  * Filter row of a VOD grid: the screen's own actions, a Sort group (single choice), the category pill and a pill that
  * opens the full filter dialog. Sort values not offered in [sortOptions] stay reachable through the dialog, so no
- * selected chip is shown for them. The row scrolls inside the grid, so its padding leaves room for the focus ring.
+ * selected chip is shown for them. The grid already pads its content, so the first chip lines up with the first card
+ * and [FocusSafeLazyRow] supplies the room for the focus ring.
  */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -163,7 +166,7 @@ fun VodFilterRow(
 ) {
     FocusSafeLazyRow(
         modifier = modifier.fillMaxWidth().focusRestorer().suppressParentVerticalScroll(),
-        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+        contentPadding = PaddingValues(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         edgeGutterStart = edgeGutter,

@@ -1004,7 +1004,7 @@ private fun SeriesVodContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            VodSectionHeader(title = categoryTitle)
+            VodSectionHeader(title = categoryTitle, horizontalInset = 0.dp)
         }
 
         if (!uiState.isReorderMode) {
