@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.MutatePriority
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animate
 import androidx.compose.ui.focus.onFocusChanged
@@ -25,6 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
@@ -131,6 +137,48 @@ fun Modifier.scrollListToTopOnFocus(state: LazyListState): Modifier {
     val scope = rememberCoroutineScope()
     return onFocusChanged { focus ->
         if (focus.hasFocus && state.canScrollBackward) scope.launch { state.animateToTop() }
+    }
+}
+
+/**
+ * Grid counterpart of [scrollListToTopOnFocus]: when focus enters the first focusable row of a grid, scrolls the grid
+ * back to its start with an animation, so the non-focusable title above that row is not left half cut off.
+ */
+@Composable
+fun Modifier.scrollGridToTopOnFocus(state: LazyGridState): Modifier {
+    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    val minPxPerMs = with(density) { GRID_TO_TOP_MIN_SPEED.toPx() }
+    val unseenItemPx = with(density) { GRID_TO_TOP_UNSEEN_ITEM.toPx() }
+    return onFocusChanged { focus ->
+        if (focus.hasFocus && state.canScrollBackward) scope.launch {
+            state.animateToTop(minPxPerMs, unseenItemPx)
+        }
+    }
+}
+
+// Floor on the scroll speed, in dp per millisecond, so the tail of the ease-out does not crawl.
+private val GRID_TO_TOP_MIN_SPEED = 0.3.dp
+
+// Height of an item scrolled out of composition is unknown, so it is estimated; the scroll clamps at the start.
+private val GRID_TO_TOP_UNSEEN_ITEM = 56.dp
+
+private const val GRID_TO_TOP_TAU_MS = 90f
+
+// Eases out by elapsed time, not per frame, so a slow frame rate does not stretch it. Runs at UserInput priority for
+// the same reason as the list version: the bring-into-view that follows the focus change would cancel a
+// default-priority animation.
+private suspend fun LazyGridState.animateToTop(minPxPerMs: Float, unseenItemPx: Float) {
+    scroll(MutatePriority.UserInput) {
+        var lastNanos = withFrameNanos { it }
+        while (firstVisibleItemIndex > 0 || firstVisibleItemScrollOffset > 0) {
+            val nowNanos = withFrameNanos { it }
+            val elapsedMs = (nowNanos - lastNanos) / 1_000_000f
+            lastNanos = nowNanos
+            val remaining = firstVisibleItemScrollOffset + firstVisibleItemIndex * unseenItemPx
+            val eased = remaining * (1f - kotlin.math.exp(-elapsedMs / GRID_TO_TOP_TAU_MS))
+            if (scrollBy(-maxOf(eased, minPxPerMs * elapsedMs)) == 0f) break
+        }
     }
 }
 
@@ -309,6 +357,40 @@ fun FocusSafeLazyColumn(
             ),
             state = state,
             contentPadding = contentPadding.withFocusOverflow(direction),
+            verticalArrangement = verticalArrangement,
+            content = content
+        )
+    }
+}
+
+/**
+ * A [LazyVerticalGrid] that fades out over [fadeHeight] at each edge with more rows behind it, and scrolls a focused
+ * card clear of that zone so the fade never covers the card being acted on. Unlike [FocusSafeLazyColumn] it adds no
+ * ring room of its own: the caller's [contentPadding] already leaves it, so the grid's layout does not move.
+ *
+ * The fade is an offscreen mask, used only while the grid can scroll. Pass a [fadeHeight] of 0 to skip it.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FocusSafeLazyVerticalGrid(
+    columns: GridCells,
+    modifier: Modifier = Modifier,
+    state: LazyGridState = rememberLazyGridState(),
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    fadeHeight: Dp = MoreContentFadeHeight,
+    content: LazyGridScope.() -> Unit
+) {
+    ProvideClearOfFadeBringIntoView(fadeHeight) {
+        LazyVerticalGrid(
+            columns = columns,
+            modifier = modifier.then(
+                if (fadeHeight > 0.dp) Modifier.fadeWhenMoreContentVertically(state, fadeHeight) else Modifier
+            ),
+            state = state,
+            contentPadding = contentPadding,
+            horizontalArrangement = horizontalArrangement,
             verticalArrangement = verticalArrangement,
             content = content
         )

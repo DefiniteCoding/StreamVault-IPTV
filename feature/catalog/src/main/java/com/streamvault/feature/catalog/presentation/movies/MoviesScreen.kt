@@ -93,7 +93,9 @@ import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
 import com.streamvault.feature.catalog.presentation.components.toVodHeroModel
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
+import com.streamvault.core.ui.design.FocusSafeLazyVerticalGrid
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.scrollGridToTopOnFocus
 import com.streamvault.domain.model.VodViewMode
 import com.streamvault.feature.catalog.presentation.vod.HandleVodUserMessage
 import com.streamvault.feature.catalog.presentation.vod.ProtectedVodPinDialog
@@ -960,7 +962,7 @@ private fun MoviesVodContent(
         VodBrowseDefaults.TRAKT_POPULAR_MOVIES_CATEGORY -> traktPopularLabel
         else -> uiState.selectedCategory ?: stringResource(R.string.nav_movies)
     }
-    LazyVerticalGrid(
+    FocusSafeLazyVerticalGrid(
         state = modernGridState,
         columns = GridCells.Adaptive(minSize = 136.dp),
         modifier = Modifier
@@ -988,6 +990,7 @@ private fun MoviesVodContent(
                 // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
                 val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
                 VodFilterRow(
+                    modifier = Modifier.scrollGridToTopOnFocus(modernGridState),
                     leadingActions = listOf(
                         VodActionChip(
                             key = "back_home",
