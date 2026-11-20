@@ -2,6 +2,7 @@ package com.streamvault.domain.usecase
 
 import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.PlaybackHistory
+import com.streamvault.domain.model.PlaybackWatchedStatus
 import com.streamvault.domain.model.Result
 import com.streamvault.domain.repository.PlaybackHistoryRepository
 import javax.inject.Inject
@@ -11,7 +12,10 @@ import kotlinx.coroutines.flow.first
  * Takes one card off the Continue watching shelf.
  *
  * A series shows as one card for its latest unfinished episode, so removing only that episode's row would let an
- * older unfinished episode take the card's place. Every history row of the series is removed instead.
+ * older unfinished episode take the card's place. The card's row and the series' other unfinished rows are removed.
+ * Completed episodes keep their history row so watched marks, the unwatched count and the resume episode survive.
+ *
+ * Not atomic: if a removal fails, rows removed before it stay removed.
  */
 class RemoveContinueWatchingItem @Inject constructor(
     private val playbackHistoryRepository: PlaybackHistoryRepository
@@ -21,7 +25,7 @@ class RemoveContinueWatchingItem @Inject constructor(
         val rows = playbackHistoryRepository
             .getRecentlyWatchedByProvider(history.providerId, SERIES_LOOKUP_LIMIT)
             .first()
-            .filter { it.seriesKey() == seriesKey }
+            .filter { it.seriesKey() == seriesKey && it.isStillOnShelf() }
         // The card's own row is always removed, even if it fell outside the lookup window.
         val targets = (rows + history).distinctBy { it.contentType to it.contentId }
         for (target in targets) {
@@ -33,6 +37,9 @@ class RemoveContinueWatchingItem @Inject constructor(
 
     private suspend fun remove(history: PlaybackHistory): Result<Unit> =
         playbackHistoryRepository.removeFromHistory(history.contentId, history.contentType, history.providerId)
+
+    private fun PlaybackHistory.isStillOnShelf(): Boolean =
+        watchedStatus == PlaybackWatchedStatus.IN_PROGRESS && !isPlaybackFinished()
 
     private fun PlaybackHistory.seriesKey(): Long? = when (contentType) {
         ContentType.SERIES,

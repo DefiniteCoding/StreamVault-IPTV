@@ -3,6 +3,7 @@ package com.streamvault.domain.usecase
 import com.google.common.truth.Truth.assertThat
 import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.PlaybackHistory
+import com.streamvault.domain.model.PlaybackWatchedStatus
 import com.streamvault.domain.model.Result
 import com.streamvault.domain.repository.PlaybackHistoryRepository
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +26,7 @@ class RemoveContinueWatchingItemTest {
     }
 
     @Test
-    fun series_removal_deletes_every_row_of_the_series_so_an_older_episode_cannot_take_the_card() = runTest {
+    fun series_removal_deletes_the_cards_row_and_older_unfinished_episodes_so_none_takes_the_card() = runTest {
         val latest = history(contentId = 11L, type = ContentType.SERIES_EPISODE, seriesId = 5L)
         val older = history(contentId = 10L, type = ContentType.SERIES_EPISODE, seriesId = 5L)
         val otherSeries = history(contentId = 20L, type = ContentType.SERIES_EPISODE, seriesId = 6L)
@@ -37,6 +38,38 @@ class RemoveContinueWatchingItemTest {
             ContentType.SERIES_EPISODE to 11L,
             ContentType.SERIES_EPISODE to 10L
         )
+    }
+
+    @Test
+    fun completed_episodes_keep_their_history_row() = runTest {
+        val card = history(contentId = 11L, type = ContentType.SERIES_EPISODE, seriesId = 5L)
+        val auto = history(
+            contentId = 10L, type = ContentType.SERIES_EPISODE, seriesId = 5L,
+            status = PlaybackWatchedStatus.COMPLETED_AUTO
+        )
+        val manual = history(
+            contentId = 9L, type = ContentType.SERIES_EPISODE, seriesId = 5L,
+            status = PlaybackWatchedStatus.COMPLETED_MANUAL
+        )
+        val repository = FakeRepository(listOf(card, auto, manual))
+
+        RemoveContinueWatchingItem(repository)(card)
+
+        assertThat(repository.removed).containsExactly(ContentType.SERIES_EPISODE to 11L)
+    }
+
+    @Test
+    fun an_in_progress_row_past_the_completion_threshold_is_kept() = runTest {
+        val card = history(contentId = 11L, type = ContentType.SERIES_EPISODE, seriesId = 5L)
+        val pastThreshold = history(
+            contentId = 10L, type = ContentType.SERIES_EPISODE, seriesId = 5L,
+            resumeMs = 96_000L
+        )
+        val repository = FakeRepository(listOf(card, pastThreshold))
+
+        RemoveContinueWatchingItem(repository)(card)
+
+        assertThat(repository.removed).containsExactly(ContentType.SERIES_EPISODE to 11L)
     }
 
     @Test
@@ -75,15 +108,22 @@ class RemoveContinueWatchingItemTest {
         assertThat(repository.removed).isEmpty()
     }
 
-    private fun history(contentId: Long, type: ContentType, seriesId: Long? = null) = PlaybackHistory(
+    private fun history(
+        contentId: Long,
+        type: ContentType,
+        seriesId: Long? = null,
+        status: PlaybackWatchedStatus = PlaybackWatchedStatus.IN_PROGRESS,
+        resumeMs: Long = 10_000L
+    ) = PlaybackHistory(
         contentId = contentId,
         contentType = type,
         providerId = 1L,
         title = "Title $contentId",
         streamUrl = "https://example.com/$contentId",
-        resumePositionMs = 10_000L,
+        resumePositionMs = resumeMs,
         totalDurationMs = 100_000L,
         lastWatchedAt = 1L,
+        watchedStatus = status,
         seriesId = seriesId
     )
 

@@ -83,7 +83,7 @@ class GetContinueWatching @Inject constructor(
         requireResumePosition: Boolean
     ): List<PlaybackHistory> = asSequence()
         .filter { entry -> scope.matches(entry.contentType) }
-        .filterNot { entry -> entry.isCompleted() }
+        .filterNot { entry -> entry.isPlaybackFinished() }
         .filter { entry -> !requireResumePosition || entry.isResumeEligible() }
         .distinctBy(::continueWatchingKey)
         .take(limit)
@@ -110,12 +110,16 @@ class GetContinueWatching @Inject constructor(
         ContentType.LIVE,
         ContentType.VOD -> false
     }
+}
 
-    private fun PlaybackHistory.isCompleted(): Boolean = when (contentType) {
-        ContentType.MOVIE,
-        ContentType.SERIES_EPISODE -> isPlaybackComplete(resumePositionMs, totalDurationMs)
-        ContentType.SERIES,
-        ContentType.LIVE,
-        ContentType.VOD -> false
-    }
+/**
+ * True when a movie or episode row is past the completion threshold, so the shelf drops it. Series and live rows
+ * never count as finished. Shared with [RemoveContinueWatchingItem] so both agree on what is still on the shelf.
+ */
+internal fun PlaybackHistory.isPlaybackFinished(): Boolean = when (contentType) {
+    ContentType.MOVIE,
+    ContentType.SERIES_EPISODE -> isPlaybackComplete(resumePositionMs, totalDurationMs)
+    ContentType.SERIES,
+    ContentType.LIVE,
+    ContentType.VOD -> false
 }

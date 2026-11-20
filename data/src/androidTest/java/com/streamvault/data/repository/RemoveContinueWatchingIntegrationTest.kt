@@ -13,6 +13,7 @@ import com.streamvault.data.preferences.PreferencesCorruptionRecovery
 import com.streamvault.data.preferences.PreferencesRepository
 import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.PlaybackHistory
+import com.streamvault.domain.model.PlaybackWatchedStatus
 import com.streamvault.domain.model.ProviderType
 import com.streamvault.domain.usecase.ContinueWatchingResult
 import com.streamvault.domain.usecase.GetContinueWatching
@@ -81,6 +82,24 @@ class RemoveContinueWatchingIntegrationTest {
         assertThat(db.playbackHistoryDao().get(10L, ContentType.SERIES_EPISODE.name, PROVIDER)).isNull()
     }
 
+    @Test
+    fun removing_a_series_card_keeps_the_completed_episodes_so_watched_marks_survive() = runTest {
+        seed(
+            episode(contentId = 11L, seriesId = 5L, lastWatchedAt = 3_000L),
+            episode(contentId = 10L, seriesId = 5L, lastWatchedAt = 1_000L, status = PlaybackWatchedStatus.COMPLETED_AUTO),
+            episode(contentId = 9L, seriesId = 5L, lastWatchedAt = 500L, status = PlaybackWatchedStatus.COMPLETED_MANUAL)
+        )
+        assertThat(shelfIds()).containsExactly(11L)
+
+        val card = shelf().first { it.contentId == 11L }
+        assertThat(RemoveContinueWatchingItem(repository)(card).isSuccess).isTrue()
+
+        assertThat(shelfIds()).isEmpty()
+        assertThat(db.playbackHistoryDao().get(11L, ContentType.SERIES_EPISODE.name, PROVIDER)).isNull()
+        assertThat(db.playbackHistoryDao().get(10L, ContentType.SERIES_EPISODE.name, PROVIDER)).isNotNull()
+        assertThat(db.playbackHistoryDao().get(9L, ContentType.SERIES_EPISODE.name, PROVIDER)).isNotNull()
+    }
+
     private suspend fun seed(vararg rows: PlaybackHistory) =
         rows.forEach { db.playbackHistoryDao().insertOrUpdate(it.toEntity()) }
 
@@ -102,15 +121,22 @@ class RemoveContinueWatchingIntegrationTest {
         lastWatchedAt = lastWatchedAt
     )
 
-    private fun episode(contentId: Long, seriesId: Long, lastWatchedAt: Long) = PlaybackHistory(
+    private fun episode(
+        contentId: Long,
+        seriesId: Long,
+        lastWatchedAt: Long,
+        status: PlaybackWatchedStatus = PlaybackWatchedStatus.IN_PROGRESS
+    ) = PlaybackHistory(
         contentId = contentId,
         contentType = ContentType.SERIES_EPISODE,
         providerId = PROVIDER,
         title = "Episode $contentId",
         streamUrl = "https://provider.example.com/episode/$contentId",
-        resumePositionMs = 600_000L,
+        // Completed rows end at their full duration, as markAsWatched and auto-completion store them.
+        resumePositionMs = if (status == PlaybackWatchedStatus.IN_PROGRESS) 600_000L else 3_000_000L,
         totalDurationMs = 3_000_000L,
         lastWatchedAt = lastWatchedAt,
+        watchedStatus = status,
         seriesId = seriesId,
         seasonNumber = 1,
         episodeNumber = (contentId % 10).toInt()
