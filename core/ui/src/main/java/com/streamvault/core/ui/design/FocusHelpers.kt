@@ -18,6 +18,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.animate
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.Stable
+import kotlinx.coroutines.CoroutineScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -141,20 +143,61 @@ fun Modifier.scrollListToTopOnFocus(state: LazyListState): Modifier {
 }
 
 /**
+ * Scrolls a grid back to its start with an animation, so the non-focusable title above its focusable rows is not
+ * left half cut off. One instance serves every item of a grid, so per-item modifiers share one coroutine scope.
+ */
+@Stable
+class GridToTopScroller internal constructor(
+    private val state: LazyGridState,
+    private val scope: CoroutineScope,
+    private val minPxPerMs: Float,
+    private val unseenItemPx: Float
+) {
+    fun scrollToTop() {
+        if (state.canScrollBackward) scope.launch { state.animateToTop(minPxPerMs, unseenItemPx) }
+    }
+
+    /**
+     * Scrolls to the top only when the item is in the first row of the consecutive items that follow the header.
+     * That row starts at position 0 in column 0, so an item sits in it exactly when its column equals its position.
+     * The column count is unknown to the caller because adaptive grids derive it from the width.
+     */
+    fun scrollToTopFromFirstRow(itemKey: Any, positionInItems: Int) {
+        val column = state.layoutInfo.visibleItemsInfo.firstOrNull { it.key == itemKey }?.column ?: return
+        if (column == positionInItems) scrollToTop()
+    }
+}
+
+@Composable
+fun rememberGridToTopScroller(state: LazyGridState): GridToTopScroller {
+    val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    return remember(state, scope, density) {
+        with(density) { GridToTopScroller(state, scope, GRID_TO_TOP_MIN_SPEED.toPx(), GRID_TO_TOP_UNSEEN_ITEM.toPx()) }
+    }
+}
+
+/**
  * Grid counterpart of [scrollListToTopOnFocus]: when focus enters the first focusable row of a grid, scrolls the grid
  * back to its start with an animation, so the non-focusable title above that row is not left half cut off.
  */
 @Composable
 fun Modifier.scrollGridToTopOnFocus(state: LazyGridState): Modifier {
-    val scope = rememberCoroutineScope()
-    val density = LocalDensity.current
-    val minPxPerMs = with(density) { GRID_TO_TOP_MIN_SPEED.toPx() }
-    val unseenItemPx = with(density) { GRID_TO_TOP_UNSEEN_ITEM.toPx() }
-    return onFocusChanged { focus ->
-        if (focus.hasFocus && state.canScrollBackward) scope.launch {
-            state.animateToTop(minPxPerMs, unseenItemPx)
-        }
-    }
+    val scroller = rememberGridToTopScroller(state)
+    return onFocusChanged { focus -> if (focus.hasFocus) scroller.scrollToTop() }
+}
+
+/**
+ * For the items that follow a header block with focusable rows (chips, search): the comfort zone leaves the first item
+ * row alone while it is in view, so the header above it stays cut off. Restores the top when focus enters that row.
+ * See [GridToTopScroller.scrollToTopFromFirstRow] for the position contract.
+ */
+fun Modifier.scrollGridToTopOnFirstRowFocus(
+    scroller: GridToTopScroller,
+    itemKey: Any,
+    positionInItems: Int
+): Modifier = onFocusChanged { focus ->
+    if (focus.hasFocus) scroller.scrollToTopFromFirstRow(itemKey, positionInItems)
 }
 
 // Floor on the scroll speed, in dp per millisecond, so the tail of the ease-out does not crawl.

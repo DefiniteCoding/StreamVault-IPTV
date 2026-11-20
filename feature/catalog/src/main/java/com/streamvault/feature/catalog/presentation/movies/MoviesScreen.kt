@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.text.BasicTextField
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -95,6 +96,8 @@ import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
 import com.streamvault.core.ui.design.FocusSafeLazyVerticalGrid
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.rememberGridToTopScroller
+import com.streamvault.core.ui.design.scrollGridToTopOnFirstRowFocus
 import com.streamvault.core.ui.design.scrollGridToTopOnFocus
 import com.streamvault.domain.model.VodViewMode
 import com.streamvault.feature.catalog.presentation.vod.HandleVodUserMessage
@@ -947,6 +950,7 @@ private fun MoviesVodContent(
     }
 
     val modernGridState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
+    val gridToTop = rememberGridToTopScroller(modernGridState)
     InfiniteScrollEffect(
         gridState = modernGridState,
         enabled = uiState.vodInfiniteScroll && !uiState.isReorderMode,
@@ -1042,7 +1046,7 @@ private fun MoviesVodContent(
                         placeholder = stringResource(R.string.movies_search_placeholder),
                         onSearch = {},
                         focusRequester = initialFocusRequester,
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        modifier = Modifier.scrollGridToTopOnFocus(modernGridState).padding(horizontal = 4.dp, vertical = 2.dp)
                     )
                 }
             }
@@ -1093,7 +1097,7 @@ private fun MoviesVodContent(
                 }
             }
         } else {
-            gridItems(filteredGridMovies, key = { it.id }) { movie ->
+            gridItemsIndexed(filteredGridMovies, key = { _, item -> item.id }) { position, movie ->
                 val isLocked = isMovieLocked(movie)
                 val isDraggingThis = draggingMovie == movie
                 MovieCard(
@@ -1125,6 +1129,7 @@ private fun MoviesVodContent(
                                 }
                             } else Modifier
                         )
+                        .scrollGridToTopOnFirstRowFocus(gridToTop, movie.id, position)
                         .then(if (!showSearchBar && movie.id == initialGridMovieId) Modifier.focusRequester(initialFocusRequester) else Modifier),
                     onClick = {
                         if (uiState.isReorderMode) {
