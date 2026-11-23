@@ -271,8 +271,10 @@ internal fun StremioCatalogBrowseContent(
                 }
             }
         }
+        // No fixed height: FocusSafeLazyRow adds its own overflow padding inside the row, so pinning it to the chip
+        // height squeezes the chips. The chips set the height.
         FocusSafeLazyRow(
-            modifier = Modifier.fillMaxWidth().height(28.dp),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 2.dp),
             edgeGutterStart = shellInset,
