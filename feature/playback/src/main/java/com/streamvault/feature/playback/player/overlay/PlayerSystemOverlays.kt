@@ -12,10 +12,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -29,8 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.animation.core.animateFloatAsState
@@ -42,14 +38,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,21 +52,18 @@ import com.streamvault.core.ui.components.dialogs.AppDialog as Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.streamvault.feature.playback.R
-import com.streamvault.core.ui.design.AppColors
-import com.streamvault.core.ui.design.TvInitialFocus
 import com.streamvault.core.ui.design.requestFocusSafely
-import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.feature.playback.player.PlayerNoticeAction
 import com.streamvault.feature.playback.player.PlayerNoticeState
 import com.streamvault.feature.playback.player.PlayerAudioVideoOffsetUiState
 import com.streamvault.feature.playback.player.PlayerRecoveryType
+import com.streamvault.feature.playback.player.PlayerViewModel
 import com.streamvault.feature.playback.player.SleepTimerUiState
 import com.streamvault.core.ui.theme.AccentAmber
 import com.streamvault.core.ui.theme.ErrorColor
@@ -88,7 +79,6 @@ import com.streamvault.domain.model.Channel
 import com.streamvault.domain.model.ChannelQualityOption
 import com.streamvault.domain.model.Episode
 import com.streamvault.domain.model.LiveChannelVariant
-import com.streamvault.domain.model.Season
 import com.streamvault.player.PlayerError
 import com.streamvault.player.PlayerTrack
 import com.streamvault.player.PLAYER_TRACK_AUTO_ID
@@ -103,7 +93,6 @@ import com.streamvault.player.SUBTITLE_OFFSET_STEP_MS
 import java.util.Locale
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvButton
-import com.streamvault.core.ui.interaction.TvPrimaryButton
 import com.streamvault.core.ui.interaction.TvIconButton
 
 @Composable
@@ -195,32 +184,21 @@ fun PlayerErrorOverlay(
         if (contentType == "LIVE" && hasLastChannel) add(PlayerNoticeAction.LAST_CHANNEL)
     }
 
-    // Retry is the one primary action, so it takes initial focus (rule 17).
-    val retryFocusRequester = remember { FocusRequester() }
-    TvInitialFocus(retryFocusRequester)
-
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        // The message sits over video of any brightness, so it gets an opaque theme-surface card (no blending, no
-        // overdraw) with the theme's own ink, ring and buttons; the dark over-video tier would hide the light themes' dark focus ring.
-        Column(
-            modifier = Modifier
-                .background(AppColors.Surface, RoundedCornerShape(16.dp))
-                .padding(horizontal = 32.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = stringResource(R.string.player_error_title),
                 style = MaterialTheme.typography.titleMedium,
-                color = AppColors.Live
+                color = ErrorColor
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = errorMessage,
                 style = MaterialTheme.typography.bodyMedium,
-                color = AppColors.TextPrimary
+                color = OnSurface
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(
@@ -228,26 +206,34 @@ fun PlayerErrorOverlay(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 recoveryActions.forEach { action ->
-                    val label = playerNoticeActionLabel(action)
-                    if (action == PlayerNoticeAction.RETRY) {
-                        TvPrimaryButton(
-                            onClick = { onAction(action) },
-                            modifier = Modifier.focusRequester(retryFocusRequester)
-                        ) {
-                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        }
-                    } else {
-                        TvButton(onClick = { onAction(action) }) {
-                            Text(text = label, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        }
+                    TvClickableSurface(
+                        onClick = { onAction(action) },
+                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = if (action == PlayerNoticeAction.RETRY) Primary else Color.White.copy(alpha = 0.08f),
+                            focusedContainerColor = if (action == PlayerNoticeAction.RETRY) PrimaryLight else Color.White.copy(alpha = 0.18f)
+                        )
+                    ) {
+                        Text(
+                            text = playerNoticeActionLabel(action),
+                            color = if (action == PlayerNoticeAction.RETRY) OnBackground else Color.White,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
+                        )
                     }
                 }
                 onBack?.let { back ->
-                    TvButton(onClick = back) {
+                    TvClickableSurface(
+                        onClick = back,
+                        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = Color.White.copy(alpha = 0.08f),
+                            focusedContainerColor = Color.White.copy(alpha = 0.18f)
+                        )
+                    ) {
                         Text(
-                            text = stringResource(R.string.playback_back),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            text = "Back",
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
                         )
                     }
                 }
@@ -260,7 +246,7 @@ fun PlayerErrorOverlay(
                     stringResource(R.string.player_error_back)
                 },
                 style = MaterialTheme.typography.bodySmall,
-                color = AppColors.TextSecondary
+                color = OnSurfaceDim
             )
         }
     }
@@ -915,7 +901,7 @@ fun PlayerSpeedSelectionDialog(
     if (!visible) return
 
     val firstItemFocusRequester = remember { FocusRequester() }
-    val speedOptions = remember { listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f) }
+    val speedOptions = remember { PlayerViewModel.PLAYBACK_SPEED_OPTIONS }
 
     LaunchedEffect(visible) {
         firstItemFocusRequester.requestFocusSafely(
@@ -995,7 +981,7 @@ fun PlayerSleepTimerDialog(
     if (!visible) return
 
     val firstItemFocusRequester = remember { FocusRequester() }
-    val options = remember { listOf(0, 15, 30, 45, 60, 90, 120) }
+    val options = remember { PlayerViewModel.PLAYBACK_TIMER_PRESETS_MINUTES.sorted() }
 
     LaunchedEffect(visible) {
         firstItemFocusRequester.requestFocusSafely(
@@ -1346,423 +1332,7 @@ fun PlayerSubtitleOffsetDialog(
     }
 }
 
-@Composable
-fun PlayerEpisodeSelectionDialog(
-    visible: Boolean,
-    seriesTitle: String,
-    seasons: List<Season>,
-    currentEpisodeId: Long,
-    currentSeasonNumber: Int?,
-    onDismiss: () -> Unit,
-    onSelectEpisode: (Episode) -> Unit
-) {
-    if (!visible) return
-
-    val availableSeasons = remember(seasons) { seasons.filter { it.episodes.isNotEmpty() } }
-    if (availableSeasons.isEmpty()) return
-
-    val totalEpisodeCount = remember(availableSeasons) { availableSeasons.sumOf { it.episodes.size } }
-
-    var selectedSeasonNumber by remember(visible, currentSeasonNumber, availableSeasons) {
-        mutableStateOf(currentSeasonNumber ?: availableSeasons.first().seasonNumber)
-    }
-    val selectedSeason = availableSeasons.firstOrNull { it.seasonNumber == selectedSeasonNumber }
-        ?: availableSeasons.first()
-    val selectedEpisode = remember(selectedSeason, currentEpisodeId) {
-        selectedSeason.episodes.firstOrNull { it.id == currentEpisodeId }
-    }
-    val selectedSeasonFocusRequester = remember(visible, selectedSeason.seasonNumber) { FocusRequester() }
-    val episodeEntryFocusRequester = remember(visible, selectedSeason.seasonNumber, currentEpisodeId) { FocusRequester() }
-
-    LaunchedEffect(availableSeasons, selectedSeasonNumber) {
-        if (availableSeasons.none { it.seasonNumber == selectedSeasonNumber }) {
-            selectedSeasonNumber = availableSeasons.first().seasonNumber
-        }
-    }
-
-    LaunchedEffect(visible, selectedSeason.seasonNumber) {
-        episodeEntryFocusRequester.requestFocusSafely(
-            tag = "PlayerEpisodeSelectionDialog",
-            target = "Selected episode option"
-        )
-    }
-
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.68f))
-                .clickable(onClick = onDismiss),
-            contentAlignment = Alignment.Center
-        ) {
-            Surface(
-                modifier = Modifier
-                    .widthIn(min = 680.dp, max = 940.dp)
-                    .fillMaxWidth(0.88f)
-                    .heightIn(max = 640.dp)
-                    .onPreviewKeyEvent { event ->
-                        if (event.nativeKeyEvent.action != KeyEvent.ACTION_DOWN) return@onPreviewKeyEvent false
-                        when (event.nativeKeyEvent.keyCode) {
-                            KeyEvent.KEYCODE_DPAD_UP,
-                            KeyEvent.KEYCODE_DPAD_DOWN,
-                            KeyEvent.KEYCODE_DPAD_LEFT,
-                            KeyEvent.KEYCODE_DPAD_RIGHT,
-                            KeyEvent.KEYCODE_DPAD_CENTER,
-                            KeyEvent.KEYCODE_ENTER,
-                            KeyEvent.KEYCODE_NUMPAD_ENTER,
-                            KeyEvent.KEYCODE_BACK -> false
-                            else -> true
-                        }
-                    },
-                shape = RoundedCornerShape(20.dp),
-                colors = SurfaceDefaults.colors(containerColor = AppColors.CanvasElevated.copy(alpha = 0.98f)),
-                border = Border(
-                    border = androidx.compose.foundation.BorderStroke(1.dp, AppColors.Outline)
-                )
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    AppColors.BrandMuted.copy(alpha = 0.10f),
-                                    AppColors.CanvasElevated,
-                                    AppColors.Canvas
-                                )
-                            )
-                        )
-                        .padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(
-                            text = stringResource(R.string.player_episodes),
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = AppColors.TextPrimary,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = seriesTitle,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = TextSecondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-
-                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            PlayerEpisodeStatPill(
-                                text = pluralStringResource(
-                                    R.plurals.player_episode_picker_seasons_count,
-                                    availableSeasons.size,
-                                    availableSeasons.size
-                                )
-                            )
-                            PlayerEpisodeStatPill(
-                                text = pluralStringResource(
-                                    R.plurals.player_episode_picker_episodes_count,
-                                    totalEpisodeCount,
-                                    totalEpisodeCount
-                                )
-                            )
-                            PlayerEpisodeStatPill(
-                                text = selectedEpisode?.let {
-                                    stringResource(
-                                        R.string.player_episode_picker_now_on,
-                                        it.seasonNumber,
-                                        it.episodeNumber
-                                    )
-                                }
-                                    ?: selectedSeason.name,
-                                accent = true
-                            )
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Surface(
-                            modifier = Modifier
-                                .width(190.dp)
-                                .fillMaxHeight(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = SurfaceDefaults.colors(containerColor = AppColors.Surface.copy(alpha = 0.78f))
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp),
-                                verticalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.series_seasons),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = AppColors.TextPrimary,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Text(
-                                    text = stringResource(R.string.player_episode_picker_hint),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = AppColors.TextSecondary
-                                )
-                                LazyColumn(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    items(availableSeasons, key = { it.seasonNumber }) { season ->
-                                        val isSelectedSeason = season.seasonNumber == selectedSeason.seasonNumber
-                                        TvClickableSurface(
-                                            onClick = { selectedSeasonNumber = season.seasonNumber },
-                                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(16.dp)),
-                                            colors = ClickableSurfaceDefaults.colors(
-                                                // Selected keeps the tonal selected fill when focused (ring and scale carry focus), as in selectableSurfaceColors.
-                                                containerColor = if (isSelectedSeason) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.62f),
-                                                focusedContainerColor = if (isSelectedSeason) AppColors.SelectedContainer else AppColors.Surface.copy(alpha = 0.76f),
-                                                contentColor = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextPrimary,
-                                                focusedContentColor = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextPrimary
-                                            ),
-                                            // The ring is the only stroke (rule 14); selection shows as the fill plus a check.
-                                            border = selectableFocusBorder(RoundedCornerShape(16.dp)),
-                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-                                            modifier = Modifier
-                                                .then(
-                                                    if (isSelectedSeason) Modifier.focusRequester(selectedSeasonFocusRequester) else Modifier
-                                                )
-                                                .focusProperties { right = episodeEntryFocusRequester }
-                                        ) {
-                                            Column(
-                                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-                                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                                            ) {
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                                ) {
-                                                    Text(
-                                                        text = season.name,
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        fontWeight = FontWeight.Bold,
-                                                        maxLines = 1,
-                                                        overflow = TextOverflow.Ellipsis,
-                                                        modifier = Modifier.weight(1f, fill = false)
-                                                    )
-                                                    if (isSelectedSeason) {
-                                                        Icon(
-                                                            imageVector = Icons.Default.Check,
-                                                            contentDescription = stringResource(R.string.player_selected),
-                                                            modifier = Modifier.size(16.dp)
-                                                        )
-                                                    }
-                                                }
-                                                Text(
-                                                    text = pluralStringResource(
-                                                        R.plurals.player_episode_picker_episodes_count,
-                                                        season.episodes.size,
-                                                        season.episodes.size
-                                                    ),
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = if (isSelectedSeason) AppColors.OnSelectedContainer else AppColors.TextSecondary
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Surface(
-                            modifier = Modifier.weight(1f),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = SurfaceDefaults.colors(containerColor = AppColors.Surface.copy(alpha = 0.70f))
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(14.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                                        Text(
-                                            text = selectedSeason.name,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = AppColors.TextPrimary,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = pluralStringResource(
-                                                R.plurals.player_episode_picker_episodes_ready,
-                                                selectedSeason.episodes.size,
-                                                selectedSeason.episodes.size
-                                            ),
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = TextSecondary
-                                        )
-                                    }
-                                    selectedEpisode?.let { episode ->
-                                        PlayerEpisodeStatPill(
-                                            text = buildEpisodeCodeLabel(episode),
-                                            accent = true
-                                        )
-                                    }
-                                }
-
-                                LazyColumn(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .heightIn(max = 440.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    itemsIndexed(selectedSeason.episodes, key = { _, episode -> episode.id }) { index, episode ->
-                                        val isSelectedEpisode = episode.id == currentEpisodeId
-                                        TvClickableSurface(
-                                            onClick = { onSelectEpisode(episode) },
-                                            shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(16.dp)),
-                                            colors = ClickableSurfaceDefaults.colors(
-                                                containerColor = if (isSelectedEpisode) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.44f),
-                                                focusedContainerColor = if (isSelectedEpisode) AppColors.SelectedContainer else AppColors.Surface.copy(alpha = 0.74f)
-                                            ),
-                                            border = selectableFocusBorder(RoundedCornerShape(16.dp)),
-                                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .then(
-                                                    if ((selectedEpisode == null && index == 0) || episode.id == selectedEpisode?.id) {
-                                                        Modifier.focusRequester(episodeEntryFocusRequester)
-                                                    } else {
-                                                        Modifier
-                                                    }
-                                                )
-                                                .focusProperties {
-                                                    if (index == 0) {
-                                                        left = selectedSeasonFocusRequester
-                                                    }
-                                                }
-                                        ) {
-                                            Column(modifier = Modifier.fillMaxWidth()) {
-                                                PlayerEpisodeListItem(
-                                                    episode = episode,
-                                                    selected = isSelectedEpisode,
-                                                    modifier = Modifier.fillMaxWidth()
-                                                )
-                                                if (isSelectedEpisode) {
-                                                    Text(
-                                                        text = stringResource(R.string.player_selected),
-                                                        style = MaterialTheme.typography.labelSmall,
-                                                        color = AppColors.OnSelectedContainer,
-                                                        modifier = Modifier.padding(start = 14.dp, end = 14.dp, bottom = 8.dp)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun PlayerEpisodeStatPill(
-    text: String,
-    accent: Boolean = false
-) {
-    Surface(
-        shape = RoundedCornerShape(999.dp),
-        colors = SurfaceDefaults.colors(
-            containerColor = if (accent) AppColors.SelectedContainer else AppColors.SurfaceElevated.copy(alpha = 0.70f)
-        )
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            color = if (accent) AppColors.OnSelectedContainer else AppColors.TextSecondary,
-            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp)
-        )
-    }
-}
-
-@Composable
-private fun PlayerEpisodeListItem(
-    episode: Episode,
-    selected: Boolean,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier.padding(horizontal = 10.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(
-            modifier = Modifier
-                .width(120.dp)
-                .height(68.dp)
-                .background(AppColors.SurfaceEmphasis.copy(alpha = 0.72f), RoundedCornerShape(12.dp))
-                .clip(RoundedCornerShape(12.dp)),
-            contentAlignment = Alignment.Center
-        ) {
-            if (!episode.coverUrl.isNullOrBlank()) {
-                AsyncImage(
-                    model = episode.coverUrl,
-                    contentDescription = episode.title,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-            } else {
-                Text(
-                    text = buildEpisodeCodeLabel(episode),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = AppColors.TextSecondary
-                )
-            }
-        }
-
-        Column(
-            modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = episode.title,
-                style = MaterialTheme.typography.titleSmall,
-                color = if (selected) AppColors.OnSelectedContainer else AppColors.TextPrimary,
-                fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                text = buildEpisodeMetaLabel(episode),
-                style = MaterialTheme.typography.bodySmall,
-                color = if (selected) AppColors.OnSelectedContainer else AppColors.TextSecondary,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            episode.plot?.takeIf { it.isNotBlank() }?.let { plot ->
-                Text(
-                    text = plot,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (selected) AppColors.OnSelectedContainer else AppColors.TextSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-    }
-}
-
-private fun formatPlaybackSpeedLabel(speed: Float): String {
+internal fun formatPlaybackSpeedLabel(speed: Float): String {
     return if (speed % 1f == 0f) {
         "${speed.toInt()}x"
     } else {
@@ -1771,7 +1341,7 @@ private fun formatPlaybackSpeedLabel(speed: Float): String {
 }
 
 @Composable
-private fun formatTimerPresetLabel(minutes: Int): String =
+internal fun formatTimerPresetLabel(minutes: Int): String =
     if (minutes <= 0) {
         stringResource(R.string.player_timer_off)
     } else {
@@ -1861,23 +1431,6 @@ private fun TrackSelectionItem(
         }
     }
 }
-
-private fun buildEpisodeCodeLabel(episode: Episode): String = buildString {
-    append("S")
-    append(episode.seasonNumber)
-    append("E")
-    append(episode.episodeNumber)
-}
-
-private fun buildEpisodeMetaLabel(episode: Episode): String = buildString {
-    append(stringResourceFallbackEpisode(episode.episodeNumber))
-    episode.duration?.takeIf { it.isNotBlank() }?.let {
-        append(" • ")
-        append(it)
-    }
-}
-
-private fun stringResourceFallbackEpisode(episodeNumber: Int): String = "Episode $episodeNumber"
 
 @Composable
 fun PlayerResumePrompt(

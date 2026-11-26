@@ -33,6 +33,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
+import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.AppSpacing
 import com.streamvault.feature.playback.R
 import com.streamvault.player.PlayerChapter
 
@@ -40,6 +42,28 @@ private const val VOD_DPAD_SEEK_STEP_MS = 10_000L
 private val TIMELINE_THUMB_RESTING = 12.dp
 private val TIMELINE_THUMB_FOCUSED = 20.dp
 private val TIMELINE_THUMB_SLOT = TIMELINE_THUMB_FOCUSED
+
+private val DefaultSpacing = AppSpacing()
+
+// Geometry the seek feedback strip copies so it lands exactly on the overlay's timeline.
+internal val VOD_OVERLAY_HORIZONTAL_PADDING = DefaultSpacing.lg
+internal val VOD_OVERLAY_VERTICAL_PADDING = DefaultSpacing.md
+internal val VOD_OVERLAY_ROW_GAP = DefaultSpacing.xs
+internal val VOD_TIMELINE_HEIGHT = 32.dp
+internal val VOD_TIMELINE_TRACK_THICKNESS = 4.dp
+internal val VOD_TIMELINE_TRACK_INSET = TIMELINE_THUMB_SLOT / 2
+internal val VOD_TIMELINE_THUMB_SIZE = TIMELINE_THUMB_RESTING
+
+// Fixed row heights under the timeline (time row, button row). They are fixed so the timeline's
+// distance from the bottom edge is a constant the seek strip can copy.
+internal val VOD_TIME_ROW_HEIGHT = 24.dp
+internal val VOD_BUTTON_ROW_HEIGHT = 56.dp
+
+/** Distance from the screen bottom to the bottom edge of the timeline box. */
+internal val VOD_TIMELINE_BOTTOM_OFFSET =
+    VOD_OVERLAY_VERTICAL_PADDING +
+        VOD_BUTTON_ROW_HEIGHT + VOD_OVERLAY_ROW_GAP +
+        VOD_TIME_ROW_HEIGHT + VOD_OVERLAY_ROW_GAP
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,7 +94,7 @@ internal fun VodTimeline(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(32.dp)
+            .height(VOD_TIMELINE_HEIGHT)
             .semantics { contentDescription = timelineDescription }
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
@@ -165,7 +189,7 @@ internal fun VodTimeline(
                         contentAlignment = Alignment.Center
                     ) {
                         if (isTimelineFocused) {
-                            Box(Modifier.size(8.dp).background(Color(0xFF10151D), CircleShape))
+                            Box(Modifier.size(8.dp).background(AppColors.Canvas, CircleShape))
                         }
                     }
                 }
@@ -173,7 +197,7 @@ internal fun VodTimeline(
             track = { sliderState ->
                 SliderDefaults.Track(
                     sliderState = sliderState,
-                    modifier = Modifier.height(4.dp),
+                    modifier = Modifier.height(VOD_TIMELINE_TRACK_THICKNESS),
                     thumbTrackGapSize = 0.dp,
                     drawStopIndicator = null,
                     colors = SliderDefaults.colors(
