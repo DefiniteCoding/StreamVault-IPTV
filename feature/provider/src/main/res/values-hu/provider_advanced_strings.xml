@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portál URL-je</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin médiaszerver</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agent felülírása (opcionális)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Fejlécek (API, opcionális, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Egyéni fejlécek (opcionális, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Útmutató forrása</string>
+  <string name="setup_guide_source_helper">Válassza ki, hogy ez a szolgáltató a saját beszállítói útmutatóját, a hozzárendelt külső XMLTV-forrásokat használja-e, vagy egyáltalán ne legyen útmutató.</string>
+  <string name="setup_guide_policy_auto_title">Automatikus</string>
+  <string name="setup_guide_policy_auto_description">A jelenlegi vegyes működés megtartása: a külső XMLTV felülírhatja a beszállítói útmutatóadatokat, a nem párosított csatornák pedig továbbra is használhatják a beszállítói tartalékadatokat.</string>
+  <string name="setup_guide_policy_external_title">Csak külső EPG</string>
+  <string name="setup_guide_policy_external_description">Csak a hozzárendelt külső XMLTV-forrásokat használja. A nem párosított csatornák útmutatóadatok nélkül maradnak.</string>
+  <string name="setup_guide_policy_provider_title">Csak beszállítói EPG</string>
+  <string name="setup_guide_policy_provider_description">A hozzárendelt külső XMLTV-forrásokat figyelmen kívül hagyja ennél a szolgáltatónál, és csak a beszállítói útmutató elérési útjait használja.</string>
+  <string name="setup_guide_policy_disabled_title">Útmutatóadatok kikapcsolása</string>
+  <string name="setup_guide_policy_disabled_description">Ennél a szolgáltatónál ne importálja és ne párosítsa az útmutatóadatokat.</string>
+
+  <string name="setup_logo_source_title">Csatornalogók</string>
+  <string name="setup_logo_source_helper">Válassza ki, hogy a csatornalogók a beszállítótól, a párosított EPG-csatorna ikonjából vagy egyetlen szigorú forrásból származzanak.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Először beszállítói logók</string>
+  <string name="setup_logo_policy_supplier_preferred_description">A beszállítói logót használja, ha van, egyébként a párosított EPG-ikont.</string>
+  <string name="setup_logo_policy_epg_preferred_title">EPG-logók előnyben</string>
+  <string name="setup_logo_policy_epg_preferred_description">Először a párosított EPG-ikont használja, egyébként a beszállítói logót.</string>
+  <string name="setup_logo_policy_supplier_only_title">Csak beszállítói logók</string>
+  <string name="setup_logo_policy_supplier_only_description">Ennél a szolgáltatónál mindig a beszállítói logókat használja.</string>
+  <string name="setup_logo_policy_epg_only_title">Csak EPG-logók</string>
+  <string name="setup_logo_policy_epg_only_description">Ennél a szolgáltatónál mindig a párosított EPG-ikonokat használja.</string>
+
+  <string name="setup_stalker_auth_title">Stalker hitelesítési mód</string>
+  <string name="setup_stalker_auth_helper">Alapértelmezés az automatikus felismerés. Csak akkor írja felül, ha a portál hitelesítő adatokat vagy vegyes MAG + fiók bejelentkezést igényel.</string>
+  <string name="setup_stalker_auth_auto_title">Automatikus felismerés</string>
+  <string name="setup_stalker_auth_auto_description">Először a portál valószínű hitelesítési módját próbálja ki, és egyszer újrapróbálkozik, ha egy másik Stalker-mód jobban illik.</string>
+  <string name="setup_stalker_auth_mac_only_title">Csak MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">MAG-stílusú MAC-hitelesítés a portálfiókba való bejelentkezés nélkül.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + hitelesítő adatok</string>
+  <string name="setup_stalker_auth_mac_credentials_description">A MAG-azonosítót megtartja, és szigorúbb portáloknál hozzáadja a portálfiók hitelesítő adatait.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Csak hitelesítő adatok</string>
+  <string name="setup_stalker_auth_credentials_only_description">A portálfiók hitelesítő adatait használja akkor is, ha a MAC-cím nem kötelező vagy figyelmen kívül marad.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portál felhasználóneve (opcionális)</string>
+  <string name="setup_stalker_username_placeholder">Portál felhasználóneve</string>
+  <string name="setup_stalker_password_optional_placeholder">Portál jelszava (opcionális)</string>
+  <string name="setup_stalker_password_placeholder">Portál jelszava</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG-típus (opcionális)</string>
+  <string name="setup_stalker_timezone_placeholder">Időzóna (opcionális)</string>
+  <string name="setup_stalker_locale_placeholder">Nyelv és régió (opcionális)</string>
+  <string name="setup_stalker_serial_placeholder">Sorozatszám (opcionális)</string>
+  <string name="setup_stalker_device_id_placeholder">Eszközazonosító (opcionális)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opcionális)</string>
+  <string name="setup_stalker_signature_placeholder">Aláírás (opcionális)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker-kompatibilitás</string>
+  <string name="setup_stalker_compat_section_helper">Portálspecifikus felülírások a makacs MAG/Stalker szerverekhez. A mezőket hagyja üresen, kivéve ha a szerver igényli őket.</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version felülírása (opcionális)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opcionális)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (lejátszó, opcionális)</string>
+  <string name="setup_stalker_player_headers_placeholder">Fejlécek (lejátszó, opcionális, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent kapcsolat</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">HTTP-proxy használata</string>
+  <string name="setup_stalker_proxy_helper">Csak a Stalker API-ra és a lejátszásra vonatkozik.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxy gazdagépe</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxy portja</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilitás</string>
+  <string name="setup_stalker_protocol_button">Protokoll: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automatikus</string>
+  <string name="setup_stalker_protocol_classic_mag">Klasszikus MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modell: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatikus</string>
+  <string name="setup_stalker_profile_experimental">%1$s (kísérleti)</string>
+  <string name="setup_stalker_experimental_note">A kísérleti profilokhoz rögzített vagy kézzel megadott azonosítómezők kellenek, és kimaradnak az automatikus felderítésből.</string>
+  <string name="setup_stalker_profile_custom">Egyéni profil</string>
+
+  <string name="setup_stalker_rules_title">Kérésszabályok</string>
+  <string name="setup_stalker_rules_helper">Egyeztetés művelet szerint, hívások tiltása vagy paraméterek felülírása. Az üres értékek eltávolítják a paramétereket.</string>
+  <string name="setup_stalker_rules_add">Szabály hozzáadása</string>
+  <string name="setup_stalker_rule_number">%1$d. szabály</string>
+  <string name="setup_stalker_rule_delete">Törlés</string>
+  <string name="setup_stalker_rule_action_placeholder">Művelet, pl. get_profile</string>
+  <string name="setup_stalker_rule_block">Kérés tiltása</string>
+  <string name="setup_stalker_rule_block_warning">Figyelem: a(z) %1$s tiltása megakadályozhatja a bejelentkezést.</string>
+  <string name="setup_stalker_rule_params_placeholder">Paraméterek felülírása: name=value | remove_me=</string>
+</resources>

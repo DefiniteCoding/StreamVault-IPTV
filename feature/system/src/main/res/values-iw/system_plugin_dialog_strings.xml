@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">יש להזין את כתובת ה-URL הישירה של ה-APK. StreamVault יוריד אותו ויפתח את תוכנית ההתקנה.</string>
+  <string name="plugins_install_url_label">כתובת URL של APK לתוסף</string>
+  <string name="plugins_installing">מתקין…</string>
+  <string name="plugins_download_install">הורדה והתקנה</string>
+</resources>

@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">Ninguna app pudo recibir el archivo de copia de seguridad.</string>
     <string name="settings_catalog_count_pending">Pendiente</string>
     <string name="settings_live_timeshift_backend_value">Automático</string>
-    <string name="nav_close_app">Cerrar la app</string>
     <string name="hidden_categories_dialog_title">Categorías ocultas</string>
     <string name="hidden_categories_dialog_subtitle">Elige las que quieras restaurar.</string>
     <string name="hidden_categories_dialog_unhide_all">Mostrar todas</string>
@@ -293,4 +292,6 @@
     <string name="nav_sports">Deportes</string>
     <string name="stremio_new_episode_channel">Avisos de episodios nuevos</string>
     <string name="stremio_new_episode_count">Episodios nuevos: %1$d</string>
+    <string name="tv_channel_favorites_title">Favoritos</string>
+    <string name="tv_channel_favorites_description">Tus canales, películas y series favoritos</string>
 </resources>

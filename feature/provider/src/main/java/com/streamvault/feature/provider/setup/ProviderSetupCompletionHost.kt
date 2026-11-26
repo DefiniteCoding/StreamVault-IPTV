@@ -4,12 +4,14 @@ import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.tv.material3.Text
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.components.dialogs.PremiumDialogFooterButton
+import com.streamvault.feature.provider.R
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -25,6 +27,7 @@ internal fun ProviderSetupCompletionLayer(
     cleanupImportedFiles: suspend (java.io.File, Set<String>, Int) -> Unit = ::cleanupOldImportedM3uFilesAsync
 ) {
     val context = LocalContext.current
+    val savedSyncPendingMessage = stringResource(R.string.setup_completion_saved_sync_pending)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(uiState.onboardingCompletion, uiState.completionWarning, uiState.pendingCombinedAttachProfileId) {
         if (
@@ -32,11 +35,7 @@ internal fun ProviderSetupCompletionLayer(
             uiState.pendingCombinedAttachProfileId == null
         ) {
             if (uiState.completionWarning != null) {
-                Toast.makeText(
-                    context,
-                    "Provider saved. Sync will resume in background.",
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(context, savedSyncPendingMessage, Toast.LENGTH_LONG).show()
             }
             val previousLocal = uiState.m3uUrl.takeIf { it.startsWith("file://") }
             val selectedLocal = selectedM3uUrl.takeIf { it.startsWith("file://") }
@@ -54,19 +53,22 @@ internal fun ProviderSetupCompletionLayer(
 
     if (uiState.pendingCombinedAttachProfileId != null) {
         PremiumDialog(
-            title = "Add Playlist To Combined M3U?",
-            subtitle = "Add ${uiState.createdProviderName ?: "this playlist"} to " +
-                "${uiState.pendingCombinedAttachProfileName ?: "the active combined source"} " +
-                "and keep that combined source active for Live TV?",
+            title = stringResource(R.string.setup_combined_attach_title),
+            subtitle = stringResource(
+                R.string.setup_combined_attach_message,
+                uiState.createdProviderName ?: stringResource(R.string.setup_combined_attach_fallback_playlist),
+                uiState.pendingCombinedAttachProfileName
+                    ?: stringResource(R.string.setup_combined_attach_fallback_source)
+            ),
             onDismissRequest = onSkipCreatedProviderCombinedAttach,
             content = {},
             footer = {
                 PremiumDialogFooterButton(
-                    label = "Not Now",
+                    label = stringResource(R.string.setup_combined_attach_skip),
                     onClick = onSkipCreatedProviderCombinedAttach
                 )
                 PremiumDialogFooterButton(
-                    label = "Add To Combined",
+                    label = stringResource(R.string.setup_combined_attach_confirm),
                     onClick = onAttachCreatedProvider,
                     emphasized = true
                 )

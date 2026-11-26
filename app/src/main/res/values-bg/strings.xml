@@ -9,7 +9,6 @@
     <string name="nav_series">Сериали</string>
     <string name="nav_epg">Програма</string>
     <string name="nav_settings">Настройки</string>
-    <string name="nav_close_app">Затвори приложението</string>
 
 
     <string name="welcome_enter_app">Влезте в приложението</string>
@@ -349,4 +348,6 @@
     <string name="nav_sports">Спорт</string>
     <string name="stremio_new_episode_channel">Известия за нови епизоди</string>
     <string name="stremio_new_episode_count">Нови епизоди: %1$d</string>
+    <string name="tv_channel_favorites_title">Любими</string>
+    <string name="tv_channel_favorites_description">Любимите ви канали, филми и сериали</string>
 </resources>

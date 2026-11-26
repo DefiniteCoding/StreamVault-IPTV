@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Actualizați detaliile furnizorului dvs. IPTV</string>
     <string name="setup_add_desc">Adăugați furnizorul dvs. IPTV</string>
     <string name="setup_shell_eyebrow">Integrarea furnizorului</string>
-    <string name="setup_shell_subtitle">Utilizați Xtream sau M3U. O poți schimba mai târziu.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U sau Jellyfin. Îl poți edita mai târziu în Setări.</string>
     <string name="setup_form_subtitle">Alegeți o sursă, introduceți detaliile și continuați. Le puteți gestiona mai târziu din Setări.</string>
     <string name="setup_source_type_label">Tip sursă</string>
     <string name="setup_info_xtream_title">Utilizați Xtream atunci când acreditările sunt disponibile</string>
-    <string name="setup_info_xtream_body">Cel mai bine atunci când aveți server, utilizator și parolă.</string>
+    <string name="setup_info_xtream_body">Ideal pentru server, utilizator și parolă.</string>
     <string name="setup_info_m3u_title">Folosiți M3U pentru liste de redare bazate pe URL sau fișiere</string>
     <string name="setup_info_m3u_body">Utilizați un link pentru lista de redare sau importați un fișier local.</string>
-    <string name="setup_info_manage_title">Puteți gestiona furnizorii mai târziu</string>
-    <string name="setup_info_manage_body">Actualizează, edita sau înlocuiește-o mai târziu din Setări.</string>
     <string name="setup_xtream">Codurile Xtream</string>
     <string name="setup_m3u">Lista de redare M3U</string>
     <string name="setup_name_hint">Numele listei de redare (opțional)</string>

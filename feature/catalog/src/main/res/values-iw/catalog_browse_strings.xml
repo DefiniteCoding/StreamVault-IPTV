@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingQuantity">
+  <string name="library_chip_all">הכול</string>
+  <string name="library_chip_favorites">מועדפים</string>
+  <string name="library_chip_resume">המשך</string>
+  <string name="library_chip_unwatched">לא נצפו</string>
+  <string name="library_chip_recent">לאחרונה</string>
+  <string name="library_chip_updated">עודכנו</string>
+  <string name="library_chip_top_rated">מדורגים מובילים</string>
+
+  <string name="library_chip_sort_library_order">סדר ספרייה</string>
+  <string name="library_chip_sort_title">א-ת</string>
+  <string name="library_chip_sort_newest">הכי חדש</string>
+  <string name="library_chip_sort_recently_updated">עודכנו לאחרונה</string>
+  <string name="library_chip_sort_updated_short">עודכנו</string>
+  <string name="library_chip_sort_rating">דירוג</string>
+  <string name="library_chip_sort_recent_activity">פעילות אחרונה</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="one">%d קבוצה</item>
+    <item quantity="two">%d קבוצות</item>
+    <item quantity="other">%d קבוצות</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d פריט</item>
+    <item quantity="two">%d פריטים</item>
+    <item quantity="other">%d פריטים</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d בחירה</item>
+    <item quantity="two">%d בחירות</item>
+    <item quantity="other">%d בחירות</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d פריט שמור</item>
+    <item quantity="two">%d פריטים שמורים</item>
+    <item quantity="other">%d פריטים שמורים</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">טעינת הסרטים נכשלה</string>
+  <string name="series_error_load_failed">טעינת הסדרות נכשלה</string>
+  <string name="movie_detail_error_load_failed">טעינת פרטי הסרט נכשלה</string>
+  <string name="series_detail_error_load_failed">טעינת פרטי הסדרה נכשלה</string>
+  <string name="catalog_error_no_active_provider">אין ספק פעיל</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\' הוחזר לטלוויזיה בשידור חי</string>
+  <string name="catalog_message_group_created">הקבוצה %1$s נוצרה</string>
+  <string name="catalog_message_group_created_and_added">הקבוצה %1$s נוצרה ו-%2$s נוסף אליה</string>
+  <string name="catalog_message_category_hidden">הקטגוריה %1$s הוסתרה</string>
+  <string name="catalog_message_category_pinned">%1$s הוצמד</string>
+  <string name="catalog_message_category_unpinned">ההצמדה של %1$s בוטלה</string>
+  <string name="catalog_message_group_renamed">שם הקבוצה שונה ל-%1$s</string>
+  <string name="catalog_message_group_deleted">הקבוצה %1$s נמחקה</string>
+  <string name="catalog_error_group_name_required">הזינו שם לקבוצה</string>
+  <string name="catalog_error_group_name_reserved">השם \'מועדפים\' שמור</string>
+  <string name="movies_error_group_name_duplicate">כבר קיימת קבוצת סרטים בשם הזה</string>
+  <string name="series_error_group_name_duplicate">כבר קיימת קבוצת סדרות בשם הזה</string>
+
+  <string name="favorites_message_removed_from_view">%1$s הוסר מהתצוגה השמורה הזו.</string>
+  <string name="favorites_message_moved_to_group">%1$s הועבר לקבוצה שנבחרה.</string>
+  <string name="favorites_message_group_deleted">הקבוצה %1$s נמחקה.</string>
+  <string name="favorites_error_move_failed">לא ניתן להעביר את %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">לא ניתן למזג את %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">לא ניתן לשמור את הסדר החדש: %1$s</string>
+  <string name="favorites_error_unknown">שגיאה לא ידועה</string>
+  <string name="favorites_subtitle_channel_number">ערוץ %1$d</string>
+  <string name="favorites_group_subtitle">קבוצת %1$s</string>
+  <string name="favorites_content_type_movie">סרט</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

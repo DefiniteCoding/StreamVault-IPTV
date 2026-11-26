@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
@@ -54,13 +55,8 @@ internal fun XtreamLiveSyncModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -96,16 +92,16 @@ internal fun StalkerAuthModeOptionRow(
     onSelect: () -> Unit
 ) {
     val title = when (mode) {
-        StalkerAuthMode.AUTO -> "Auto-detect"
-        StalkerAuthMode.MAC_ONLY -> "MAC only"
-        StalkerAuthMode.MAC_PLUS_CREDENTIALS -> "MAC + credentials"
-        StalkerAuthMode.CREDENTIALS_ONLY -> "Credentials only"
+        StalkerAuthMode.AUTO -> stringResource(R.string.setup_stalker_auth_auto_title)
+        StalkerAuthMode.MAC_ONLY -> stringResource(R.string.setup_stalker_auth_mac_only_title)
+        StalkerAuthMode.MAC_PLUS_CREDENTIALS -> stringResource(R.string.setup_stalker_auth_mac_credentials_title)
+        StalkerAuthMode.CREDENTIALS_ONLY -> stringResource(R.string.setup_stalker_auth_credentials_only_title)
     }
     val description = when (mode) {
-        StalkerAuthMode.AUTO -> "Try the portal's likely auth flow first and retry once if a different Stalker mode fits better."
-        StalkerAuthMode.MAC_ONLY -> "Use MAG-style MAC authentication without a portal account login."
-        StalkerAuthMode.MAC_PLUS_CREDENTIALS -> "Keep the MAG identity and add portal account credentials for stricter portals."
-        StalkerAuthMode.CREDENTIALS_ONLY -> "Use portal account credentials even if the MAC address is optional or ignored."
+        StalkerAuthMode.AUTO -> stringResource(R.string.setup_stalker_auth_auto_description)
+        StalkerAuthMode.MAC_ONLY -> stringResource(R.string.setup_stalker_auth_mac_only_description)
+        StalkerAuthMode.MAC_PLUS_CREDENTIALS -> stringResource(R.string.setup_stalker_auth_mac_credentials_description)
+        StalkerAuthMode.CREDENTIALS_ONLY -> stringResource(R.string.setup_stalker_auth_credentials_only_description)
     }
     TvSurface(
         onClick = onSelect,
@@ -118,13 +114,8 @@ internal fun StalkerAuthModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -193,13 +184,8 @@ internal fun EpgSyncModeOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
@@ -243,16 +229,16 @@ internal fun GuideSourcePolicyOptionRow(
     onSelect: () -> Unit
 ) {
     val title = when (policy) {
-        GuideSourcePolicy.AUTO -> "Auto"
-        GuideSourcePolicy.EXTERNAL_ONLY -> "Use external EPG only"
-        GuideSourcePolicy.PROVIDER_ONLY -> "Use supplier EPG only"
-        GuideSourcePolicy.DISABLED -> "Disable guide data"
+        GuideSourcePolicy.AUTO -> stringResource(R.string.setup_guide_policy_auto_title)
+        GuideSourcePolicy.EXTERNAL_ONLY -> stringResource(R.string.setup_guide_policy_external_title)
+        GuideSourcePolicy.PROVIDER_ONLY -> stringResource(R.string.setup_guide_policy_provider_title)
+        GuideSourcePolicy.DISABLED -> stringResource(R.string.setup_guide_policy_disabled_title)
     }
     val description = when (policy) {
-        GuideSourcePolicy.AUTO -> "Keep the current mixed behavior: external XMLTV can override supplier guide data, and unmatched channels may still use supplier fallback."
-        GuideSourcePolicy.EXTERNAL_ONLY -> "Use only assigned external XMLTV sources. Unmatched channels stay without guide data."
-        GuideSourcePolicy.PROVIDER_ONLY -> "Ignore assigned external XMLTV sources for this provider and use only the supplier guide paths."
-        GuideSourcePolicy.DISABLED -> "Do not import or resolve guide data for this provider."
+        GuideSourcePolicy.AUTO -> stringResource(R.string.setup_guide_policy_auto_description)
+        GuideSourcePolicy.EXTERNAL_ONLY -> stringResource(R.string.setup_guide_policy_external_description)
+        GuideSourcePolicy.PROVIDER_ONLY -> stringResource(R.string.setup_guide_policy_provider_description)
+        GuideSourcePolicy.DISABLED -> stringResource(R.string.setup_guide_policy_disabled_description)
     }
     PolicyOptionRow(title = title, description = description, selected = selected, onSelect = onSelect)
 }
@@ -264,16 +250,16 @@ internal fun ChannelLogoSourcePolicyOptionRow(
     onSelect: () -> Unit
 ) {
     val title = when (policy) {
-        ChannelLogoSourcePolicy.SUPPLIER_PREFERRED -> "Supplier logos first"
-        ChannelLogoSourcePolicy.EPG_PREFERRED -> "Prefer EPG logos"
-        ChannelLogoSourcePolicy.SUPPLIER_ONLY -> "Supplier logos only"
-        ChannelLogoSourcePolicy.EPG_ONLY -> "EPG logos only"
+        ChannelLogoSourcePolicy.SUPPLIER_PREFERRED -> stringResource(R.string.setup_logo_policy_supplier_preferred_title)
+        ChannelLogoSourcePolicy.EPG_PREFERRED -> stringResource(R.string.setup_logo_policy_epg_preferred_title)
+        ChannelLogoSourcePolicy.SUPPLIER_ONLY -> stringResource(R.string.setup_logo_policy_supplier_only_title)
+        ChannelLogoSourcePolicy.EPG_ONLY -> stringResource(R.string.setup_logo_policy_epg_only_title)
     }
     val description = when (policy) {
-        ChannelLogoSourcePolicy.SUPPLIER_PREFERRED -> "Use the supplier logo when it exists, then fall back to the matched EPG icon."
-        ChannelLogoSourcePolicy.EPG_PREFERRED -> "Use the matched EPG icon first, then fall back to the supplier logo."
-        ChannelLogoSourcePolicy.SUPPLIER_ONLY -> "Always use supplier logos for this provider."
-        ChannelLogoSourcePolicy.EPG_ONLY -> "Always use matched EPG icons for this provider."
+        ChannelLogoSourcePolicy.SUPPLIER_PREFERRED -> stringResource(R.string.setup_logo_policy_supplier_preferred_description)
+        ChannelLogoSourcePolicy.EPG_PREFERRED -> stringResource(R.string.setup_logo_policy_epg_preferred_description)
+        ChannelLogoSourcePolicy.SUPPLIER_ONLY -> stringResource(R.string.setup_logo_policy_supplier_only_description)
+        ChannelLogoSourcePolicy.EPG_ONLY -> stringResource(R.string.setup_logo_policy_epg_only_description)
     }
     PolicyOptionRow(title = title, description = description, selected = selected, onSelect = onSelect)
 }
@@ -296,13 +282,8 @@ internal fun PolicyOptionRow(
             focusedContainerColor = if (selected) Primary.copy(alpha = 0.26f) else SurfaceHighlight.copy(alpha = 0.9f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.45f) else Color.Transparent
-                )
-            ),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {

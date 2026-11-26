@@ -3,6 +3,7 @@
 import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
 import com.streamvault.domain.model.ProviderType
+import com.streamvault.feature.catalog.presentation.components.labelRes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -126,26 +127,21 @@ inline fun <State> setVodLibrarySortBy(
 
 /**
  * Returns a compact summary label for the currently active filter and/or sort
- * (e.g. "Favorites ֲ· Rating"), or null when both are at their defaults.
+ * (e.g. "Favorites \u00B7 Rating"), or null when both are at their defaults.
  * This is used to decorate the "Filter & Sort" action chip so the user can
  * tell at a glance that a non-default browse mode is in effect.
+ *
+ * [label] resolves a string resource id so the summary follows the app language.
  */
-fun vodActiveFilterSortDetail(filter: LibraryFilterType, sort: LibrarySortBy): String? {
-    val filterLabel = when (filter) {
-        LibraryFilterType.ALL -> null
-        LibraryFilterType.FAVORITES -> "Favorites"
-        LibraryFilterType.IN_PROGRESS -> "Resume"
-        LibraryFilterType.UNWATCHED -> "Unwatched"
-        LibraryFilterType.RECENTLY_UPDATED -> "Recent"
-        LibraryFilterType.TOP_RATED -> "Top Rated"
-    }
-    val sortLabel = when (sort) {
-        LibrarySortBy.LIBRARY -> null
-        LibrarySortBy.TITLE -> "A-Z"
-        LibrarySortBy.RELEASE -> "Newest"
-        LibrarySortBy.UPDATED -> "Updated"
-        LibrarySortBy.RATING -> "Rating"
-        LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-    }
-    return listOfNotNull(filterLabel, sortLabel).joinToString(" ֲ· ").ifEmpty { null }
+fun vodActiveFilterSortDetail(
+    filter: LibraryFilterType,
+    sort: LibrarySortBy,
+    recentAsUpdated: Boolean,
+    label: (Int) -> String
+): String? {
+    val filterLabel = filter.takeUnless { it == LibraryFilterType.ALL }
+        ?.let { label(it.labelRes(recentAsUpdated)) }
+    val sortLabel = sort.takeUnless { it == LibrarySortBy.LIBRARY }
+        ?.let { label(it.labelRes(short = true)) }
+    return listOfNotNull(filterLabel, sortLabel).joinToString(" \u00B7 ").ifEmpty { null }
 }

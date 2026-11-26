@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">رابط البوابة</string>
+  <string name="setup_jellyfin_source_subtitle">خادم وسائط Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">تجاوز User-Agent (اختياري)</string>
+  <string name="setup_adv_headers_stalker_placeholder">الترويسات (API، اختياري، Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">ترويسات مخصصة (اختياري، Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">مصدر الدليل</string>
+  <string name="setup_guide_source_helper">اختر ما إذا كان هذا المزوّد يستخدم دليل المورّد أو مصادر XMLTV الخارجية المعيّنة لك أو لا يستخدم أي دليل.</string>
+  <string name="setup_guide_policy_auto_title">تلقائي</string>
+  <string name="setup_guide_policy_auto_description">احتفظ بالسلوك المختلط الحالي: يمكن لـ XMLTV الخارجي تجاوز بيانات دليل المورّد، وقد تستخدم القنوات غير المطابقة بيانات المورّد احتياطيًا.</string>
+  <string name="setup_guide_policy_external_title">استخدام EPG الخارجي فقط</string>
+  <string name="setup_guide_policy_external_description">استخدم مصادر XMLTV الخارجية المعيّنة فقط. تبقى القنوات غير المطابقة بلا بيانات دليل.</string>
+  <string name="setup_guide_policy_provider_title">استخدام EPG المورّد فقط</string>
+  <string name="setup_guide_policy_provider_description">تجاهل مصادر XMLTV الخارجية المعيّنة لهذا المزوّد واستخدم مسارات دليل المورّد فقط.</string>
+  <string name="setup_guide_policy_disabled_title">تعطيل بيانات الدليل</string>
+  <string name="setup_guide_policy_disabled_description">لا تستورد بيانات الدليل ولا تطابقها لهذا المزوّد.</string>
+
+  <string name="setup_logo_source_title">شعارات القنوات</string>
+  <string name="setup_logo_source_helper">اختر ما إذا كانت شعارات القنوات تأتي من المورّد أو من أيقونة قناة EPG المطابقة أو من مصدر واحد صارم.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">شعارات المورّد أولاً</string>
+  <string name="setup_logo_policy_supplier_preferred_description">استخدم شعار المورّد عند توفره، ثم ارجع إلى أيقونة EPG المطابقة.</string>
+  <string name="setup_logo_policy_epg_preferred_title">تفضيل شعارات EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">استخدم أيقونة EPG المطابقة أولاً، ثم ارجع إلى شعار المورّد.</string>
+  <string name="setup_logo_policy_supplier_only_title">شعارات المورّد فقط</string>
+  <string name="setup_logo_policy_supplier_only_description">استخدم شعارات المورّد دائمًا لهذا المزوّد.</string>
+  <string name="setup_logo_policy_epg_only_title">شعارات EPG فقط</string>
+  <string name="setup_logo_policy_epg_only_description">استخدم أيقونات EPG المطابقة دائمًا لهذا المزوّد.</string>
+
+  <string name="setup_stalker_auth_title">وضع مصادقة Stalker</string>
+  <string name="setup_stalker_auth_helper">الاكتشاف التلقائي هو الافتراضي. لا تغيّره إلا إذا كانت البوابة تتطلب بيانات اعتماد أو تسجيل دخول مختلطًا بين MAG والحساب.</string>
+  <string name="setup_stalker_auth_auto_title">اكتشاف تلقائي</string>
+  <string name="setup_stalker_auth_auto_description">جرّب تدفق المصادقة المرجّح للبوابة أولاً وأعد المحاولة مرة واحدة إذا كان وضع Stalker آخر أنسب.</string>
+  <string name="setup_stalker_auth_mac_only_title">MAC فقط</string>
+  <string name="setup_stalker_auth_mac_only_description">استخدم مصادقة MAC بأسلوب MAG دون تسجيل دخول بحساب البوابة.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + بيانات الاعتماد</string>
+  <string name="setup_stalker_auth_mac_credentials_description">احتفظ بهوية MAG وأضف بيانات اعتماد حساب البوابة للبوابات الأكثر صرامة.</string>
+  <string name="setup_stalker_auth_credentials_only_title">بيانات الاعتماد فقط</string>
+  <string name="setup_stalker_auth_credentials_only_description">استخدم بيانات اعتماد حساب البوابة حتى لو كان عنوان MAC اختياريًا أو متجاهلًا.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">اسم مستخدم البوابة (اختياري)</string>
+  <string name="setup_stalker_username_placeholder">اسم مستخدم البوابة</string>
+  <string name="setup_stalker_password_optional_placeholder">كلمة مرور البوابة (اختياري)</string>
+  <string name="setup_stalker_password_placeholder">كلمة مرور البوابة</string>
+  <string name="setup_stalker_mag_type_placeholder">نوع MAG (اختياري)</string>
+  <string name="setup_stalker_timezone_placeholder">المنطقة الزمنية (اختياري)</string>
+  <string name="setup_stalker_locale_placeholder">الإعدادات الإقليمية (اختياري)</string>
+  <string name="setup_stalker_serial_placeholder">الرقم التسلسلي (اختياري)</string>
+  <string name="setup_stalker_device_id_placeholder">معرّف الجهاز (اختياري)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (اختياري)</string>
+  <string name="setup_stalker_signature_placeholder">التوقيع (اختياري)</string>
+
+  <string name="setup_stalker_compat_section_title">توافق Stalker</string>
+  <string name="setup_stalker_compat_section_helper">تجاوزات خاصة بالبوابة لخوادم MAG/Stalker العنيدة. اترك الحقول فارغة ما لم يحتجها الخادم.</string>
+  <string name="setup_stalker_hw_version_placeholder">تجاوز hw_version (اختياري)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API، اختياري)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (المشغّل، اختياري)</string>
+  <string name="setup_stalker_player_headers_placeholder">الترويسات (المشغّل، اختياري، Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">رابط X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">استخدام وكيل HTTP</string>
+  <string name="setup_stalker_proxy_helper">ينطبق على Stalker API والتشغيل فقط.</string>
+  <string name="setup_stalker_proxy_host_placeholder">مضيف الوكيل</string>
+  <string name="setup_stalker_proxy_port_placeholder">منفذ الوكيل</string>
+
+  <string name="setup_stalker_selector_title">التوافق</string>
+  <string name="setup_stalker_protocol_button">البروتوكول: %1$s</string>
+  <string name="setup_stalker_protocol_auto">تلقائي</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG الكلاسيكي</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">الطراز: %1$s</string>
+  <string name="setup_stalker_model_automatic">تلقائي</string>
+  <string name="setup_stalker_profile_experimental">%1$s (تجريبي)</string>
+  <string name="setup_stalker_experimental_note">تتطلب الملفات التعريفية التجريبية حقول هوية مُلتقطة أو يدوية، وتُستثنى من الاكتشاف التلقائي.</string>
+  <string name="setup_stalker_profile_custom">ملف تعريفي مخصص</string>
+
+  <string name="setup_stalker_rules_title">قواعد الطلبات</string>
+  <string name="setup_stalker_rules_helper">طابق حسب الإجراء، أو احظر الاستدعاءات، أو تجاوز المعاملات. تؤدي القيم الفارغة إلى إزالة المعاملات.</string>
+  <string name="setup_stalker_rules_add">إضافة قاعدة</string>
+  <string name="setup_stalker_rule_number">القاعدة %1$d</string>
+  <string name="setup_stalker_rule_delete">حذف</string>
+  <string name="setup_stalker_rule_action_placeholder">الإجراء، مثل get_profile</string>
+  <string name="setup_stalker_rule_block">حظر هذا الطلب</string>
+  <string name="setup_stalker_rule_block_warning">تحذير: قد يؤدي حظر %1$s إلى منع تسجيل الدخول.</string>
+  <string name="setup_stalker_rule_params_placeholder">تجاوزات المعاملات: name=value | remove_me=</string>
+</resources>

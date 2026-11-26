@@ -241,7 +241,6 @@
     <string name="settings_catalog_count_pending">대기 중</string>
     <string name="settings_live_timeshift_backend_value">자동</string>
     <!-- M2: Google Drive backup sync -->
-    <string name="nav_close_app">앱 종료</string>
     <string name="hidden_categories_dialog_title">숨긴 카테고리</string>
     <string name="hidden_categories_dialog_subtitle">복원할 항목을 선택하세요.</string>
     <string name="hidden_categories_dialog_unhide_all">모두 표시</string>
@@ -293,4 +292,6 @@
     <string name="nav_sports">스포츠</string>
     <string name="stremio_new_episode_channel">새 에피소드 알림</string>
     <string name="stremio_new_episode_count">새 에피소드: %1$d</string>
+    <string name="tv_channel_favorites_title">즐겨찾기</string>
+    <string name="tv_channel_favorites_description">즐겨찾는 채널, 영화 및 시리즈</string>
 </resources>

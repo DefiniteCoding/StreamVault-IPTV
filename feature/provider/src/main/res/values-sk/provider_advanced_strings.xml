@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL portálu</string>
+  <string name="setup_jellyfin_source_subtitle">Mediálny server Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Prepísanie User-Agent (voliteľné)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Hlavičky (API, voliteľné, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Vlastné hlavičky (voliteľné, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Zdroj sprievodcu</string>
+  <string name="setup_guide_source_helper">Vyberte, či tento poskytovateľ použije sprievodcu od svojho dodávateľa, vaše priradené externé zdroje XMLTV, alebo žiadneho sprievodcu.</string>
+  <string name="setup_guide_policy_auto_title">Automaticky</string>
+  <string name="setup_guide_policy_auto_description">Zachovať súčasné zmiešané správanie: externé XMLTV môže prepísať údaje sprievodcu od dodávateľa a nespárované kanály môžu stále použiť záložné údaje dodávateľa.</string>
+  <string name="setup_guide_policy_external_title">Iba externé EPG</string>
+  <string name="setup_guide_policy_external_description">Použiť iba priradené externé zdroje XMLTV. Nespárované kanály zostanú bez údajov sprievodcu.</string>
+  <string name="setup_guide_policy_provider_title">Iba EPG dodávateľa</string>
+  <string name="setup_guide_policy_provider_description">Ignorovať priradené externé zdroje XMLTV pre tohto poskytovateľa a použiť iba cesty sprievodcu od dodávateľa.</string>
+  <string name="setup_guide_policy_disabled_title">Vypnúť údaje sprievodcu</string>
+  <string name="setup_guide_policy_disabled_description">Neimportovať ani nespárovať údaje sprievodcu pre tohto poskytovateľa.</string>
+
+  <string name="setup_logo_source_title">Logá kanálov</string>
+  <string name="setup_logo_source_helper">Vyberte, či logá kanálov pochádzajú od dodávateľa, z ikony spárovaného kanála EPG, alebo z jedného pevného zdroja.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Najprv logá dodávateľa</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Použiť logo dodávateľa, ak existuje, inak spárovanú ikonu EPG.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Uprednostniť logá z EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Najprv použiť spárovanú ikonu EPG, inak logo dodávateľa.</string>
+  <string name="setup_logo_policy_supplier_only_title">Iba logá dodávateľa</string>
+  <string name="setup_logo_policy_supplier_only_description">Pre tohto poskytovateľa vždy použiť logá dodávateľa.</string>
+  <string name="setup_logo_policy_epg_only_title">Iba logá z EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Pre tohto poskytovateľa vždy použiť spárované ikony EPG.</string>
+
+  <string name="setup_stalker_auth_title">Režim overenia Stalker</string>
+  <string name="setup_stalker_auth_helper">Predvolená je automatická detekcia. Zmeňte ju iba vtedy, keď portál vyžaduje prihlasovacie údaje alebo zmiešané prihlásenie MAG + účet.</string>
+  <string name="setup_stalker_auth_auto_title">Automatická detekcia</string>
+  <string name="setup_stalker_auth_auto_description">Najprv vyskúšať pravdepodobný spôsob overenia portálu a raz to zopakovať, ak lepšie sedí iný režim Stalker.</string>
+  <string name="setup_stalker_auth_mac_only_title">Iba MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Použiť overenie MAC v štýle MAG bez prihlásenia do účtu portálu.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + prihlasovacie údaje</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Ponechať identitu MAG a pridať prihlasovacie údaje k účtu portálu pre prísnejšie portály.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Iba prihlasovacie údaje</string>
+  <string name="setup_stalker_auth_credentials_only_description">Použiť prihlasovacie údaje k účtu portálu, aj keď je adresa MAC voliteľná alebo ignorovaná.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Používateľské meno portálu (voliteľné)</string>
+  <string name="setup_stalker_username_placeholder">Používateľské meno portálu</string>
+  <string name="setup_stalker_password_optional_placeholder">Heslo portálu (voliteľné)</string>
+  <string name="setup_stalker_password_placeholder">Heslo portálu</string>
+  <string name="setup_stalker_mag_type_placeholder">Typ MAG (voliteľné)</string>
+  <string name="setup_stalker_timezone_placeholder">Časové pásmo (voliteľné)</string>
+  <string name="setup_stalker_locale_placeholder">Jazyk a región (voliteľné)</string>
+  <string name="setup_stalker_serial_placeholder">Sériové číslo (voliteľné)</string>
+  <string name="setup_stalker_device_id_placeholder">ID zariadenia (voliteľné)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (voliteľné)</string>
+  <string name="setup_stalker_signature_placeholder">Podpis (voliteľné)</string>
+
+  <string name="setup_stalker_compat_section_title">Kompatibilita Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Prepísania pre konkrétne portály a problematické servery MAG/Stalker. Polia nechajte prázdne, ak ich server nevyžaduje.</string>
+  <string name="setup_stalker_hw_version_placeholder">Prepísanie hw_version (voliteľné)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, voliteľné)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (prehrávač, voliteľné)</string>
+  <string name="setup_stalker_player_headers_placeholder">Hlavičky (prehrávač, voliteľné, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Odkaz X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Použiť proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Platí iba pre API Stalker a prehrávanie.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Hostiteľ proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Port proxy</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilita</string>
+  <string name="setup_stalker_protocol_button">Protokol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automaticky</string>
+  <string name="setup_stalker_protocol_classic_mag">Klasický MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automaticky</string>
+  <string name="setup_stalker_profile_experimental">%1$s (experimentálne)</string>
+  <string name="setup_stalker_experimental_note">Experimentálne profily vyžadujú zachytené alebo ručne zadané polia identity a sú vyradené z automatického vyhľadávania.</string>
+  <string name="setup_stalker_profile_custom">Vlastný profil</string>
+
+  <string name="setup_stalker_rules_title">Pravidlá požiadaviek</string>
+  <string name="setup_stalker_rules_helper">Zhoda podľa akcie, blokovanie volaní alebo prepísanie parametrov. Prázdne hodnoty parametre odstránia.</string>
+  <string name="setup_stalker_rules_add">Pridať pravidlo</string>
+  <string name="setup_stalker_rule_number">Pravidlo %1$d</string>
+  <string name="setup_stalker_rule_delete">Odstrániť</string>
+  <string name="setup_stalker_rule_action_placeholder">Akcia, napr. get_profile</string>
+  <string name="setup_stalker_rule_block">Zablokovať túto požiadavku</string>
+  <string name="setup_stalker_rule_block_warning">Upozornenie: blokovanie %1$s môže zabrániť prihláseniu.</string>
+  <string name="setup_stalker_rule_params_placeholder">Prepísanie parametrov: name=value | remove_me=</string>
+</resources>

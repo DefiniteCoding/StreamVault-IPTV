@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.ui.draw.clip
 import androidx.compose.material.icons.Icons
@@ -88,6 +88,8 @@ import com.streamvault.domain.model.Program
 import com.streamvault.domain.model.RecordingStatus
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -368,21 +370,25 @@ fun PlayerNumericInputOverlay(
     }
 }
 
+/** Shown only when the viewer changes the aspect ratio, not on playback start or when a saved ratio is restored. */
 @Composable
 fun PlayerAspectRatioToast(
-    aspectRatioLabel: String,
-    controlsVisible: Boolean,
+    aspectRatioChanges: Flow<String>,
     modifier: Modifier = Modifier
 ) {
     var show by remember { mutableStateOf(false) }
-    LaunchedEffect(aspectRatioLabel) {
-        show = true
-        delay(2000)
-        show = false
+    var label by remember { mutableStateOf("") }
+    LaunchedEffect(aspectRatioChanges) {
+        aspectRatioChanges.collectLatest { changedTo ->
+            label = changedTo
+            show = true
+            delay(2000)
+            show = false
+        }
     }
 
     AnimatedVisibility(
-        visible = show && !controlsVisible,
+        visible = show,
         enter = fadeIn() + slideInVertically(initialOffsetY = { -it }),
         exit = fadeOut() + slideOutVertically(targetOffsetY = { -it }),
         modifier = modifier
@@ -393,7 +399,7 @@ fun PlayerAspectRatioToast(
                 .padding(horizontal = 24.dp, vertical = 12.dp)
         ) {
             Text(
-                text = stringResource(R.string.player_aspect_ratio_label, aspectRatioLabel),
+                text = stringResource(R.string.player_aspect_ratio_label, label),
                 style = MaterialTheme.typography.titleMedium,
                 color = Color.White,
                 fontWeight = FontWeight.Bold
@@ -806,6 +812,9 @@ private fun PlayerLiveInfo(
     showExternalPlayerAction: Boolean,
     onOpenExternalPlayer: () -> Unit
 ) {
+    // Android TV leaves the app for Home instead of shrinking it; PiP is an Android-device feature.
+    val pictureInPictureAvailable = !rememberIsTelevisionDevice()
+    val castAvailable = pictureInPictureAvailable
     val showTimeshiftControls = timeshiftUiState.available && !isCastConnected
     val appTimeFormat = LocalUiTimeFormat.current
     val timeFormat = remember(appTimeFormat) { appTimeFormat.createTimeFormat() }
@@ -821,11 +830,13 @@ private fun PlayerLiveInfo(
             stringResource(if (isMuted) R.string.player_unmute else R.string.player_mute),
             onToggleMute
         ))
-        add(PlayerActionSpec(
-            "cast",
-            stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
-            if (isCastConnected) onStopCasting else onCast
-        ))
+        if (castAvailable) {
+            add(PlayerActionSpec(
+                "cast",
+                stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
+                if (isCastConnected) onStopCasting else onCast
+            ))
+        }
         add(PlayerActionSpec(
             "stop_playback_timer",
             sleepTimerActionLabel(
@@ -850,7 +861,9 @@ private fun PlayerLiveInfo(
             ),
             onOpenIdleStandbyTimer
         ))
-        add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        if (pictureInPictureAvailable) {
+            add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        }
         if (showExternalPlayerAction) {
             add(PlayerActionSpec("external_player", stringResource(R.string.player_open_in_external_player), onOpenExternalPlayer))
         }
@@ -1060,6 +1073,8 @@ private fun PlayerVodInfo(
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isTelevisionDevice = rememberIsTelevisionDevice()
+    val pictureInPictureAvailable = !isTelevisionDevice
+    val castAvailable = !isTelevisionDevice
     val compactControls = screenWidth < 700.dp
     val tabletControls = !isTelevisionDevice && screenWidth >= 700.dp && screenWidth < 1280.dp
     val transportButtonSize = when {
@@ -1147,12 +1162,16 @@ private fun PlayerVodInfo(
             ),
             onOpenIdleStandbyTimer
         ))
-        add(PlayerActionSpec(
-            "cast",
-            stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
-            if (isCastConnected) onStopCasting else onCast
-        ))
-        add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        if (castAvailable) {
+            add(PlayerActionSpec(
+                "cast",
+                stringResource(if (isCastConnected) R.string.player_stop_casting else R.string.player_cast),
+                if (isCastConnected) onStopCasting else onCast
+            ))
+        }
+        if (pictureInPictureAvailable) {
+            add(PlayerActionSpec("picture_in_picture", stringResource(R.string.player_picture_in_picture), onEnterPictureInPicture))
+        }
         add(PlayerActionSpec("aspect_ratio", stringResource(R.string.player_aspect_ratio_label, aspectRatioLabel), onToggleAspectRatio))
     }
     var sliderValue by remember(duration, currentPosition) {
@@ -1460,14 +1479,6 @@ private fun PlayerSeekPreviewCard(
     }
 }
 
-private fun formatPlaybackSpeedLabel(speed: Float): String {
-    return if (speed % 1f == 0f) {
-        "${speed.toInt()}x"
-    } else {
-        "${("%.2f".format(Locale.US, speed)).trimEnd('0').trimEnd('.')}x"
-    }
-}
-
 private fun sleepTimerActionLabel(title: String, activeLabel: String, active: Boolean): String =
     if (active) activeLabel else title
 
@@ -1629,9 +1640,10 @@ private fun PlayerQuickActionRows(
 
     if (singleRow) {
         val actions = rows.flatten()
-        LazyRow(
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(end = 4.dp)
+            contentPadding = PaddingValues(end = 4.dp),
+            fadeWidth = 0.dp
         ) {
             itemsIndexed(
                 items = actions,

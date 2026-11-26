@@ -5,6 +5,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,11 +33,13 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.foundation.focusable
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -49,19 +53,18 @@ import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
-import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.design.BrowseColors
+import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
 import com.streamvault.core.ui.design.LocalBrowseVisuals
+import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.theme.FocusBorder
-import com.streamvault.core.ui.theme.OnSurface
-import com.streamvault.core.ui.theme.OnSurfaceDim
-import com.streamvault.core.ui.theme.Primary
 import com.streamvault.core.ui.theme.SurfaceElevated
 import com.streamvault.core.ui.theme.SurfaceHighlight
-import com.streamvault.core.ui.theme.TextSecondary
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -163,9 +166,8 @@ fun SearchInput(
     val modern = LocalBrowseVisuals.current
     val palette = if (modern) BrowseColors.current else AppColors.current
     val searchShape = if (modern) BrowseShapes.Control else RoundedCornerShape(12.dp)
-    val borderColor = if (isFocused) palette.focus else if (modern) palette.outline else OnSurfaceDim.copy(alpha = 0.5f)
-    val backgroundColor = if (isFocused) palette.surfaceEmphasis else palette.surfaceElevated
-    val borderWidth = if (isFocused) 2.dp else 1.dp
+    val interactionSource = remember { MutableInteractionSource() }
+    val colors = remember(palette, isFocused) { inputFieldColors(palette, isFocused) }
 
     Box(
         modifier = modifier
@@ -173,8 +175,12 @@ fun SearchInput(
             .heightIn(min = 56.dp)
             .focusRequester(focusRequester)
             .bringIntoViewRequester(bringIntoViewRequester)
-            .background(backgroundColor, searchShape)
-            .border(borderWidth, borderColor, searchShape)
+            .background(colors.container, searchShape)
+            // Rest state is a filled container with no stroke; focus adds the ring on top of the focus fill.
+            .then(
+                if (isFocused) Modifier.border(BrowseFocusSpec.SelectableRingWidth, palette.focus, searchShape)
+                else Modifier
+            )
             .semantics(mergeDescendants = true) {
                 contentDescription = placeholder
                 stateDescription = value.ifBlank { placeholder }
@@ -188,7 +194,11 @@ fun SearchInput(
             .mouseClickable(enabled = enabled, focusRequester = focusRequester) {
                 activateInput()
             }
-            .clickable(enabled = enabled) {
+            .clickable(
+                enabled = enabled,
+                interactionSource = interactionSource,
+                indication = null
+            ) {
                 activateInput()
             }
             .focusable(enabled = enabled)
@@ -197,11 +207,11 @@ fun SearchInput(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(modifier = Modifier.weight(1f)) {
-                if (value.isEmpty() && !isFocused) {
+                if (value.isEmpty()) {
                     Text(
                         text = placeholder,
                         style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary
+                        color = colors.placeholder
                     )
                 }
 
@@ -218,10 +228,6 @@ fun SearchInput(
                         .focusRequester(inputFocusRequester)
                         .focusProperties {
                             canFocus = enabled && acceptsInput
-                            if (isTelevisionDevice && acceptsInput) {
-                                left = FocusRequester.Cancel
-                                right = FocusRequester.Cancel
-                            }
                         }
                         .onFocusChanged {
                             hasInputFocus = enabled && it.hasFocus
@@ -233,27 +239,19 @@ fun SearchInput(
                             }
                         }
                         .onPreviewKeyEvent { event ->
-                            if (!isTelevisionDevice || !acceptsInput || event.nativeKeyEvent.action != android.view.KeyEvent.ACTION_DOWN) {
+                            if (!isTelevisionDevice || !acceptsInput) {
                                 return@onPreviewKeyEvent false
                             }
-                            val cursor = textFieldValue.selection.end
-                            when (event.nativeKeyEvent.keyCode) {
-                                android.view.KeyEvent.KEYCODE_DPAD_LEFT -> {
-                                    val nextCursor = (cursor - 1).coerceAtLeast(0)
-                                    textFieldValue = textFieldValue.copy(selection = TextRange(nextCursor))
-                                    true
-                                }
-                                android.view.KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                                    val nextCursor = (cursor + 1).coerceAtMost(textFieldValue.text.length)
-                                    textFieldValue = textFieldValue.copy(selection = TextRange(nextCursor))
-                                    true
-                                }
-                                else -> false
+                            handleTvSearchKey(event, textFieldValue, { textFieldValue = it },
+                                focusManager::moveFocus) {
+                                pendingInputActivation = false
+                                acceptsInput = false
+                                keyboardController?.hide()
                             }
                         },
-                    textStyle = MaterialTheme.typography.bodySmall.copy(color = OnSurface),
+                    textStyle = MaterialTheme.typography.bodySmall.copy(color = colors.text),
                     singleLine = true,
-                    cursorBrush = SolidColor(Primary),
+                    cursorBrush = SolidColor(colors.cursor),
                     enabled = enabled,
                     readOnly = !acceptsInput,
                     keyboardOptions = KeyboardOptions(imeAction = imeAction),
@@ -274,11 +272,7 @@ fun SearchInput(
             Icon(
                 imageVector = if (value.isBlank()) Icons.Default.Search else Icons.Default.Close,
                 contentDescription = null,
-                tint = if (value.isBlank()) {
-                    if (isFocused) Primary else OnSurfaceDim
-                } else {
-                    OnSurface
-                },
+                tint = colors.icon,
                 modifier = Modifier
                     .padding(start = 6.dp)
                     .clickable(enabled = enabled && value.isNotBlank()) {
@@ -289,6 +283,69 @@ fun SearchInput(
             )
         }
     }
+}
+
+/** Ink and fill of a text input (search and setup forms). Focus takes the tonal selected fill (the Focus ring is drawn on top), so every ink flips to [AppPalette.onSelectedContainer]. */
+data class InputFieldColors(
+    val container: Color,
+    val text: Color,
+    val placeholder: Color,
+    val icon: Color,
+    val cursor: Color
+)
+
+fun inputFieldColors(palette: AppPalette, focused: Boolean): InputFieldColors =
+    if (focused) {
+        InputFieldColors(
+            container = palette.selectedContainer,
+            text = palette.onSelectedContainer,
+            placeholder = palette.onSelectedContainer,
+            icon = palette.onSelectedContainer,
+            cursor = palette.onSelectedContainer
+        )
+    } else {
+        restInputFieldColors(palette)
+    }
+
+private const val INPUT_FILL_CONTRAST = 3f
+private const val INPUT_VALUE_CONTRAST = 5f
+private const val INPUT_PLACEHOLDER_CONTRAST = 4.5f
+private const val SHADE_STEP = 0.01f
+
+// An input has no stroke at rest (rule 14), so its fill alone marks it and holds 3:1 (rule 7) against the canvas and
+// the surface it sits on. controlContainer stays the lighter fill of buttons and chips, which carry a label.
+// Ink is then pulled toward the strongest ink the fill allows, because textSecondary falls under 4.5:1 on it.
+internal fun restInputFieldColors(palette: AppPalette): InputFieldColors {
+    val container = shadeUntil(palette.controlContainer, palette.textPrimary) {
+        contrastRatio(it, palette.canvas) >= INPUT_FILL_CONTRAST && contrastRatio(it, palette.surface) >= INPUT_FILL_CONTRAST
+    }
+    val strongest = contentOnColor(container)
+    val value = shadeUntil(palette.textPrimary, strongest) { contrastRatio(it, container) >= INPUT_VALUE_CONTRAST }
+    val placeholder = shadeUntil(palette.textSecondary, value) { contrastRatio(it, container) >= INPUT_PLACEHOLDER_CONTRAST }
+    return InputFieldColors(
+        container = container,
+        text = value,
+        placeholder = placeholder,
+        icon = placeholder,
+        cursor = if (contrastRatio(palette.brand, container) >= INPUT_FILL_CONTRAST) palette.brand else value
+    )
+}
+
+// First color on the way from [from] to [to] that satisfies [accepts]; [to] when none does.
+private inline fun shadeUntil(from: Color, to: Color, accepts: (Color) -> Boolean): Color {
+    var step = 0f
+    var shade = from
+    while (!accepts(shade) && step < 1f) {
+        step = minOf(1f, step + SHADE_STEP)
+        shade = lerp(from, to, step)
+    }
+    return shade
+}
+
+private fun contrastRatio(first: Color, second: Color): Float {
+    val firstLuminance = first.luminance()
+    val secondLuminance = second.luminance()
+    return (maxOf(firstLuminance, secondLuminance) + 0.05f) / (minOf(firstLuminance, secondLuminance) + 0.05f)
 }
 
 internal fun shouldConsumeSearchInputBack(acceptsInput: Boolean): Boolean = acceptsInput

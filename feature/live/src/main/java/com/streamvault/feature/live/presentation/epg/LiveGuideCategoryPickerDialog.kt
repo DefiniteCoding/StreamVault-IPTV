@@ -1,5 +1,6 @@
 package com.streamvault.feature.live.presentation.epg
 
+import com.streamvault.feature.live.home.localizedName
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -185,7 +186,7 @@ fun LiveGuideCategoryPickerDialog(
                             ) {
                                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                     Text(
-                                        text = category.name,
+                                        text = category.localizedName(),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = if (isSelected) Primary else OnSurface
                                     )

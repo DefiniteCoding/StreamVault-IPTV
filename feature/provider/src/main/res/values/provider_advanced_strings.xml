@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portal URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin media server</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agent override (optional)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Headers (API, optional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Custom headers (optional, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Guide source</string>
+  <string name="setup_guide_source_helper">Choose whether this provider uses its supplier guide, your assigned external XMLTV sources, or no guide at all.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Keep the current mixed behavior: external XMLTV can override supplier guide data, and unmatched channels may still use supplier fallback.</string>
+  <string name="setup_guide_policy_external_title">Use external EPG only</string>
+  <string name="setup_guide_policy_external_description">Use only assigned external XMLTV sources. Unmatched channels stay without guide data.</string>
+  <string name="setup_guide_policy_provider_title">Use supplier EPG only</string>
+  <string name="setup_guide_policy_provider_description">Ignore assigned external XMLTV sources for this provider and use only the supplier guide paths.</string>
+  <string name="setup_guide_policy_disabled_title">Disable guide data</string>
+  <string name="setup_guide_policy_disabled_description">Do not import or resolve guide data for this provider.</string>
+
+  <string name="setup_logo_source_title">Channel logos</string>
+  <string name="setup_logo_source_helper">Pick whether channel logos come from the supplier, the matched EPG channel icon, or a strict single source.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Supplier logos first</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Use the supplier logo when it exists, then fall back to the matched EPG icon.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Prefer EPG logos</string>
+  <string name="setup_logo_policy_epg_preferred_description">Use the matched EPG icon first, then fall back to the supplier logo.</string>
+  <string name="setup_logo_policy_supplier_only_title">Supplier logos only</string>
+  <string name="setup_logo_policy_supplier_only_description">Always use supplier logos for this provider.</string>
+  <string name="setup_logo_policy_epg_only_title">EPG logos only</string>
+  <string name="setup_logo_policy_epg_only_description">Always use matched EPG icons for this provider.</string>
+
+  <string name="setup_stalker_auth_title">Stalker auth mode</string>
+  <string name="setup_stalker_auth_helper">Auto-detect is the default. Override it only when the portal needs credentials or a mixed MAG + account login flow.</string>
+  <string name="setup_stalker_auth_auto_title">Auto-detect</string>
+  <string name="setup_stalker_auth_auto_description">Try the portal\'s likely auth flow first and retry once if a different Stalker mode fits better.</string>
+  <string name="setup_stalker_auth_mac_only_title">MAC only</string>
+  <string name="setup_stalker_auth_mac_only_description">Use MAG-style MAC authentication without a portal account login.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + credentials</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Keep the MAG identity and add portal account credentials for stricter portals.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Credentials only</string>
+  <string name="setup_stalker_auth_credentials_only_description">Use portal account credentials even if the MAC address is optional or ignored.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portal username (optional)</string>
+  <string name="setup_stalker_username_placeholder">Portal username</string>
+  <string name="setup_stalker_password_optional_placeholder">Portal password (optional)</string>
+  <string name="setup_stalker_password_placeholder">Portal password</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG Type (optional)</string>
+  <string name="setup_stalker_timezone_placeholder">Timezone (optional)</string>
+  <string name="setup_stalker_locale_placeholder">Locale (optional)</string>
+  <string name="setup_stalker_serial_placeholder">Serial number (optional)</string>
+  <string name="setup_stalker_device_id_placeholder">Device ID (optional)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (optional)</string>
+  <string name="setup_stalker_signature_placeholder">Signature (optional)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker compatibility</string>
+  <string name="setup_stalker_compat_section_helper">Portal-specific overrides for stubborn MAG/Stalker servers. Leave fields empty unless a server needs them.</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version override (optional)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, optional)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (Player, optional)</string>
+  <string name="setup_stalker_player_headers_placeholder">Headers (Player, optional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent Link</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Use HTTP proxy</string>
+  <string name="setup_stalker_proxy_helper">Applies to Stalker API and playback only.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxy host</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxy port</string>
+
+  <string name="setup_stalker_selector_title">Compatibility</string>
+  <string name="setup_stalker_protocol_button">Protocol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">Classic MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatic</string>
+  <string name="setup_stalker_profile_experimental">%1$s (experimental)</string>
+  <string name="setup_stalker_experimental_note">Experimental profiles require captured/manual identity fields and are excluded from automatic discovery.</string>
+  <string name="setup_stalker_profile_custom">Custom profile</string>
+
+  <string name="setup_stalker_rules_title">Request rules</string>
+  <string name="setup_stalker_rules_helper">Match by action, block calls, or override params. Blank values remove params.</string>
+  <string name="setup_stalker_rules_add">Add Rule</string>
+  <string name="setup_stalker_rule_number">Rule %1$d</string>
+  <string name="setup_stalker_rule_delete">Delete</string>
+  <string name="setup_stalker_rule_action_placeholder">Action, e.g. get_profile</string>
+  <string name="setup_stalker_rule_block">Block this request</string>
+  <string name="setup_stalker_rule_block_warning">Warning: blocking %1$s can prevent login.</string>
+  <string name="setup_stalker_rule_params_placeholder">Param overrides: name=value | remove_me=</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Zadajte priamu URL adresu súboru APK. StreamVault ho stiahne a otvorí inštalátor.</string>
+  <string name="plugins_install_url_label">URL APK pluginu</string>
+  <string name="plugins_installing">Inštaluje sa…</string>
+  <string name="plugins_download_install">Stiahnuť a nainštalovať</string>
+</resources>

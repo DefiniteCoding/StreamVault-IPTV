@@ -1,6 +1,5 @@
 package com.streamvault.feature.settings.presentation
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -8,23 +7,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.settings.R
+import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.FocusSpec
+import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.core.ui.interaction.TvClickableSurface
-import com.streamvault.core.ui.theme.ErrorColor
 import com.streamvault.core.ui.theme.OnBackground
 import com.streamvault.core.ui.theme.OnSurfaceDim
 import com.streamvault.core.ui.theme.Primary
@@ -183,16 +181,14 @@ public fun ProviderActionButtons(
                     liveOnboardingIncomplete -> stringResource(R.string.settings_sync_btn)
                     else -> stringResource(R.string.settings_connect)
                 },
-                accent = Primary,
-                filled = true,
-                contentColor = com.streamvault.core.ui.theme.OnPrimary,
+                primary = true,
                 onClick = if (liveOnboardingIncomplete) onRefresh else onConnect,
                 modifier = if (targetItemId == "sources.sync") targetFocusModifier else Modifier,
             )
         } else {
             ProviderActionButton(
                 label = if (isSyncing) stringResource(R.string.settings_syncing_btn) else stringResource(R.string.settings_sync_btn),
-                accent = Primary,
+                primary = true,
                 onClick = onRefresh,
                 modifier = if (targetItemId == "sources.sync") targetFocusModifier else Modifier,
             )
@@ -200,7 +196,6 @@ public fun ProviderActionButtons(
 
         ProviderActionButton(
             label = stringResource(R.string.settings_edit),
-            accent = Secondary,
             onClick = onEdit,
             modifier = if (targetItemId == "sources.edit") targetFocusModifier else Modifier,
         )
@@ -208,53 +203,62 @@ public fun ProviderActionButtons(
         if (isActive) {
             ProviderActionButton(
                 label = stringResource(R.string.settings_provider_category_controls_action),
-                accent = Primary,
                 onClick = onParentalControl
             )
         }
 
         ProviderActionButton(
             label = stringResource(R.string.settings_delete),
-            accent = ErrorColor,
+            destructive = true,
             onClick = onDelete,
             modifier = if (targetItemId == "sources.delete") targetFocusModifier else Modifier,
         )
     }
 }
 
+/**
+ * The first action (Connect, or Sync once active) is the card's single primary. Delete is a red-label
+ * destructive secondary that fills red on focus; the rest are accent-tinted secondaries (rules 12 to 15).
+ */
 @Composable
 private fun ProviderActionButton(
     label: String,
-    accent: Color,
     onClick: () -> Unit,
-    filled: Boolean = false,
-    contentColor: Color = accent,
+    primary: Boolean = false,
+    destructive: Boolean = false,
     modifier: Modifier = Modifier,
 ) {
     TvClickableSurface(
         onClick = onClick,
         modifier = modifier,
         shape = ClickableSurfaceDefaults.shape(SettingsDetailShapes.Control),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (filled) accent else accent.copy(alpha = 0.12f),
-            focusedContainerColor = accent,
-            contentColor = contentColor,
-            focusedContentColor = com.streamvault.core.ui.design.contentOnColor(accent)
-        ),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(FocusSpec.BorderWidth, com.streamvault.core.ui.theme.FocusBorder),
-                shape = SettingsDetailShapes.Control
+        colors = when {
+            primary -> ClickableSurfaceDefaults.colors(
+                containerColor = BrowseColors.Brand,
+                contentColor = BrowseColors.OnPrimary,
+                focusedContainerColor = BrowseColors.BrandStrong,
+                focusedContentColor = contentOnColor(BrowseColors.BrandStrong)
             )
-        ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+            destructive -> ClickableSurfaceDefaults.colors(
+                containerColor = BrowseColors.SurfaceElevated,
+                contentColor = BrowseColors.Live,
+                focusedContainerColor = BrowseColors.Live,
+                focusedContentColor = contentOnColor(BrowseColors.Live)
+            )
+            else -> ClickableSurfaceDefaults.colors(
+                containerColor = BrowseColors.SurfaceAccent,
+                contentColor = BrowseColors.TextPrimary,
+                focusedContainerColor = BrowseColors.SurfaceAccent,
+                focusedContentColor = BrowseColors.TextPrimary
+            )
+        },
+        border = selectableFocusBorder(SettingsDetailShapes.Control),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = FocusSpec.FocusedScale)
     ) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
-            modifier = Modifier
-                .widthIn(min = 0.dp)
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
         )
     }
 }

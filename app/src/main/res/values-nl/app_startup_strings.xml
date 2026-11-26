@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Uw bibliotheek wordt voorbereid…</string>
+    <string name="startup_failed_title">StreamVault kan uw bibliotheek niet openen</string>
+    <string name="startup_failed_message">De lokale database kon niet worden bijgewerkt. Uw gegevens zijn niet verwijderd.</string>
+    <string name="startup_failed_error_type">Fout: %1$s</string>
+    <string name="startup_retry">Opnieuw proberen</string>
+    <string name="startup_share_report">Rapport delen</string>
+</resources>

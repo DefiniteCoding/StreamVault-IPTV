@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">รุนแรง</string>
     <string name="multiview_thermal_critical">วิกฤต</string>
     <string name="multiview_low_memory_warning">ความจำตึงตัวสูง สล็อตเพิ่มเติมจะอยู่ในสแตนด์บายจนกว่าการเล่นจะเสถียร</string>
+    <string name="multiview_search_categories">ค้นหาหมวดหมู่…</string>
+    <string name="multiview_search_channels">ค้นหาช่อง…</string>
+    <string name="multiview_no_categories">ไม่พบหมวดหมู่</string>
+    <string name="multiview_no_channels">ไม่พบช่อง</string>
+    <string name="multiview_picker_subtitle">เลือกหมวดหมู่ แล้วเลือกช่อง</string>
 </resources>

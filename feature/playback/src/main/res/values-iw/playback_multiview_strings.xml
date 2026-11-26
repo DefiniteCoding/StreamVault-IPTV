@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">חמור</string>
     <string name="multiview_thermal_critical">קריטי</string>
     <string name="multiview_low_memory_warning">לחץ הזיכרון גבוה. חריצים נוספים נשארים במצב המתנה עד שההשמעה מתייצבת.</string>
+    <string name="multiview_search_categories">חיפוש קטגוריות…</string>
+    <string name="multiview_search_channels">חיפוש ערוצים…</string>
+    <string name="multiview_no_categories">לא נמצאו קטגוריות</string>
+    <string name="multiview_no_channels">לא נמצאו ערוצים</string>
+    <string name="multiview_picker_subtitle">בחר קטגוריה, ואז בחר ערוץ</string>
 </resources>

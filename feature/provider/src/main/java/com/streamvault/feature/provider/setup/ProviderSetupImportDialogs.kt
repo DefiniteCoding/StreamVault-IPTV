@@ -47,17 +47,17 @@ internal fun ImportOptionsButton(
     TvClickableSurface(
         onClick = onClick,
         modifier = modifier
-            .height(if (compact) 38.dp else 44.dp)
+            .height(44.dp)
             .onFocusEvent { isFocused = it.hasFocus }
             .semantics { contentDescription = text },
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Artwork),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = Surface.copy(alpha = 0.9f),
+            containerColor = com.streamvault.core.ui.design.BrowseColors.SurfaceAccent,
             focusedContainerColor = SurfaceHighlight
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (isFocused) PrimaryLight else SurfaceHighlight)),
-            focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         )
     ) {
         Row(

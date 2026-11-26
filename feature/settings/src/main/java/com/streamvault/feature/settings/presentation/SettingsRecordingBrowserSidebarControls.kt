@@ -1,6 +1,8 @@
 package com.streamvault.feature.settings.presentation
 
-import androidx.compose.foundation.BorderStroke
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.BrowseColors
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,8 +10,8 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import com.streamvault.core.ui.components.inputFieldColors
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -26,18 +28,14 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.settings.R
 import com.streamvault.core.ui.interaction.TvClickableSurface
-import com.streamvault.core.ui.theme.FocusBorder
 import com.streamvault.core.ui.theme.OnBackground
 import com.streamvault.core.ui.theme.OnSurfaceDim
 import com.streamvault.core.ui.theme.Primary
-import com.streamvault.core.ui.theme.SurfaceElevated
-import com.streamvault.core.ui.theme.SurfaceHighlight
 import com.streamvault.domain.model.RecordingStatus
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -102,6 +100,9 @@ private fun RecordingBrowserSearchField(
     val inputFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var acceptsInput by remember(isTelevisionDevice) { mutableStateOf(!isTelevisionDevice) }
+    var hasFocus by remember { mutableStateOf(false) }
+    val palette = BrowseColors.current
+    val colors = remember(palette, hasFocus) { inputFieldColors(palette, hasFocus) }
 
     TvClickableSurface(
         onClick = {
@@ -111,22 +112,14 @@ private fun RecordingBrowserSearchField(
         },
         modifier = Modifier
             .fillMaxWidth()
-            .focusRequester(searchFocusRequester),
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
+            .focusRequester(searchFocusRequester)
+            .onFocusChanged { hasFocus = it.hasFocus },
+        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = SurfaceElevated,
-            focusedContainerColor = SurfaceHighlight
+            containerColor = colors.container,
+            focusedContainerColor = colors.container
         ),
-        border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, OnSurfaceDim.copy(alpha = 0.3f)),
-                shape = RoundedCornerShape(8.dp)
-            ),
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, FocusBorder),
-                shape = RoundedCornerShape(8.dp)
-            )
-        ),
+        border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Box(
@@ -138,15 +131,15 @@ private fun RecordingBrowserSearchField(
                 Text(
                     text = stringResource(R.string.settings_recording_search_hint),
                     style = MaterialTheme.typography.bodySmall,
-                    color = OnSurfaceDim
+                    color = colors.placeholder
                 )
             }
             BasicTextField(
                 value = searchQuery,
                 onValueChange = onSearchQueryChange,
-                textStyle = MaterialTheme.typography.bodySmall.copy(color = OnBackground),
+                textStyle = MaterialTheme.typography.bodySmall.copy(color = colors.text),
                 singleLine = true,
-                cursorBrush = SolidColor(Primary),
+                cursorBrush = SolidColor(colors.cursor),
                 readOnly = isTelevisionDevice && !acceptsInput,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                 keyboardActions = KeyboardActions(onSearch = {

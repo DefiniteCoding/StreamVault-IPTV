@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">ป้อน URL ของ APK โดยตรง StreamVault จะดาวน์โหลดและเปิดตัวติดตั้ง</string>
+  <string name="plugins_install_url_label">URL APK ของปลั๊กอิน</string>
+  <string name="plugins_installing">กำลังติดตั้ง…</string>
+  <string name="plugins_download_install">ดาวน์โหลดและติดตั้ง</string>
+</resources>

@@ -12,15 +12,13 @@
     <string name="setup_update_desc">IPTV sağlayıcı bilgilerinizi güncelleyin</string>
     <string name="setup_add_desc">IPTV sağlayıcınızı ekleyin</string>
     <string name="setup_shell_eyebrow">Sağlayıcı Kurulumu</string>
-    <string name="setup_shell_subtitle">Xtream veya M3U kullanın. Sonra değiştirebilirsiniz.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U veya Jellyfin. Sonra Ayarlar\'dan düzenleyin.</string>
     <string name="setup_form_subtitle">Bir kaynak seçin, bilgileri girin ve devam edin. Daha sonra Ayarlar\'dan yönetebilirsiniz.</string>
     <string name="setup_source_type_label">Kaynak Türü</string>
     <string name="setup_info_xtream_title">Bilgiler varsa Xtream kullanın</string>
-    <string name="setup_info_xtream_body">Sunucu, kullanıcı adı ve şifre varsa en uygunudur.</string>
+    <string name="setup_info_xtream_body">Sunucu, kullanıcı adı, şifre için en iyisi.</string>
     <string name="setup_info_m3u_title">URL veya dosya tabanlı çalma listeleri için M3U\'yu kullanın</string>
     <string name="setup_info_m3u_body">Bir oynatma listesi bağlantısı kullanın veya yerel bir dosya içe aktarın.</string>
-    <string name="setup_info_manage_title">Sağlayıcıları sonra yönetebilirsiniz</string>
-    <string name="setup_info_manage_body">Daha sonra Ayarlar\'dan yenileyin, düzenleyin veya değiştirin.</string>
     <string name="setup_xtream">Xtream Kodları</string>
     <string name="setup_m3u">M3U Çalma Listesi</string>
     <string name="setup_name_hint">Oynatma Listesi Adı (İsteğe Bağlı)</string>

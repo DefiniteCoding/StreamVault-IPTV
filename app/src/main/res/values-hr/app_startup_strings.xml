@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Priprema vaše biblioteke…</string>
+    <string name="startup_failed_title">StreamVault nije mogao otvoriti vašu biblioteku</string>
+    <string name="startup_failed_message">Lokalna baza podataka nije mogla biti nadograđena. Vaši podaci nisu izbrisani.</string>
+    <string name="startup_failed_error_type">Pogreška: %1$s</string>
+    <string name="startup_retry">Pokušaj ponovno</string>
+    <string name="startup_share_report">Podijeli izvješće</string>
+</resources>

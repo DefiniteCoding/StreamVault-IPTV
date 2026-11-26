@@ -43,7 +43,6 @@ class DatabaseStartupGateTest {
         gate.open()
         val failure = gate.state.value as DatabaseStartupState.Failed
         assertThat(failure.errorType).isEqualTo("IllegalStateException")
-        assertThat(failure.userMessage).doesNotContain("secret")
 
         gate.open()
         assertThat(gate.state.value).isEqualTo(DatabaseStartupState.Ready)

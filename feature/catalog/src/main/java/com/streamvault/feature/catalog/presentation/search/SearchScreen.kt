@@ -2,7 +2,10 @@
 
 package com.streamvault.feature.catalog.presentation.search
 
-import com.streamvault.core.ui.layout.AdaptiveRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.focusRingButtonBorder
+import com.streamvault.core.ui.design.secondaryButtonColors
+import com.streamvault.feature.catalog.presentation.components.DetailCloseButton
 
 import androidx.compose.foundation.layout.FlowRow
 
@@ -10,16 +13,27 @@ import com.streamvault.core.ui.layout.isPortraitLayout
 
 import android.widget.Toast
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.selectableSurfaceColors
 import androidx.annotation.StringRes
 import com.streamvault.core.ui.interaction.TvClickableSurface
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyColumn
+import com.streamvault.core.ui.design.FocusOverflowPadding
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.foundation.focusGroup
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.*
@@ -28,10 +42,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import kotlinx.coroutines.withTimeoutOrNull
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
+import com.streamvault.core.ui.design.LocalAppSpacing
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -48,6 +69,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Star
@@ -121,6 +143,12 @@ class SearchViewModel @Inject constructor(
     private val _selectedTab = MutableStateFlow(SearchTab.ALL)
     val selectedTab: StateFlow<SearchTab> = _selectedTab.asStateFlow()
 
+    // Each scope keeps its own sort and filters. They survive new queries and tab switches, not leaving the screen.
+    private val _refinementsByTab = MutableStateFlow<Map<SearchTab, SearchRefinements>>(emptyMap())
+    val refinements: StateFlow<SearchRefinements> = combine(_selectedTab, _refinementsByTab) { tab, byTab ->
+        byTab[tab] ?: SearchRefinements()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchRefinements())
+
     private val _parentalControlLevel = MutableStateFlow(0)
     private val _activeProviderId = MutableStateFlow<Long?>(null)
 
@@ -137,6 +165,20 @@ class SearchViewModel @Inject constructor(
         .onEach { provider -> _activeProviderId.value = provider?.id }
         .flatMapLatest { provider ->
             provider?.let { parentalControlManager.unlockedCategoriesForProvider(it.id) } ?: flowOf(emptySet())
+        }
+
+    private val searchProviderWithHiddenCategoryIds = providerRepository.getActiveProvider()
+        .flatMapLatest { provider ->
+            if (provider == null) {
+                flowOf(SearchProviderVisibility())
+            } else {
+                combine(
+                    preferencesRepository.getHiddenCategoryIds(provider.id, ContentType.MOVIE),
+                    preferencesRepository.getHiddenCategoryIds(provider.id, ContentType.SERIES)
+                ) { movieIds, seriesIds ->
+                    SearchProviderVisibility(provider, movieIds, seriesIds)
+                }
+            }
         }
 
     init {
@@ -170,16 +212,28 @@ class SearchViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
+    /** Search results as returned by the use case, before the user's sort and filters. */
     @OptIn(FlowPreview::class)
-    val uiState: StateFlow<SearchUiState> = combine(
-        providerRepository.getActiveProvider(),
+    private val searchFilterParams = combine(
+        searchProviderWithHiddenCategoryIds,
         _query.debounce(300),
         _selectedTab,
         _parentalControlLevel,
         unlockedCategoryIds
-    ) { provider, query, tab, level, unlockedIds ->
-        SearchFilterParams(provider, query, tab, level, unlockedIds)
-    }.distinctUntilChanged().flatMapLatest { params ->
+    ) { providerVisibility, query, tab, level, unlockedIds ->
+        SearchFilterParams(
+            provider = providerVisibility.provider,
+            query = query,
+            tab = tab,
+            level = level,
+            unlockedCategoryIds = unlockedIds,
+            hiddenMovieCategoryIds = providerVisibility.hiddenMovieCategoryIds,
+            hiddenSeriesCategoryIds = providerVisibility.hiddenSeriesCategoryIds
+        )
+    }
+
+    val unrefinedState: StateFlow<SearchUiState> = searchFilterParams
+        .distinctUntilChanged().flatMapLatest { params ->
         val provider = params.provider
         val query = params.query
         val tab = params.tab
@@ -208,12 +262,14 @@ class SearchViewModel @Inject constructor(
                     channels = if (filterAdult)
                         results.channels.filterNot { it.isAdult || it.isUserProtected }
                     else results.channels,
-                    movies = if (filterAdult)
-                        results.movies.filterNot { it.isAdult || it.isUserProtected }
-                    else results.movies,
-                    series = if (filterAdult)
-                        results.series.filterNot { it.isAdult || it.isUserProtected }
-                    else results.series,
+                    movies = results.movies.filter { movie ->
+                        movie.categoryId?.let(params.hiddenMovieCategoryIds::contains) != true &&
+                            (!filterAdult || (!movie.isAdult && !movie.isUserProtected))
+                    },
+                    series = results.series.filter { series ->
+                        series.categoryId?.let(params.hiddenSeriesCategoryIds::contains) != true &&
+                            (!filterAdult || (!series.isAdult && !series.isUserProtected))
+                    },
                     isLoading = false,
                     hasSearched = true,
                     hasSearchError = results.isPartialResult &&
@@ -238,6 +294,19 @@ class SearchViewModel @Inject constructor(
             }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
+
+    val uiState: StateFlow<SearchUiState> = combine(unrefinedState, refinements) { state, refinements ->
+        state.withRefinements(refinements)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), SearchUiState())
+
+    fun setSort(sort: SearchSort) = updateRefinements { it.copy(sort = sort) }
+
+    fun applyFilters(filters: SearchFilters) = updateRefinements { it.copy(filters = filters) }
+
+    private fun updateRefinements(transform: (SearchRefinements) -> SearchRefinements) {
+        val tab = _selectedTab.value
+        _refinementsByTab.update { byTab -> byTab + (tab to transform(byTab[tab] ?: SearchRefinements())) }
+    }
 
     fun onQueryChange(newQuery: String) {
         _query.value = newQuery
@@ -367,8 +436,26 @@ private data class SearchFilterParams(
     val query: String,
     val tab: SearchTab,
     val level: Int,
-    val unlockedCategoryIds: Set<Long>
+    val unlockedCategoryIds: Set<Long>,
+    val hiddenMovieCategoryIds: Set<Long> = emptySet(),
+    val hiddenSeriesCategoryIds: Set<Long> = emptySet()
 )
+
+private data class SearchProviderVisibility(
+    val provider: com.streamvault.domain.model.LegacyProvider? = null,
+    val hiddenMovieCategoryIds: Set<Long> = emptySet(),
+    val hiddenSeriesCategoryIds: Set<Long> = emptySet()
+)
+
+private fun SearchUiState.withRefinements(refinements: SearchRefinements): SearchUiState {
+    val refined = SearchResultSet(channels, movies, series).refined(refinements)
+    return copy(
+        channels = refined.channels,
+        movies = refined.movies,
+        series = refined.series,
+        unfilteredTotal = totalResults
+    )
+}
 
 enum class SearchTab(@get:StringRes val titleRes: Int) {
     ALL(R.string.search_all),
@@ -402,7 +489,9 @@ data class SearchUiState(
     val hasActiveProvider: Boolean = false,
     val queryLength: Int = 0,
     val unlockedCategoryIds: Set<Long> = emptySet(),
-    val catalogCompleteness: CatalogCompleteness = CatalogCompleteness.COMPLETE
+    val catalogCompleteness: CatalogCompleteness = CatalogCompleteness.COMPLETE,
+    // Result count before the user's filters. Above zero while isEmpty means the filters hid everything.
+    val unfilteredTotal: Int = 0
 ) {
     val isEmpty: Boolean get() = hasSearched && channels.isEmpty() && movies.isEmpty() && series.isEmpty()
     val totalResults: Int get() = channels.size + movies.size + series.size
@@ -473,9 +562,10 @@ fun SearchScreen(
         showActionsDialog = true
     }
     val portrait = isPortraitLayout()
-    val availableWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp - 64
-    val channelColumns = if (portrait) (availableWidth / 240).coerceIn(1, 4) else 4
-    val posterColumns = if (portrait) (availableWidth / 148).coerceIn(1, 6) else 6
+    val inputPaneWidth = if (portrait) 0 else (SearchInputPaneWidth + SearchPaneGap).value.toInt()
+    val availableWidth = androidx.compose.ui.platform.LocalConfiguration.current.screenWidthDp - 64 - inputPaneWidth
+    val channelColumns = (availableWidth / 240).coerceIn(1, 4)
+    val posterColumns = (availableWidth / 148).coerceIn(1, 6)
     val channelRows = remember(uiState.channels, channelColumns) { uiState.channels.chunked(channelColumns) }
     val movieRows = remember(uiState.movies, posterColumns) { uiState.movies.chunked(posterColumns) }
     val seriesRows = remember(uiState.series, posterColumns) { uiState.series.chunked(posterColumns) }
@@ -557,7 +647,95 @@ fun SearchScreen(
         )
     }
 
-    val selectedTabDescription = selectedStateLabel
+    val resultsFocusRequester = remember { FocusRequester() }
+    val hasResults = uiState.hasActiveProvider && uiState.queryLength >= 2 && !uiState.isLoading && !uiState.isEmpty
+    var searchFieldFocused by remember { mutableStateOf(true) }
+    var resultsFocused by remember { mutableStateOf(false) }
+    var focusedResultRow by remember { mutableIntStateOf(0) }
+    fun onResultRowFocused(row: Int) { focusedResultRow = row }
+    // Left leaves for the input pane only from the first card of a row; the legend says so.
+    var resultAtRowStart by remember { mutableStateOf(true) }
+    fun onResultColumnFocused(atStart: Boolean) { resultAtRowStart = atStart }
+    var leftPaneFocused by remember { mutableStateOf(true) }
+    var tabsFocused by remember { mutableStateOf(false) }
+    var refineFocused by remember { mutableStateOf(false) }
+    val hintContext = when {
+        searchFieldFocused -> SearchHintContext.FIELD
+        leftPaneFocused -> SearchHintContext.LEFT_PANE
+        resultsFocused -> if (focusedResultRow <= 0) SearchHintContext.TOP_RESULT else SearchHintContext.RESULTS
+        refineFocused -> SearchHintContext.REFINE
+        tabsFocused -> SearchHintContext.TABS
+        else -> null
+    }
+    val filteredEmpty = uiState.isEmpty && uiState.unfilteredTotal > 0 && !uiState.hasSearchError
+    // Filters stay reachable while they hide everything, otherwise the user could not undo them.
+    val showRefinementBar = uiState.hasActiveProvider && uiState.queryLength >= 2 && !uiState.isLoading &&
+        (hasResults || filteredEmpty)
+
+    val refinements by viewModel.refinements.collectAsStateWithLifecycle()
+    var refinementSheet by remember { mutableStateOf<SearchRefinementSheet?>(null) }
+    var lastRefinementSheet by remember { mutableStateOf<SearchRefinementSheet?>(null) }
+    var focusRemoveFiltersOnClose by remember { mutableStateOf(false) }
+    val filteredEmptyNow by rememberUpdatedState(filteredEmpty)
+    val sortFocusRequester = remember { FocusRequester() }
+    val filtersFocusRequester = remember { FocusRequester() }
+    val removeFiltersFocusRequester = remember { FocusRequester() }
+
+    // Back out of a sheet lands on the button that opened it. If the applied filters hid every result, the
+    // "Remove filters" action is the way forward, so focus goes there once it is composed.
+    LaunchedEffect(refinementSheet) {
+        val sheet = refinementSheet
+        if (sheet != null) {
+            lastRefinementSheet = sheet
+            return@LaunchedEffect
+        }
+        val closed = lastRefinementSheet ?: return@LaunchedEffect
+        lastRefinementSheet = null
+        if (focusRemoveFiltersOnClose) {
+            focusRemoveFiltersOnClose = false
+            withTimeoutOrNull(REMOVE_FILTERS_FOCUS_TIMEOUT_MS) { snapshotFlow { filteredEmptyNow }.first { it } }
+            withFrameNanos { }
+            removeFiltersFocusRequester.requestFocusSafely(tag = "SearchScreen", target = "Remove filters")
+        } else {
+            val target = if (closed == SearchRefinementSheet.SORT) sortFocusRequester else filtersFocusRequester
+            target.requestFocusSafely(tag = "SearchScreen", target = "Refinement button")
+        }
+    }
+
+    when (refinementSheet) {
+        SearchRefinementSheet.SORT -> SearchSortSheet(
+            tab = selectedTab,
+            current = refinements.sort,
+            onSelect = { sort ->
+                viewModel.setSort(sort)
+                refinementSheet = null
+            },
+            onDismiss = { refinementSheet = null }
+        )
+
+        SearchRefinementSheet.FILTERS -> {
+            val unrefined by viewModel.unrefinedState.collectAsStateWithLifecycle()
+            val unrefinedResults = remember(unrefined.channels, unrefined.movies, unrefined.series) {
+                SearchResultSet(unrefined.channels, unrefined.movies, unrefined.series)
+            }
+            val options = remember(unrefinedResults, refinements.filters) {
+                unrefinedResults.filterOptions(refinements.filters)
+            }
+            SearchFiltersSheet(
+                initial = refinements.filters,
+                options = options,
+                unrefined = unrefinedResults,
+                    onApply = { filters, matchCount ->
+                    if (filters != refinements.filters) viewModel.applyFilters(filters)
+                    focusRemoveFiltersOnClose = matchCount == 0 && filters.isActive
+                    refinementSheet = null
+                },
+                onDismiss = { refinementSheet = null }
+            )
+        }
+
+        null -> Unit
+    }
 
     // ג”€ג”€ Long-press actions dialog ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€ג”€
     if (showActionsDialog) {
@@ -613,409 +791,703 @@ fun SearchScreen(
         true,
         false
     ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(18.dp),
-            contentPadding = PaddingValues(bottom = 32.dp)
-        ) {
-            item {
-                SearchHeroPanel(
-                    query = query,
-                    selectedTab = selectedTab,
-                    recentQueries = recentQueries,
-                    totalResults = uiState.totalResults,
-                    onQueryChange = viewModel::onQueryChange,
-                    onSearch = {
-                        viewModel.onSearchSubmitted()
-                    },
-                    onTabSelected = viewModel::onTabSelected,
-                    onRecentQuerySelected = {
-                        viewModel.onRecentQuerySelected(it)
-                    },
-                    onClearRecentQueries = viewModel::clearRecentQueries,
-                    focusRequester = searchFocusRequester,
-                    selectedStateLabel = selectedTabDescription
-                )
-            }
-
-            when {
-                !uiState.hasActiveProvider -> {
-                    item {
-                        SearchMessageState(
-                            title = stringResource(R.string.search_no_provider_title),
-                            subtitle = stringResource(R.string.search_no_provider_subtitle)
+        Column(modifier = Modifier.fillMaxSize()) {
+            SearchPanes(
+                modifier = Modifier.weight(1f),
+                inputPane = {
+                    Box(modifier = Modifier.onFocusChanged { leftPaneFocused = it.hasFocus }) {
+                        SearchInputPane(
+                            query = query,
+                            hasResults = hasResults,
+                            recentQueries = recentQueries,
+                            onQueryChange = viewModel::onQueryChange,
+                            onSearch = viewModel::onSearchSubmitted,
+                            onRecentQuerySelected = viewModel::onRecentQuerySelected,
+                            onClearRecentQueries = viewModel::clearRecentQueries,
+                            focusRequester = searchFocusRequester,
+                            resultsFocusRequester = resultsFocusRequester,
+                            selectedStateLabel = selectedStateLabel,
+                            onFieldFocusChanged = { searchFieldFocused = it }
                         )
                     }
-                }
-
-                uiState.queryLength < 2 -> {
-                    item {
-                        SearchMessageState(
-                            title = stringResource(R.string.search_ready_title),
-                            subtitle = stringResource(R.string.search_type_to_search)
+                },
+                resultsPane = {
+                    // Sort and Filters sit at the end of the tab row as one group; the weighted tabs keep them apart.
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.lg),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        SearchScopeTabs(
+                            modifier = Modifier
+                                .weight(1f)
+                                .onFocusChanged { tabsFocused = it.hasFocus },
+                            selectedTab = selectedTab,
+                            resultCount = if (hasResults) uiState.totalResults else null,
+                            onTabSelected = viewModel::onTabSelected,
+                            selectedStateLabel = selectedStateLabel
                         )
-                    }
-                }
-
-                uiState.isLoading -> {
-                    item {
-                        SearchMessageState(
-                            title = stringResource(R.string.search_loading_title),
-                            subtitle = stringResource(R.string.search_loading_subtitle)
-                        )
-                    }
-                }
-
-                uiState.isEmpty && uiState.hasSearchError -> {
-                    item {
-                        SearchMessageState(
-                            title = stringResource(R.string.search_error_title),
-                            subtitle = stringResource(R.string.search_error_subtitle)
-                        )
-                    }
-                }
-
-                uiState.isEmpty -> {
-                    item {
-                        SearchMessageState(
-                            title = stringResource(R.string.search_no_results_title),
-                            subtitle = stringResource(R.string.search_no_results, query)
-                        )
-                    }
-                }
-
-                else -> {
-                    item {
-                        SearchResultsSummaryRow(
-                            uiState = uiState,
-                            onBuildCompleteIndex = viewModel::buildCompleteStalkerSearchIndex
-                        )
-                    }
-
-                    if (selectedTab == SearchTab.ALL) {
-                        if (uiState.channels.isNotEmpty()) {
-                            item {
-                                SearchResultRail(
-                                    title = stringResource(R.string.search_live_tv),
-                                    items = uiState.channels.subList(0, minOf(uiState.channels.size, 18)),
-                                    keySelector = { it.id }
-                                ) { channel ->
-                                    val channelLocked = isLocked(
-                                        categoryId = channel.categoryId,
-                                        isAdult = channel.isAdult,
-                                        isUserProtected = channel.isUserProtected
-                                    )
-                                    ChannelCard(
-                                        channel = channel,
-                                        nowMs = nowMs,
-                                        isLocked = channelLocked,
-                                        isRecording = channel.id in recordingChannelIds,
-                                        isScheduledRecording = channel.id in scheduledChannelIds,
-                                        onClick = {
-                                            if (channelLocked) {
-                                                pendingChannel = channel
-                                                showPinDialog = true
-                                            } else {
-                                                onChannelClick(channel)
-                                            }
-                                        },
-                                        onLongClick = { showChannelActions(channel) }
-                                    )
-                                }
-                            }
-                        }
-
-                        if (uiState.movies.isNotEmpty()) {
-                            item {
-                                SearchResultRail(
-                                    title = stringResource(R.string.search_movies),
-                                    items = uiState.movies.subList(0, minOf(uiState.movies.size, 18)),
-                                    keySelector = { it.id }
-                                ) { movie ->
-                                    val movieLocked = isLocked(
-                                        categoryId = movie.categoryId,
-                                        isAdult = movie.isAdult,
-                                        isUserProtected = movie.isUserProtected
-                                    )
-                                    MovieCard(
-                                        movie = movie,
-                                        isLocked = movieLocked,
-                                        onClick = {
-                                            if (movieLocked) {
-                                                pendingMovie = movie
-                                                showPinDialog = true
-                                            } else {
-                                                onMovieClick(movie)
-                                            }
-                                        },
-                                        onLongClick = { showMovieActions(movie) }
-                                    )
-                                }
-                            }
-                        }
-
-                        if (uiState.series.isNotEmpty()) {
-                            item {
-                                SearchResultRail(
-                                    title = stringResource(R.string.search_series),
-                                    items = uiState.series.subList(0, minOf(uiState.series.size, 18)),
-                                    keySelector = { it.id }
-                                ) { seriesItem ->
-                                    val seriesLocked = isLocked(
-                                        categoryId = seriesItem.categoryId,
-                                        isAdult = seriesItem.isAdult,
-                                        isUserProtected = seriesItem.isUserProtected
-                                    )
-                                    SeriesCard(
-                                        series = seriesItem,
-                                        isLocked = seriesLocked,
-                                        onClick = {
-                                            if (seriesLocked) {
-                                                pendingSeries = seriesItem
-                                                showPinDialog = true
-                                            } else {
-                                                onSeriesClick(seriesItem)
-                                            }
-                                        },
-                                        onLongClick = { showSeriesActions(seriesItem) }
-                                    )
-                                }
-                            }
-                        }
-                    } else {
-                        item {
-                            SectionHeader(
-                                title = when (selectedTab) {
-                                    SearchTab.ALL -> stringResource(R.string.search_all)
-                                    SearchTab.LIVE -> stringResource(R.string.search_live_tv)
-                                    SearchTab.MOVIES -> stringResource(R.string.search_movies)
-                                    SearchTab.SERIES -> stringResource(R.string.search_series)
-                                }
+                        if (showRefinementBar) {
+                            SearchRefinementBar(
+                                modifier = Modifier.onFocusChanged { refineFocused = it.hasFocus },
+                                refinements = refinements,
+                                onSortClick = { refinementSheet = SearchRefinementSheet.SORT },
+                                onFiltersClick = { refinementSheet = SearchRefinementSheet.FILTERS },
+                                sortFocusRequester = sortFocusRequester,
+                                filtersFocusRequester = filtersFocusRequester
                             )
                         }
-
-                        when (selectedTab) {
-                            SearchTab.ALL -> Unit
-                            SearchTab.LIVE -> items(
-                                items = channelRows,
-                                key = { row -> row.joinToString("-") { it.id.toString() } },
-                                contentType = { "search_live_row" }
-                            ) { row ->
-                                SearchChannelGridRow(
-                                    channels = row,
-                                    nowMs = nowMs,
-                                    recordingChannelIds = recordingChannelIds,
-                                    scheduledChannelIds = scheduledChannelIds,
-                                    isLocked = { channel ->
-                                        isLocked(
-                                            categoryId = channel.categoryId,
-                                            isAdult = channel.isAdult,
-                                            isUserProtected = channel.isUserProtected
-                                        )
-                                    },
-                                    onChannelClick = { channel, locked ->
-                                        if (locked) {
-                                            pendingChannel = channel
-                                            showPinDialog = true
-                                        } else {
-                                            onChannelClick(channel)
-                                        }
-                                    },
-                                    onChannelLongClick = { channel -> showChannelActions(channel) }
-                                )
+                    }
+                    // Fades the rows at the edges they scroll under. The list is widened by the focus overflow and padded
+                    // back, so the offscreen layer of the fade does not clip the focus ring of a card at the left edge.
+                    FocusSafeLazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .bleedHorizontally(FocusOverflowPadding)
+                            .focusRequester(resultsFocusRequester)
+                            .onFocusChanged { resultsFocused = it.hasFocus }
+                            .focusGroup(),
+                        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+                        contentPadding = PaddingValues(
+                            start = FocusOverflowPadding,
+                            end = FocusOverflowPadding,
+                            bottom = LocalAppSpacing.current.xs
+                        ),
+                        fadeHeight = LocalAppSpacing.current.md
+                    ) {
+                        when {
+                            !uiState.hasActiveProvider -> {
+                                item {
+                                    SearchMessageState(
+                                        title = stringResource(R.string.search_no_provider_title),
+                                        subtitle = stringResource(R.string.search_no_provider_subtitle)
+                                    )
+                                }
                             }
 
-                            SearchTab.MOVIES -> items(
-                                items = movieRows,
-                                key = { row -> row.joinToString("-") { it.id.toString() } },
-                                contentType = { "search_movie_row" }
-                            ) { row ->
-                                SearchMovieGridRow(
-                                    movies = row,
-                                    isLocked = { movie ->
-                                        isLocked(
-                                            categoryId = movie.categoryId,
-                                            isAdult = movie.isAdult,
-                                            isUserProtected = movie.isUserProtected
-                                        )
-                                    },
-                                    onMovieClick = { movie, locked ->
-                                        if (locked) {
-                                            pendingMovie = movie
-                                            showPinDialog = true
-                                        } else {
-                                            onMovieClick(movie)
-                                        }
-                                    },
-                                    onMovieLongClick = { movie -> showMovieActions(movie) }
-                                )
+                            uiState.queryLength < 2 -> {
+                                item {
+                                    SearchMessageState(
+                                        title = stringResource(R.string.search_type_to_search),
+                                        subtitle = stringResource(R.string.search_command_subtitle)
+                                    )
+                                }
                             }
 
-                            SearchTab.SERIES -> items(
-                                items = seriesRows,
-                                key = { row -> row.joinToString("-") { it.id.toString() } },
-                                contentType = { "search_series_row" }
-                            ) { row ->
-                                SearchSeriesGridRow(
-                                    seriesItems = row,
-                                    isLocked = { seriesItem ->
-                                        isLocked(
-                                            categoryId = seriesItem.categoryId,
-                                            isAdult = seriesItem.isAdult,
-                                            isUserProtected = seriesItem.isUserProtected
+                            uiState.isLoading -> {
+                                item {
+                                    SearchMessageState(
+                                        title = stringResource(R.string.search_loading_title),
+                                        subtitle = stringResource(R.string.search_loading_subtitle)
+                                    )
+                                }
+                            }
+
+                            uiState.isEmpty && uiState.hasSearchError -> {
+                                item {
+                                    SearchMessageState(
+                                        title = stringResource(R.string.search_error_title),
+                                        subtitle = stringResource(R.string.search_error_subtitle)
+                                    )
+                                }
+                            }
+
+                            filteredEmpty -> {
+                                item {
+                                    Column {
+                                        SearchMessageState(
+                                            title = stringResource(R.string.search_no_results_title),
+                                            subtitle = stringResource(R.string.search_no_results_filtered)
                                         )
-                                    },
-                                    onSeriesClick = { seriesItem, locked ->
-                                        if (locked) {
-                                            pendingSeries = seriesItem
-                                            showPinDialog = true
-                                        } else {
-                                            onSeriesClick(seriesItem)
+                                        SearchFilteredEmptyAction(
+                                            activeFilters = refinements.filters.activeCount,
+                                            focusRequester = removeFiltersFocusRequester,
+                                            onRemoveFilters = {
+                                                // The button disappears with the empty state, so hand focus to a button that stays.
+                                                filtersFocusRequester.requestFocusSafely(tag = "SearchScreen", target = "Filters button")
+                                                viewModel.applyFilters(SearchFilters())
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            uiState.isEmpty -> {
+                                item {
+                                    SearchMessageState(
+                                        title = stringResource(R.string.search_no_results_title),
+                                        subtitle = stringResource(R.string.search_no_results, query)
+                                    )
+                                }
+                            }
+
+                            else -> {
+                                if (uiState.catalogCompleteness != CatalogCompleteness.COMPLETE) {
+                                    item {
+                                        SearchCatalogNotice(
+                                            completeness = uiState.catalogCompleteness,
+                                            onBuildCompleteIndex = viewModel::buildCompleteStalkerSearchIndex,
+                                            modifier = Modifier.trackResultRow(0, ::onResultRowFocused)
+                                        )
+                                    }
+                                }
+
+                                if (selectedTab == SearchTab.ALL) {
+                                    if (uiState.channels.isNotEmpty()) {
+                                        item {
+                                            SearchResultRail(
+                                                title = stringResource(R.string.search_live_tv),
+                                                items = uiState.channels.subList(0, minOf(uiState.channels.size, 18)),
+                                                keySelector = { it.id },
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                modifier = Modifier.trackResultRow(0, ::onResultRowFocused)
+                                            ) { channel ->
+                                                val channelLocked = isLocked(
+                                                    categoryId = channel.categoryId,
+                                                    isAdult = channel.isAdult,
+                                                    isUserProtected = channel.isUserProtected
+                                                )
+                                                ChannelCard(
+                                                    channel = channel,
+                                                    nowMs = nowMs,
+                                                    isLocked = channelLocked,
+                                                    isRecording = channel.id in recordingChannelIds,
+                                                    isScheduledRecording = channel.id in scheduledChannelIds,
+                                                    onClick = {
+                                                        if (channelLocked) {
+                                                            pendingChannel = channel
+                                                            showPinDialog = true
+                                                        } else {
+                                                            onChannelClick(channel)
+                                                        }
+                                                    },
+                                                    onLongClick = { showChannelActions(channel) }
+                                                )
+                                            }
                                         }
-                                    },
-                                    onSeriesLongClick = { seriesItem -> showSeriesActions(seriesItem) }
-                                )
+                                    }
+
+                                    if (uiState.movies.isNotEmpty()) {
+                                        item {
+                                            SearchResultRail(
+                                                title = stringResource(R.string.search_movies),
+                                                items = uiState.movies.subList(0, minOf(uiState.movies.size, 18)),
+                                                keySelector = { it.id },
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                modifier = Modifier.trackResultRow(
+                                                    if (uiState.channels.isNotEmpty()) 1 else 0,
+                                                    ::onResultRowFocused
+                                                )
+                                            ) { movie ->
+                                                val movieLocked = isLocked(
+                                                    categoryId = movie.categoryId,
+                                                    isAdult = movie.isAdult,
+                                                    isUserProtected = movie.isUserProtected
+                                                )
+                                                MovieCard(
+                                                    movie = movie,
+                                                    isLocked = movieLocked,
+                                                    onClick = {
+                                                        if (movieLocked) {
+                                                            pendingMovie = movie
+                                                            showPinDialog = true
+                                                        } else {
+                                                            onMovieClick(movie)
+                                                        }
+                                                    },
+                                                    onLongClick = { showMovieActions(movie) }
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    if (uiState.series.isNotEmpty()) {
+                                        item {
+                                            SearchResultRail(
+                                                title = stringResource(R.string.search_series),
+                                                items = uiState.series.subList(0, minOf(uiState.series.size, 18)),
+                                                keySelector = { it.id },
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                modifier = Modifier.trackResultRow(
+                                                    (if (uiState.channels.isNotEmpty()) 1 else 0) +
+                                                        (if (uiState.movies.isNotEmpty()) 1 else 0),
+                                                    ::onResultRowFocused
+                                                )
+                                            ) { seriesItem ->
+                                                val seriesLocked = isLocked(
+                                                    categoryId = seriesItem.categoryId,
+                                                    isAdult = seriesItem.isAdult,
+                                                    isUserProtected = seriesItem.isUserProtected
+                                                )
+                                                SeriesCard(
+                                                    series = seriesItem,
+                                                    isLocked = seriesLocked,
+                                                    onClick = {
+                                                        if (seriesLocked) {
+                                                            pendingSeries = seriesItem
+                                                            showPinDialog = true
+                                                        } else {
+                                                            onSeriesClick(seriesItem)
+                                                        }
+                                                    },
+                                                    onLongClick = { showSeriesActions(seriesItem) }
+                                                )
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    item {
+                                        SectionHeader(
+                                            title = when (selectedTab) {
+                                                SearchTab.ALL -> stringResource(R.string.search_all)
+                                                SearchTab.LIVE -> stringResource(R.string.search_live_tv)
+                                                SearchTab.MOVIES -> stringResource(R.string.search_movies)
+                                                SearchTab.SERIES -> stringResource(R.string.search_series)
+                                            }
+                                        )
+                                    }
+
+                                    when (selectedTab) {
+                                        SearchTab.ALL -> Unit
+                                        SearchTab.LIVE -> itemsIndexed(
+                                            items = channelRows,
+                                            key = { _, row -> row.joinToString("-") { it.id.toString() } },
+                                            contentType = { _, _ -> "search_live_row" }
+                                        ) { rowIndex, row ->
+                                            SearchChannelGridRow(
+                                                modifier = Modifier.trackResultRow(rowIndex, ::onResultRowFocused),
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                channels = row,
+                                                nowMs = nowMs,
+                                                recordingChannelIds = recordingChannelIds,
+                                                scheduledChannelIds = scheduledChannelIds,
+                                                isLocked = { channel ->
+                                                    isLocked(
+                                                        categoryId = channel.categoryId,
+                                                        isAdult = channel.isAdult,
+                                                        isUserProtected = channel.isUserProtected
+                                                    )
+                                                },
+                                                onChannelClick = { channel, locked ->
+                                                    if (locked) {
+                                                        pendingChannel = channel
+                                                        showPinDialog = true
+                                                    } else {
+                                                        onChannelClick(channel)
+                                                    }
+                                                },
+                                                onChannelLongClick = { channel -> showChannelActions(channel) }
+                                            )
+                                        }
+
+                                        SearchTab.MOVIES -> itemsIndexed(
+                                            items = movieRows,
+                                            key = { _, row -> row.joinToString("-") { it.id.toString() } },
+                                            contentType = { _, _ -> "search_movie_row" }
+                                        ) { rowIndex, row ->
+                                            SearchMovieGridRow(
+                                                modifier = Modifier.trackResultRow(rowIndex, ::onResultRowFocused),
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                movies = row,
+                                                isLocked = { movie ->
+                                                    isLocked(
+                                                        categoryId = movie.categoryId,
+                                                        isAdult = movie.isAdult,
+                                                        isUserProtected = movie.isUserProtected
+                                                    )
+                                                },
+                                                onMovieClick = { movie, locked ->
+                                                    if (locked) {
+                                                        pendingMovie = movie
+                                                        showPinDialog = true
+                                                    } else {
+                                                        onMovieClick(movie)
+                                                    }
+                                                },
+                                                onMovieLongClick = { movie -> showMovieActions(movie) }
+                                            )
+                                        }
+
+                                        SearchTab.SERIES -> itemsIndexed(
+                                            items = seriesRows,
+                                            key = { _, row -> row.joinToString("-") { it.id.toString() } },
+                                            contentType = { _, _ -> "search_series_row" }
+                                        ) { rowIndex, row ->
+                                            SearchSeriesGridRow(
+                                                modifier = Modifier.trackResultRow(rowIndex, ::onResultRowFocused),
+                                                onColumnFocused = ::onResultColumnFocused,
+                                                seriesItems = row,
+                                                isLocked = { seriesItem ->
+                                                    isLocked(
+                                                        categoryId = seriesItem.categoryId,
+                                                        isAdult = seriesItem.isAdult,
+                                                        isUserProtected = seriesItem.isUserProtected
+                                                    )
+                                                },
+                                                onSeriesClick = { seriesItem, locked ->
+                                                    if (locked) {
+                                                        pendingSeries = seriesItem
+                                                        showPinDialog = true
+                                                    } else {
+                                                        onSeriesClick(seriesItem)
+                                                    }
+                                                },
+                                                onSeriesLongClick = { seriesItem -> showSeriesActions(seriesItem) }
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
+                }
+            )
+            // A band of its own under the panes: the legend never covers the rows being moved through, and the band
+            // is always reserved so the panes do not jump when results appear or clear.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(LocalAppSpacing.current.let { it.lg + it.xxs }),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                // The result-side hints need results; the field and input-pane hints are useful before the first search too.
+                val relevant = hintContext != null &&
+                    (hasResults || hintContext == SearchHintContext.FIELD || hintContext == SearchHintContext.LEFT_PANE)
+                if (relevant && hintContext != null) {
+                    SearchRemoteHints(
+                        context = hintContext,
+                        atRowStart = resultAtRowStart,
+                        hasResults = hasResults,
+                        keyboardVisible = WindowInsets.isImeVisible
+                    )
                 }
             }
         }
     }
 }
 
+private enum class SearchHintContext { FIELD, LEFT_PANE, TABS, REFINE, TOP_RESULT, RESULTS }
+
+// A key is its label, or an icon when the remote prints a symbol (Back); the label then doubles as the content description.
+private class SearchHintKey(
+    @StringRes val labelRes: Int,
+    val icon: ImageVector? = null,
+    val onClick: (() -> Unit)? = null
+)
+
+/** Widens the node by [extra] on both sides while keeping its place; pair it with equal horizontal content padding. */
+private fun Modifier.bleedHorizontally(extra: Dp): Modifier = layout { measurable, constraints ->
+    val extraPx = extra.roundToPx()
+    val placeable = measurable.measure(constraints.copy(maxWidth = constraints.maxWidth + extraPx * 2))
+    layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(-extraPx, 0) }
+}
+
+private fun Modifier.trackResultColumn(column: Int, onFocused: (atStart: Boolean) -> Unit): Modifier =
+    onFocusChanged { if (it.hasFocus) onFocused(column == 0) }
+
+private fun Modifier.trackResultRow(row: Int, onFocused: (Int) -> Unit): Modifier =
+    onFocusChanged { if (it.hasFocus) onFocused(row) }
+
+/**
+ * Remote key legend in the band under the panes. What it lists follows the focus: on the top result row Up leads to
+ * Sort and filters and Down moves on, lower down Up and Down just browse. Each key is clickable with a pointer and does
+ * what the D-pad key does. It is not a focus stop, so D-pad order and Back are untouched. Left becomes Right in RTL
+ * because the input pane sits at the start edge.
+ */
 @Composable
-private fun SearchHeroPanel(
+private fun SearchRemoteHints(
+    context: SearchHintContext,
+    hasResults: Boolean,
+    keyboardVisible: Boolean,
+    atRowStart: Boolean,
+    modifier: Modifier = Modifier
+) {
+    val spacing = LocalAppSpacing.current
+    val focusManager = LocalFocusManager.current
+    val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    val ok = SearchHintKey(R.string.search_hint_key_ok)
+    val back = SearchHintKey(R.string.search_hint_key_back, icon = Icons.AutoMirrored.Filled.ArrowBack)
+    val up = SearchHintKey(R.string.search_hint_key_up) { focusManager.moveFocus(FocusDirection.Up) }
+    val down = SearchHintKey(R.string.search_hint_key_down) { focusManager.moveFocus(FocusDirection.Down) }
+    val side = SearchHintKey(if (rtl) R.string.search_hint_key_right else R.string.search_hint_key_left) {
+        focusManager.moveFocus(if (rtl) FocusDirection.Right else FocusDirection.Left)
+    }
+    // From the input pane the results are the other way round: Right in LTR, Left in RTL.
+    val toResults = SearchHintKey(if (rtl) R.string.search_hint_key_left else R.string.search_hint_key_right) {
+        focusManager.moveFocus(if (rtl) FocusDirection.Left else FocusDirection.Right)
+    }
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        when (context) {
+            SearchHintContext.TOP_RESULT -> {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_open)
+                SearchRemoteHint(listOf(up), R.string.search_hint_action_up)
+                SearchRemoteHint(listOf(down), R.string.search_hint_action_more)
+                SearchRowHints(side, toResults, atRowStart)
+            }
+            SearchHintContext.RESULTS -> {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_open)
+                SearchRemoteHint(listOf(up, down), R.string.search_hint_action_browse)
+                SearchRowHints(side, toResults, atRowStart)
+            }
+            SearchHintContext.FIELD -> if (keyboardVisible) {
+                SearchRemoteHint(listOf(back), R.string.search_hint_action_keyboard_close)
+            } else {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_type)
+                // Without results Down leads to the recents, not to a result.
+                if (hasResults) SearchRemoteHint(listOf(down), R.string.search_hint_action_first)
+            }
+            SearchHintContext.LEFT_PANE -> {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_select)
+                if (hasResults) SearchRemoteHint(listOf(toResults), R.string.search_hint_action_results)
+            }
+            SearchHintContext.TABS -> {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_select)
+                SearchRemoteHint(listOf(down), R.string.search_hint_action_results)
+            }
+            SearchHintContext.REFINE -> {
+                SearchRemoteHint(listOf(ok), R.string.search_hint_action_open)
+                SearchRemoteHint(listOf(down), R.string.search_hint_action_results)
+            }
+        }
+    }
+}
+
+/** First card: Left leaves for the input pane and Right moves on. Further along both keys just browse the row. */
+@Composable
+private fun SearchRowHints(side: SearchHintKey, toResults: SearchHintKey, atRowStart: Boolean) {
+    if (atRowStart) {
+        SearchRemoteHint(listOf(side), R.string.search_hint_action_side)
+        SearchRemoteHint(listOf(toResults), R.string.search_hint_action_row)
+    } else {
+        SearchRemoteHint(listOf(side, toResults), R.string.search_hint_action_row)
+    }
+}
+
+@Composable
+private fun SearchRemoteHint(keys: List<SearchHintKey>, @StringRes actionRes: Int, labelMaxLines: Int = 1) {
+    val spacing = LocalAppSpacing.current
+    val labelClick = keys.singleOrNull()?.onClick
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        keys.forEach { key -> SearchHintKeyCap(key) }
+        Text(
+            text = stringResource(actionRes),
+            style = MaterialTheme.typography.bodyMedium,
+            color = TextSecondary,
+            maxLines = labelMaxLines,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .padding(start = spacing.xs)
+                .then(if (labelClick != null) Modifier.mouseClickable(onClick = labelClick) else Modifier)
+        )
+    }
+}
+
+@Composable
+private fun SearchHintKeyCap(key: SearchHintKey) {
+    val spacing = LocalAppSpacing.current
+    val capModifier = Modifier
+        .padding(end = spacing.xxs)
+        .background(AppColors.ControlContainer, BrowseShapes.Control)
+        .then(
+            if (key.onClick != null) {
+                Modifier
+                    .semantics { role = Role.Button }
+                    .mouseClickable(onClick = key.onClick)
+            } else {
+                Modifier
+            }
+        )
+        .padding(horizontal = spacing.xs, vertical = spacing.xxs)
+    if (key.icon != null) {
+        Icon(
+            imageVector = key.icon,
+            contentDescription = stringResource(key.labelRes),
+            tint = AppColors.TextPrimary,
+            modifier = capModifier.size(18.dp)
+        )
+    } else {
+        Text(
+            text = stringResource(key.labelRes),
+            style = MaterialTheme.typography.bodyMedium,
+            color = AppColors.TextPrimary,
+            maxLines = 1,
+            modifier = capModifier
+        )
+    }
+}
+
+// Width of the input and recents column. Results get the rest of the row, so the grids size from it.
+private val SearchInputPaneWidth = 240.dp
+private val SearchPaneGap = 24.dp
+private const val SearchRecentLimit = 8
+private const val REMOVE_FILTERS_FOCUS_TIMEOUT_MS = 1_000L
+
+private enum class SearchRefinementSheet { SORT, FILTERS }
+
+@Composable
+private fun SearchPanes(
+    inputPane: @Composable () -> Unit,
+    resultsPane: @Composable () -> Unit,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
+    if (isPortraitLayout()) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(18.dp)
+        ) {
+            inputPane()
+            Column(modifier = Modifier.weight(1f)) { resultsPane() }
+        }
+    } else {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(SearchPaneGap)
+        ) {
+            Box(modifier = Modifier.width(SearchInputPaneWidth)) { inputPane() }
+            Column(modifier = Modifier.weight(1f)) { resultsPane() }
+        }
+    }
+}
+
+@Composable
+private fun SearchInputPane(
     query: String,
-    selectedTab: SearchTab,
+    hasResults: Boolean,
     recentQueries: List<String>,
-    totalResults: Int,
     onQueryChange: (String) -> Unit,
     onSearch: () -> Unit,
-    onTabSelected: (SearchTab) -> Unit,
     onRecentQuerySelected: (String) -> Unit,
     onClearRecentQueries: () -> Unit,
     focusRequester: FocusRequester,
-    selectedStateLabel: String
+    resultsFocusRequester: FocusRequester,
+    selectedStateLabel: String,
+    onFieldFocusChanged: (Boolean) -> Unit
 ) {
-    Surface(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = SurfaceElevated.copy(alpha = 0.92f))
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Column(
+        SearchInput(
+            value = query,
+            onValueChange = onQueryChange,
+            placeholder = stringResource(R.string.search_field_hint),
+            focusRequester = focusRequester,
+            onSearch = onSearch,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
-            verticalArrangement = Arrangement.spacedBy(14.dp)
-        ) {
-            AdaptiveRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.Top
-            ) {
-                Column(
-                    modifier = if (isPortraitLayout()) Modifier.fillMaxWidth() else Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = stringResource(R.string.search_title),
-                        style = MaterialTheme.typography.headlineMedium,
-                        color = TextPrimary,
-                        modifier = Modifier.semantics { heading() }
-                    )
-                    Text(
-                        text = stringResource(R.string.search_command_subtitle),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = TextSecondary,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = 640.dp)
-                    )
+                .height(52.dp)
+                .onFocusChanged { onFieldFocusChanged(it.hasFocus) }
+                // With results on screen, Down skips the recents and lands on the first result. A focusProperties
+                // redirect does not reach the field's innermost focus target, so the key is handled here.
+                .onPreviewKeyEvent { event ->
+                    val jumpToResults = hasResults && event.key == Key.DirectionDown && event.type == KeyEventType.KeyDown
+                    if (jumpToResults) resultsFocusRequester.requestFocus()
+                    jumpToResults
                 }
-
-                SearchStatusCard(
-                    title = if (query.length >= 2) {
-                        stringResource(R.string.search_results_title, totalResults)
-                    } else {
-                        stringResource(R.string.search_ready_title)
-                    },
-                    body = if (query.length >= 2) {
-                        stringResource(R.string.search_screen_subtitle)
-                    } else {
-                        stringResource(R.string.search_type_to_search)
-                    },
-                    modifier = Modifier.widthIn(min = 220.dp, max = 360.dp)
-                )
-            }
-
-            SearchInput(
-                value = query,
-                onValueChange = onQueryChange,
-                placeholder = stringResource(R.string.search_hint),
-                focusRequester = focusRequester,
-                onSearch = onSearch,
+        )
+        if (recentQueries.isNotEmpty()) {
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(52.dp)
-            )
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(SearchTab.values().toList(), key = { it.name }) { tab ->
-                    SearchPill(
-                        text = stringResource(tab.titleRes),
-                        selected = tab == selectedTab,
-                        onClick = { onTabSelected(tab) },
+                    .padding(top = 14.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.search_recent_title),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextSecondary
+                )
+                SearchPill(
+                    text = stringResource(R.string.search_clear_history),
+                    selected = false,
+                    compact = true,
+                    onClick = onClearRecentQueries
+                )
+            }
+            recentQueries.take(SearchRecentLimit).forEach { recentQuery ->
+                key(recentQuery) {
+                    val recentQueryDescription = stringResource(R.string.a11y_recent_search, recentQuery)
+                    val isCurrent = recentQuery.equals(query, ignoreCase = true)
+                    SearchRecentRow(
+                        text = recentQuery,
+                        onClick = { onRecentQuerySelected(recentQuery) },
                         modifier = Modifier.semantics {
-                            selected = tab == selectedTab
-                            if (tab == selectedTab) {
+                            contentDescription = recentQueryDescription
+                            if (isCurrent) {
+                                selected = true
                                 stateDescription = selectedStateLabel
                             }
                         }
                     )
                 }
             }
+        }
+    }
+}
 
-            if (recentQueries.isNotEmpty()) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.search_recent_title),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = TextSecondary
-                    )
-                    LazyRow(
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(recentQueries, key = { it }) { recentQuery ->
-                            val recentQueryDescription = stringResource(R.string.a11y_recent_search, recentQuery)
-                            SearchPill(
-                                text = recentQuery,
-                                selected = recentQuery.equals(query, ignoreCase = true),
-                                onClick = { onRecentQuerySelected(recentQuery) },
-                                modifier = Modifier.semantics {
-                                    contentDescription = recentQueryDescription
-                                    if (recentQuery.equals(query, ignoreCase = true)) {
-                                        selected = true
-                                        stateDescription = selectedStateLabel
-                                    }
-                                }
-                            )
-                        }
-                    }
-                    SearchPill(
-                        text = stringResource(R.string.search_clear_history),
-                        selected = false,
-                        compact = true,
-                        onClick = onClearRecentQueries
-                    )
-                }
+@OptIn(ExperimentalTvMaterial3Api::class)
+@Composable
+private fun SearchRecentRow(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(12.dp)
+    TvClickableSurface(
+        modifier = modifier.fillMaxWidth(),
+        onClick = onClick,
+        shape = ClickableSurfaceDefaults.shape(shape),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        colors = selectableSurfaceColors(selected = false),
+        border = selectableFocusBorder(shape)
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun SearchScopeTabs(
+    selectedTab: SearchTab,
+    resultCount: Int?,
+    onTabSelected: (SearchTab) -> Unit,
+    selectedStateLabel: String,
+    modifier: Modifier = Modifier
+) {
+    FocusSafeLazyRow(
+        modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(SearchTab.values().toList(), key = { it.name }) { tab ->
+            val name = stringResource(tab.titleRes)
+            // Only the selected scope was searched, so only its count is known.
+            val label = if (tab == selectedTab && resultCount != null) {
+                stringResource(R.string.search_results_count, name, resultCount)
+            } else {
+                name
             }
+            SearchPill(
+                text = label,
+                selected = tab == selectedTab,
+                onClick = { onTabSelected(tab) },
+                modifier = Modifier.semantics {
+                    selected = tab == selectedTab
+                    if (tab == selectedTab) {
+                        stateDescription = selectedStateLabel
+                    }
+                }
+            )
         }
     }
 }
@@ -1034,25 +1506,8 @@ private fun SearchPill(
         onClick = onClick,
         shape = ClickableSurfaceDefaults.shape(CircleShape),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) Primary.copy(alpha = 0.22f) else Surface.copy(alpha = 0.72f),
-            focusedContainerColor = if (selected) Primary.copy(alpha = 0.30f) else SurfaceHighlight,
-            contentColor = if (selected) TextPrimary else TextSecondary,
-            focusedContentColor = TextPrimary
-        ),
-        border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(
-                    1.dp,
-                    if (selected) Primary.copy(alpha = 0.65f) else FocusBorder.copy(alpha = 0.28f)
-                ),
-                shape = CircleShape
-            ),
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, FocusBorder),
-                shape = CircleShape
-            )
-        )
+        colors = selectableSurfaceColors(selected),
+        border = selectableFocusBorder(CircleShape)
     ) {
         Text(
             text = text,
@@ -1068,49 +1523,26 @@ private fun SearchPill(
 }
 
 @Composable
-private fun SearchStatusCard(
-    title: String,
-    body: String,
-    modifier: Modifier = Modifier
-) {
-    Surface(
-        modifier = modifier,
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = Surface.copy(alpha = 0.78f))
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                color = TextPrimary
-            )
-            Text(
-                text = body,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@Composable
 private fun <T : Any> SearchResultRail(
     title: String,
     items: List<T>,
     keySelector: (T) -> Any,
+    onColumnFocused: (atStart: Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     itemContent: @Composable (T) -> Unit
 ) {
-    CategoryRow(
-        title = title,
-        items = items,
-        keySelector = keySelector
-    ) { item ->
-        itemContent(item)
+    Box(modifier = modifier) {
+        // No inset, so the rail starts under the scope pills; the pane gap above is kept small for the same reason.
+        CategoryRow(
+            title = title,
+            items = items,
+            keySelector = keySelector,
+            contentInset = 0.dp,
+            headerTopPadding = LocalAppSpacing.current.xs,
+            onItemFocused = { item -> onColumnFocused(item == items.firstOrNull()) }
+        ) { item ->
+            itemContent(item)
+        }
     }
 }
 
@@ -1122,23 +1554,27 @@ private fun SearchChannelGridRow(
     scheduledChannelIds: Set<Long> = emptySet(),
     isLocked: (Channel) -> Boolean,
     onChannelClick: (Channel, Boolean) -> Unit,
-    onChannelLongClick: (Channel) -> Unit
+    onChannelLongClick: (Channel) -> Unit,
+    onColumnFocused: (atStart: Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        channels.forEach { channel ->
+        channels.forEachIndexed { column, channel ->
             val locked = isLocked(channel)
-            ChannelCard(
-                channel = channel,
-                nowMs = nowMs,
-                isLocked = locked,
-                isRecording = channel.id in recordingChannelIds,
-                isScheduledRecording = channel.id in scheduledChannelIds,
-                onClick = { onChannelClick(channel, locked) },
-                onLongClick = { onChannelLongClick(channel) }
-            )
+            Box(modifier = Modifier.trackResultColumn(column, onColumnFocused)) {
+                ChannelCard(
+                    channel = channel,
+                    nowMs = nowMs,
+                    isLocked = locked,
+                    isRecording = channel.id in recordingChannelIds,
+                    isScheduledRecording = channel.id in scheduledChannelIds,
+                    onClick = { onChannelClick(channel, locked) },
+                    onLongClick = { onChannelLongClick(channel) }
+                )
+            }
         }
     }
 }
@@ -1148,20 +1584,24 @@ private fun SearchMovieGridRow(
     movies: List<Movie>,
     isLocked: (Movie) -> Boolean,
     onMovieClick: (Movie, Boolean) -> Unit,
-    onMovieLongClick: (Movie) -> Unit
+    onMovieLongClick: (Movie) -> Unit,
+    onColumnFocused: (atStart: Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        movies.forEach { movie ->
+        movies.forEachIndexed { column, movie ->
             val locked = isLocked(movie)
-            MovieCard(
-                movie = movie,
-                isLocked = locked,
-                onClick = { onMovieClick(movie, locked) },
-                onLongClick = { onMovieLongClick(movie) }
-            )
+            Box(modifier = Modifier.trackResultColumn(column, onColumnFocused)) {
+                MovieCard(
+                    movie = movie,
+                    isLocked = locked,
+                    onClick = { onMovieClick(movie, locked) },
+                    onLongClick = { onMovieLongClick(movie) }
+                )
+            }
         }
     }
 }
@@ -1171,20 +1611,24 @@ private fun SearchSeriesGridRow(
     seriesItems: List<Series>,
     isLocked: (Series) -> Boolean,
     onSeriesClick: (Series, Boolean) -> Unit,
-    onSeriesLongClick: (Series) -> Unit
+    onSeriesLongClick: (Series) -> Unit,
+    onColumnFocused: (atStart: Boolean) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        seriesItems.forEach { seriesItem ->
+        seriesItems.forEachIndexed { column, seriesItem ->
             val locked = isLocked(seriesItem)
-            SeriesCard(
-                series = seriesItem,
-                isLocked = locked,
-                onClick = { onSeriesClick(seriesItem, locked) },
-                onLongClick = { onSeriesLongClick(seriesItem) }
-            )
+            Box(modifier = Modifier.trackResultColumn(column, onColumnFocused)) {
+                SeriesCard(
+                    series = seriesItem,
+                    isLocked = locked,
+                    onClick = { onSeriesClick(seriesItem, locked) },
+                    onLongClick = { onSeriesLongClick(seriesItem) }
+                )
+            }
         }
     }
 }
@@ -1204,53 +1648,42 @@ fun SectionHeader(title: String) {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-private fun SearchResultsSummaryRow(
-    uiState: SearchUiState,
-    onBuildCompleteIndex: () -> Unit
+private fun SearchCatalogNotice(
+    completeness: CatalogCompleteness,
+    onBuildCompleteIndex: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val countsSummary = listOf(
-        stringResource(R.string.search_results_count, stringResource(R.string.search_live_tv), uiState.channels.size),
-        stringResource(R.string.search_results_count, stringResource(R.string.search_movies), uiState.movies.size),
-        stringResource(R.string.search_results_count, stringResource(R.string.search_series), uiState.series.size)
-    ).joinToString("  •  ")
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .semantics { liveRegion = LiveRegionMode.Polite },
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Text(
-            text = stringResource(R.string.search_results_title, uiState.totalResults),
-            style = MaterialTheme.typography.titleMedium,
-            color = OnSurface,
-            modifier = Modifier.semantics { heading() }
-        )
-        Text(
-            text = countsSummary,
-            style = MaterialTheme.typography.bodySmall,
-            color = TextSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
-        if (uiState.catalogCompleteness != CatalogCompleteness.COMPLETE) {
-            Text(
-                text = stringResource(
-                    when (uiState.catalogCompleteness) {
-                        CatalogCompleteness.INDEXING -> R.string.search_catalog_indexing
-                        CatalogCompleteness.TRUNCATED -> R.string.search_catalog_truncated
-                        CatalogCompleteness.PARTIAL -> R.string.search_catalog_downloaded_only
-                        CatalogCompleteness.COMPLETE -> R.string.search_catalog_complete
-                    }
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = AppColors.Warning
-            )
-            if (uiState.catalogCompleteness == CatalogCompleteness.PARTIAL ||
-                uiState.catalogCompleteness == CatalogCompleteness.TRUNCATED
-            ) {
-                Button(onClick = onBuildCompleteIndex) {
-                    Text(stringResource(R.string.search_build_complete_index))
+            text = stringResource(
+                when (completeness) {
+                    CatalogCompleteness.INDEXING -> R.string.search_catalog_indexing
+                    CatalogCompleteness.TRUNCATED -> R.string.search_catalog_truncated
+                    CatalogCompleteness.PARTIAL -> R.string.search_catalog_downloaded_only
+                    CatalogCompleteness.COMPLETE -> R.string.search_catalog_complete
                 }
+            ),
+            style = MaterialTheme.typography.bodySmall,
+            color = AppColors.Warning
+        )
+        if (completeness == CatalogCompleteness.PARTIAL || completeness == CatalogCompleteness.TRUNCATED) {
+            // Secondary (rule 13): the results below are the screen's focus, so this stays below them in weight.
+            Button(
+                onClick = onBuildCompleteIndex,
+                colors = secondaryButtonColors(),
+                shape = ButtonDefaults.shape(shape = BrowseShapes.Control),
+                border = focusRingButtonBorder(BrowseShapes.Control),
+                scale = ButtonDefaults.scale(focusedScale = 1.03f)
+            ) {
+                Text(
+                    text = stringResource(R.string.search_build_complete_index),
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
@@ -1321,12 +1754,11 @@ private fun SearchItemActionsDialog(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f)
                     )
-                    IconButton(
+                    DetailCloseButton(
+                        contentDescription = stringResource(R.string.search_actions_dismiss),
                         onClick = safeDismiss,
                         modifier = Modifier.mouseClickable(onClick = safeDismiss)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.search_actions_dismiss))
-                    }
+                    )
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -1335,7 +1767,6 @@ private fun SearchItemActionsDialog(
                         icon = Icons.Default.Star,
                         label = if (isFavorite) stringResource(R.string.search_actions_remove_favorite)
                                 else stringResource(R.string.search_actions_add_favorite),
-                        isActive = isFavorite,
                         focusRequester = firstFocusRequester,
                         onClick = { if (canInteract) onToggleFavorite() }
                     )
@@ -1345,14 +1776,12 @@ private fun SearchItemActionsDialog(
                         SearchActionButton(
                             icon = Icons.Default.Close,
                             label = stringResource(R.string.search_actions_hide_category),
-                            isActive = false,
                             onClick = { if (canInteract) onHide() }
                         )
                     } else {
                         SearchActionButton(
                             icon = Icons.Default.Close,
                             label = stringResource(R.string.search_actions_hide_no_category),
-                            isActive = false,
                             enabled = false,
                             onClick = {}
                         )
@@ -1364,14 +1793,12 @@ private fun SearchItemActionsDialog(
                             icon = Icons.Default.Lock,
                             label = if (isProtected) stringResource(R.string.search_actions_unlock)
                                     else stringResource(R.string.search_actions_lock),
-                            isActive = isProtected,
                             onClick = { if (canInteract) onToggleLock() }
                         )
                     } else {
                         SearchActionButton(
                             icon = Icons.Default.Lock,
                             label = stringResource(R.string.search_actions_lock_no_category),
-                            isActive = false,
                             enabled = false,
                             onClick = {}
                         )
@@ -1387,7 +1814,6 @@ private fun SearchItemActionsDialog(
 private fun SearchActionButton(
     icon: ImageVector,
     label: String,
-    isActive: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester? = null,
@@ -1400,26 +1826,13 @@ private fun SearchActionButton(
         )
         .mouseClickable(onClick = onClick)
 
-    val actionColor = if (isActive) AppColors.Warning.copy(alpha = 0.18f)
-        else AppColors.SurfaceAccent
-
     Button(
         onClick = onClick,
         enabled = enabled,
         modifier = baseModifier,
-        colors = ButtonDefaults.colors(
-            containerColor = actionColor,
-            focusedContainerColor = actionColor,
-            contentColor = AppColors.TextPrimary,
-            focusedContentColor = AppColors.TextPrimary,
-            disabledContainerColor = AppColors.Surface.copy(alpha = 0.3f),
-            disabledContentColor = AppColors.TextSecondary
-        ),
+        colors = secondaryButtonColors(),
         shape = ButtonDefaults.shape(shape = BrowseShapes.Control),
-        border = ButtonDefaults.border(
-            border = Border(BorderStroke(1.dp, AppColors.Outline)),
-            focusedBorder = Border(BorderStroke(2.dp, AppColors.Focus))
-        ),
+        border = focusRingButtonBorder(BrowseShapes.Control),
         scale = ButtonDefaults.scale(focusedScale = 1f)
     ) {
         Icon(

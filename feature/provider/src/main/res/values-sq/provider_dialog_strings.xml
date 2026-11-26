@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Anulo</string>
+  <string name="setup_completion_saved_sync_pending">Ofruesi u ruajt. Sinkronizimi do të vazhdojë në sfond.</string>
+  <string name="setup_combined_attach_title">Të shtohet playlista te M3U i kombinuar?</string>
+  <string name="setup_combined_attach_message">Të shtohet %1$s te %2$s dhe të mbahet ky burim i kombinuar aktiv për Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">kjo listë luajtjeje</string>
+  <string name="setup_combined_attach_fallback_source">burimi aktiv i kombinuar</string>
+  <string name="setup_combined_attach_skip">Jo tani</string>
+  <string name="setup_combined_attach_confirm">Shto te burimi i kombinuar</string>
+</resources>

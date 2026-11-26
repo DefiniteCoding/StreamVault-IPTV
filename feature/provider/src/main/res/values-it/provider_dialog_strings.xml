@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Annulla</string>
+  <string name="setup_completion_saved_sync_pending">Fornitore salvato. La sincronizzazione riprenderà in background.</string>
+  <string name="setup_combined_attach_title">Aggiungere la playlist alla M3U combinata?</string>
+  <string name="setup_combined_attach_message">Aggiungere %1$s a %2$s e mantenere attiva quella sorgente combinata per la Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">questa playlist</string>
+  <string name="setup_combined_attach_fallback_source">la sorgente combinata attiva</string>
+  <string name="setup_combined_attach_skip">Non ora</string>
+  <string name="setup_combined_attach_confirm">Aggiungi alla sorgente combinata</string>
+</resources>

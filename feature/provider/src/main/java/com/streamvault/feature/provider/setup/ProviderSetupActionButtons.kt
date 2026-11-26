@@ -18,12 +18,14 @@ import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Glow
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.design.browse.FocusBorder
 import com.streamvault.core.ui.design.browse.OnBackground
+import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.browse.Primary
-import com.streamvault.core.ui.design.browse.PrimaryLight
 import com.streamvault.core.ui.design.browse.SurfaceHighlight
+import com.streamvault.core.ui.design.browse.TextPrimary
 
 @Composable
 internal fun ActionButton(
@@ -34,6 +36,7 @@ internal fun ActionButton(
     ProviderActionButton(
         text = text,
         height = 52.dp,
+        isPrimary = true,
         isLoading = isLoading,
         onClick = onClick
     )
@@ -48,6 +51,7 @@ internal fun SmallActionButton(
     ProviderActionButton(
         text = text,
         height = 40.dp,
+        isPrimary = false,
         isLoading = isLoading,
         onClick = onClick
     )
@@ -57,6 +61,7 @@ internal fun SmallActionButton(
 private fun ProviderActionButton(
     text: String,
     height: androidx.compose.ui.unit.Dp,
+    isPrimary: Boolean,
     isLoading: Boolean = false,
     onClick: () -> Unit
 ) {
@@ -68,14 +73,23 @@ private fun ProviderActionButton(
             .height(height),
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (!isLoading) Primary else SurfaceHighlight,
-            focusedContainerColor = if (!isLoading) Primary else SurfaceHighlight
+            containerColor = when {
+                isLoading -> SurfaceHighlight
+                isPrimary -> Primary
+                else -> BrowseColors.ControlContainer
+            },
+            focusedContainerColor = when {
+                isLoading -> SurfaceHighlight
+                isPrimary -> Primary
+                else -> SurfaceHighlight
+            }
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        // Ring plus scale: a focused primary keeps its brand fill (rule 16), so the fill cannot carry focus.
+        scale = ClickableSurfaceDefaults.scale(focusedScale = BrowseFocusSpec.FocusedScale),
         glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow.None),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (!isLoading) PrimaryLight else SurfaceHighlight)),
-            focusedBorder = Border(BorderStroke(2.dp, FocusBorder))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         )
     ) {
         Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
@@ -86,7 +100,11 @@ private fun ProviderActionButton(
                     color = OnBackground.copy(alpha = 0.6f)
                 )
             } else {
-                Text(text = text, style = MaterialTheme.typography.bodySmall, color = com.streamvault.core.ui.design.BrowseColors.OnPrimary)
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (isPrimary) com.streamvault.core.ui.design.BrowseColors.OnPrimary else TextPrimary
+                )
             }
         }
     }

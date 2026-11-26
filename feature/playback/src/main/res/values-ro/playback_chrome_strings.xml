@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Înapoi</string>
+    <string name="multiview_hud_title">Comenzi ecran împărțit</string>
+    <string name="multiview_hud_standby_active">Standby activ</string>
+    <string name="multiview_hud_presets">Presetări</string>
+    <string name="player_episode_picker_hint">Alegeți un sezon, apoi mergeți la dreapta pentru episoade.</string>
+    <string name="player_episode_picker_now_on">Acum: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d sezon</item>
+        <item quantity="few">%1$d sezoane</item>
+        <item quantity="other">%1$d de sezoane</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d episod</item>
+        <item quantity="few">%1$d episoade</item>
+        <item quantity="other">%1$d de episoade</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d episod gata de redare</item>
+        <item quantity="few">%1$d episoade gata de redare</item>
+        <item quantity="other">%1$d de episoade gata de redare</item>
+    </plurals>
+</resources>

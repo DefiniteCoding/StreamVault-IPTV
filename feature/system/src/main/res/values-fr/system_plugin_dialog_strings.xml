@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Saisissez l’URL directe de l’APK. StreamVault la téléchargera et ouvrira l’installateur.</string>
+  <string name="plugins_install_url_label">URL de l’APK du plugin</string>
+  <string name="plugins_installing">Installation…</string>
+  <string name="plugins_download_install">Télécharger et installer</string>
+</resources>

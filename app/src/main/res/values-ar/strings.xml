@@ -243,7 +243,6 @@
     <!-- M2: Google Drive backup sync -->
     <string name="settings_drive_cancel_backup_choice_subtitle">العودة إلى إجراءات النسخ الاحتياطي على Drive.</string>
 
-    <string name="nav_close_app">إغلاق التطبيق</string>
     <string name="nav_vod">VOD</string>
     <string name="m3u_organize_items">تنظيم عناصر M3U</string>
     <string name="m3u_move_to_movies">نقل إلى الأفلام</string>
@@ -295,4 +294,6 @@
     <string name="nav_sports">الرياضة</string>
     <string name="stremio_new_episode_channel">إشعارات الحلقات الجديدة</string>
     <string name="stremio_new_episode_count">الحلقات الجديدة: %1$d</string>
+    <string name="tv_channel_favorites_title">المفضلة</string>
+    <string name="tv_channel_favorites_description">قنواتك وأفلامك ومسلسلاتك المفضلة</string>
 </resources>

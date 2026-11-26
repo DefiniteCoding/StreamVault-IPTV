@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Suosikit</string>
+    <string name="category_name_recent">Viimeisimmät</string>
+    <string name="category_name_all_channels">Kaikki kanavat</string>
+    <string name="category_name_placeholder">Kategoria %1$s</string>
+</resources>

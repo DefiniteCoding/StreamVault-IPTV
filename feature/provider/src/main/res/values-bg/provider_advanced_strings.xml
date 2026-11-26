@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL на портала</string>
+  <string name="setup_jellyfin_source_subtitle">Медиен сървър Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Заместване на User-Agent (по избор)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Заглавки (API, по избор, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Персонализирани заглавки (по избор, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Източник на програмата</string>
+  <string name="setup_guide_source_helper">Изберете дали този доставчик ползва програмата на доставчика, зададените външни XMLTV източници или никаква програма.</string>
+  <string name="setup_guide_policy_auto_title">Авто</string>
+  <string name="setup_guide_policy_auto_description">Запазва текущото смесено поведение: външният XMLTV може да замени данните на доставчика, а каналите без съвпадение пак могат да ползват данните на доставчика.</string>
+  <string name="setup_guide_policy_external_title">Само външна EPG</string>
+  <string name="setup_guide_policy_external_description">Ползва само зададените външни XMLTV източници. Каналите без съвпадение остават без данни за програмата.</string>
+  <string name="setup_guide_policy_provider_title">Само EPG на доставчика</string>
+  <string name="setup_guide_policy_provider_description">Игнорира зададените външни XMLTV източници за този доставчик и ползва само пътищата за програма на доставчика.</string>
+  <string name="setup_guide_policy_disabled_title">Изключи данните за програмата</string>
+  <string name="setup_guide_policy_disabled_description">Не импортира и не съпоставя данни за програмата за този доставчик.</string>
+
+  <string name="setup_logo_source_title">Лога на каналите</string>
+  <string name="setup_logo_source_helper">Изберете откъде идват логата на каналите: от доставчика, от иконата на съпоставения EPG канал или от един строго определен източник.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Първо логата от доставчика</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Ползва логото от доставчика, когато има такова, иначе иконата на съпоставения EPG канал.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Предпочитай логата от EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Първо ползва иконата на съпоставения EPG канал, после логото от доставчика.</string>
+  <string name="setup_logo_policy_supplier_only_title">Само логата от доставчика</string>
+  <string name="setup_logo_policy_supplier_only_description">Винаги ползва логата от доставчика за този доставчик.</string>
+  <string name="setup_logo_policy_epg_only_title">Само логата от EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Винаги ползва иконите на съпоставените EPG канали за този доставчик.</string>
+
+  <string name="setup_stalker_auth_title">Режим на удостоверяване за Stalker</string>
+  <string name="setup_stalker_auth_helper">По подразбиране е автоматичното разпознаване. Сменяйте го само ако порталът изисква данни за вход или смесен вход с MAG + акаунт.</string>
+  <string name="setup_stalker_auth_auto_title">Автоматично разпознаване</string>
+  <string name="setup_stalker_auth_auto_description">Първо опитва най-вероятния начин на удостоверяване на портала и повтаря веднъж, ако друг режим на Stalker пасва по-добре.</string>
+  <string name="setup_stalker_auth_mac_only_title">Само MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Ползва MAC удостоверяване в стил MAG без вход с акаунт на портала.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + данни за вход</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Запазва MAG идентичността и добавя данни за вход в акаунта на портала за по-строги портали.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Само данни за вход</string>
+  <string name="setup_stalker_auth_credentials_only_description">Ползва данни за вход в акаунта на портала, дори MAC адресът да е по избор или да се игнорира.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Потребителско име за портала (по избор)</string>
+  <string name="setup_stalker_username_placeholder">Потребителско име за портала</string>
+  <string name="setup_stalker_password_optional_placeholder">Парола за портала (по избор)</string>
+  <string name="setup_stalker_password_placeholder">Парола за портала</string>
+  <string name="setup_stalker_mag_type_placeholder">Тип MAG (по избор)</string>
+  <string name="setup_stalker_timezone_placeholder">Часова зона (по избор)</string>
+  <string name="setup_stalker_locale_placeholder">Локал (по избор)</string>
+  <string name="setup_stalker_serial_placeholder">Сериен номер (по избор)</string>
+  <string name="setup_stalker_device_id_placeholder">ID на устройството (по избор)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (по избор)</string>
+  <string name="setup_stalker_signature_placeholder">Подпис (по избор)</string>
+
+  <string name="setup_stalker_compat_section_title">Съвместимост със Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Настройки за отделни портали с капризни MAG/Stalker сървъри. Оставете полетата празни, освен ако сървърът не ги изисква.</string>
+  <string name="setup_stalker_hw_version_placeholder">Заместване на hw_version (по избор)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, по избор)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (плеър, по избор)</string>
+  <string name="setup_stalker_player_headers_placeholder">Заглавки (плеър, по избор, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Връзка за X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Използвай HTTP прокси</string>
+  <string name="setup_stalker_proxy_helper">Важи само за Stalker API и възпроизвеждането.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Прокси хост</string>
+  <string name="setup_stalker_proxy_port_placeholder">Прокси порт</string>
+
+  <string name="setup_stalker_selector_title">Съвместимост</string>
+  <string name="setup_stalker_protocol_button">Протокол: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Авто</string>
+  <string name="setup_stalker_protocol_classic_mag">Класически MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Модел: %1$s</string>
+  <string name="setup_stalker_model_automatic">Автоматично</string>
+  <string name="setup_stalker_profile_experimental">%1$s (експериментално)</string>
+  <string name="setup_stalker_experimental_note">Експерименталните профили изискват заснети или въведени ръчно идентификационни полета и са изключени от автоматичното откриване.</string>
+  <string name="setup_stalker_profile_custom">Персонализиран профил</string>
+
+  <string name="setup_stalker_rules_title">Правила за заявки</string>
+  <string name="setup_stalker_rules_helper">Съпоставяйте по действие, блокирайте извиквания или замествайте параметри. Празните стойности премахват параметрите.</string>
+  <string name="setup_stalker_rules_add">Добави правило</string>
+  <string name="setup_stalker_rule_number">Правило %1$d</string>
+  <string name="setup_stalker_rule_delete">Изтрий</string>
+  <string name="setup_stalker_rule_action_placeholder">Действие, напр. get_profile</string>
+  <string name="setup_stalker_rule_block">Блокирай тази заявка</string>
+  <string name="setup_stalker_rule_block_warning">Внимание: блокирането на %1$s може да попречи на входа.</string>
+  <string name="setup_stalker_rule_params_placeholder">Замествания на параметри: name=value | remove_me=</string>
+</resources>

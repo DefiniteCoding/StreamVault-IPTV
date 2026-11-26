@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">همه</string>
+  <string name="library_chip_favorites">علاقه‌مندی‌ها</string>
+  <string name="library_chip_resume">ادامه</string>
+  <string name="library_chip_unwatched">تماشا نشده</string>
+  <string name="library_chip_recent">اخیر</string>
+  <string name="library_chip_updated">به‌روز شده</string>
+  <string name="library_chip_top_rated">برترین‌ها</string>
+
+  <string name="library_chip_sort_library_order">ترتیب کتابخانه</string>
+  <string name="library_chip_sort_title">الف-ی</string>
+  <string name="library_chip_sort_newest">جدیدترین</string>
+  <string name="library_chip_sort_recently_updated">اخیراً به‌روزرسانی‌شده</string>
+  <string name="library_chip_sort_updated_short">به‌روز شده</string>
+  <string name="library_chip_sort_rating">امتیاز</string>
+  <string name="library_chip_sort_recent_activity">فعالیت اخیر</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="one">%d گروه</item>
+    <item quantity="other">%d گروه</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d مورد</item>
+    <item quantity="other">%d مورد</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d انتخاب</item>
+    <item quantity="other">%d انتخاب</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d مورد ذخیره‌شده</item>
+    <item quantity="other">%d مورد ذخیره‌شده</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">بارگذاری فیلم‌ها ناموفق بود</string>
+  <string name="series_error_load_failed">بارگذاری سریال‌ها ناموفق بود</string>
+  <string name="movie_detail_error_load_failed">بارگذاری جزئیات فیلم ناموفق بود</string>
+  <string name="series_detail_error_load_failed">بارگذاری جزئیات سریال ناموفق بود</string>
+  <string name="catalog_error_no_active_provider">ارائه‌دهنده فعالی وجود ندارد</string>
+  <string name="catalog_message_moved_back_to_live">«%1$s» به پخش زنده بازگردانده شد</string>
+  <string name="catalog_message_group_created">گروه %1$s ایجاد شد</string>
+  <string name="catalog_message_group_created_and_added">گروه %1$s ایجاد شد و %2$s به آن اضافه شد</string>
+  <string name="catalog_message_category_hidden">دسته %1$s پنهان شد</string>
+  <string name="catalog_message_category_pinned">%1$s سنجاق شد</string>
+  <string name="catalog_message_category_unpinned">سنجاق %1$s برداشته شد</string>
+  <string name="catalog_message_group_renamed">نام گروه به %1$s تغییر کرد</string>
+  <string name="catalog_message_group_deleted">گروه %1$s حذف شد</string>
+  <string name="catalog_error_group_name_required">نام گروه را وارد کنید</string>
+  <string name="catalog_error_group_name_reserved">«علاقه‌مندی‌ها» نام رزروشده است</string>
+  <string name="movies_error_group_name_duplicate">گروه فیلمی با این نام از قبل وجود دارد</string>
+  <string name="series_error_group_name_duplicate">گروه سریالی با این نام از قبل وجود دارد</string>
+
+  <string name="favorites_message_removed_from_view">%1$s از این نمای ذخیره‌شده حذف شد.</string>
+  <string name="favorites_message_moved_to_group">%1$s به گروه انتخاب‌شده منتقل شد.</string>
+  <string name="favorites_message_group_deleted">گروه %1$s حذف شد.</string>
+  <string name="favorites_error_move_failed">انتقال %1$s ممکن نشد: %2$s</string>
+  <string name="favorites_error_merge_failed">ادغام %1$s ممکن نشد: %2$s</string>
+  <string name="favorites_error_reorder_failed">ذخیره ترتیب جدید ممکن نشد: %1$s</string>
+  <string name="favorites_error_unknown">خطای ناشناخته</string>
+  <string name="favorites_subtitle_channel_number">کانال %1$d</string>
+  <string name="favorites_group_subtitle">گروه %1$s</string>
+  <string name="favorites_content_type_movie">فیلم</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

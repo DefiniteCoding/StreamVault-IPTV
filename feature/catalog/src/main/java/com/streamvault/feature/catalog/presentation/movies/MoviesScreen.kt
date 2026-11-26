@@ -1,5 +1,6 @@
 ﻿package com.streamvault.feature.catalog.presentation.movies
 
+import com.streamvault.core.ui.design.BrowseColors
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.text.BasicTextField
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -21,7 +23,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.*
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -40,7 +41,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.isVodTitleLocked
+import com.streamvault.feature.catalog.presentation.components.firstUnlockedHeroTitle
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.feature.catalog.presentation.components.TraktRatingSummary
 import com.streamvault.feature.catalog.presentation.components.SelectionChip
@@ -50,6 +55,7 @@ import com.streamvault.feature.catalog.presentation.components.SavedCategoryShor
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryShortcutsRow
 import com.streamvault.core.ui.design.browse.*
 import com.streamvault.domain.model.Category
+import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
 import com.streamvault.domain.model.Movie
@@ -81,17 +87,30 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
-import com.streamvault.feature.catalog.presentation.components.VodHeroStrip
+import com.streamvault.feature.catalog.presentation.components.VodFilterRow
+import com.streamvault.feature.catalog.presentation.components.VodFocusHero
+import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
+import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
+import com.streamvault.feature.catalog.presentation.components.toVodHeroModel
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
+import com.streamvault.core.ui.design.FocusSafeLazyVerticalGrid
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.rememberGridToTopScroller
+import com.streamvault.core.ui.design.scrollGridToTopOnFirstRowFocus
+import com.streamvault.core.ui.design.scrollGridToTopOnFocus
 import com.streamvault.domain.model.VodViewMode
 import com.streamvault.feature.catalog.presentation.vod.HandleVodUserMessage
 import com.streamvault.feature.catalog.presentation.vod.ProtectedVodPinDialog
 import com.streamvault.feature.catalog.presentation.vod.VodBrowseDefaults
+import com.streamvault.feature.catalog.presentation.vod.VodSelectedCategoryFocus
 import com.streamvault.feature.catalog.presentation.vod.VodReorderMoveDirection
 import com.streamvault.feature.catalog.presentation.vod.shouldShowVodPreview
-import com.streamvault.feature.catalog.presentation.vod.vodActiveFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.libraryCountLabel
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterChips
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.rememberLibrarySortChips
+import com.streamvault.feature.catalog.presentation.components.rememberInlineLibrarySortChips
 import com.streamvault.feature.catalog.presentation.vod.vodReorderMoveDirection
 import kotlinx.coroutines.delay
 
@@ -100,6 +119,7 @@ import kotlinx.coroutines.delay
 fun MoviesScreen(
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
+    onContinueWatchingOpenDetails: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: MoviesViewModel = hiltViewModel()
 ) {
@@ -109,10 +129,16 @@ fun MoviesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val initialContentFocusRequester = remember { FocusRequester() }
+    VodSelectedCategoryFocus(
+        category = uiState.selectedCategory,
+        contentReady = !uiState.isLoading && !uiState.isLoadingSelectedCategory && uiState.errorMessage == null,
+        focusRequester = initialContentFocusRequester
+    )
     var showPinDialog by remember { mutableStateOf(false) }
     var pinError by remember { mutableStateOf<String?>(null) }
     var pendingMovie by remember { mutableStateOf<Movie?>(null) }
     var pendingCategory by remember { mutableStateOf<Category?>(null) }
+    var pendingContinueWatchingRemoval by remember { mutableStateOf<PlaybackHistory?>(null) }
 
     HandleVodUserMessage(
         userMessage = uiState.userMessage,
@@ -178,10 +204,10 @@ fun MoviesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    CircularProgressIndicator(color = Color.White)
+                    CircularProgressIndicator(color = BrowseColors.Brand)
                     Text(
                         text = stringResource(R.string.movies_loading),
-                        color = Color.White.copy(alpha = 0.7f)
+                        color = BrowseColors.TextSecondary
                     )
                 }
             }
@@ -224,6 +250,13 @@ fun MoviesScreen(
                 onSearchQueryChange = viewModel::setSearchQuery,
                 onMovieClick = onMovieClick,
                 onContinueWatchingPlay = onContinueWatchingPlay,
+                onRequestContinueWatchingRemoval = { pendingContinueWatchingRemoval = it },
+                onContinueWatchingMenu = ContinueWatchingMenuActions(
+                    onResume = onContinueWatchingPlay,
+                    onRemove = viewModel::onRemoveContinueWatching,
+                    onOpenDetails = onContinueWatchingOpenDetails,
+                    onMarkWatched = viewModel::onMarkContinueWatchingWatched
+                ),
                 onProtectedMovieClick = { movie ->
                     pendingCategory = null
                     pendingMovie = movie
@@ -255,6 +288,7 @@ fun MoviesScreen(
                 },
                 onLoadMore = viewModel::loadMoreSelectedCategory,
                 onLoadMorePreviewRows = viewModel::loadMorePreviewRows,
+                onResolveHero = viewModel::resolveHeroMovie,
                 onDismissReorder = viewModel::exitCategoryReorderMode,
                 onMoveReorderItemUp = viewModel::moveItemUp,
                 onMoveReorderItemDown = viewModel::moveItemDown,
@@ -269,6 +303,17 @@ fun MoviesScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
+        )
+    }
+
+    pendingContinueWatchingRemoval?.let { history ->
+        ContinueWatchingRemovalDialog(
+            history = history,
+            onDismiss = { pendingContinueWatchingRemoval = null },
+            onConfirm = {
+                viewModel.onRemoveContinueWatching(history)
+                pendingContinueWatchingRemoval = null
+            }
         )
     }
 
@@ -347,6 +392,8 @@ private fun MoviesVodContent(
     onSearchQueryChange: (String) -> Unit,
     onMovieClick: (Movie) -> Unit,
     onContinueWatchingPlay: (PlaybackHistory) -> Unit,
+    onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
+    onContinueWatchingMenu: ContinueWatchingMenuActions,
     onProtectedMovieClick: (Movie) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Movie) -> Unit,
@@ -358,6 +405,7 @@ private fun MoviesVodContent(
     onOpenFresh: () -> Unit,
     onLoadMore: () -> Unit,
     onLoadMorePreviewRows: () -> Unit,
+    onResolveHero: suspend (Movie) -> Movie,
     onDismissReorder: () -> Unit,
     onMoveReorderItemUp: (Movie) -> Unit,
     onMoveReorderItemDown: (Movie) -> Unit,
@@ -385,7 +433,6 @@ private fun MoviesVodContent(
     val freshMovies = uiState.libraryLensRows[MovieLibraryLens.FRESH].orEmpty()
     val topRatedMovies = uiState.libraryLensRows[MovieLibraryLens.TOP_RATED].orEmpty()
     val continueWatching = uiState.continueWatching
-    val heroMovie = freshMovies.firstOrNull() ?: topRatedMovies.firstOrNull() ?: favoriteMovies.firstOrNull()
     val categoryByName = remember(uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
         buildMap<String, Category> {
             uiState.providerCategories.forEach { put(it.name, it) }
@@ -417,11 +464,22 @@ private fun MoviesVodContent(
     }
     val isMovieLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { movie: Movie ->
-            val categoryId = movie.categoryId
-            (movie.isAdult || movie.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = movie.isAdult,
+                isUserProtected = movie.isUserProtected,
+                categoryId = movie.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
+    }
+    // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+    val heroMovie = remember(freshMovies, topRatedMovies, favoriteMovies, isMovieLocked) {
+        firstUnlockedHeroTitle(listOf(freshMovies, topRatedMovies, favoriteMovies), isMovieLocked)
+    }
+    val focusedHeroMovie = remember { mutableStateOf<Movie?>(null) }
+    val onPosterFocused = remember(isMovieLocked) {
+        { movie: Movie -> if (!isMovieLocked(movie)) focusedHeroMovie.value = movie }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
     val browseCategoryNames = remember(uiState.categoryNames, uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
@@ -462,12 +520,6 @@ private fun MoviesVodContent(
             category == null || category.id !in uiState.pinnedCategoryIds
         }
     }
-    val fallbackMovieId = if (heroMovie == null) {
-        favoriteMovies.firstOrNull()?.id
-            ?: freshMovies.firstOrNull()?.id
-            ?: topRatedMovies.firstOrNull()?.id
-            ?: catEntries.firstOrNull()?.value?.firstOrNull()?.id
-    } else null
     val categoryOptions = remember(
         visibleCategoryNames,
         uiState.categoryCounts,
@@ -554,6 +606,7 @@ private fun MoviesVodContent(
             onProtectedMovieClick = onProtectedMovieClick,
             onProtectedCategoryClick = onProtectedCategoryClick,
             onShowDialog = onShowDialog,
+            onRequestContinueWatchingRemoval = onRequestContinueWatchingRemoval,
             onShowCategoryOptions = onShowCategoryOptions,
             onSelectCategory = onSelectCategory,
             onSelectFullLibraryBrowse = onSelectFullLibraryBrowse,
@@ -582,23 +635,48 @@ private fun MoviesVodContent(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 28.dp)
         ) {
-            item(key = "hero") {
-            if (heroMovie != null) {
-                VodHeroStrip(
-                        title = heroMovie.name,
-                        subtitle = heroMovie.plot?.takeIf { it.isNotBlank() }
-                            ?: heroMovie.year
-                            ?: stringResource(R.string.movies_library_lens_subtitle),
-                        actionLabel = stringResource(R.string.player_resume).substringBefore(" "),
+            uiState.featured?.let { featured ->
+                item(key = "hero") {
+                    com.streamvault.feature.catalog.presentation.components.VodHeroStrip(
+                        title = featured.candidate.title,
+                        subtitle = featured.episode?.let { stringResource(R.string.continue_watching_season_episode, it.seasonNumber, it.episodeNumber) }
+                            ?: stringResource(when (featured.mode) {
+                                com.streamvault.domain.model.VodFeaturedMode.LATEST_RELEASE -> R.string.featured_latest
+                                com.streamvault.domain.model.VodFeaturedMode.RECENTLY_ADDED -> R.string.featured_added
+                                com.streamvault.domain.model.VodFeaturedMode.RANDOM -> R.string.featured_random
+                                com.streamvault.domain.model.VodFeaturedMode.FOR_YOU -> R.string.featured_for_you
+                                com.streamvault.domain.model.VodFeaturedMode.UP_NEXT -> R.string.featured_up_next
+                                else -> R.string.featured_continue
+                            }),
+                        actionLabel = stringResource(if (featured.episode != null) R.string.featured_up_next
+                            else if (featured.history != null) R.string.player_resume else R.string.featured_details),
+                        focusRequester = initialFocusRequester,
                         onClick = {
-                            val isLocked = isMovieLocked(heroMovie)
-                            if (isLocked) onProtectedMovieClick(heroMovie) else onMovieClick(heroMovie)
+                            featured.history?.let(onContinueWatchingPlay)
+                                ?: featured.candidate.movie?.let(onMovieClick)
                         },
-                        modifier = Modifier
-                            .padding(top = 8.dp, bottom = 6.dp)
-                            .focusRequester(initialFocusRequester)
                     )
+                }
             }
+            // Upstream's featured card owns the top slot while its mode is not Hidden; our focus hero fills it otherwise.
+            if (uiState.featured == null) {
+                item(key = "hero") {
+                    val shown = rememberHeroDetails(
+                        rememberHeroItem(focusedHeroMovie, heroMovie),
+                        onResolveHero
+                    )
+                    if (shown != null) {
+                        VodFocusHero(
+                            model = shown.toVodHeroModel(),
+                            actionLabel = stringResource(R.string.continue_watching_menu_open_details),
+                            onActionClick = {
+                                if (isMovieLocked(shown)) onProtectedMovieClick(shown) else onMovieClick(shown)
+                            },
+                            modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
+                            actionFocusRequester = initialFocusRequester
+                        )
+                    }
+                }
             }
             item(key = "actions") {
             VodActionChipRow(
@@ -615,7 +693,7 @@ private fun MoviesVodContent(
                             VodActionChip(
                                 key = "categories",
                                 label = stringResource(R.string.movies_categories_title),
-                                detail = "${visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }} groups",
+                                detail = libraryCountLabel(R.plurals.library_count_groups, visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }),
                                 onClick = { showCategoryPicker = true }
                             )
                         )
@@ -663,7 +741,7 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = "resume",
                                     label = stringResource(R.string.library_lens_continue),
-                                    detail = "${continueWatching.size} items",
+                                    detail = libraryCountLabel(R.plurals.library_count_items, continueWatching.size),
                                     onClick = onOpenContinueWatching
                                 )
                             )
@@ -673,7 +751,7 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = MovieLibraryLens.TOP_RATED.name,
                                     label = stringResource(R.string.library_lens_top_rated),
-                                    detail = "${topRatedMovies.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, topRatedMovies.size),
                                     onClick = onOpenTopRated
                                 )
                             )
@@ -683,20 +761,22 @@ private fun MoviesVodContent(
                                 VodActionChip(
                                     key = MovieLibraryLens.FRESH.name,
                                     label = stringResource(R.string.library_lens_fresh_movies),
-                                    detail = "${freshMovies.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, freshMovies.size),
                                     onClick = onOpenFresh
                                 )
                             )
                         }
                     },
-                    modifier = Modifier.padding(top = 2.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(top = 2.dp, bottom = 6.dp),
+                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null && heroMovie == null }
                 )
             }
             if (continueWatching.isNotEmpty()) {
             item(key = "continue_watching") {
                 ContinueWatchingRow(
                         items = continueWatching,
-                        onItemClick = onContinueWatchingPlay
+                        onItemClick = onContinueWatchingPlay,
+                        menu = onContinueWatchingMenu
                     )
             }
             }
@@ -706,7 +786,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.favorites_title),
                     items = favoriteMovies,
                     onSeeAll = { onSelectCategory(uiState.favoriteCategoryName) },
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -735,7 +816,8 @@ private fun MoviesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                     val isLocked = isMovieLocked(movie)
                     MovieCard(
@@ -743,8 +825,6 @@ private fun MoviesVodContent(
                         isLocked = isLocked,
                         onClick = { if (isLocked) onProtectedMovieClick(movie) else onMovieClick(movie) },
                         onLongClick = { onShowDialog(movie) }
-                        ,
-                        modifier = if (movie.id == fallbackMovieId) Modifier.focusRequester(initialFocusRequester) else Modifier
                     )
                 }
             }
@@ -755,7 +835,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.library_lens_fresh_movies),
                     items = freshMovies,
                     onSeeAll = null,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -773,7 +854,8 @@ private fun MoviesVodContent(
                     title = stringResource(R.string.library_lens_top_rated),
                     items = topRatedMovies,
                     onSeeAll = null,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                         val isLocked = isMovieLocked(movie)
                         MovieCard(
@@ -798,7 +880,8 @@ private fun MoviesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { movie ->
                     val isLocked = isMovieLocked(movie)
                     MovieCard(
@@ -806,8 +889,6 @@ private fun MoviesVodContent(
                         isLocked = isLocked,
                         onClick = { if (isLocked) onProtectedMovieClick(movie) else onMovieClick(movie) },
                         onLongClick = { onShowDialog(movie) }
-                        ,
-                        modifier = if (movie.id == fallbackMovieId) Modifier.focusRequester(initialFocusRequester) else Modifier
                     )
                 }
             }
@@ -819,7 +900,7 @@ private fun MoviesVodContent(
                             .padding(vertical = 24.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(32.dp))
+                        CircularProgressIndicator(color = BrowseColors.Brand, modifier = Modifier.size(32.dp))
                     }
                 }
             }
@@ -853,13 +934,13 @@ private fun MoviesVodContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_movies),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = movieFilterChips(),
+            filterChips = rememberLibraryFilterChips(),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = movieSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -869,6 +950,7 @@ private fun MoviesVodContent(
     }
 
     val modernGridState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
+    val gridToTop = rememberGridToTopScroller(modernGridState)
     InfiniteScrollEffect(
         gridState = modernGridState,
         enabled = uiState.vodInfiniteScroll && !uiState.isReorderMode,
@@ -877,7 +959,14 @@ private fun MoviesVodContent(
         prefetchDistance = uiState.selectedCategoryRawPageSize.coerceAtLeast(6),
         onLoadMore = onLoadMore
     )
-    LazyVerticalGrid(
+    val categoryTitle = when (uiState.selectedCategory) {
+        uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_movies)
+        VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
+        VodBrowseDefaults.TRAKT_TRENDING_MOVIES_CATEGORY -> traktTrendingLabel
+        VodBrowseDefaults.TRAKT_POPULAR_MOVIES_CATEGORY -> traktPopularLabel
+        else -> uiState.selectedCategory ?: stringResource(R.string.nav_movies)
+    }
+    FocusSafeLazyVerticalGrid(
         state = modernGridState,
         columns = GridCells.Adaptive(minSize = 136.dp),
         modifier = Modifier
@@ -896,66 +985,56 @@ private fun MoviesVodContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            VodSectionHeader(
-                title = when (uiState.selectedCategory) {
-                    uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_movies)
-                    VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
-                    VodBrowseDefaults.TRAKT_TRENDING_MOVIES_CATEGORY -> traktTrendingLabel
-                    VodBrowseDefaults.TRAKT_POPULAR_MOVIES_CATEGORY -> traktPopularLabel
-                    else -> uiState.selectedCategory ?: stringResource(R.string.nav_movies)
-                }
-            )
+            VodSectionHeader(title = categoryTitle, horizontalInset = 0.dp)
         }
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val browseOptionsDetail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy)
-                val hasActiveFilterSort = selectedFilterType != LibraryFilterType.ALL || selectedSortBy != LibrarySortBy.LIBRARY
-                VodActionChipRow(
-                    actions = buildList {
-                        add(
-                            VodActionChip(
-                                key = "back_home",
-                                label = stringResource(R.string.nav_movies),
-                                onClick = { onSelectCategory(null) }
-                            )
+                val inlineSortChips = rememberInlineLibrarySortChips()
+                // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
+                val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
+                VodFilterRow(
+                    modifier = Modifier.scrollGridToTopOnFocus(modernGridState),
+                    leadingActions = listOf(
+                        VodActionChip(
+                            key = "back_home",
+                            label = stringResource(R.string.nav_movies),
+                            onClick = { onSelectCategory(null) }
+                        ),
+                        VodActionChip(
+                            key = "search_toggle",
+                            label = stringResource(
+                                if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
+                            ),
+                            onClick = { showSearchBar = !showSearchBar }
                         )
-                        add(
-                            VodActionChip(
-                                key = "categories",
-                                label = stringResource(R.string.movies_categories_title),
-                                onClick = { showCategoryPicker = true }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "search_toggle",
-                                label = stringResource(
-                                    if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
-                                ),
-                                onClick = { showSearchBar = !showSearchBar }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "browse_options",
-                                label = stringResource(R.string.library_action_filters_sort),
-                                detail = browseOptionsDetail,
-                                onClick = { showBrowseOptions = true }
-                            )
-                        )
-                        if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
-                            add(
-                                VodActionChip(
-                                    key = uiState.fullLibraryCategoryName,
-                                    label = stringResource(R.string.library_full_browse_title_movies),
-                                    onClick = onSelectFullLibraryBrowse
-                                )
-                            )
-                        }
+                    ),
+                    sortLabel = stringResource(R.string.vod_filter_sort_label),
+                    sortOptions = inlineSortChips,
+                    selectedSortKey = selectedSortBy.name,
+                    onSortSelected = { key ->
+                        LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
                     },
-                    selectedKey = if (hasActiveFilterSort) "browse_options" else null,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
+                    categoryLabel = stringResource(R.string.vod_filter_category_label),
+                    categoryName = categoryTitle,
+                    onCategoryClick = { showCategoryPicker = true },
+                    moreLabel = stringResource(R.string.library_action_filters_sort),
+                    moreValue = rememberLibraryFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY).orEmpty(),
+                    onMoreClick = { showBrowseOptions = true },
+                    trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
+                        listOf(
+                            VodActionChip(
+                                key = uiState.fullLibraryCategoryName,
+                                label = stringResource(R.string.library_full_browse_title_movies),
+                                onClick = onSelectFullLibraryBrowse
+                            )
+                        )
+                    } else {
+                        emptyList()
+                    },
+                    firstActionFocusRequester = if (
+                        !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridMovieId == null)
+                    ) initialFocusRequester else null
                 )
             }
 
@@ -967,7 +1046,7 @@ private fun MoviesVodContent(
                         placeholder = stringResource(R.string.movies_search_placeholder),
                         onSearch = {},
                         focusRequester = initialFocusRequester,
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        modifier = Modifier.scrollGridToTopOnFocus(modernGridState).padding(horizontal = 4.dp, vertical = 2.dp)
                     )
                 }
             }
@@ -985,10 +1064,10 @@ private fun MoviesVodContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        CircularProgressIndicator(color = Color.White)
+                        CircularProgressIndicator(color = BrowseColors.Brand)
                         Text(
                             text = stringResource(R.string.movies_loading),
-                            color = Color.White.copy(alpha = 0.7f)
+                            color = BrowseColors.TextSecondary
                         )
                     }
                 }
@@ -1018,7 +1097,7 @@ private fun MoviesVodContent(
                 }
             }
         } else {
-            gridItems(filteredGridMovies, key = { it.id }) { movie ->
+            gridItemsIndexed(filteredGridMovies, key = { _, item -> item.id }) { position, movie ->
                 val isLocked = isMovieLocked(movie)
                 val isDraggingThis = draggingMovie == movie
                 MovieCard(
@@ -1050,6 +1129,7 @@ private fun MoviesVodContent(
                                 }
                             } else Modifier
                         )
+                        .scrollGridToTopOnFirstRowFocus(gridToTop, movie.id, position)
                         .then(if (!showSearchBar && movie.id == initialGridMovieId) Modifier.focusRequester(initialFocusRequester) else Modifier),
                     onClick = {
                         if (uiState.isReorderMode) {
@@ -1097,6 +1177,7 @@ private fun MoviesVodClassicContent(
     onProtectedMovieClick: (Movie) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Movie) -> Unit,
+    onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
     onShowCategoryOptions: (String) -> Unit,
     onSelectCategory: (String?) -> Unit,
     onSelectFullLibraryBrowse: () -> Unit,
@@ -1145,10 +1226,13 @@ private fun MoviesVodClassicContent(
     }
     val isMovieLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { movie: Movie ->
-            val categoryId = movie.categoryId
-            (movie.isAdult || movie.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = movie.isAdult,
+                isUserProtected = movie.isUserProtected,
+                categoryId = movie.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
@@ -1188,13 +1272,13 @@ private fun MoviesVodClassicContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_movies),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = movieFilterChips(),
+            filterChips = rememberLibraryFilterChips(),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = movieSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -1389,12 +1473,15 @@ private fun MoviesVodClassicContent(
                         VodActionChip(
                             key = "browse_options",
                             label = stringResource(R.string.library_action_filters_sort),
-                            detail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy),
+                            detail = rememberLibraryFilterSortDetail(selectedFilterType, selectedSortBy),
                             onClick = { showBrowseOptions = true }
                         )
                     )
                 },
-                selectedActionKey = if (hasActiveFilterSortClassic) "browse_options" else null
+                selectedActionKey = if (hasActiveFilterSortClassic) "browse_options" else null,
+                firstActionFocusRequester = if (
+                    !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridMovieId == null)
+                ) initialFocusRequester else null
             )
 
             if (showSearchBar) {
@@ -1444,7 +1531,7 @@ private fun MoviesVodClassicContent(
                                 .height(320.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = Color.White)
+                            CircularProgressIndicator(color = BrowseColors.Brand)
                         }
                     }
                 } else if (filteredGridMovies.isEmpty()) {
@@ -1508,7 +1595,19 @@ private fun MoviesVodClassicContent(
                                 }
                             },
                             onLongClick = {
-                                if (!uiState.isReorderMode) onShowDialog(movie)
+                                if (!uiState.isReorderMode) {
+                                    val history = if (selectedFilterType == LibraryFilterType.IN_PROGRESS) {
+                                        uiState.continueWatching.firstOrNull { item ->
+                                            item.providerId == movie.providerId &&
+                                                item.contentType == ContentType.MOVIE &&
+                                                (item.contentId == movie.id ||
+                                                    item.contentId == movie.selectedVariantId ||
+                                                    movie.variants.any { variant -> variant.rawMovieId == item.contentId })
+                                        }
+                                    } else null
+                                    if (history != null) onRequestContinueWatchingRemoval(history)
+                                    else onShowDialog(movie)
+                                }
                             }
                         )
                     }
@@ -1541,33 +1640,3 @@ private fun movieLibraryLensLabel(lens: MovieLibraryLens): String =
         MovieLibraryLens.TOP_RATED -> stringResource(R.string.library_lens_top_rated)
         MovieLibraryLens.FRESH -> stringResource(R.string.library_lens_fresh_movies)
     }
-
-private fun movieFilterChips(): List<SelectionChip> {
-    return listOf(
-        SelectionChip(LibraryFilterType.ALL.name, "All"),
-        SelectionChip(LibraryFilterType.FAVORITES.name, "Favorites"),
-        SelectionChip(LibraryFilterType.IN_PROGRESS.name, "Resume"),
-        SelectionChip(LibraryFilterType.UNWATCHED.name, "Unwatched"),
-        SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Recent"),
-        SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
-    )
-}
-
-private fun movieSortChips(): List<SelectionChip> {
-    return LibrarySortBy.entries.map { sort ->
-        SelectionChip(
-            key = sort.name,
-            label = when (sort) {
-                LibrarySortBy.LIBRARY -> "Library Order"
-                LibrarySortBy.TITLE -> "A-Z"
-                LibrarySortBy.RELEASE -> "Newest"
-                LibrarySortBy.UPDATED -> "Recently Updated"
-                LibrarySortBy.RATING -> "Rating"
-                LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-            }
-        )
-    }
-}
-
-
-

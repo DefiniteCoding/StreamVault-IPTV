@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Menyiapkan pustaka Anda…</string>
+    <string name="startup_failed_title">StreamVault tidak dapat membuka pustaka Anda</string>
+    <string name="startup_failed_message">Database lokal tidak dapat ditingkatkan. Data Anda tidak dihapus.</string>
+    <string name="startup_failed_error_type">Kesalahan: %1$s</string>
+    <string name="startup_retry">Coba lagi</string>
+    <string name="startup_share_report">Bagikan laporan</string>
+</resources>

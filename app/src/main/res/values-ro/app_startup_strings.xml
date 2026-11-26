@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Se pregătește biblioteca dvs.…</string>
+    <string name="startup_failed_title">StreamVault nu a putut deschide biblioteca dvs.</string>
+    <string name="startup_failed_message">Baza de date locală nu a putut fi actualizată. Datele dvs. nu au fost șterse.</string>
+    <string name="startup_failed_error_type">Eroare: %1$s</string>
+    <string name="startup_retry">Reîncercați</string>
+    <string name="startup_share_report">Distribuiți raportul</string>
+</resources>

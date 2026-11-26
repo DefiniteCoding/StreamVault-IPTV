@@ -1,5 +1,6 @@
 package com.streamvault.feature.live.home
 
+import com.streamvault.feature.live.presentation.components.LiveQuickFiltersContent
 import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,7 +23,6 @@ import com.google.common.truth.Truth.assertThat
 import com.streamvault.core.ui.theme.StreamVaultTheme
 import com.streamvault.domain.model.ActiveLiveSource
 import com.streamvault.domain.model.ActiveLiveSourceOption
-import com.streamvault.domain.model.LiveTvQuickFilterVisibilityMode
 import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.Text
 import org.junit.Rule
@@ -120,46 +120,21 @@ class HomeScreenBehaviorTest {
     }
 
     @Test
-    fun categorySidebarHeader_quickFilterSelectionReachesHomeCallback() {
+    fun quickFiltersContent_savedFilterSelectionReachesHomeCallback() {
         val selectedFilters = mutableListOf<String>()
-        val categorySearchFocusRequester = FocusRequester()
 
         composeRule.setContent {
             StreamVaultTheme {
-                LiveCategorySidebarHeader(
-                    title = "Live TV",
-                    currentSource = ActiveLiveSource.ProviderSource(1L),
-                    sourceOptions = listOf(
-                        ActiveLiveSourceOption(
-                            source = ActiveLiveSource.ProviderSource(1L),
-                            title = "Fixture provider"
-                        )
-                    ),
-                    showSourceSwitcher = false,
-                    onSourceSelected = {},
+                LiveQuickFiltersContent(
+                    savedFilters = listOf("Movies"),
                     categorySearchQuery = "",
-                    onCategorySearchQueryChanged = {},
-                    categorySearchFocusRequester = categorySearchFocusRequester,
-                    categorySearchPlaceholder = "Search categories",
-                    quickFilterVisibilityMode = LiveTvQuickFilterVisibilityMode.ALWAYS_VISIBLE,
-                    savedCategoryFilters = listOf("Movies"),
-                    activeCategoryFilter = null,
+                    activeFilter = null,
                     hiddenCategoriesButtonLabel = null,
                     hiddenChannelsButtonLabel = null,
-                    quickFiltersButtonTitle = "Quick filters",
-                    quickFiltersTitle = "Saved filters",
-                    quickFiltersShowLabel = "Show",
-                    quickFiltersHideLabel = "Hide",
-                    quickFiltersShowingAllLabel = "Showing all categories",
-                    quickFiltersActiveLabel = "Filter active",
-                    quickFiltersManualSearchLabel = "Manual search",
-                    quickFiltersAllLabel = "All categories",
-                    quickFiltersEmptyLabel = "No saved filters",
-                    quickFiltersAddChipLabel = "Add quick filter",
-                    noSourceLabel = "No provider",
-                    selectedLabel = "Selected",
-                    unavailableLabel = "Unavailable",
-                    isReorderMode = false,
+                    chipTitle = "Saved filters",
+                    allLabel = "All categories",
+                    emptyLabel = "No saved filters",
+                    addChipLabel = "Add quick filter",
                     onShowHiddenCategories = {},
                     onShowHiddenChannels = {},
                     onAddFilter = {},
@@ -169,8 +144,6 @@ class HomeScreenBehaviorTest {
             }
         }
 
-        composeRule.onNodeWithText("Quick filters")
-            .performSemanticsAction(SemanticsActions.OnClick)
         composeRule.onNodeWithText("Movies")
             .performSemanticsAction(SemanticsActions.OnClick)
 
@@ -199,30 +172,10 @@ class HomeScreenBehaviorTest {
                             onCategorySearchQueryChanged = {},
                             categorySearchFocusRequester = remember { FocusRequester() },
                             categorySearchPlaceholder = "Search categories",
-                            quickFilterVisibilityMode = LiveTvQuickFilterVisibilityMode.HIDE,
-                            savedCategoryFilters = emptyList(),
-                            activeCategoryFilter = null,
-                            hiddenCategoriesButtonLabel = null,
-                            hiddenChannelsButtonLabel = null,
-                            quickFiltersButtonTitle = "Quick filters",
-                            quickFiltersTitle = "Saved filters",
-                            quickFiltersShowLabel = "Show",
-                            quickFiltersHideLabel = "Hide",
-                            quickFiltersShowingAllLabel = "Showing all categories",
-                            quickFiltersActiveLabel = "Filter active",
-                            quickFiltersManualSearchLabel = "Manual search",
-                            quickFiltersAllLabel = "All categories",
-                            quickFiltersEmptyLabel = "No saved filters",
-                            quickFiltersAddChipLabel = "Add quick filter",
                             noSourceLabel = "No provider",
                             selectedLabel = "Selected",
                             unavailableLabel = "Unavailable",
-                            isReorderMode = false,
-                            onShowHiddenCategories = {},
-                            onShowHiddenChannels = {},
-                            onAddFilter = {},
-                            onAllSelected = {},
-                            onSavedFilterSelected = {}
+                            isReorderMode = false
                         )
                     }
                 }

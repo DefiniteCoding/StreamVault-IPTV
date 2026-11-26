@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Összes</string>
+  <string name="library_chip_favorites">Kedvencek</string>
+  <string name="library_chip_resume">Folytatás</string>
+  <string name="library_chip_unwatched">Nem megtekintett</string>
+  <string name="library_chip_recent">Legutóbbi</string>
+  <string name="library_chip_updated">Frissítve</string>
+  <string name="library_chip_top_rated">Legjobbra értékelt</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Könyvtár sorrendje</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Legújabb</string>
+  <string name="library_chip_sort_recently_updated">Nemrég frissítve</string>
+  <string name="library_chip_sort_updated_short">Frissítve</string>
+  <string name="library_chip_sort_rating">Értékelés</string>
+  <string name="library_chip_sort_recent_activity">Legutóbbi aktivitás</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d csoport</item>
+    <item quantity="other">%d csoport</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d elem</item>
+    <item quantity="other">%d elem</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d válogatás</item>
+    <item quantity="other">%d válogatás</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d mentett elem</item>
+    <item quantity="other">%d mentett elem</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">A filmek betöltése sikertelen</string>
+  <string name="series_error_load_failed">A sorozatok betöltése sikertelen</string>
+  <string name="movie_detail_error_load_failed">A film részleteinek betöltése sikertelen</string>
+  <string name="series_detail_error_load_failed">A sorozat részleteinek betöltése sikertelen</string>
+  <string name="catalog_error_no_active_provider">Nincs aktív szolgáltató</string>
+  <string name="catalog_message_moved_back_to_live">„%1$s” visszahelyezve az Élő TV-be</string>
+  <string name="catalog_message_group_created">Csoport létrehozva: %1$s</string>
+  <string name="catalog_message_group_created_and_added">Csoport létrehozva: %1$s, hozzáadva: %2$s</string>
+  <string name="catalog_message_category_hidden">Kategória elrejtve: %1$s</string>
+  <string name="catalog_message_category_pinned">Kitűzve: %1$s</string>
+  <string name="catalog_message_category_unpinned">Kitűzés megszüntetve: %1$s</string>
+  <string name="catalog_message_group_renamed">A csoport új neve: %1$s</string>
+  <string name="catalog_message_group_deleted">Csoport törölve: %1$s</string>
+  <string name="catalog_error_group_name_required">Adja meg a csoport nevét</string>
+  <string name="catalog_error_group_name_reserved">A Kedvencek név le van foglalva</string>
+  <string name="movies_error_group_name_duplicate">Már létezik ilyen nevű filmcsoport</string>
+  <string name="series_error_group_name_duplicate">Már létezik ilyen nevű sorozatcsoport</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">%1$s eltávolítva ebből a mentett nézetből.</string>
+  <string name="favorites_message_moved_to_group">%1$s áthelyezve a kiválasztott csoportba.</string>
+  <string name="favorites_message_group_deleted">Csoport törölve: %1$s.</string>
+  <string name="favorites_error_move_failed">%1$s áthelyezése sikertelen: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s egyesítése sikertelen: %2$s</string>
+  <string name="favorites_error_reorder_failed">Az új sorrend mentése sikertelen: %1$s</string>
+  <string name="favorites_error_unknown">Ismeretlen hiba</string>
+  <string name="favorites_subtitle_channel_number">%1$d. csatorna</string>
+  <string name="favorites_group_subtitle">%1$s csoport</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

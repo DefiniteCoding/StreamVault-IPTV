@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Geri</string>
+    <string name="multiview_hud_title">Bölünmüş Ekran Kontrolleri</string>
+    <string name="multiview_hud_standby_active">Bekleme etkin</string>
+    <string name="multiview_hud_presets">Hazır Ayarlar</string>
+    <string name="player_episode_picker_hint">Bir sezon seçin, ardından bölümler için sağa gidin.</string>
+    <string name="player_episode_picker_now_on">Şu an: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d sezon</item>
+        <item quantity="other">%1$d sezon</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d bölüm</item>
+        <item quantity="other">%1$d bölüm</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d bölüm oynatılmaya hazır</item>
+        <item quantity="other">%1$d bölüm oynatılmaya hazır</item>
+    </plurals>
+</resources>

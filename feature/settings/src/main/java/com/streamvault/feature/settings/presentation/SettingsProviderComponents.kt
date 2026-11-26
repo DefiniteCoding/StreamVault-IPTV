@@ -125,6 +125,7 @@ public fun ProviderSettingsCard(
                     else R.string.settings_provider_connection_check_now
                 ),
                 accent = Secondary,
+                tone = SettingsChipTone.Secondary,
                 enabled = !availability.isChecking,
                 onClick = onCheckAvailability
             )

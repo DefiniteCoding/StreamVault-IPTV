@@ -1,13 +1,19 @@
 package com.streamvault.feature.live.presentation.components
 
+import androidx.compose.ui.graphics.Color
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.BrowseShapes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.ui.Alignment
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,19 +27,13 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.Border
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.interaction.rememberTvInteractionSounds
-import com.streamvault.core.ui.design.browse.FocusBorder
-import com.streamvault.core.ui.design.browse.OnSurface
 import com.streamvault.core.ui.design.browse.OnSurfaceDim
-import com.streamvault.core.ui.design.browse.Primary
-import com.streamvault.core.ui.design.browse.SurfaceElevated
-import com.streamvault.core.ui.design.browse.SurfaceHighlight
 
 data class LiveSelectionChip(
     val key: String,
@@ -45,6 +45,10 @@ data class LiveChipRowItem(
     val key: String,
     val label: String,
     val supportingText: String? = null,
+    val count: Int? = null,
+    val focusRequester: FocusRequester? = null,
+    val onFocused: () -> Unit = {},
+    val onLongClick: (() -> Unit)? = null,
     val onClick: () -> Unit
 )
 
@@ -86,8 +90,7 @@ fun LiveChipRowSection(
     contentPadding: PaddingValues = PaddingValues(horizontal = 24.dp),
     chipHorizontalPadding: Int = 16,
     supportingTextStyle: TextStyle = MaterialTheme.typography.bodySmall,
-    supportingTextMaxLines: Int = Int.MAX_VALUE,
-    focusedContainerBoostWhenSelected: Boolean = false
+    supportingTextMaxLines: Int = Int.MAX_VALUE
 ) {
     if (chips.isEmpty()) return
     val sounds = rememberTvInteractionSounds()
@@ -108,42 +111,51 @@ fun LiveChipRowSection(
                 modifier = Modifier.padding(horizontal = headerHorizontalPadding.dp, vertical = 2.dp)
             )
         }
-        LazyRow(contentPadding = contentPadding, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FocusSafeLazyRow(contentPadding = contentPadding, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(items = chips, key = { it.key }, contentType = { "live_selection_chip" }) { chip ->
                 val selected = chip.key == selectedKey
                 var wasFocused by remember(chip.key) { mutableStateOf(false) }
-                val requester = remember(chip.key) { FocusRequester() }
+                val requester = remember(chip.key, chip.focusRequester) { chip.focusRequester ?: FocusRequester() }
                 Surface(
                     onClick = { sounds.playSelect(); chip.onClick() },
+                    onLongClick = chip.onLongClick,
                     modifier = Modifier
                         .focusRequester(requester)
                         .mouseClickable(focusRequester = requester, onClick = { sounds.playSelect(); chip.onClick() })
                         .onFocusChanged {
-                            if (it.isFocused && !wasFocused) sounds.playNavigate()
+                            if (it.isFocused && !wasFocused) {
+                                sounds.playNavigate()
+                                chip.onFocused()
+                            }
                             wasFocused = it.isFocused
                         },
+                    // Secondary control: filled at rest, no stroke. Selected keeps its fill when focused; the ring carries focus.
                     colors = ClickableSurfaceDefaults.colors(
-                        containerColor = if (selected) Primary.copy(alpha = 0.18f) else SurfaceElevated,
-                        focusedContainerColor = if (selected && focusedContainerBoostWhenSelected) Primary.copy(alpha = 0.28f) else SurfaceHighlight,
-                        contentColor = if (selected) Primary else OnSurface,
-                        focusedContentColor = OnSurface
+                        containerColor = if (selected) BrowseColors.SelectedContainer else BrowseColors.ControlContainer,
+                        focusedContainerColor = if (selected) BrowseColors.SelectedContainer else BrowseColors.SurfaceAccent,
+                        contentColor = if (selected) BrowseColors.OnSelectedContainer else BrowseColors.TextPrimary,
+                        focusedContentColor = if (selected) BrowseColors.OnSelectedContainer else BrowseColors.TextPrimary
                     ),
                     shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                    border = ClickableSurfaceDefaults.border(
-                        focusedBorder = Border(
-                            border = BorderStroke(2.dp, FocusBorder),
-                            shape = BrowseShapes.Control
-                        )
-                    ),
+                    border = selectableFocusBorder(BrowseShapes.Control),
                     scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                 ) {
                     Column(
                         modifier = Modifier.padding(horizontal = chipHorizontalPadding.dp, vertical = 10.dp),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        Text(text = chip.label, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = chip.label, style = MaterialTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            chip.count?.let { count ->
+                                Text(
+                                    text = count.toString(),
+                                    style = LocalAppTypeTokens.current.labelNumeric,
+                                    modifier = Modifier.padding(start = LocalAppSpacing.current.sm)
+                                )
+                            }
+                        }
                         chip.supportingText?.takeIf { it.isNotBlank() }?.let {
-                            Text(text = it, style = supportingTextStyle, color = OnSurfaceDim, maxLines = supportingTextMaxLines, overflow = TextOverflow.Ellipsis)
+                            Text(text = it, style = supportingTextStyle, color = if (selected || wasFocused) Color.Unspecified else BrowseColors.TextSecondary, maxLines = supportingTextMaxLines, overflow = TextOverflow.Ellipsis)
                         }
                     }
                 }

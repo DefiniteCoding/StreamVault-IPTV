@@ -10,6 +10,12 @@ data class AppPalette(
     val surfaceElevated: Color,
     val surfaceEmphasis: Color,
     val surfaceAccent: Color,
+    /** Resting fill of secondary buttons and chips, tinted to the theme. At least 1.5:1 against canvas and surface in dark themes, 1.3:1 in light ones, since they have no stroke. Text inputs derive a stronger 3:1 fill from it, see restInputFieldColors. */
+    val controlContainer: Color,
+    /** Opaque tonal fill of a selected chip or row. It keeps this fill while focused, so selection never reads as a focus change. */
+    val selectedContainer: Color,
+    /** Label and icon ink on [selectedContainer]. */
+    val onSelectedContainer: Color,
     val brand: Color,
     val brandMuted: Color,
     val brandStrong: Color,
@@ -27,6 +33,37 @@ data class AppPalette(
     val outline: Color,
     val heroTop: Color,
     val heroBottom: Color,
+    /** Opaque fill drawn under light glass so warm artwork cannot tint it. Transparent where the glass needs none; skip the draw then. */
+    val glassBase: Color,
+    /** Floating top bar fill. Near-opaque so the selected pill keeps 3:1 against it over any backdrop, white included. */
+    val glassBar: Color,
+    /** Larger glass panels (side panels, sheets). */
+    val glassPanel: Color,
+    /**
+     * Dark tier used over video and hero artwork in every theme: black at 85% (rule 9 floor is 55%), drawn without the
+     * sheen. Lower alpha or a sheen lets bright artwork lift it until the selected pill drops below 3:1.
+     */
+    val glassOverVideo: Color,
+    /** 1dp hairline around glass. */
+    val glassStroke: Color,
+    /** 1dp inner top line on glass. */
+    val glassHighlight: Color,
+    /** Start of the top sheen gradient, fading to transparent over the top 40%. Kept low: it lightens the bar under labels. */
+    val glassSheen: Color,
+    /** Selected top-nav pill. Neutral, opaque, at least 3:1 against both glass tiers and the focus fill, so it never reads as focused. */
+    val navSelected: Color,
+    /** Label ink on [navSelected]. */
+    val onNavSelected: Color,
+    /** Ink on a [focus] fill. */
+    val onFocus: Color,
+    /** Focus fill and ring on the dark tier. Differs from [focus] only in light themes, whose focus is near-black. */
+    val focusOverVideo: Color,
+    /** Ink on a [focusOverVideo] fill. */
+    val onFocusOverVideo: Color,
+    /** Resting label ink on the dark tier. */
+    val onGlassOverVideo: Color,
+    /** Low-alpha brand tint for aurora and selected washes. */
+    val accentSoft: Color,
     val isLight: Boolean
 ) {
     companion object {
@@ -59,6 +96,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF162338),
             surfaceEmphasis = Color(0xFF1D2E46),
             surfaceAccent = Color(0xFF223754),
+            controlContainer = Color(0xFF2F3A46),
+            selectedContainer = Color(0xFF9FB8D8),
+            onSelectedContainer = Color(0xFF07111B),
             brand = Color(0xFF69A8FF),
             brandMuted = Color(0x335FA4FF),
             brandStrong = Color(0xFF8BBCFF),
@@ -76,6 +116,20 @@ data class AppPalette(
             outline = Color(0x264C6D95),
             heroTop = Color(0xCC07111B),
             heroBottom = Color(0xF207111B),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF007111B),
+            glassPanel = Color(0xF00F1B29),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF6A717A),
+            onNavSelected = Color(0xFFF5F7FB),
+            onFocus = Color(0xFF07111B),
+            focusOverVideo = Color(0xFFF4F8FF),
+            onFocusOverVideo = Color(0xFF07111B),
+            onGlassOverVideo = Color(0xFFBBC6D8),
+            accentSoft = Color(0x2969A8FF),
             isLight = false
         )
 
@@ -86,11 +140,14 @@ data class AppPalette(
             surfaceElevated = Color(0xFF1B1B21),
             surfaceEmphasis = Color(0xFF232329),
             surfaceAccent = Color(0xFF2A2A31),
+            controlContainer = Color(0xFF353539),
+            selectedContainer = Color(0xFFB5AFC4),
+            onSelectedContainer = Color(0xFF0A0A0D),
             brand = Color(0xFFD0BCFF),
             brandMuted = Color(0x33D0BCFF),
             brandStrong = Color(0xFFEADDFF),
             onPrimary = Color(0xFF381E72),
-            focus = Color(0xFF8A8A92),
+            focus = Color(0xFFF6F0FF),
             textPrimary = Color(0xFFF5F7FB),
             textSecondary = Color(0xFFC2C2C8),
             textTertiary = Color(0xFF8A8A92),
@@ -103,6 +160,20 @@ data class AppPalette(
             outline = Color(0x26FFFFFF),
             heroTop = Color(0xCC0A0A0D),
             heroBottom = Color(0xF20A0A0D),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF00A0A0D),
+            glassPanel = Color(0xF0141419),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF707073),
+            onNavSelected = Color(0xFFF5F7FB),
+            onFocus = Color(0xFF0A0A0D),
+            focusOverVideo = Color(0xFFF6F0FF),
+            onFocusOverVideo = Color(0xFF0A0A0D),
+            onGlassOverVideo = Color(0xFFC2C2C8),
+            accentSoft = Color(0x29D0BCFF),
             isLight = false
         )
 
@@ -113,11 +184,14 @@ data class AppPalette(
             surfaceElevated = Color(0xFFEAF0F8),
             surfaceEmphasis = Color(0xFFDDE7F3),
             surfaceAccent = Color(0xFFD2E2F5),
+            controlContainer = Color(0xFFC8DBF1),
+            selectedContainer = Color(0xFF3C71B0),
+            onSelectedContainer = Color(0xFFFFFFFF),
             brand = Color(0xFF185FB4),
             brandMuted = Color(0x33185FB4),
             brandStrong = Color(0xFF0D47A1),
             onPrimary = Color.White,
-            focus = Color(0xFF123B6D),
+            focus = Color(0xFF071327),
             textPrimary = Color(0xFF132033),
             textSecondary = Color(0xFF41516A),
             textTertiary = Color(0xFF667892),
@@ -130,6 +204,20 @@ data class AppPalette(
             outline = Color(0x335B6B82),
             heroTop = Color(0xCCF4F7FB),
             heroBottom = Color(0xF2F4F7FB),
+            glassBase = Color(0xFFEEF1F5),
+            glassBar = Color(0xB8FFFFFF),
+            glassPanel = Color(0xD9FFFFFF),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1F132033),
+            glassHighlight = Color(0xCCFFFFFF),
+            glassSheen = Color(0x80FFFFFF),
+            navSelected = Color(0xFF6B747F),
+            onNavSelected = Color.White,
+            onFocus = Color.White,
+            focusOverVideo = Color(0xFFF4F8FF),
+            onFocusOverVideo = Color(0xFF071327),
+            onGlassOverVideo = Color(0xFFD5DCE6),
+            accentSoft = Color(0x1F185FB4),
             isLight = true
         )
 
@@ -140,6 +228,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF193326),
             surfaceEmphasis = Color(0xFF244634),
             surfaceAccent = Color(0xFF2B5540),
+            controlContainer = Color(0xFF304139),
+            selectedContainer = Color(0xFF8FC1A8),
+            onSelectedContainer = Color(0xFF07140F),
             brand = Color(0xFF79D6A5),
             brandMuted = Color(0x3379D6A5),
             brandStrong = Color(0xFFA2F0C5),
@@ -157,6 +248,20 @@ data class AppPalette(
             outline = Color(0x335B8A70),
             heroTop = Color(0xCC07140F),
             heroBottom = Color(0xF207140F),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF007140F),
+            glassPanel = Color(0xF010231A),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF68746E),
+            onNavSelected = Color(0xFFF1F8F3),
+            onFocus = Color(0xFF07140F),
+            focusOverVideo = Color(0xFFE8FFF1),
+            onFocusOverVideo = Color(0xFF07140F),
+            onGlassOverVideo = Color(0xFFBDCEC2),
+            accentSoft = Color(0x2979D6A5),
             isLight = false
         )
 
@@ -167,6 +272,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF38231C),
             surfaceEmphasis = Color(0xFF4A2D22),
             surfaceAccent = Color(0xFF5A3526),
+            controlContainer = Color(0xFF463935),
+            selectedContainer = Color(0xFFCFB19F),
+            onSelectedContainer = Color(0xFF19100F),
             brand = Color(0xFFFFB27F),
             brandMuted = Color(0x33FFB27F),
             brandStrong = Color(0xFFFFD0AD),
@@ -184,6 +292,20 @@ data class AppPalette(
             outline = Color(0x337B5747),
             heroTop = Color(0xCC19100F),
             heroBottom = Color(0xF219100F),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF019100F),
+            glassPanel = Color(0xF0291A16),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF79706D),
+            onNavSelected = Color(0xFFFFF6F0),
+            onFocus = Color(0xFF19100F),
+            focusOverVideo = Color(0xFFFFF1E8),
+            onFocusOverVideo = Color(0xFF19100F),
+            onGlassOverVideo = Color(0xFFD9C4B8),
+            accentSoft = Color(0x29FFB27F),
             isLight = false
         )
 
@@ -194,6 +316,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF15343C),
             surfaceEmphasis = Color(0xFF1D4650),
             surfaceAccent = Color(0xFF23545F),
+            controlContainer = Color(0xFF2E4248),
+            selectedContainer = Color(0xFF7EC3C3),
+            onSelectedContainer = Color(0xFF06151A),
             brand = Color(0xFF67D9D5),
             brandMuted = Color(0x3367D9D5),
             brandStrong = Color(0xFF9AF2E8),
@@ -211,6 +336,20 @@ data class AppPalette(
             outline = Color(0x33517F87),
             heroTop = Color(0xCC06151A),
             heroBottom = Color(0xF206151A),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF006151A),
+            glassPanel = Color(0xF00D252C),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF667579),
+            onNavSelected = Color(0xFFF0FAFA),
+            onFocus = Color(0xFF06151A),
+            focusOverVideo = Color(0xFFE6FFFC),
+            onFocusOverVideo = Color(0xFF06151A),
+            onGlassOverVideo = Color(0xFFB9D0D3),
+            accentSoft = Color(0x2967D9D5),
             isLight = false
         )
 
@@ -221,6 +360,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF382237),
             surfaceEmphasis = Color(0xFF4A2C48),
             surfaceAccent = Color(0xFF593555),
+            controlContainer = Color(0xFF473845),
+            selectedContainer = Color(0xFFC9AFBD),
+            onSelectedContainer = Color(0xFF180E17),
             brand = Color(0xFFF0A4CC),
             brandMuted = Color(0x33F0A4CC),
             brandStrong = Color(0xFFFFC6E2),
@@ -238,6 +380,20 @@ data class AppPalette(
             outline = Color(0x337D5873),
             heroTop = Color(0xCC180E17),
             heroBottom = Color(0xF2180E17),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF0180E17),
+            glassPanel = Color(0xF02A1928),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF796E78),
+            onNavSelected = Color(0xFFFFF5FA),
+            onFocus = Color(0xFF180E17),
+            focusOverVideo = Color(0xFFFFEFF7),
+            onFocusOverVideo = Color(0xFF180E17),
+            onGlassOverVideo = Color(0xFFD9C1D0),
+            accentSoft = Color(0x29F0A4CC),
             isLight = false
         )
 
@@ -248,6 +404,9 @@ data class AppPalette(
             surfaceElevated = Color(0xFF121212),
             surfaceEmphasis = Color(0xFF1C1C1C),
             surfaceAccent = Color(0xFF252525),
+            controlContainer = Color(0xFF303030),
+            selectedContainer = Color(0xFFA4ADC3),
+            onSelectedContainer = Color.Black,
             brand = Color(0xFFA9BEFF),
             brandMuted = Color(0x33A9BEFF),
             brandStrong = Color(0xFFD1DAFF),
@@ -265,6 +424,20 @@ data class AppPalette(
             outline = Color(0x33FFFFFF),
             heroTop = Color(0xCC000000),
             heroBottom = Color(0xF2000000),
+            glassBase = Color.Transparent,
+            glassBar = Color(0xF0000000),
+            glassPanel = Color(0xF0080808),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1AFFFFFF),
+            glassHighlight = Color(0x29FFFFFF),
+            glassSheen = Color(0x0AFFFFFF),
+            navSelected = Color(0xFF707070),
+            onNavSelected = Color(0xFFF6F6F8),
+            onFocus = Color(0xFF000000),
+            focusOverVideo = Color(0xFFFFFFFF),
+            onFocusOverVideo = Color(0xFF000000),
+            onGlassOverVideo = Color(0xFFC2C2C8),
+            accentSoft = Color(0x29A9BEFF),
             isLight = false
         )
 
@@ -275,11 +448,14 @@ data class AppPalette(
             surfaceElevated = Color(0xFFEAE0CE),
             surfaceEmphasis = Color(0xFFDDD0B9),
             surfaceAccent = Color(0xFFD0C1A5),
+            controlContainer = Color(0xFFD9CCB4),
+            selectedContainer = Color(0xFF617046),
+            onSelectedContainer = Color(0xFFFFFFFF),
             brand = Color(0xFF66764A),
             brandMuted = Color(0x3366764A),
             brandStrong = Color(0xFF485A34),
             onPrimary = Color.White,
-            focus = Color(0xFF453729),
+            focus = Color(0xFF1E150C),
             textPrimary = Color(0xFF30271F),
             textSecondary = Color(0xFF55483A),
             textTertiary = Color(0xFF756655),
@@ -292,6 +468,20 @@ data class AppPalette(
             outline = Color(0x33594A39),
             heroTop = Color(0xCCF3EBDD),
             heroBottom = Color(0xF2F3EBDD),
+            glassBase = Color(0xFFF1EADF),
+            glassBar = Color(0xB8FFFAF1),
+            glassPanel = Color(0xD9FFFAF1),
+            glassOverVideo = Color(0xD9000000),
+            glassStroke = Color(0x1F30271F),
+            glassHighlight = Color(0xCCFFFFFF),
+            glassSheen = Color(0x80FFFFFF),
+            navSelected = Color(0xFF78726D),
+            onNavSelected = Color.White,
+            onFocus = Color.White,
+            focusOverVideo = Color(0xFFFFF8EC),
+            onFocusOverVideo = Color(0xFF1E150C),
+            onGlassOverVideo = Color(0xFFE6DCCC),
+            accentSoft = Color(0x1F66764A),
             isLight = true
         )
     }

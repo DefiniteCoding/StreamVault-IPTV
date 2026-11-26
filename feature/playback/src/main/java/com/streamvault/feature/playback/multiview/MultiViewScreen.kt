@@ -1,5 +1,6 @@
 package com.streamvault.feature.playback.multiview
 
+import com.streamvault.feature.playback.ui.localizedName
 import com.streamvault.core.ui.layout.isPortraitLayout
 
 import com.streamvault.core.ui.design.BrowseShapes
@@ -804,8 +805,8 @@ private fun ReplaceSlotDialog(
         parentalControlLevel in 1..2 && (cat.isAdult || cat.isUserProtected)
 
     PremiumDialog(
-        title = if (selectedCategory == null) stringResource(R.string.multiview_replace_title) else selectedCategory.name,
-        subtitle = if (selectedCategory == null) "Choose a category, then pick a channel" else null,
+        title = if (selectedCategory == null) stringResource(R.string.multiview_replace_title) else selectedCategory.localizedName(),
+        subtitle = if (selectedCategory == null) stringResource(R.string.multiview_picker_subtitle) else null,
         onDismissRequest = onDismiss,
         widthFraction = 0.62f,
         content = {
@@ -824,7 +825,10 @@ private fun ReplaceSlotDialog(
                     Box {
                         if (searchQuery.isEmpty()) {
                             Text(
-                                text = if (selectedCategory == null) "Search categories\u2026" else "Search channels\u2026",
+                                text = stringResource(
+                                    if (selectedCategory == null) R.string.multiview_search_categories
+                                    else R.string.multiview_search_channels
+                                ),
                                 color = Color.White.copy(alpha = 0.38f),
                                 style = MaterialTheme.typography.bodyMedium
                             )
@@ -848,10 +852,10 @@ private fun ReplaceSlotDialog(
                 }
                 selectedCategory == null -> {
                     val filtered = if (catSearch.isBlank()) pickerState.categories
-                        else pickerState.categories.filter { it.name.contains(catSearch, ignoreCase = true) }
+                        else pickerState.categories.filter { it.localizedName().contains(catSearch, ignoreCase = true) }
                     if (filtered.isEmpty()) {
                         Text(
-                            text = "No categories found",
+                            text = stringResource(R.string.multiview_no_categories),
                             color = Color.White.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -863,7 +867,7 @@ private fun ReplaceSlotDialog(
                             items(filtered, key = { it.id }) { category ->
                                 val locked = isCategoryLocked(category)
                                 PremiumDialogActionButton(
-                                    label = if (locked) "\uD83D\uDD12 ${category.name}" else category.name,
+                                    label = if (locked) "\uD83D\uDD12 ${category.localizedName()}" else category.localizedName(),
                                     onClick = {
                                         if (locked) {
                                             pendingLockedCategory = category
@@ -882,7 +886,7 @@ private fun ReplaceSlotDialog(
                     val filtered = pickerState.filteredChannels
                     if (filtered.isEmpty() && !pickerState.isLoading) {
                         Text(
-                            text = "No channels found",
+                            text = stringResource(R.string.multiview_no_channels),
                             color = Color.White.copy(alpha = 0.5f),
                             style = MaterialTheme.typography.bodyMedium
                         )
@@ -905,7 +909,7 @@ private fun ReplaceSlotDialog(
         footer = {
             if (selectedCategory != null) {
                 PremiumDialogFooterButton(
-                    label = "\u2190 Back",
+                    label = stringResource(R.string.playback_back),
                     onClick = onBackToCategories
                 )
             }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">รายการโปรด</string>
+    <string name="category_name_recent">ล่าสุด</string>
+    <string name="category_name_all_channels">ช่องทั้งหมด</string>
+    <string name="category_name_placeholder">หมวดหมู่ %1$s</string>
+</resources>

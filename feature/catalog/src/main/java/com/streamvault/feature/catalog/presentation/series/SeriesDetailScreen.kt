@@ -1,6 +1,12 @@
 package com.streamvault.feature.catalog.presentation.series
 
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.ComfortZoneScrollOnFocus
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.initialFocusTarget
+import com.streamvault.core.ui.design.scrollListToTopOnFocus
+import com.streamvault.core.ui.design.selectableFocusBorder
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,7 +14,6 @@ import android.content.ContextWrapper
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,12 +29,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +43,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusRestorer
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -48,13 +57,12 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.tv.material3.Border
 import androidx.tv.material3.Button
-import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
-import androidx.tv.material3.Icon
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -64,8 +72,11 @@ import com.streamvault.feature.catalog.R
 import com.streamvault.feature.catalog.api.CatalogPlatformHost
 import com.streamvault.feature.catalog.api.CatalogUiEvent
 import com.streamvault.feature.catalog.presentation.catalogMessageText
-import com.streamvault.feature.catalog.presentation.components.EpisodeRowCard
+import com.streamvault.feature.catalog.presentation.components.EpisodeCard
 import com.streamvault.feature.catalog.presentation.components.DetailActionButton
+import com.streamvault.feature.catalog.presentation.components.DetailBackButton
+import com.streamvault.feature.catalog.presentation.components.DetailFavoriteButton
+import com.streamvault.feature.catalog.presentation.components.DetailVariantButton
 import com.streamvault.feature.catalog.presentation.components.DetailSectionHeading
 import com.streamvault.feature.catalog.presentation.components.ExternalRatingsStrip
 import com.streamvault.feature.catalog.presentation.components.formatVodRatingLabel
@@ -77,6 +88,7 @@ import com.streamvault.feature.catalog.presentation.time.formatPositionMs
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.core.ui.components.shell.ContentMetadataStrip
+import com.streamvault.core.ui.components.shell.ArtworkPillAlpha
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.domain.model.Episode
@@ -88,18 +100,15 @@ import com.streamvault.domain.trakt.TraktCustomListItem
 import com.streamvault.domain.trakt.TraktCustomListItemIdentity
 import com.streamvault.domain.trakt.TraktCustomListItemType
 import com.streamvault.core.ui.interaction.TvClickableSurface
-import com.streamvault.core.ui.interaction.TvButton
-import com.streamvault.core.ui.interaction.TvIconButton
 import com.streamvault.domain.model.Result
 import kotlinx.coroutines.launch
-
-private const val EPISODE_DETAIL_PAGE_SIZE = 100
 
 @Composable
 fun SeriesDetailScreen(
     onEpisodeClick: (Episode, Series) -> Unit,
     onResumeClick: ((Episode) -> Unit)? = null,
     onBack: () -> Unit,
+    onOpenSettings: () -> Unit,
     platformHost: CatalogPlatformHost? = null,
     viewModel: SeriesDetailViewModel = hiltViewModel()
 ) {
@@ -159,7 +168,8 @@ fun SeriesDetailScreen(
         traktWatchlistBusy = uiState.traktWatchlistBusy,
         traktUserRating = uiState.traktUserRating,
         traktRatingBusy = uiState.traktRatingBusy,
-        onToggleTraktWatchlist = viewModel::toggleTraktWatchlist,
+        // Not connected: the watchlist button reads "Connect Trakt in Settings" and opens Settings.
+        onToggleTraktWatchlist = if (uiState.traktWatchlistConnected) viewModel::toggleTraktWatchlist else onOpenSettings,
         onRateOnTrakt = { ratingDialogOpen = true },
         onToggleFavorite = viewModel::toggleFavorite,
         onSelectVariant = viewModel::selectSeriesVariant,
@@ -177,7 +187,6 @@ fun SeriesDetailScreen(
             viewModel.downloadEpisode(episode)
         },
         onCastResumeEpisode = viewModel::castResumeEpisode,
-        onCastEpisode = viewModel::castEpisode,
         onBack = onBack
     )
     if (ratingDialogOpen) {
@@ -245,7 +254,6 @@ private fun SeriesDetailContent(
     onCopyEpisodeUrl: suspend (Episode) -> String?,
     onDownloadEpisode: (Episode) -> Unit,
     onCastResumeEpisode: () -> Unit,
-    onCastEpisode: (Episode) -> Unit,
     onBack: () -> Unit
 ) {
     val isTelevisionDevice = rememberIsTelevisionDevice()
@@ -254,6 +262,41 @@ private fun SeriesDetailContent(
     val copyEpisodeUrl: (Episode) -> Unit = { episode ->
         coroutineScope.launch {
             copyStreamUrlToClipboard(context, onCopyEpisodeUrl(episode))
+        }
+    }
+    // Rule 17: initial focus goes to Play/Resume, or to the first control (My list) when there is nothing to play.
+    val initialFocusModifier = Modifier.initialFocusTarget(
+        key = series.id,
+        tag = "SeriesDetailScreen",
+        target = if (resumeEpisode != null) "Play button" else "My list button"
+    )
+    val traktActions: LazyListScope.() -> Unit = {
+        if (series.tmdbId?.let { it > 0L } == true) {
+            item {
+                TraktWatchlistActionButton(
+                    hasIdentity = true,
+                    connected = traktWatchlistConnected,
+                    loaded = traktWatchlistLoaded,
+                    watchlisted = traktWatchlisted,
+                    busy = traktWatchlistBusy,
+                    onClick = onToggleTraktWatchlist,
+                )
+            }
+            item {
+                TraktRatingActionButton(
+                    hasIdentity = true,
+                    connected = traktWatchlistConnected,
+                    busy = traktRatingBusy,
+                    rating = traktUserRating,
+                    onClick = onRateOnTrakt,
+                )
+            }
+            item {
+                TraktCustomListActionButton(
+                    item = series.traktShowListItem(),
+                    additionalItems = series.traktNestedListItems(),
+                )
+            }
         }
     }
     BoxWithConstraints(
@@ -273,10 +316,8 @@ private fun SeriesDetailContent(
             PaddingValues(horizontal = 56.dp, vertical = 36.dp)
         }
         val posterWidth = if (compactLayout) 132.dp else 220.dp
-        var visibleEpisodeLimit by remember(selectedSeason?.seasonNumber) {
-            mutableStateOf(EPISODE_DETAIL_PAGE_SIZE)
-        }
-        val visibleEpisodes = selectedSeason?.episodes.orEmpty().take(visibleEpisodeLimit)
+        // Rows grow into the screen padding so cards slide off the screen edge instead of being cut at the padding.
+        val screenGutter = contentPadding.calculateLeftPadding(LayoutDirection.Ltr)
 
         AsyncImage(
             model = rememberCrossfadeImageModel(series.backdropUrl ?: series.posterUrl),
@@ -303,304 +344,288 @@ private fun SeriesDetailContent(
                 )
         )
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = contentPadding,
-            verticalArrangement = Arrangement.spacedBy(24.dp)
-        ) {
-            item {
-                TvButton(
-                    onClick = onBack,
-                    colors = ButtonDefaults.colors(
-                        containerColor = AppColors.Surface.copy(alpha = 0.72f),
-                        contentColor = AppColors.TextPrimary
-                    ),
-                    border = ButtonDefaults.border(
-                        border = Border(border = androidx.compose.foundation.BorderStroke(1.dp, AppColors.Outline))
-                    )
-                ) {
-                    Text(stringResource(R.string.series_detail_back))
-                }
-            }
-
-            item {
-                if (compactLayout) {
-                    Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
-                        Box(
-                            modifier = Modifier
-                                .width(posterWidth)
-                                .aspectRatio(2f / 3f)
-                                .clip(BrowseShapes.Panel)
-                                .background(AppColors.SurfaceElevated)
-                                .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
-                        ) {
-                            AsyncImage(
-                                model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
-                                contentDescription = series.name,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
-                                series.rating.takeIf { it > 0f }?.let {
-                                    StatusPill(
-                                        label = formatVodRatingLabel(it),
-                                        containerColor = AppColors.Warning,
-                                        contentColor = Color.Black
-                                    )
-                                }
-                                if (unwatchedEpisodeCount > 0) {
-                                    StatusPill(
-                                        label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
-                                        containerColor = AppColors.SurfaceEmphasis
-                                    )
-                                }
-                            }
-                            Text(
-                                text = series.name,
-                                style = MaterialTheme.typography.displayMedium,
-                                color = AppColors.TextPrimary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            ContentMetadataStrip(
-                                values = listOf(
-                                    series.releaseDate.orEmpty(),
-                                    series.genre.orEmpty(),
-                                    selectedSeason?.name.orEmpty()
-                                )
-                            )
-                            ExternalRatingsStrip(
-                                ratings = externalRatings,
-                                isLoading = isLoadingExternalRatings
-                            )
-                            SeriesVersionSelector(
-                                variants = series.variants,
-                                selectedVariantId = series.selectedVariantId ?: series.id,
-                                onSelectVariant = onSelectVariant
-                            )
-                            Text(
-                                text = series.plot ?: stringResource(R.string.series_plot_fallback),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = AppColors.TextSecondary,
-                                maxLines = 5,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            resumeEpisode?.let { ep ->
-                                val hasProgress = ep.watchProgress > 5000L
-                                SeriesDetailActions(
-                                    series = series,
-                                    resumeEpisode = ep,
-                                     hasProgress = hasProgress,
-                                     isCasting = isCasting,
-                                     onResumeClick = onResumeClick,
-                                     onCopyUrl = { copyEpisodeUrl(ep) },
-                                     onCast = onCastResumeEpisode,
-                                     onToggleFavorite = onToggleFavorite
-                                 )
-                            }
-                            if (resumeEpisode == null) {
-                                SeriesDetailFavoriteAction(series = series, onToggleFavorite = onToggleFavorite)
-                            }
-                        }
-                    }
-                } else {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(24.dp),
-                        verticalAlignment = Alignment.Bottom
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .width(posterWidth)
-                                .aspectRatio(2f / 3f)
-                                .clip(BrowseShapes.Panel)
-                                .background(AppColors.SurfaceElevated)
-                                .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
-                        ) {
-                            AsyncImage(
-                                model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
-                                contentDescription = series.name,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(18.dp)
-                        ) {
-                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                                StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
-                                series.rating.takeIf { it > 0f }?.let {
-                                    StatusPill(
-                                        label = formatVodRatingLabel(it),
-                                        containerColor = AppColors.Warning,
-                                        contentColor = Color.Black
-                                    )
-                                }
-                                if (unwatchedEpisodeCount > 0) {
-                                    StatusPill(
-                                        label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
-                                        containerColor = AppColors.SurfaceEmphasis
-                                    )
-                                }
-                            }
-                            Text(
-                                text = series.name,
-                                style = MaterialTheme.typography.displayMedium,
-                                color = AppColors.TextPrimary,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            ContentMetadataStrip(
-                                values = listOf(
-                                    series.releaseDate.orEmpty(),
-                                    series.genre.orEmpty(),
-                                    selectedSeason?.name.orEmpty()
-                                )
-                            )
-                            ExternalRatingsStrip(
-                                ratings = externalRatings,
-                                isLoading = isLoadingExternalRatings
-                            )
-                            SeriesVersionSelector(
-                                variants = series.variants,
-                                selectedVariantId = series.selectedVariantId ?: series.id,
-                                onSelectVariant = onSelectVariant
-                            )
-                            Text(
-                                text = series.plot ?: stringResource(R.string.series_plot_fallback),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = AppColors.TextSecondary,
-                                maxLines = 5,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                            resumeEpisode?.let { ep ->
-                                val hasProgress = ep.watchProgress > 5000L
-                                SeriesDetailActions(
-                                    series = series,
-                                    resumeEpisode = ep,
-                                     hasProgress = hasProgress,
-                                     isCasting = isCasting,
-                                     onResumeClick = onResumeClick,
-                                     onCopyUrl = { copyEpisodeUrl(ep) },
-                                     onCast = onCastResumeEpisode,
-                                     onToggleFavorite = onToggleFavorite
-                                 )
-                            }
-                            if (resumeEpisode == null) {
-                                SeriesDetailFavoriteAction(series = series, onToggleFavorite = onToggleFavorite)
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (series.tmdbId?.let { it > 0L } == true) {
-                item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        item {
-                            TraktWatchlistActionButton(
-                                hasIdentity = true,
-                                connected = traktWatchlistConnected,
-                                loaded = traktWatchlistLoaded,
-                                watchlisted = traktWatchlisted,
-                                busy = traktWatchlistBusy,
-                                onClick = onToggleTraktWatchlist,
-                            )
-                        }
-                        item {
-                            TraktRatingActionButton(
-                                hasIdentity = true,
-                                connected = traktWatchlistConnected,
-                                busy = traktRatingBusy,
-                                rating = traktUserRating,
-                                onClick = onRateOnTrakt,
-                            )
-                        }
-                        item {
-                            TraktCustomListActionButton(
-                                item = series.traktShowListItem(),
-                                additionalItems = series.traktNestedListItems(),
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (series.seasons.isNotEmpty()) {
-                item {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        DetailSectionHeading(stringResource(R.string.series_seasons))
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(12.dp),
-                            contentPadding = PaddingValues(vertical = 2.dp)
-                        ) {
-                            items(series.seasons, key = { it.seasonNumber }) { season ->
-                                SeasonChip(
-                                    season = season,
-                                    isSelected = season == selectedSeason,
-                                    onClick = { onSeasonSelected(season) }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (series.seasons.none { season -> season.episodes.isNotEmpty() }) {
-                item {
-                    Text(
-                        text = stringResource(R.string.series_episodes_empty),
-                        color = AppColors.TextSecondary
-                    )
-                }
-            } else {
-                selectedSeason?.let { season ->
+        val listState = rememberLazyListState()
+        ComfortZoneScrollOnFocus {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = contentPadding,
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // The remote's Back key covers TV; the on-screen button stays for touch devices.
+                if (!isTelevisionDevice) {
                     item {
-                        DetailSectionHeading(
-                            stringResource(R.string.series_episodes, season.episodes.size),
-                            season.name
+                        DetailBackButton(
+                            contentDescription = stringResource(R.string.series_detail_back),
+                            onClick = onBack
                         )
                     }
-                    val fallbackCover = series.posterUrl ?: series.backdropUrl
-                    items(visibleEpisodes, key = { it.id }) { episode ->
-                        EpisodeItem(
+                }
+
+                item {
+                    Box(modifier = Modifier.scrollListToTopOnFocus(listState)) {
+                        if (compactLayout) {
+                            Column(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(posterWidth)
+                                        .aspectRatio(2f / 3f)
+                                        .clip(BrowseShapes.Panel)
+                                        .background(AppColors.SurfaceElevated)
+                                        .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
+                                ) {
+                                    AsyncImage(
+                                        model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
+                                        contentDescription = series.name,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                                ) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
+                                        series.rating.takeIf { it > 0f }?.let {
+                                            StatusPill(
+                                                label = formatVodRatingLabel(it),
+                                                containerColor = AppColors.Warning,
+                                                contentColor = contentOnColor(AppColors.Warning),
+                                                containerAlpha = ArtworkPillAlpha
+                                            )
+                                        }
+                                        if (unwatchedEpisodeCount > 0) {
+                                            StatusPill(
+                                                label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
+                                                containerColor = AppColors.SurfaceEmphasis
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = series.name,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        color = AppColors.TextPrimary,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    ContentMetadataStrip(
+                                        values = listOf(
+                                            series.releaseDate.orEmpty(),
+                                            series.genre.orEmpty(),
+                                            selectedSeason?.name.orEmpty()
+                                        )
+                                    )
+                                    ExternalRatingsStrip(
+                                        ratings = externalRatings,
+                                        isLoading = isLoadingExternalRatings
+                                    )
+                                    SeriesVersionSelector(
+                                        variants = series.variants,
+                                        selectedVariantId = series.selectedVariantId ?: series.id,
+                                        onSelectVariant = onSelectVariant,
+                                        edgeGutterStart = screenGutter,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                    Text(
+                                        text = series.plot ?: stringResource(R.string.series_plot_fallback),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = AppColors.TextSecondary,
+                                        maxLines = 5,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    SeriesDetailActions(
+                                        series = series,
+                                        resumeEpisode = resumeEpisode,
+                                        isCasting = isCasting,
+                                        showCopyUrlAndCast = !isTelevisionDevice,
+                                        onResumeClick = onResumeClick,
+                                        onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
+                                        onCast = onCastResumeEpisode,
+                                        onToggleFavorite = onToggleFavorite,
+                                        initialFocusModifier = initialFocusModifier,
+                                        traktActions = traktActions,
+                                        edgeGutterStart = screenGutter,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                }
+                            }
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(24.dp),
+                                verticalAlignment = Alignment.Bottom
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(posterWidth)
+                                        .aspectRatio(2f / 3f)
+                                        .clip(BrowseShapes.Panel)
+                                        .background(AppColors.SurfaceElevated)
+                                        .border(1.dp, AppColors.Outline, BrowseShapes.Panel)
+                                ) {
+                                    AsyncImage(
+                                        model = rememberCrossfadeImageModel(series.posterUrl ?: series.backdropUrl),
+                                        contentDescription = series.name,
+                                        modifier = Modifier.fillMaxSize(),
+                                        contentScale = ContentScale.Crop
+                                    )
+                                }
+
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalArrangement = Arrangement.spacedBy(18.dp)
+                                ) {
+                                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                        StatusPill(label = stringResource(R.string.nav_series), containerColor = AppColors.BrandMuted)
+                                        series.rating.takeIf { it > 0f }?.let {
+                                            StatusPill(
+                                                label = formatVodRatingLabel(it),
+                                                containerColor = AppColors.Warning,
+                                                contentColor = contentOnColor(AppColors.Warning),
+                                                containerAlpha = ArtworkPillAlpha
+                                            )
+                                        }
+                                        if (unwatchedEpisodeCount > 0) {
+                                            StatusPill(
+                                                label = stringResource(R.string.series_unwatched_badge, unwatchedEpisodeCount),
+                                                containerColor = AppColors.SurfaceEmphasis
+                                            )
+                                        }
+                                    }
+                                    Text(
+                                        text = series.name,
+                                        style = MaterialTheme.typography.displayMedium,
+                                        color = AppColors.TextPrimary,
+                                        maxLines = 2,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    ContentMetadataStrip(
+                                        values = listOf(
+                                            series.releaseDate.orEmpty(),
+                                            series.genre.orEmpty(),
+                                            selectedSeason?.name.orEmpty()
+                                        )
+                                    )
+                                    ExternalRatingsStrip(
+                                        ratings = externalRatings,
+                                        isLoading = isLoadingExternalRatings
+                                    )
+                                    SeriesVersionSelector(
+                                        variants = series.variants,
+                                        selectedVariantId = series.selectedVariantId ?: series.id,
+                                        onSelectVariant = onSelectVariant,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                    Text(
+                                        text = series.plot ?: stringResource(R.string.series_plot_fallback),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = AppColors.TextSecondary,
+                                        maxLines = 5,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    SeriesDetailActions(
+                                        series = series,
+                                        resumeEpisode = resumeEpisode,
+                                        isCasting = isCasting,
+                                        showCopyUrlAndCast = !isTelevisionDevice,
+                                        onResumeClick = onResumeClick,
+                                        onCopyUrl = { resumeEpisode?.let(copyEpisodeUrl) },
+                                        onCast = onCastResumeEpisode,
+                                        onToggleFavorite = onToggleFavorite,
+                                        initialFocusModifier = initialFocusModifier,
+                                        traktActions = traktActions,
+                                        edgeGutterEnd = screenGutter
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                seasonAndEpisodeItems(
+                    series = series,
+                    selectedSeason = selectedSeason,
+                    onSeasonSelected = onSeasonSelected,
+                    onEpisodeClick = onEpisodeClick,
+                    onDownloadEpisode = onDownloadEpisode,
+                    edgeGutter = screenGutter
+                )
+            }
+        }
+    }
+}
+
+/** Season chips, then the episode card row of the selected season. Internal so the D-pad map can be tested alone. */
+internal fun LazyListScope.seasonAndEpisodeItems(
+    series: Series,
+    selectedSeason: Season?,
+    onSeasonSelected: (Season) -> Unit,
+    onEpisodeClick: (Episode) -> Unit,
+    onDownloadEpisode: (Episode) -> Unit,
+    edgeGutter: Dp = 0.dp
+) {
+    if (series.seasons.isNotEmpty()) {
+        item {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                DetailSectionHeading(stringResource(R.string.series_seasons))
+                val selectedChipFocus = remember { FocusRequester() }
+                val seasonListState = rememberLazyListState(
+                    initialFirstVisibleItemIndex = series.seasons.indexOf(selectedSeason).coerceAtLeast(0)
+                )
+                FocusSafeLazyRow(
+                    state = seasonListState,
+                    modifier = Modifier.focusRestorer(selectedChipFocus),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 4.dp),
+                    edgeGutterStart = edgeGutter,
+                    edgeGutterEnd = edgeGutter
+                ) {
+                    items(series.seasons, key = { it.seasonNumber }) { season ->
+                        val isSelected = season == selectedSeason
+                        SeasonChip(
+                            season = season,
+                            isSelected = isSelected,
+                            onClick = { onSeasonSelected(season) },
+                            modifier = if (isSelected) Modifier.focusRequester(selectedChipFocus) else Modifier
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (series.seasons.none { season -> season.episodes.isNotEmpty() }) {
+        item {
+            Text(
+                text = stringResource(R.string.series_episodes_empty),
+                color = AppColors.TextSecondary
+            )
+        }
+    } else {
+        selectedSeason?.let { season ->
+            item {
+                DetailSectionHeading(
+                    stringResource(R.string.series_episodes, season.episodes.size),
+                    season.name
+                )
+            }
+            item {
+                val fallbackCover = series.backdropUrl ?: series.posterUrl
+                FocusSafeLazyRow(
+                    modifier = Modifier.focusRestorer(),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(vertical = 12.dp),
+                    edgeGutterStart = edgeGutter,
+                    edgeGutterEnd = edgeGutter
+                ) {
+                    items(season.episodes, key = { it.id }) { episode ->
+                        EpisodeCard(
                             episode = episode,
                             fallbackImageUrl = fallbackCover,
                             onClick = { onEpisodeClick(episode) },
-                            onCopyUrl = { copyEpisodeUrl(episode) },
-                            onDownload = { onDownloadEpisode(episode) },
-                            onCast = { onCastEpisode(episode) },
-                            isCasting = isCasting
+                            onDownload = { onDownloadEpisode(episode) }
                         )
-                    }
-                    if (visibleEpisodes.size < season.episodes.size) {
-                        item {
-                            TvButton(
-                                onClick = {
-                                    visibleEpisodeLimit = (visibleEpisodeLimit + EPISODE_DETAIL_PAGE_SIZE)
-                                        .coerceAtMost(season.episodes.size)
-                                }
-                            ) {
-                                Text(
-                                    text = stringResource(
-                                        R.string.library_load_more,
-                                        visibleEpisodes.size,
-                                        season.episodes.size
-                                    )
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -656,7 +681,9 @@ private fun Series.traktNestedListItems(): List<TraktCustomListItem> {
 private fun SeriesVersionSelector(
     variants: List<VodSeriesVariant>,
     selectedVariantId: Long,
-    onSelectVariant: (Long) -> Unit
+    onSelectVariant: (Long) -> Unit,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
     if (variants.size <= 1) return
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -665,92 +692,87 @@ private fun SeriesVersionSelector(
             style = MaterialTheme.typography.titleMedium,
             color = AppColors.TextPrimary
         )
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = edgeGutterStart,
+            edgeGutterEnd = edgeGutterEnd
+        ) {
             items(variants, key = { it.rawSeriesId }) { variant ->
                 val selected = variant.rawSeriesId == selectedVariantId
-                TvButton(
-                    onClick = { onSelectVariant(variant.rawSeriesId) },
-                    colors = ButtonDefaults.colors(
-                        containerColor = if (selected) AppColors.Brand else AppColors.SurfaceEmphasis,
-                        contentColor = if (selected) AppColors.OnPrimary else AppColors.TextPrimary
-                    )
-                ) {
-                    Text(
-                        text = variant.label,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                DetailVariantButton(
+                    label = variant.label,
+                    selected = selected,
+                    onClick = { onSelectVariant(variant.rawSeriesId) }
+                )
             }
         }
     }
 }
 
+/** Primary Play/Resume, secondary My list (Copy URL and Cast off TV only), then secondary Trakt actions. */
 @Composable
 private fun SeriesDetailActions(
     series: Series,
-    resumeEpisode: Episode,
-    hasProgress: Boolean,
+    resumeEpisode: Episode?,
     isCasting: Boolean,
+    showCopyUrlAndCast: Boolean,
     onResumeClick: (Episode) -> Unit,
     onCopyUrl: () -> Unit,
     onCast: () -> Unit,
-    onToggleFavorite: () -> Unit
+    onToggleFavorite: () -> Unit,
+    traktActions: LazyListScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    initialFocusModifier: Modifier = Modifier,
+    edgeGutterStart: Dp = 0.dp,
+    edgeGutterEnd: Dp = 0.dp
 ) {
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-        item { DetailActionButton(
-            label = if (hasProgress) {
-                stringResource(
-                    R.string.series_detail_resume,
-                    resumeEpisode.seasonNumber,
-                    resumeEpisode.episodeNumber,
-                    formatPositionMs(resumeEpisode.watchProgress)
-                )
-            } else {
-                stringResource(
-                    R.string.series_detail_play_episode,
-                    resumeEpisode.seasonNumber,
-                    resumeEpisode.episodeNumber
-                )
-            },
-            onClick = { onResumeClick(resumeEpisode) },
-            primary = true
-        ) }
-        item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
-        item { DetailActionButton(
-            stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
-            onCast, enabled = !isCasting
-        ) }
-        item { SeriesDetailFavoriteAction(series = series, onToggleFavorite = onToggleFavorite) }
-    }
-}
-
-@Composable
-private fun SeriesDetailFavoriteAction(
-    series: Series,
-    onToggleFavorite: () -> Unit
-) {
-    TvIconButton(
-        onClick = onToggleFavorite,
-        scale = ButtonDefaults.scale(focusedScale = 1f),
-        shape = ButtonDefaults.shape(shape = CircleShape),
-        border = ButtonDefaults.border(
-            border = Border(BorderStroke(1.dp, AppColors.Outline), shape = CircleShape),
-            focusedBorder = Border(BorderStroke(2.dp, AppColors.Focus), shape = CircleShape)
-        ),
-        colors = ButtonDefaults.colors(
-            containerColor = if (series.isFavorite) AppColors.Brand else AppColors.SurfaceEmphasis,
-            focusedContainerColor = if (series.isFavorite) AppColors.Brand else AppColors.SurfaceEmphasis,
-            contentColor = if (series.isFavorite) AppColors.OnPrimary else AppColors.TextSecondary,
-            focusedContentColor = if (series.isFavorite) AppColors.OnPrimary else AppColors.TextSecondary
-        )
+    FocusSafeLazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        edgeGutterStart = edgeGutterStart,
+        edgeGutterEnd = edgeGutterEnd
     ) {
-        Icon(
-            imageVector = if (series.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-            contentDescription = stringResource(
-                if (series.isFavorite) R.string.favorites_remove else R.string.favorites_add
+        if (resumeEpisode != null) {
+            item {
+                DetailActionButton(
+                    label = if (resumeEpisode.watchProgress > 5000L) {
+                        stringResource(
+                            R.string.series_detail_resume,
+                            resumeEpisode.seasonNumber,
+                            resumeEpisode.episodeNumber,
+                            formatPositionMs(resumeEpisode.watchProgress)
+                        )
+                    } else {
+                        stringResource(
+                            R.string.series_detail_play_episode,
+                            resumeEpisode.seasonNumber,
+                            resumeEpisode.episodeNumber
+                        )
+                    },
+                    onClick = { onResumeClick(resumeEpisode) },
+                    modifier = initialFocusModifier,
+                    primary = true
+                )
+            }
+            if (showCopyUrlAndCast) {
+                item { DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl) }
+                item {
+                    DetailActionButton(
+                        stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
+                        onCast, enabled = !isCasting
+                    )
+                }
+            }
+        }
+        item {
+            DetailFavoriteButton(
+                isFavorite = series.isFavorite,
+                onToggle = onToggleFavorite,
+                modifier = if (resumeEpisode == null) initialFocusModifier else Modifier
             )
-        )
+        }
+        traktActions()
     }
 }
 
@@ -758,84 +780,29 @@ private fun SeriesDetailFavoriteAction(
 fun SeasonChip(
     season: Season,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     TvClickableSurface(
         onClick = onClick,
+        modifier = modifier.semantics { selected = isSelected },
         shape = ClickableSurfaceDefaults.shape(shape = BrowseShapes.Control),
+        // Filled at rest, tonal when selected; a selected chip keeps its fill when focused and the ring carries focus.
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (isSelected) AppColors.BrandMuted else AppColors.SurfaceElevated,
-            contentColor = AppColors.TextPrimary,
-            focusedContainerColor = if (isSelected) AppColors.BrandMuted else AppColors.SurfaceElevated,
-            focusedContentColor = AppColors.TextPrimary
+            containerColor = if (isSelected) AppColors.SelectedContainer else AppColors.ControlContainer,
+            contentColor = if (isSelected) AppColors.OnSelectedContainer else AppColors.TextPrimary,
+            focusedContainerColor = if (isSelected) AppColors.SelectedContainer else AppColors.SurfaceAccent,
+            focusedContentColor = if (isSelected) AppColors.OnSelectedContainer else AppColors.TextPrimary
         ),
-        border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) AppColors.Brand else AppColors.Outline),
-                shape = BrowseShapes.Control
-            ),
-            focusedBorder = Border(
-                border = androidx.compose.foundation.BorderStroke(2.dp, AppColors.Focus),
-                shape = BrowseShapes.Control
-            )
-        ),
+        border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Text(
             text = season.name,
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
-            style = MaterialTheme.typography.labelLarge
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal
         )
-    }
-}
-
-@Composable
-fun EpisodeItem(
-    episode: Episode,
-    fallbackImageUrl: String? = null,
-    onClick: () -> Unit,
-    onCopyUrl: () -> Unit,
-    onDownload: () -> Unit,
-    onCast: () -> Unit,
-    isCasting: Boolean
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        TvClickableSurface(
-            onClick = onClick,
-            shape = ClickableSurfaceDefaults.shape(shape = BrowseShapes.Panel),
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = AppColors.SurfaceElevated,
-                focusedContainerColor = AppColors.SurfaceElevated
-            ),
-            border = ClickableSurfaceDefaults.border(
-                border = Border(BorderStroke(1.dp, AppColors.Outline), shape = BrowseShapes.Panel),
-                focusedBorder = Border(BorderStroke(2.dp, AppColors.Focus), shape = BrowseShapes.Panel)
-            ),
-            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-            modifier = Modifier.weight(1f)
-        ) {
-            EpisodeRowCard(
-                episode = episode,
-                fallbackImageUrl = fallbackImageUrl,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-        Column(
-            modifier = Modifier.width(140.dp),
-            verticalArrangement = Arrangement.spacedBy(7.dp)
-        ) {
-            DetailActionButton(stringResource(R.string.download_button_label), onDownload,
-                modifier = Modifier.fillMaxWidth(), compact = true)
-            DetailActionButton(stringResource(R.string.stream_url_copy), onCopyUrl,
-                modifier = Modifier.fillMaxWidth(), compact = true)
-            DetailActionButton(
-                stringResource(if (isCasting) R.string.cast_launching else R.string.cast_button_label),
-                onCast, modifier = Modifier.fillMaxWidth(), enabled = !isCasting, compact = true)
-        }
     }
 }
 

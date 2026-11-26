@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_stalker_card_hint">Portaalin URL ja tarjoajan MAC-osoite.</string>
+</resources>

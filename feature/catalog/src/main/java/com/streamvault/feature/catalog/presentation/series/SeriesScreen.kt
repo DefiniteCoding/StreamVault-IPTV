@@ -1,5 +1,6 @@
 ﻿package com.streamvault.feature.catalog.presentation.series
 
+import com.streamvault.core.ui.design.BrowseColors
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.items as gridItems
+import androidx.compose.foundation.lazy.grid.itemsIndexed as gridItemsIndexed
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.text.BasicTextField
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,7 +24,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.tv.material3.*
 import androidx.compose.ui.layout.ContentScale
 import coil3.compose.AsyncImage
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -41,7 +42,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
+import com.streamvault.feature.catalog.presentation.components.isVodTitleLocked
+import com.streamvault.feature.catalog.presentation.components.firstUnlockedHeroTitle
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRemovalDialog
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryContextCard
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryShortcut
 import com.streamvault.feature.catalog.presentation.components.SavedCategoryShortcutsRow
@@ -50,8 +55,10 @@ import com.streamvault.feature.catalog.presentation.components.SelectionChipRow
 import com.streamvault.feature.catalog.presentation.components.SeriesCard
 import com.streamvault.core.ui.design.browse.*
 import com.streamvault.domain.model.Category
+import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.LibraryFilterType
 import com.streamvault.domain.model.LibrarySortBy
+import com.streamvault.domain.model.PlaybackHistory
 import com.streamvault.domain.model.Series
 import com.streamvault.domain.util.SearchTextNormalizer
 import kotlinx.coroutines.launch
@@ -80,17 +87,30 @@ import com.streamvault.feature.catalog.presentation.components.VodBrowseOptionsD
 import com.streamvault.feature.catalog.presentation.components.VodClassicCategoryOption
 import com.streamvault.feature.catalog.presentation.components.VodClassicContentHeader
 import com.streamvault.feature.catalog.presentation.components.VodClassicSplitLayout
-import com.streamvault.feature.catalog.presentation.components.VodHeroStrip
+import com.streamvault.feature.catalog.presentation.components.VodFilterRow
+import com.streamvault.feature.catalog.presentation.components.VodFocusHero
+import com.streamvault.feature.catalog.presentation.components.rememberHeroDetails
+import com.streamvault.feature.catalog.presentation.components.rememberHeroItem
+import com.streamvault.feature.catalog.presentation.components.toVodHeroModel
 import com.streamvault.feature.catalog.presentation.components.VodSectionHeader
 import com.streamvault.core.ui.design.FocusRestoreHost
+import com.streamvault.core.ui.design.FocusSafeLazyVerticalGrid
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.rememberGridToTopScroller
+import com.streamvault.core.ui.design.scrollGridToTopOnFirstRowFocus
+import com.streamvault.core.ui.design.scrollGridToTopOnFocus
 import com.streamvault.domain.model.VodViewMode
 import com.streamvault.feature.catalog.presentation.vod.HandleVodUserMessage
 import com.streamvault.feature.catalog.presentation.vod.ProtectedVodPinDialog
 import com.streamvault.feature.catalog.presentation.vod.VodBrowseDefaults
+import com.streamvault.feature.catalog.presentation.vod.VodSelectedCategoryFocus
 import com.streamvault.feature.catalog.presentation.vod.VodReorderMoveDirection
 import com.streamvault.feature.catalog.presentation.vod.shouldShowVodPreview
-import com.streamvault.feature.catalog.presentation.vod.vodActiveFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.libraryCountLabel
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterChips
+import com.streamvault.feature.catalog.presentation.components.rememberLibraryFilterSortDetail
+import com.streamvault.feature.catalog.presentation.components.rememberLibrarySortChips
+import com.streamvault.feature.catalog.presentation.components.rememberInlineLibrarySortChips
 import com.streamvault.feature.catalog.presentation.vod.vodReorderMoveDirection
 import kotlinx.coroutines.delay
 
@@ -99,6 +119,8 @@ import kotlinx.coroutines.delay
 fun SeriesScreen(
     onSeriesClick: (Series) -> Unit,
     onSeriesIdClick: (Long) -> Unit,
+    onFeaturedPlay: (PlaybackHistory) -> Unit = {},
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     viewModel: SeriesViewModel = hiltViewModel()
 ) {
@@ -108,10 +130,16 @@ fun SeriesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val initialContentFocusRequester = remember { FocusRequester() }
+    VodSelectedCategoryFocus(
+        category = uiState.selectedCategory,
+        contentReady = !uiState.isLoading && !uiState.isLoadingSelectedCategory && uiState.errorMessage == null,
+        focusRequester = initialContentFocusRequester
+    )
     var showPinDialog by remember { mutableStateOf(false) }
     var pinError by remember { mutableStateOf<String?>(null) }
     var pendingSeries by remember { mutableStateOf<Series?>(null) }
     var pendingCategory by remember { mutableStateOf<Category?>(null) }
+    var pendingContinueWatchingRemoval by remember { mutableStateOf<PlaybackHistory?>(null) }
 
     HandleVodUserMessage(
         userMessage = uiState.userMessage,
@@ -177,10 +205,10 @@ fun SeriesScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    CircularProgressIndicator(color = Color.White)
+                    CircularProgressIndicator(color = BrowseColors.Brand)
                     Text(
                         text = stringResource(R.string.series_loading),
-                        color = Color.White.copy(alpha = 0.7f)
+                        color = BrowseColors.TextSecondary
                     )
                 }
             }
@@ -223,6 +251,11 @@ fun SeriesScreen(
                 onSearchQueryChange = viewModel::setSearchQuery,
                 onSeriesClick = onSeriesClick,
                 onSeriesIdClick = onSeriesIdClick,
+                onFeaturedPlay = { history -> viewModel.playFeaturedHistory(history, onFeaturedPlay, onSeriesIdClick) },
+                onRequestContinueWatchingRemoval = { pendingContinueWatchingRemoval = it },
+                onContinueWatchingRemove = viewModel::onRemoveContinueWatching,
+                onContinueWatchingMarkWatched = viewModel::onMarkContinueWatchingWatched,
+                onContinueWatchingPlay = onContinueWatchingPlay,
                 onProtectedSeriesClick = { series ->
                     pendingCategory = null
                     pendingSeries = series
@@ -254,6 +287,7 @@ fun SeriesScreen(
                 },
                 onLoadMore = viewModel::loadMoreSelectedCategory,
                 onLoadMorePreviewRows = viewModel::loadMorePreviewRows,
+                onResolveHero = viewModel::resolveHeroSeries,
                 onDismissReorder = viewModel::exitCategoryReorderMode,
                 onMoveReorderItemUp = viewModel::moveItemUp,
                 onMoveReorderItemDown = viewModel::moveItemDown,
@@ -268,6 +302,17 @@ fun SeriesScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
+        )
+    }
+
+    pendingContinueWatchingRemoval?.let { history ->
+        ContinueWatchingRemovalDialog(
+            history = history,
+            onDismiss = { pendingContinueWatchingRemoval = null },
+            onConfirm = {
+                viewModel.onRemoveContinueWatching(history)
+                pendingContinueWatchingRemoval = null
+            }
         )
     }
 
@@ -336,6 +381,9 @@ fun SeriesScreen(
 @Composable
 private fun SeriesVodContent(
     uiState: SeriesUiState,
+    onContinueWatchingRemove: (PlaybackHistory) -> Unit,
+    onContinueWatchingMarkWatched: (PlaybackHistory) -> Unit,
+    onContinueWatchingPlay: (PlaybackHistory) -> Unit,
     selectedFilterType: LibraryFilterType,
     onSelectedFilterTypeChange: (LibraryFilterType) -> Unit,
     selectedSortBy: LibrarySortBy,
@@ -344,6 +392,8 @@ private fun SeriesVodContent(
     onSearchQueryChange: (String) -> Unit,
     onSeriesClick: (Series) -> Unit,
     onSeriesIdClick: (Long) -> Unit,
+    onFeaturedPlay: (PlaybackHistory) -> Unit,
+    onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
     onProtectedSeriesClick: (Series) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Series) -> Unit,
@@ -355,6 +405,7 @@ private fun SeriesVodContent(
     onOpenFresh: () -> Unit,
     onLoadMore: () -> Unit,
     onLoadMorePreviewRows: () -> Unit,
+    onResolveHero: suspend (Series) -> Series,
     onDismissReorder: () -> Unit,
     onMoveReorderItemUp: (Series) -> Unit,
     onMoveReorderItemDown: (Series) -> Unit,
@@ -383,7 +434,6 @@ private fun SeriesVodContent(
     val freshSeries = uiState.libraryLensRows[SeriesLibraryLens.FRESH].orEmpty()
     val topRatedSeries = uiState.libraryLensRows[SeriesLibraryLens.TOP_RATED].orEmpty()
     val continueWatching = uiState.continueWatching
-    val heroSeries = freshSeries.firstOrNull() ?: topRatedSeries.firstOrNull() ?: favoriteSeries.firstOrNull()
     val categoryByName = remember(uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
         buildMap<String, Category> {
             uiState.providerCategories.forEach { put(it.name, it) }
@@ -415,11 +465,22 @@ private fun SeriesVodContent(
     }
     val isSeriesLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { series: Series ->
-            val categoryId = series.categoryId
-            (series.isAdult || series.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = series.isAdult,
+                isUserProtected = series.isUserProtected,
+                categoryId = series.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
+    }
+    // A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+    val heroSeries = remember(freshSeries, topRatedSeries, favoriteSeries, isSeriesLocked) {
+        firstUnlockedHeroTitle(listOf(freshSeries, topRatedSeries, favoriteSeries), isSeriesLocked)
+    }
+    val focusedHeroSeries = remember { mutableStateOf<Series?>(null) }
+    val onPosterFocused = remember(isSeriesLocked) {
+        { series: Series -> if (!isSeriesLocked(series)) focusedHeroSeries.value = series }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
     val browseCategoryNames = remember(uiState.categoryNames, uiState.providerCategories, uiState.categories, uiState.favoriteCategoryName) {
@@ -460,12 +521,6 @@ private fun SeriesVodContent(
             category == null || category.id !in uiState.pinnedCategoryIds
         }
     }
-    val fallbackSeriesId = if (heroSeries == null) {
-        favoriteSeries.firstOrNull()?.id
-            ?: freshSeries.firstOrNull()?.id
-            ?: topRatedSeries.firstOrNull()?.id
-            ?: catEntries.firstOrNull()?.value?.firstOrNull()?.id
-    } else null
     val categoryOptions = remember(
         visibleCategoryNames,
         uiState.categoryCounts,
@@ -553,6 +608,7 @@ private fun SeriesVodContent(
             onProtectedSeriesClick = onProtectedSeriesClick,
             onProtectedCategoryClick = onProtectedCategoryClick,
             onShowDialog = onShowDialog,
+            onRequestContinueWatchingRemoval = onRequestContinueWatchingRemoval,
             onShowCategoryOptions = onShowCategoryOptions,
             onSelectCategory = onSelectCategory,
             onSelectFullLibraryBrowse = onSelectFullLibraryBrowse,
@@ -581,23 +637,57 @@ private fun SeriesVodContent(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(bottom = 28.dp)
         ) {
-            item(key = "hero") {
-            if (heroSeries != null) {
-                VodHeroStrip(
-                        title = heroSeries.name,
-                        subtitle = heroSeries.plot?.takeIf { it.isNotBlank() }
-                            ?: heroSeries.genre
-                            ?: stringResource(R.string.series_library_lens_subtitle),
-                        actionLabel = stringResource(R.string.player_resume).substringBefore(" "),
+            uiState.featured?.let { featured ->
+                item(key = "hero") {
+                    com.streamvault.feature.catalog.presentation.components.VodHeroStrip(
+                        title = featured.candidate.title,
+                        subtitle = featured.episode?.let { stringResource(R.string.continue_watching_season_episode, it.seasonNumber, it.episodeNumber) }
+                            ?: stringResource(when (featured.mode) {
+                                com.streamvault.domain.model.VodFeaturedMode.LATEST_RELEASE -> R.string.featured_latest
+                                com.streamvault.domain.model.VodFeaturedMode.RECENTLY_ADDED -> R.string.featured_updated
+                                com.streamvault.domain.model.VodFeaturedMode.RANDOM -> R.string.featured_random
+                                com.streamvault.domain.model.VodFeaturedMode.FOR_YOU -> R.string.featured_for_you
+                                com.streamvault.domain.model.VodFeaturedMode.UP_NEXT -> R.string.featured_up_next
+                                else -> R.string.featured_continue
+                            }),
+                        actionLabel = stringResource(if (featured.episode != null) R.string.featured_up_next
+                            else if (featured.history != null) R.string.player_resume else R.string.featured_details),
+                        focusRequester = initialFocusRequester,
                         onClick = {
-                            val isLocked = isSeriesLocked(heroSeries)
-                            if (isLocked) onProtectedSeriesClick(heroSeries) else onSeriesClick(heroSeries)
+                            val episode = featured.episode
+                            val history = featured.history
+                            if (episode != null && history != null) onFeaturedPlay(history.copy(
+                                id = 0, contentId = episode.id, contentType = ContentType.SERIES_EPISODE,
+                                seriesId = featured.candidate.id, title = episode.title, streamUrl = episode.streamUrl,
+                                remoteContentId = null, remoteSeriesId = null,
+                                resumePositionMs = episode.watchProgress, totalDurationMs = episode.durationSeconds.toLong() * 1000,
+                                seasonNumber = episode.seasonNumber, episodeNumber = episode.episodeNumber,
+                                watchedStatus = com.streamvault.domain.model.PlaybackWatchedStatus.IN_PROGRESS,
+                            )) else if (history != null) onFeaturedPlay(history)
+                            else featured.candidate.series?.let(onSeriesClick)
                         },
-                        modifier = Modifier
-                            .padding(top = 8.dp, bottom = 6.dp)
-                            .focusRequester(initialFocusRequester)
                     )
+                }
             }
+            // Upstream's featured card owns the top slot while its mode is not Hidden; our focus hero fills it otherwise.
+            if (uiState.featured == null) {
+                item(key = "hero") {
+                    val shown = rememberHeroDetails(
+                        rememberHeroItem(focusedHeroSeries, heroSeries),
+                        onResolveHero
+                    )
+                    if (shown != null) {
+                        VodFocusHero(
+                            model = shown.toVodHeroModel(),
+                            actionLabel = stringResource(R.string.continue_watching_menu_open_details),
+                            onActionClick = {
+                                if (isSeriesLocked(shown)) onProtectedSeriesClick(shown) else onSeriesClick(shown)
+                            },
+                            modifier = Modifier.padding(top = 8.dp, bottom = 6.dp),
+                            actionFocusRequester = initialFocusRequester
+                        )
+                    }
+                }
             }
             item(key = "actions") {
             VodActionChipRow(
@@ -614,7 +704,7 @@ private fun SeriesVodContent(
                             VodActionChip(
                                 key = "categories",
                                 label = stringResource(R.string.series_categories_title),
-                                detail = "${visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }} groups",
+                                detail = libraryCountLabel(R.plurals.library_count_groups, visibleCategoryNames.count { name -> categoryByName[name]?.id != VodBrowseDefaults.FAVORITES_SENTINEL_ID }),
                                 onClick = { showCategoryPicker = true }
                             )
                         )
@@ -662,7 +752,7 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = "resume",
                                     label = stringResource(R.string.library_lens_continue),
-                                    detail = "${continueWatching.size} items",
+                                    detail = libraryCountLabel(R.plurals.library_count_items, continueWatching.size),
                                     onClick = onOpenContinueWatching
                                 )
                             )
@@ -672,7 +762,7 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = SeriesLibraryLens.TOP_RATED.name,
                                     label = stringResource(R.string.library_lens_top_rated),
-                                    detail = "${topRatedSeries.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, topRatedSeries.size),
                                     onClick = onOpenTopRated
                                 )
                             )
@@ -682,30 +772,38 @@ private fun SeriesVodContent(
                                 VodActionChip(
                                     key = SeriesLibraryLens.FRESH.name,
                                     label = stringResource(R.string.library_lens_fresh_series),
-                                    detail = "${freshSeries.size} picks",
+                                    detail = libraryCountLabel(R.plurals.library_count_picks, freshSeries.size),
                                     onClick = onOpenFresh
                                 )
                             )
                         }
                     },
-                    modifier = Modifier.padding(top = 2.dp, bottom = 6.dp)
+                    modifier = Modifier.padding(top = 2.dp, bottom = 6.dp),
+                    firstActionFocusRequester = initialFocusRequester.takeIf { uiState.featured == null && heroSeries == null }
                 )
             }
             if (continueWatching.isNotEmpty()) {
             item(key = "continue_watching") {
+                val openContinueWatchingDetails: (PlaybackHistory) -> Unit = { history ->
+                    val rawSeriesId = history.seriesId ?: history.contentId
+                    val presentedSeries = continueSeries.firstOrNull { series ->
+                        series.rawSeriesIdsForNavigation().contains(rawSeriesId)
+                    }
+                    if (presentedSeries != null) {
+                        onSeriesClick(presentedSeries)
+                    } else {
+                        onSeriesIdClick(rawSeriesId)
+                    }
+                }
                 ContinueWatchingRow(
                         items = continueWatching,
-                        onItemClick = { history ->
-                            val rawSeriesId = history.seriesId ?: history.contentId
-                            val presentedSeries = continueSeries.firstOrNull { series ->
-                                series.rawSeriesIdsForNavigation().contains(rawSeriesId)
-                            }
-                            if (presentedSeries != null) {
-                                onSeriesClick(presentedSeries)
-                            } else {
-                                onSeriesIdClick(rawSeriesId)
-                            }
-                        }
+                        onItemClick = openContinueWatchingDetails,
+                        menu = ContinueWatchingMenuActions(
+                            onResume = onContinueWatchingPlay,
+                            onRemove = onContinueWatchingRemove,
+                            onOpenDetails = openContinueWatchingDetails,
+                            onMarkWatched = onContinueWatchingMarkWatched
+                        )
                     )
             }
             }
@@ -715,7 +813,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.favorites_title),
                         items = favoriteSeries,
                         onSeeAll = { onSelectCategory(uiState.favoriteCategoryName) },
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -742,15 +841,15 @@ private fun SeriesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { series ->
                     val isLocked = isSeriesLocked(series)
                     SeriesCard(
                         series = series,
                         isLocked = isLocked,
                         onClick = { if (isLocked) onProtectedSeriesClick(series) else onSeriesClick(series) },
-                        onLongClick = { onShowDialog(series) },
-                        modifier = if (series.id == fallbackSeriesId) Modifier.focusRequester(initialFocusRequester) else Modifier
+                        onLongClick = { onShowDialog(series) }
                     )
                 }
             }
@@ -761,7 +860,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.library_lens_fresh_series),
                         items = freshSeries,
                         onSeeAll = null,
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -779,7 +879,8 @@ private fun SeriesVodContent(
                         title = stringResource(R.string.library_lens_top_rated),
                         items = topRatedSeries,
                         onSeeAll = null,
-                        keySelector = { it.id }
+                        keySelector = { it.id },
+                        onItemFocused = onPosterFocused
                     ) { series ->
                         val isLocked = isSeriesLocked(series)
                         SeriesCard(
@@ -804,15 +905,15 @@ private fun SeriesVodContent(
                     },
                     onPinToggle = matchedCategory?.let { { onToggleCategoryPinned(it) } },
                     isPinned = matchedCategory?.id in uiState.pinnedCategoryIds,
-                    keySelector = { it.id }
+                    keySelector = { it.id },
+                    onItemFocused = onPosterFocused
                 ) { series ->
                     val isLocked = isSeriesLocked(series)
                     SeriesCard(
                         series = series,
                         isLocked = isLocked,
                         onClick = { if (isLocked) onProtectedSeriesClick(series) else onSeriesClick(series) },
-                        onLongClick = { onShowDialog(series) },
-                        modifier = if (series.id == fallbackSeriesId) Modifier.focusRequester(initialFocusRequester) else Modifier
+                        onLongClick = { onShowDialog(series) }
                     )
                 }
             }
@@ -824,7 +925,7 @@ private fun SeriesVodContent(
                             .padding(vertical = 24.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator(color = Color.White, modifier = Modifier.size(32.dp))
+                        CircularProgressIndicator(color = BrowseColors.Brand, modifier = Modifier.size(32.dp))
                     }
                 }
             }
@@ -858,13 +959,13 @@ private fun SeriesVodContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_series),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = seriesFilterChips(),
+            filterChips = rememberLibraryFilterChips(recentAsUpdated = true),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = seriesSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -874,6 +975,7 @@ private fun SeriesVodContent(
     }
 
     val modernGridState = androidx.compose.foundation.lazy.grid.rememberLazyGridState()
+    val gridToTop = rememberGridToTopScroller(modernGridState)
     InfiniteScrollEffect(
         gridState = modernGridState,
         enabled = uiState.vodInfiniteScroll && !uiState.isReorderMode,
@@ -882,7 +984,14 @@ private fun SeriesVodContent(
         prefetchDistance = uiState.selectedCategoryRawPageSize.coerceAtLeast(6),
         onLoadMore = onLoadMore
     )
-    LazyVerticalGrid(
+    val categoryTitle = when (uiState.selectedCategory) {
+        uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_series)
+        VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
+        VodBrowseDefaults.TRAKT_TRENDING_SERIES_CATEGORY -> traktTrendingLabel
+        VodBrowseDefaults.TRAKT_POPULAR_SERIES_CATEGORY -> traktPopularLabel
+        else -> uiState.selectedCategory ?: stringResource(R.string.nav_series)
+    }
+    FocusSafeLazyVerticalGrid(
         state = modernGridState,
         columns = GridCells.Adaptive(minSize = 136.dp),
         modifier = Modifier
@@ -901,66 +1010,56 @@ private fun SeriesVodContent(
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
-            VodSectionHeader(
-                title = when (uiState.selectedCategory) {
-                    uiState.fullLibraryCategoryName -> stringResource(R.string.library_full_browse_title_series)
-                    VodBrowseDefaults.TRAKT_WATCHLIST_CATEGORY -> traktWatchlistLabel
-                    VodBrowseDefaults.TRAKT_TRENDING_SERIES_CATEGORY -> traktTrendingLabel
-                    VodBrowseDefaults.TRAKT_POPULAR_SERIES_CATEGORY -> traktPopularLabel
-                    else -> uiState.selectedCategory ?: stringResource(R.string.nav_series)
-                }
-            )
+            VodSectionHeader(title = categoryTitle, horizontalInset = 0.dp)
         }
 
         if (!uiState.isReorderMode) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                val browseOptionsDetail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy)
-                val hasActiveFilterSort = selectedFilterType != LibraryFilterType.ALL || selectedSortBy != LibrarySortBy.LIBRARY
-                VodActionChipRow(
-                    actions = buildList {
-                        add(
-                            VodActionChip(
-                                key = "back_home",
-                                label = stringResource(R.string.nav_series),
-                                onClick = { onSelectCategory(null) }
-                            )
+                val inlineSortChips = rememberInlineLibrarySortChips()
+                // A sort without a chip is set through the dialog, so the pill names it; chip sorts show on the chips.
+                val sortInDialog = selectedSortBy.takeIf { sort -> inlineSortChips.none { it.key == sort.name } }
+                VodFilterRow(
+                    modifier = Modifier.scrollGridToTopOnFocus(modernGridState),
+                    leadingActions = listOf(
+                        VodActionChip(
+                            key = "back_home",
+                            label = stringResource(R.string.nav_series),
+                            onClick = { onSelectCategory(null) }
+                        ),
+                        VodActionChip(
+                            key = "search_toggle",
+                            label = stringResource(
+                                if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
+                            ),
+                            onClick = { showSearchBar = !showSearchBar }
                         )
-                        add(
-                            VodActionChip(
-                                key = "categories",
-                                label = stringResource(R.string.series_categories_title),
-                                onClick = { showCategoryPicker = true }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "search_toggle",
-                                label = stringResource(
-                                    if (showSearchBar) R.string.library_action_hide_search else R.string.search_title
-                                ),
-                                onClick = { showSearchBar = !showSearchBar }
-                            )
-                        )
-                        add(
-                            VodActionChip(
-                                key = "browse_options",
-                                label = stringResource(R.string.library_action_filters_sort),
-                                detail = browseOptionsDetail,
-                                onClick = { showBrowseOptions = true }
-                            )
-                        )
-                        if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
-                            add(
-                                VodActionChip(
-                                    key = uiState.fullLibraryCategoryName,
-                                    label = stringResource(R.string.library_full_browse_title_series),
-                                    onClick = onSelectFullLibraryBrowse
-                                )
-                            )
-                        }
+                    ),
+                    sortLabel = stringResource(R.string.vod_filter_sort_label),
+                    sortOptions = inlineSortChips,
+                    selectedSortKey = selectedSortBy.name,
+                    onSortSelected = { key ->
+                        LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
                     },
-                    selectedKey = if (hasActiveFilterSort) "browse_options" else null,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 2.dp)
+                    categoryLabel = stringResource(R.string.vod_filter_category_label),
+                    categoryName = categoryTitle,
+                    onCategoryClick = { showCategoryPicker = true },
+                    moreLabel = stringResource(R.string.library_action_filters_sort),
+                    moreValue = rememberLibraryFilterSortDetail(selectedFilterType, sortInDialog ?: LibrarySortBy.LIBRARY, recentAsUpdated = true).orEmpty(),
+                    onMoreClick = { showBrowseOptions = true },
+                    trailingActions = if (uiState.selectedCategory != uiState.fullLibraryCategoryName) {
+                        listOf(
+                            VodActionChip(
+                                key = uiState.fullLibraryCategoryName,
+                                label = stringResource(R.string.library_full_browse_title_series),
+                                onClick = onSelectFullLibraryBrowse
+                            )
+                        )
+                    } else {
+                        emptyList()
+                    },
+                    firstActionFocusRequester = if (
+                        !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridSeriesId == null)
+                    ) initialFocusRequester else null
                 )
             }
 
@@ -972,7 +1071,7 @@ private fun SeriesVodContent(
                         placeholder = stringResource(R.string.series_search_placeholder),
                         onSearch = {},
                         focusRequester = initialFocusRequester,
-                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
+                        modifier = Modifier.scrollGridToTopOnFocus(modernGridState).padding(horizontal = 4.dp, vertical = 2.dp)
                     )
                 }
             }
@@ -990,10 +1089,10 @@ private fun SeriesVodContent(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        CircularProgressIndicator(color = Color.White)
+                        CircularProgressIndicator(color = BrowseColors.Brand)
                         Text(
                             text = stringResource(R.string.series_loading),
-                            color = Color.White.copy(alpha = 0.7f)
+                            color = BrowseColors.TextSecondary
                         )
                     }
                 }
@@ -1023,7 +1122,7 @@ private fun SeriesVodContent(
                 }
             }
         } else {
-            gridItems(filteredGridSeries, key = { it.id }) { series ->
+            gridItemsIndexed(filteredGridSeries, key = { _, item -> item.id }) { position, series ->
                 val isLocked = isSeriesLocked(series)
                 val isDraggingThis = draggingSeries == series
                 SeriesCard(
@@ -1055,6 +1154,7 @@ private fun SeriesVodContent(
                                 }
                             } else Modifier
                         )
+                        .scrollGridToTopOnFirstRowFocus(gridToTop, series.id, position)
                         .then(if (!showSearchBar && series.id == initialGridSeriesId) Modifier.focusRequester(initialFocusRequester) else Modifier),
                     onClick = {
                         if (uiState.isReorderMode) {
@@ -1103,6 +1203,7 @@ private fun SeriesVodClassicContent(
     onProtectedSeriesClick: (Series) -> Unit,
     onProtectedCategoryClick: (Category) -> Unit,
     onShowDialog: (Series) -> Unit,
+    onRequestContinueWatchingRemoval: (PlaybackHistory) -> Unit,
     onShowCategoryOptions: (String) -> Unit,
     onSelectCategory: (String?) -> Unit,
     onSelectFullLibraryBrowse: () -> Unit,
@@ -1151,10 +1252,13 @@ private fun SeriesVodClassicContent(
     }
     val isSeriesLocked = remember(uiState.parentalControlLevel, uiState.unlockedCategoryIds) {
         { series: Series ->
-            val categoryId = series.categoryId
-            (series.isAdult || series.isUserProtected) &&
-                uiState.parentalControlLevel in 1..2 &&
-                (categoryId == null || kotlin.math.abs(categoryId) !in uiState.unlockedCategoryIds)
+            isVodTitleLocked(
+                isAdult = series.isAdult,
+                isUserProtected = series.isUserProtected,
+                categoryId = series.categoryId,
+                parentalControlLevel = uiState.parentalControlLevel,
+                unlockedCategoryIds = uiState.unlockedCategoryIds
+            )
         }
     }
     val openProtectedCategory: (Category) -> Unit = onProtectedCategoryClick
@@ -1194,13 +1298,13 @@ private fun SeriesVodClassicContent(
         VodBrowseOptionsDialog(
             title = stringResource(R.string.nav_series),
             filterTitle = stringResource(R.string.library_filter_title),
-            filterChips = seriesFilterChips(),
+            filterChips = rememberLibraryFilterChips(recentAsUpdated = true),
             selectedFilterKey = selectedFilterType.name,
             onFilterSelected = { key ->
                 LibraryFilterType.entries.firstOrNull { it.name == key }?.let(onSelectedFilterTypeChange)
             },
             sortTitle = stringResource(R.string.library_sort_title),
-            sortChips = seriesSortChips(),
+            sortChips = rememberLibrarySortChips(),
             selectedSortKey = selectedSortBy.name,
             onSortSelected = { key ->
                 LibrarySortBy.entries.firstOrNull { it.name == key }?.let(onSelectedSortByChange)
@@ -1395,12 +1499,15 @@ private fun SeriesVodClassicContent(
                         VodActionChip(
                             key = "browse_options",
                             label = stringResource(R.string.library_action_filters_sort),
-                            detail = vodActiveFilterSortDetail(selectedFilterType, selectedSortBy),
+                            detail = rememberLibraryFilterSortDetail(selectedFilterType, selectedSortBy, recentAsUpdated = true),
                             onClick = { showBrowseOptions = true }
                         )
                     )
                 },
-                selectedActionKey = if (hasActiveFilterSortClassic) "browse_options" else null
+                selectedActionKey = if (hasActiveFilterSortClassic) "browse_options" else null,
+                firstActionFocusRequester = if (
+                    !showSearchBar && (uiState.isLoadingSelectedCategory || initialGridSeriesId == null)
+                ) initialFocusRequester else null
             )
 
             if (showSearchBar) {
@@ -1450,7 +1557,7 @@ private fun SeriesVodClassicContent(
                                 .height(320.dp),
                             contentAlignment = Alignment.Center
                         ) {
-                            CircularProgressIndicator(color = Color.White)
+                            CircularProgressIndicator(color = BrowseColors.Brand)
                         }
                     }
                 } else if (filteredGridSeries.isEmpty()) {
@@ -1514,7 +1621,20 @@ private fun SeriesVodClassicContent(
                                 }
                             },
                             onLongClick = {
-                                if (!uiState.isReorderMode) onShowDialog(series)
+                                if (!uiState.isReorderMode) {
+                                    val history = if (selectedFilterType == LibraryFilterType.IN_PROGRESS) {
+                                        uiState.continueWatching.firstOrNull { item ->
+                                            val historySeriesId = item.seriesId ?: item.contentId
+                                            item.providerId == series.providerId &&
+                                                item.contentType in setOf(ContentType.SERIES, ContentType.SERIES_EPISODE) &&
+                                                (historySeriesId == series.id ||
+                                                    historySeriesId == series.selectedVariantId ||
+                                                    series.variants.any { variant -> variant.rawSeriesId == historySeriesId })
+                                        }
+                                    } else null
+                                    if (history != null) onRequestContinueWatchingRemoval(history)
+                                    else onShowDialog(series)
+                                }
                             }
                         )
                     }
@@ -1547,33 +1667,6 @@ private fun seriesLibraryLensLabel(lens: SeriesLibraryLens): String =
         SeriesLibraryLens.TOP_RATED -> stringResource(R.string.library_lens_top_rated)
         SeriesLibraryLens.FRESH -> stringResource(R.string.library_lens_fresh_series)
     }
-
-private fun seriesFilterChips(): List<SelectionChip> {
-    return listOf(
-        SelectionChip(LibraryFilterType.ALL.name, "All"),
-        SelectionChip(LibraryFilterType.FAVORITES.name, "Favorites"),
-        SelectionChip(LibraryFilterType.IN_PROGRESS.name, "Resume"),
-        SelectionChip(LibraryFilterType.UNWATCHED.name, "Unwatched"),
-        SelectionChip(LibraryFilterType.RECENTLY_UPDATED.name, "Updated"),
-        SelectionChip(LibraryFilterType.TOP_RATED.name, "Top Rated")
-    )
-}
-
-private fun seriesSortChips(): List<SelectionChip> {
-    return LibrarySortBy.entries.map { sort ->
-        SelectionChip(
-            key = sort.name,
-            label = when (sort) {
-                LibrarySortBy.LIBRARY -> "Library Order"
-                LibrarySortBy.TITLE -> "A-Z"
-                LibrarySortBy.RELEASE -> "Newest"
-                LibrarySortBy.UPDATED -> "Recently Updated"
-                LibrarySortBy.RATING -> "Rating"
-                LibrarySortBy.WATCH_COUNT -> "Recent Activity"
-            }
-        )
-    }
-}
 
 private fun Series.rawSeriesIdsForNavigation(): List<Long> =
     variants.map { it.rawSeriesId }.ifEmpty { listOf(selectedVariantId ?: id) }

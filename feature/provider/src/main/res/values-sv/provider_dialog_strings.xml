@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Avbryt</string>
+  <string name="setup_completion_saved_sync_pending">Leverantören sparad. Synkroniseringen återupptas i bakgrunden.</string>
+  <string name="setup_combined_attach_title">Lägg till spellista i kombinerad M3U?</string>
+  <string name="setup_combined_attach_message">Lägg till %1$s i %2$s och behåll den kombinerade källan aktiv för Live-TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">den här spellistan</string>
+  <string name="setup_combined_attach_fallback_source">den aktiva kombinerade källan</string>
+  <string name="setup_combined_attach_skip">Inte nu</string>
+  <string name="setup_combined_attach_confirm">Lägg till i kombinerad</string>
+</resources>

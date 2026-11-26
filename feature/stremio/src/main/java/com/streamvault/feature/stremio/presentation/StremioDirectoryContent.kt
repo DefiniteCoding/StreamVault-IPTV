@@ -12,6 +12,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
+import com.streamvault.core.ui.design.FocusSafeLazyRow
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.shellHorizontalInset
 import com.streamvault.core.ui.interaction.TvButton
 import com.streamvault.domain.model.stremio.stremioConfigureUrl
 import com.streamvault.feature.stremio.R
@@ -23,6 +26,8 @@ internal fun StremioDirectoryContent(
     viewModel: StremioDirectoryViewModel = hiltViewModel()
 ) {
     BackHandler(onBack = onBack)
+    // The shell pads the screen; rows grow into it so buttons slide off the screen edge.
+    val shellInset = LocalAppSpacing.current.shellHorizontalInset
     val state by viewModel.state.collectAsStateWithLifecycle()
     val uriHandler = LocalUriHandler.current
     var openFailed by remember { mutableStateOf(false) }
@@ -31,7 +36,11 @@ internal fun StremioDirectoryContent(
             TvButton(onClick = onBack) { Text(stringResource(R.string.stremio_browse)) }
             TvButton(onClick = viewModel::load) { Text(stringResource(R.string.stremio_refresh)) }
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            edgeGutterStart = shellInset,
+            edgeGutterEnd = shellInset
+        ) {
             items(state.sources, key = { it.key }) { source ->
                 TvButton(onClick = { viewModel.select(source.key) }) { Text(source.name) }
             }

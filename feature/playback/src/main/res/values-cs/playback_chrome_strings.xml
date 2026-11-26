@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Zpět</string>
+    <string name="multiview_hud_title">Ovládání rozdělené obrazovky</string>
+    <string name="multiview_hud_standby_active">Pohotovostní režim aktivní</string>
+    <string name="multiview_hud_presets">Předvolby</string>
+    <string name="player_episode_picker_hint">Vyberte sezónu a pro epizody přejděte doprava.</string>
+    <string name="player_episode_picker_now_on">Právě hraje S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d sezóna</item>
+        <item quantity="few">%1$d sezóny</item>
+        <item quantity="many">%1$d sezóny</item>
+        <item quantity="other">%1$d sezón</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d epizoda</item>
+        <item quantity="few">%1$d epizody</item>
+        <item quantity="many">%1$d epizody</item>
+        <item quantity="other">%1$d epizod</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d epizoda připravena k přehrání</item>
+        <item quantity="few">%1$d epizody připraveny k přehrání</item>
+        <item quantity="many">%1$d epizody připraveno k přehrání</item>
+        <item quantity="other">%1$d epizod připraveno k přehrání</item>
+    </plurals>
+</resources>

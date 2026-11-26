@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">Portaal-URL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin-mediaserver</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agent overschrijven (optioneel)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Headers (API, optioneel, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Eigen headers (optioneel, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Gidsbron</string>
+  <string name="setup_guide_source_helper">Kies of deze provider de gids van de leverancier gebruikt, je toegewezen externe XMLTV-bronnen, of helemaal geen gids.</string>
+  <string name="setup_guide_policy_auto_title">Automatisch</string>
+  <string name="setup_guide_policy_auto_description">Houd het huidige gemengde gedrag aan: externe XMLTV kan gidsgegevens van de leverancier overschrijven en niet-gekoppelde zenders kunnen nog steeds terugvallen op de leverancier.</string>
+  <string name="setup_guide_policy_external_title">Alleen externe EPG gebruiken</string>
+  <string name="setup_guide_policy_external_description">Gebruik alleen toegewezen externe XMLTV-bronnen. Niet-gekoppelde zenders blijven zonder gidsgegevens.</string>
+  <string name="setup_guide_policy_provider_title">Alleen EPG van leverancier gebruiken</string>
+  <string name="setup_guide_policy_provider_description">Negeer toegewezen externe XMLTV-bronnen voor deze provider en gebruik alleen de gidspaden van de leverancier.</string>
+  <string name="setup_guide_policy_disabled_title">Gidsgegevens uitschakelen</string>
+  <string name="setup_guide_policy_disabled_description">Importeer of verwerk geen gidsgegevens voor deze provider.</string>
+
+  <string name="setup_logo_source_title">Zenderlogo\'s</string>
+  <string name="setup_logo_source_helper">Kies of zenderlogo\'s van de leverancier komen, van het pictogram van het gekoppelde EPG-kanaal, of uit één vaste bron.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Logo\'s van leverancier eerst</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Gebruik het logo van de leverancier als dat bestaat en val anders terug op het gekoppelde EPG-pictogram.</string>
+  <string name="setup_logo_policy_epg_preferred_title">EPG-logo\'s voorrang geven</string>
+  <string name="setup_logo_policy_epg_preferred_description">Gebruik eerst het gekoppelde EPG-pictogram en val anders terug op het logo van de leverancier.</string>
+  <string name="setup_logo_policy_supplier_only_title">Alleen logo\'s van leverancier</string>
+  <string name="setup_logo_policy_supplier_only_description">Gebruik voor deze provider altijd de logo\'s van de leverancier.</string>
+  <string name="setup_logo_policy_epg_only_title">Alleen EPG-logo\'s</string>
+  <string name="setup_logo_policy_epg_only_description">Gebruik voor deze provider altijd de gekoppelde EPG-pictogrammen.</string>
+
+  <string name="setup_stalker_auth_title">Stalker-authenticatiemodus</string>
+  <string name="setup_stalker_auth_helper">Automatisch detecteren is de standaard. Wijzig dit alleen als het portaal inloggegevens nodig heeft of een gemengde login met MAG + account.</string>
+  <string name="setup_stalker_auth_auto_title">Automatisch detecteren</string>
+  <string name="setup_stalker_auth_auto_description">Probeer eerst de waarschijnlijke inlogprocedure van het portaal en probeer het één keer opnieuw als een andere Stalker-modus beter past.</string>
+  <string name="setup_stalker_auth_mac_only_title">Alleen MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Gebruik MAC-authenticatie in MAG-stijl zonder aanmelding met een portaalaccount.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + inloggegevens</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Behoud de MAG-identiteit en voeg de inloggegevens van het portaalaccount toe voor strengere portalen.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Alleen inloggegevens</string>
+  <string name="setup_stalker_auth_credentials_only_description">Gebruik de inloggegevens van het portaalaccount, ook als het MAC-adres optioneel is of wordt genegeerd.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Portaalgebruikersnaam (optioneel)</string>
+  <string name="setup_stalker_username_placeholder">Portaalgebruikersnaam</string>
+  <string name="setup_stalker_password_optional_placeholder">Portaalwachtwoord (optioneel)</string>
+  <string name="setup_stalker_password_placeholder">Portaalwachtwoord</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG-type (optioneel)</string>
+  <string name="setup_stalker_timezone_placeholder">Tijdzone (optioneel)</string>
+  <string name="setup_stalker_locale_placeholder">Landinstelling (optioneel)</string>
+  <string name="setup_stalker_serial_placeholder">Serienummer (optioneel)</string>
+  <string name="setup_stalker_device_id_placeholder">Apparaat-ID (optioneel)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (optioneel)</string>
+  <string name="setup_stalker_signature_placeholder">Handtekening (optioneel)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker-compatibiliteit</string>
+  <string name="setup_stalker_compat_section_helper">Portaalspecifieke overschrijvingen voor weerbarstige MAG/Stalker-servers. Laat velden leeg tenzij een server ze nodig heeft.</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_version overschrijven (optioneel)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, optioneel)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (Player, optioneel)</string>
+  <string name="setup_stalker_player_headers_placeholder">Headers (Player, optioneel, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent-link</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">HTTP-proxy gebruiken</string>
+  <string name="setup_stalker_proxy_helper">Geldt alleen voor de Stalker-API en het afspelen.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxyhost</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxypoort</string>
+
+  <string name="setup_stalker_selector_title">Compatibiliteit</string>
+  <string name="setup_stalker_protocol_button">Protocol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Automatisch</string>
+  <string name="setup_stalker_protocol_classic_mag">Klassiek MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatisch</string>
+  <string name="setup_stalker_profile_experimental">%1$s (experimenteel)</string>
+  <string name="setup_stalker_experimental_note">Experimentele profielen vereisen vastgelegde of handmatig ingevoerde identiteitsvelden en worden uitgesloten van automatische detectie.</string>
+  <string name="setup_stalker_profile_custom">Aangepast profiel</string>
+
+  <string name="setup_stalker_rules_title">Verzoekregels</string>
+  <string name="setup_stalker_rules_helper">Koppel op actie, blokkeer aanroepen of overschrijf parameters. Lege waarden verwijderen parameters.</string>
+  <string name="setup_stalker_rules_add">Regel toevoegen</string>
+  <string name="setup_stalker_rule_number">Regel %1$d</string>
+  <string name="setup_stalker_rule_delete">Verwijderen</string>
+  <string name="setup_stalker_rule_action_placeholder">Actie, bijv. get_profile</string>
+  <string name="setup_stalker_rule_block">Dit verzoek blokkeren</string>
+  <string name="setup_stalker_rule_block_warning">Waarschuwing: het blokkeren van %1$s kan inloggen verhinderen.</string>
+  <string name="setup_stalker_rule_params_placeholder">Parameters overschrijven: name=value | remove_me=</string>
+</resources>

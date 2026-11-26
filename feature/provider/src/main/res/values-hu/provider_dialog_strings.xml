@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Mégse</string>
+  <string name="setup_completion_saved_sync_pending">Szolgáltató mentve. A szinkronizálás a háttérben folytatódik.</string>
+  <string name="setup_combined_attach_title">Lejátszási lista hozzáadása a kombinált M3U-hoz?</string>
+  <string name="setup_combined_attach_message">Hozzáadja %1$s elemet ide: %2$s, és aktívan tartja ezt a kombinált forrást az Élő TV-hez?</string>
+  <string name="setup_combined_attach_fallback_playlist">ezt a lejátszási listát</string>
+  <string name="setup_combined_attach_fallback_source">az aktív kombinált forrás</string>
+  <string name="setup_combined_attach_skip">Most nem</string>
+  <string name="setup_combined_attach_confirm">Hozzáadás a kombinálthoz</string>
+</resources>

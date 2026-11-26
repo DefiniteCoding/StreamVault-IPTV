@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Ilagay ang direktang URL ng APK. Ida-download ito ng StreamVault at bubuksan ang installer.</string>
+  <string name="plugins_install_url_label">URL ng plugin APK</string>
+  <string name="plugins_installing">Ini-install…</string>
+  <string name="plugins_download_install">I-download at i-install</string>
+</resources>

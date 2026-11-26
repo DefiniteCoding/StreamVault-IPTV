@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Enter the direct APK URL. StreamVault will download it and open the installer.</string>
+  <string name="plugins_install_url_label">Plugin APK URL</string>
+  <string name="plugins_installing">Installing…</string>
+  <string name="plugins_download_install">Download and install</string>
+</resources>

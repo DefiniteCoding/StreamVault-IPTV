@@ -68,7 +68,7 @@ internal fun EnhancedMultiViewControlHud(
             verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
-                text = "Split Screen Controls",
+                text = stringResource(R.string.multiview_hud_title),
                 color = BrowseColors.TextPrimary,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
@@ -122,7 +122,7 @@ internal fun EnhancedMultiViewControlHud(
                     )
                 ) {
                     Text(
-                        text = "Standby active",
+                        text = stringResource(R.string.multiview_hud_standby_active),
                         color = BrowseColors.Warning,
                         style = MaterialTheme.typography.labelMedium,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -161,7 +161,7 @@ internal fun EnhancedMultiViewControlHud(
 
         if (uiState.presets.isNotEmpty()) {
             Text(
-                text = "Presets",
+                text = stringResource(R.string.multiview_hud_presets),
                 color = BrowseColors.TextSecondary,
                 style = MaterialTheme.typography.labelLarge
             )

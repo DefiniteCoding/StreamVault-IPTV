@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">रद्द करें</string>
+  <string name="setup_completion_saved_sync_pending">प्रोवाइडर सहेज लिया गया। सिंक बैकग्राउंड में फिर शुरू होगा।</string>
+  <string name="setup_combined_attach_title">प्लेलिस्ट को कंबाइंड M3U में जोड़ें?</string>
+  <string name="setup_combined_attach_message">%1$s को %2$s में जोड़ें और उस कंबाइंड स्रोत को लाइव TV के लिए सक्रिय रखें?</string>
+  <string name="setup_combined_attach_fallback_playlist">यह प्लेलिस्ट</string>
+  <string name="setup_combined_attach_fallback_source">सक्रिय कंबाइंड स्रोत</string>
+  <string name="setup_combined_attach_skip">अभी नहीं</string>
+  <string name="setup_combined_attach_confirm">कंबाइंड में जोड़ें</string>
+</resources>

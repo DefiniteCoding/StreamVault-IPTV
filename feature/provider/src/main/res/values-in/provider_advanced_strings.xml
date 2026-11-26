@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL portal</string>
+  <string name="setup_jellyfin_source_subtitle">Server media Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Penggantian User-Agent (opsional)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Header (API, opsional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Header kustom (opsional, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Sumber panduan</string>
+  <string name="setup_guide_source_helper">Pilih apakah penyedia ini memakai panduan dari penyedianya, sumber XMLTV eksternal yang Anda tetapkan, atau tanpa panduan sama sekali.</string>
+  <string name="setup_guide_policy_auto_title">Otomatis</string>
+  <string name="setup_guide_policy_auto_description">Pertahankan perilaku campuran saat ini: XMLTV eksternal dapat menimpa data panduan penyedia, dan saluran yang tidak cocok masih bisa memakai panduan penyedia sebagai cadangan.</string>
+  <string name="setup_guide_policy_external_title">Hanya gunakan EPG eksternal</string>
+  <string name="setup_guide_policy_external_description">Hanya gunakan sumber XMLTV eksternal yang ditetapkan. Saluran yang tidak cocok tetap tanpa data panduan.</string>
+  <string name="setup_guide_policy_provider_title">Hanya gunakan EPG penyedia</string>
+  <string name="setup_guide_policy_provider_description">Abaikan sumber XMLTV eksternal yang ditetapkan untuk penyedia ini dan hanya gunakan jalur panduan dari penyedia.</string>
+  <string name="setup_guide_policy_disabled_title">Nonaktifkan data panduan</string>
+  <string name="setup_guide_policy_disabled_description">Jangan impor atau petakan data panduan untuk penyedia ini.</string>
+
+  <string name="setup_logo_source_title">Logo saluran</string>
+  <string name="setup_logo_source_helper">Pilih apakah logo saluran berasal dari penyedia, ikon saluran EPG yang cocok, atau satu sumber saja secara ketat.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Logo penyedia lebih dulu</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Gunakan logo penyedia jika ada, lalu beralih ke ikon EPG yang cocok.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Utamakan logo EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Gunakan ikon EPG yang cocok lebih dulu, lalu beralih ke logo penyedia.</string>
+  <string name="setup_logo_policy_supplier_only_title">Hanya logo penyedia</string>
+  <string name="setup_logo_policy_supplier_only_description">Selalu gunakan logo penyedia untuk penyedia ini.</string>
+  <string name="setup_logo_policy_epg_only_title">Hanya logo EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Selalu gunakan ikon EPG yang cocok untuk penyedia ini.</string>
+
+  <string name="setup_stalker_auth_title">Mode autentikasi Stalker</string>
+  <string name="setup_stalker_auth_helper">Deteksi otomatis adalah default. Ubah hanya jika portal memerlukan kredensial atau alur masuk campuran MAG + akun.</string>
+  <string name="setup_stalker_auth_auto_title">Deteksi otomatis</string>
+  <string name="setup_stalker_auth_auto_description">Coba alur autentikasi portal yang paling mungkin lebih dulu, lalu ulangi sekali jika mode Stalker lain lebih cocok.</string>
+  <string name="setup_stalker_auth_mac_only_title">Hanya MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Gunakan autentikasi MAC gaya MAG tanpa masuk dengan akun portal.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + kredensial</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Pertahankan identitas MAG dan tambahkan kredensial akun portal untuk portal yang lebih ketat.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Hanya kredensial</string>
+  <string name="setup_stalker_auth_credentials_only_description">Gunakan kredensial akun portal meskipun alamat MAC bersifat opsional atau diabaikan.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Nama pengguna portal (opsional)</string>
+  <string name="setup_stalker_username_placeholder">Nama pengguna portal</string>
+  <string name="setup_stalker_password_optional_placeholder">Sandi portal (opsional)</string>
+  <string name="setup_stalker_password_placeholder">Sandi portal</string>
+  <string name="setup_stalker_mag_type_placeholder">Tipe MAG (opsional)</string>
+  <string name="setup_stalker_timezone_placeholder">Zona waktu (opsional)</string>
+  <string name="setup_stalker_locale_placeholder">Lokal (opsional)</string>
+  <string name="setup_stalker_serial_placeholder">Nomor seri (opsional)</string>
+  <string name="setup_stalker_device_id_placeholder">ID perangkat (opsional)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opsional)</string>
+  <string name="setup_stalker_signature_placeholder">Tanda tangan (opsional)</string>
+
+  <string name="setup_stalker_compat_section_title">Kompatibilitas Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Penggantian khusus portal untuk server MAG/Stalker yang rewel. Biarkan kolom kosong kecuali server memerlukannya.</string>
+  <string name="setup_stalker_hw_version_placeholder">Penggantian hw_version (opsional)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opsional)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (pemutar, opsional)</string>
+  <string name="setup_stalker_player_headers_placeholder">Header (pemutar, opsional, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Tautan X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Gunakan proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Hanya berlaku untuk API Stalker dan pemutaran.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Host proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Port proxy</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilitas</string>
+  <string name="setup_stalker_protocol_button">Protokol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Otomatis</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG klasik</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Otomatis</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperimental)</string>
+  <string name="setup_stalker_experimental_note">Profil eksperimental memerlukan kolom identitas hasil tangkapan atau manual, dan dikecualikan dari penemuan otomatis.</string>
+  <string name="setup_stalker_profile_custom">Profil kustom</string>
+
+  <string name="setup_stalker_rules_title">Aturan permintaan</string>
+  <string name="setup_stalker_rules_helper">Cocokkan berdasarkan aksi, blokir panggilan, atau ganti parameter. Nilai kosong menghapus parameter.</string>
+  <string name="setup_stalker_rules_add">Tambah aturan</string>
+  <string name="setup_stalker_rule_number">Aturan %1$d</string>
+  <string name="setup_stalker_rule_delete">Hapus</string>
+  <string name="setup_stalker_rule_action_placeholder">Aksi, mis. get_profile</string>
+  <string name="setup_stalker_rule_block">Blokir permintaan ini</string>
+  <string name="setup_stalker_rule_block_warning">Peringatan: memblokir %1$s dapat mencegah proses masuk.</string>
+  <string name="setup_stalker_rule_params_placeholder">Penggantian parameter: name=value | remove_me=</string>
+</resources>

@@ -83,7 +83,6 @@ data class MultiViewUiState(
 
 data class MultiViewPresetUiModel(
     val index: Int,
-    val label: String,
     val isPopulated: Boolean,
     val channelCount: Int
 )

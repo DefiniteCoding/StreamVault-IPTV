@@ -7,8 +7,11 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.foundation.focusGroup
+import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -68,6 +71,10 @@ public fun SettingsContentPane(
     restorePageRequestId: Long = 0L,
     onPageChanged: (SettingsPage?) -> Unit = {},
     categorySelectionId: Long = 0L,
+    railFocusRequester: FocusRequester? = null,
+    onContentFocusChanged: (Boolean) -> Unit = {},
+    enterContentRequested: Boolean = false,
+    onContentEntered: () -> Unit = {},
     openOpenSubtitlesSignIn: Boolean = false,
     onCloseApp: () -> Unit = {}
 ) {
@@ -153,6 +160,7 @@ public fun SettingsContentPane(
         overviewEntryPlaced,
         activeSearchTarget?.requestId,
         searchTargetPlaced,
+        enterContentRequested,
     ) {
         when {
             activeSearchTarget != null && searchTargetPlaced -> {
@@ -180,11 +188,15 @@ public fun SettingsContentPane(
                 withFrameNanos { }
                 if (focusCoordinator.canApply(intent, targetId)) returnFocus.requestFocus()
             }
-            page == null && lastPage == null && overviewEntryPlaced -> {
+            // On TV the sidebar keeps focus until the user explicitly selects a category.
+            page == null && lastPage == null && overviewEntryPlaced && (compact || enterContentRequested) -> {
                 val targetId = "category.${category.name.lowercase()}.first"
                 val intent = focusCoordinator.next(targetId)
                 withFrameNanos { }
-                if (focusCoordinator.canApply(intent, targetId)) overviewEntryFocus.requestFocus()
+                if (focusCoordinator.canApply(intent, targetId)) {
+                    overviewEntryFocus.requestFocus()
+                    onContentEntered()
+                }
             }
         }
     }
@@ -193,6 +205,12 @@ public fun SettingsContentPane(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
+                    // Left leaving the content goes to the selected sidebar item, not whichever item is level with the focus.
+                    .then(
+                        if (!compact && railFocusRequester != null) {
+                            Modifier.exitLeftTo(railFocusRequester, onContentFocusChanged)
+                        } else Modifier
+                    )
                     .then(
                         if (compact) Modifier.fillMaxWidth()
                         else Modifier.widthIn(
@@ -262,7 +280,9 @@ public fun SettingsContentPane(
                                     onClick = { lastPage = destination; page = destination })
                     }
                 } else {
-                    if (page == SettingsPage.SPORTS_DATA_PROVIDERS) {
+                    if (page == SettingsPage.PLAYBACK_WEBHOOKS) {
+                        item { PlaybackWebhookSettingsPage(modifier = if (activeSearchTarget != null) searchTargetModifier else Modifier) }
+                    } else if (page == SettingsPage.SPORTS_DATA_PROVIDERS) {
                         item { SportsDataProviderSettingsPage() }
                     } else if (page == SettingsPage.SOURCE_COMPATIBILITY) {
                         item {
@@ -509,3 +529,12 @@ private val SettingsScrollPositionsSaver = listSaver<MutableMap<String, Settings
         }.toMutableMap()
     },
 )
+
+/** Focus group whose Left exit goes to [target]; navigation inside the group is unchanged. */
+@OptIn(ExperimentalComposeUiApi::class)
+private fun Modifier.exitLeftTo(target: FocusRequester, onFocusChanged: (Boolean) -> Unit): Modifier = this
+    .focusProperties {
+        exit = { direction -> if (direction == FocusDirection.Left) target else FocusRequester.Default }
+    }
+    .onFocusChanged { onFocusChanged(it.hasFocus) }
+    .focusGroup()

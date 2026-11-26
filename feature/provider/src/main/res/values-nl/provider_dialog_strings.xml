@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Annuleren</string>
+  <string name="setup_completion_saved_sync_pending">Aanbieder opgeslagen. Synchronisatie wordt op de achtergrond hervat.</string>
+  <string name="setup_combined_attach_title">Afspeellijst toevoegen aan gecombineerde M3U?</string>
+  <string name="setup_combined_attach_message">%1$s toevoegen aan %2$s en die gecombineerde bron actief houden voor Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">deze afspeellijst</string>
+  <string name="setup_combined_attach_fallback_source">de actieve gecombineerde bron</string>
+  <string name="setup_combined_attach_skip">Niet nu</string>
+  <string name="setup_combined_attach_confirm">Toevoegen aan gecombineerd</string>
+</resources>

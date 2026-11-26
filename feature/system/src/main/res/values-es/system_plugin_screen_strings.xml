@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_actions">Acciones</string>
+  <string name="plugins_settings_need_attention">Algunos ajustes del complemento requieren atención antes de guardar.</string>
+</resources>

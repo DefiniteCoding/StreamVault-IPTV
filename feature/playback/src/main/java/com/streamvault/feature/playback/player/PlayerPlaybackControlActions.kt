@@ -10,16 +10,32 @@ import kotlinx.coroutines.launch
 private const val PLAYBACK_CONTROL_MUTE_TOGGLE_DEBOUNCE_MS = 250L
 
 fun PlayerViewModel.seekForward() {
+    webhookState.discontinuity = true
     notifyUserActivity()
-    playerEngine.seekForward()
+    emitSeekFeedback(SeekDirection.FORWARD)
+    playerEngine.seekForward(SEEK_STEP_MS)
 }
 
 fun PlayerViewModel.seekBackward() {
+    webhookState.discontinuity = true
     notifyUserActivity()
-    playerEngine.seekBackward()
+    emitSeekFeedback(SeekDirection.BACKWARD)
+    playerEngine.seekBackward(SEEK_STEP_MS)
+}
+
+// Live seeks go through timeshift and have no stable position to show, so feedback is for VOD only.
+private fun PlayerViewModel.emitSeekFeedback(direction: SeekDirection) {
+    if (currentContentType == ContentType.LIVE) return
+    seekTargetTracker.next(
+        direction = direction,
+        enginePositionMs = playerEngine.currentPosition.value,
+        durationMs = playerEngine.duration.value,
+        nowMs = SystemClock.elapsedRealtime()
+    )?.let(_seekFeedback::tryEmit)
 }
 
 fun PlayerViewModel.seekToLiveEdge() {
+    webhookState.discontinuity = true
     notifyUserActivity()
     playerEngine.seekToLiveEdge()
 }
@@ -68,16 +84,22 @@ fun PlayerViewModel.toggleControls() {
 }
 
 fun PlayerViewModel.toggleAspectRatio() {
-    val nextRatio = when (_aspectRatio.value) {
-        AspectRatio.FIT -> AspectRatio.FILL
-        AspectRatio.FILL -> AspectRatio.ZOOM
-        AspectRatio.ZOOM -> AspectRatio.FIT
-    }
-    _aspectRatio.value = nextRatio
+    setAspectRatio(
+        when (_aspectRatio.value) {
+            AspectRatio.FIT -> AspectRatio.FILL
+            AspectRatio.FILL -> AspectRatio.ZOOM
+            AspectRatio.ZOOM -> AspectRatio.FIT
+        }
+    )
+}
+
+fun PlayerViewModel.setAspectRatio(ratio: AspectRatio) {
+    _aspectRatio.value = ratio
+    _aspectRatioChanges.tryEmit(ratio)
 
     if (currentContentType == ContentType.LIVE && currentContentId > 0L) {
         viewModelScope.launch {
-            playerPreferencesCoordinator.setAspectRatioForChannel(currentContentId, nextRatio.name)
+            playerPreferencesCoordinator.setAspectRatioForChannel(currentContentId, ratio.name)
         }
     }
 }
@@ -86,12 +108,15 @@ fun PlayerViewModel.dismissResumePrompt(resume: Boolean) {
     val prompt = _resumePrompt.value
     _resumePrompt.value = ResumePromptState()
     if (resume && prompt.positionMs > 0) {
+        webhookState.discontinuity = true
         playerEngine.seekTo(prompt.positionMs)
     }
     playerEngine.play()
 }
 
 fun PlayerViewModel.play() {
+    webhookState.handedOff = false
+    webhookState.userPaused = false
     notifyUserActivity()
     if (
         currentContentType == ContentType.LIVE &&
@@ -105,6 +130,7 @@ fun PlayerViewModel.play() {
 }
 
 fun PlayerViewModel.pause() {
+    webhookState.userPaused = true
     notifyUserActivity()
     if (currentContentType == ContentType.LIVE && timeshiftConfig.enabled) {
         playerEngine.pauseTimeshift()

@@ -1,8 +1,7 @@
 package com.streamvault.feature.provider.setup
 
 import androidx.compose.foundation.*
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.input.*
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
 import com.streamvault.feature.provider.R
+import com.streamvault.core.ui.components.inputFieldColors
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.design.browse.*
@@ -60,6 +60,8 @@ internal fun ProviderTextField(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val coroutineScope = rememberCoroutineScope()
     val isFocused = hasContainerFocus || hasInputFocus
+    val browsePalette = com.streamvault.core.ui.design.BrowseColors.current
+    val colors = remember(browsePalette, isFocused) { inputFieldColors(browsePalette, isFocused) }
     val passwordVisibilityDescription = if (isPassword) {
         androidx.compose.ui.res.stringResource(
             if (isPasswordVisible) R.string.setup_hide_password else R.string.setup_show_password
@@ -147,9 +149,6 @@ internal fun ProviderTextField(
         if (revealedPasswordIndex == idx) revealedPasswordIndex = null
     }
 
-    val borderColor by animateColorAsState(if (isFocused) Primary else SurfaceHighlight, tween(150), label = "border")
-    val bgColor     by animateColorAsState(if (isFocused) Surface  else SurfaceElevated, tween(150), label = "bg")
-
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -163,7 +162,12 @@ internal fun ProviderTextField(
                 }
             }
             .mouseClickable(focusRequester = containerFocusRequester, onClick = ::activateInput)
-            .clickable(onClick = ::activateInput)
+            // No indication: its focus overlay lightens the fill, and the focus ring already marks focus.
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = ::activateInput
+            )
             .focusable()
             .padding(0.dp)
     ) {
@@ -237,17 +241,17 @@ internal fun ProviderTextField(
             readOnly = isTelevisionDevice && !acceptsInput,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(color = OnBackground),
+            textStyle = MaterialTheme.typography.bodyMedium.copy(color = colors.text),
             visualTransformation = when {
                 !isPassword || isPasswordVisible -> VisualTransformation.None
                 else -> RevealingPasswordVisualTransformation(revealedPasswordIndex)
             },
-            cursorBrush = SolidColor(Primary),
+            cursorBrush = SolidColor(colors.cursor),
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier
-                        .background(bgColor, RoundedCornerShape(10.dp))
-                        .border(if (isFocused) 2.dp else 1.dp, borderColor, RoundedCornerShape(10.dp))
+                        .background(colors.container, RoundedCornerShape(10.dp))
+                        .then(if (isFocused) Modifier.border(2.dp, FocusBorder, RoundedCornerShape(10.dp)) else Modifier)
                         .padding(horizontal = 16.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -256,7 +260,7 @@ internal fun ProviderTextField(
                         contentAlignment = Alignment.CenterStart
                     ) {
                         if (fieldValue.text.isEmpty()) {
-                            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium, color = OnSurfaceDim)
+                            Text(text = placeholder, style = MaterialTheme.typography.bodyMedium, color = colors.placeholder)
                         }
                         innerTextField()
                     }
@@ -292,7 +296,7 @@ internal fun ProviderTextField(
                         ) {
                             PasswordVisibilityGlyph(
                                 isVisible = isPasswordVisible,
-                                tint = if (isFocused) Primary else OnSurfaceDim,
+                                tint = colors.icon,
                                 modifier = Modifier.align(Alignment.Center)
                             )
                         }

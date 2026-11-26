@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Aktualizujte podrobnosti svého poskytovatele IPTV</string>
     <string name="setup_add_desc">Přidejte svého poskytovatele IPTV</string>
     <string name="setup_shell_eyebrow">Registrace poskytovatele</string>
-    <string name="setup_shell_subtitle">Použijte Xtream nebo M3U. Později to můžete změnit.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U nebo Jellyfin. Upravte později v Nastavení.</string>
     <string name="setup_form_subtitle">Vyberte zdroj, zadejte údaje a pokračujte. Později to můžete spravovat v Nastavení.</string>
     <string name="setup_source_type_label">Typ zdroje</string>
     <string name="setup_info_xtream_title">Použijte Xtream, když máte přihlašovací údaje</string>
-    <string name="setup_info_xtream_body">Nejlepší, když máte server, uživatele a heslo.</string>
+    <string name="setup_info_xtream_body">Nejlepší pro server, uživatele a heslo.</string>
     <string name="setup_info_m3u_title">Použijte M3U pro playlisty z URL nebo souboru</string>
     <string name="setup_info_m3u_body">Použijte odkaz na playlist nebo importujte místní soubor.</string>
-    <string name="setup_info_manage_title">Poskytovatele můžete spravovat později</string>
-    <string name="setup_info_manage_body">Později jej můžete obnovit, upravit nebo nahradit v Nastavení.</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">Seznam skladeb M3U</string>
     <string name="setup_name_hint">Název seznamu videí (volitelné)</string>

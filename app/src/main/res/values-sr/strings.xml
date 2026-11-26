@@ -9,7 +9,6 @@
     <string name="nav_series">Серије</string>
     <string name="nav_epg">Водич</string>
     <string name="nav_settings">Подешавања</string>
-    <string name="nav_close_app">Затвори апликацију</string>
 
 
     <string name="welcome_enter_app">Уђи у апликацију</string>
@@ -346,4 +345,6 @@
     <string name="nav_sports">Спорт</string>
     <string name="stremio_new_episode_channel">Обавештења о новим епизодама</string>
     <string name="stremio_new_episode_count">Нове епизоде: %1$d</string>
+    <string name="tv_channel_favorites_title">Омиљено</string>
+    <string name="tv_channel_favorites_description">Ваши омиљени канали, филмови и серије</string>
 </resources>

@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Päivitä IPTV-palveluntarjoajan tiedot</string>
     <string name="setup_add_desc">Lisää IPTV-palveluntarjoajasi</string>
     <string name="setup_shell_eyebrow">Palveluntarjoajan perehdytys</string>
-    <string name="setup_shell_subtitle">Käytä Xtreamia tai M3U:ta. Voit vaihtaa sen myöhemmin.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U tai Jellyfin. Muokkaa myöhemmin Asetuksissa.</string>
     <string name="setup_form_subtitle">Valitse lähde, syötä tiedot ja jatka. Voit hallita sitä myöhemmin Asetuksista.</string>
     <string name="setup_source_type_label">Lähteen tyyppi</string>
     <string name="setup_info_xtream_title">Käytä Xtreamia, kun tunnistetiedot ovat saatavilla</string>
-    <string name="setup_info_xtream_body">Parasta, kun sinulla on palvelin, käyttäjä ja salasana.</string>
+    <string name="setup_info_xtream_body">Parasta: palvelin, käyttäjä ja salasana.</string>
     <string name="setup_info_m3u_title">Käytä M3U:ta URL- tai tiedostopohjaisiin soittolistoihin</string>
     <string name="setup_info_m3u_body">Käytä soittolistalinkkiä tai tuo paikallinen tiedosto.</string>
-    <string name="setup_info_manage_title">Voit hallita palveluntarjoajia myöhemmin</string>
-    <string name="setup_info_manage_body">Päivitä, muokkaa tai vaihda se myöhemmin Asetuksista.</string>
     <string name="setup_xtream">Xtream koodit</string>
     <string name="setup_m3u">M3U soittolista</string>
     <string name="setup_name_hint">Soittolistan nimi (valinnainen)</string>

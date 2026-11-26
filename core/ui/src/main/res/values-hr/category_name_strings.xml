@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Omiljeni</string>
+    <string name="category_name_recent">Nedavno</string>
+    <string name="category_name_all_channels">Svi kanali</string>
+    <string name="category_name_placeholder">Kategorija %1$s</string>
+</resources>

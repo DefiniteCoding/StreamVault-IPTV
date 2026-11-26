@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">취소</string>
+  <string name="setup_completion_saved_sync_pending">공급자가 저장되었습니다. 동기화는 백그라운드에서 다시 시작됩니다.</string>
+  <string name="setup_combined_attach_title">재생목록을 통합 M3U에 추가할까요?</string>
+  <string name="setup_combined_attach_message">%1$s을(를) %2$s에 추가하고 해당 통합 소스를 라이브 TV용으로 계속 활성 상태로 유지할까요?</string>
+  <string name="setup_combined_attach_fallback_playlist">이 재생목록</string>
+  <string name="setup_combined_attach_fallback_source">활성 통합 소스</string>
+  <string name="setup_combined_attach_skip">나중에</string>
+  <string name="setup_combined_attach_confirm">통합 소스에 추가</string>
+</resources>

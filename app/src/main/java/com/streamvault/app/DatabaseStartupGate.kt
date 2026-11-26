@@ -24,10 +24,7 @@ import javax.inject.Singleton
 sealed interface DatabaseStartupState {
     data object Opening : DatabaseStartupState
     data object Ready : DatabaseStartupState
-    data class Failed(
-        val errorType: String,
-        val userMessage: String = "The local database could not be upgraded. Your data was not deleted."
-    ) : DatabaseStartupState
+    data class Failed(val errorType: String) : DatabaseStartupState
 }
 
 internal class DatabaseStartupGate(
@@ -62,6 +59,7 @@ internal class DatabaseStartupGate(
 @Singleton
 class DatabaseStartupCoordinator @Inject constructor(
     database: Lazy<StreamVaultDatabase>,
+    migrator: Lazy<com.streamvault.data.repository.LegacyCombinedIdentityMigrator>,
     @ApplicationContext context: Context
 ) {
     private val startupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -69,6 +67,7 @@ class DatabaseStartupCoordinator @Inject constructor(
         openDatabase = {
             withContext(Dispatchers.IO) {
                 database.get().openHelper.writableDatabase
+                migrator.get().migrate()
             }
         },
         onFailure = { error ->

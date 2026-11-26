@@ -170,6 +170,7 @@ public fun LazyListScope.settingsBrowsingSection(
                     modifier = if (targetItemId == "live.filter_visibility") targetFocusModifier else Modifier,)
             }
             if (page == null || page == SettingsPage.LIVE_CHANNELS) {
+                DefaultLiveChannelOrderSetting()
                 SwitchSettingsRow(
                     label = stringResource(R.string.settings_hide_decorative_live_rows),
                     value = stringResource(R.string.settings_hide_decorative_live_rows_subtitle),
@@ -237,6 +238,8 @@ public fun LazyListScope.settingsBrowsingSection(
                     modifier = if (targetItemId == "appearance.language") targetFocusModifier else Modifier,)
             }
             if (page == null || page == SettingsPage.VOD_LIBRARY) {
+                FeaturedCardSettings(uiState, viewModel, targetItemId, targetFocusModifier)
+
                 ClickableSettingsRow(
                     label = stringResource(R.string.settings_vod_view_mode),
                     value = stringResource(uiState.vodViewMode.labelResId()),

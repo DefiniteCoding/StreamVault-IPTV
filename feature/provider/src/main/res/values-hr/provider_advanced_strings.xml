@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL portala</string>
+  <string name="setup_jellyfin_source_subtitle">Medijski poslužitelj Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Nadjačavanje User-Agenta (neobavezno)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Zaglavlja (API, neobavezno, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Prilagođena zaglavlja (neobavezno, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Izvor vodiča</string>
+  <string name="setup_guide_source_helper">Odaberite koristi li ovaj pružatelj vodič pružatelja, dodijeljene vanjske XMLTV izvore ili nikakav vodič.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Zadržava trenutno miješano ponašanje: vanjski XMLTV može nadjačati podatke pružatelja, a kanali bez podudaranja i dalje mogu koristiti podatke pružatelja.</string>
+  <string name="setup_guide_policy_external_title">Samo vanjski EPG</string>
+  <string name="setup_guide_policy_external_description">Koristi samo dodijeljene vanjske XMLTV izvore. Kanali bez podudaranja ostaju bez podataka vodiča.</string>
+  <string name="setup_guide_policy_provider_title">Samo EPG pružatelja</string>
+  <string name="setup_guide_policy_provider_description">Zanemaruje dodijeljene vanjske XMLTV izvore za ovog pružatelja i koristi samo putanje vodiča pružatelja.</string>
+  <string name="setup_guide_policy_disabled_title">Isključi podatke vodiča</string>
+  <string name="setup_guide_policy_disabled_description">Ne uvozi i ne usklađuje podatke vodiča za ovog pružatelja.</string>
+
+  <string name="setup_logo_source_title">Logotipi kanala</string>
+  <string name="setup_logo_source_helper">Odaberite dolaze li logotipi kanala od pružatelja, iz ikone usklađenog EPG kanala ili iz jednog strogog izvora.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Prvo logotipi pružatelja</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Koristi logotip pružatelja kad postoji, zatim ikonu usklađenog EPG kanala.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Preferiraj EPG logotipe</string>
+  <string name="setup_logo_policy_epg_preferred_description">Prvo koristi ikonu usklađenog EPG kanala, zatim logotip pružatelja.</string>
+  <string name="setup_logo_policy_supplier_only_title">Samo logotipi pružatelja</string>
+  <string name="setup_logo_policy_supplier_only_description">Uvijek koristi logotipe pružatelja za ovog pružatelja.</string>
+  <string name="setup_logo_policy_epg_only_title">Samo EPG logotipi</string>
+  <string name="setup_logo_policy_epg_only_description">Uvijek koristi ikone usklađenih EPG kanala za ovog pružatelja.</string>
+
+  <string name="setup_stalker_auth_title">Način autentifikacije za Stalker</string>
+  <string name="setup_stalker_auth_helper">Automatsko otkrivanje je zadano. Promijenite ga samo ako portal traži vjerodajnice ili mješovitu prijavu MAG + račun.</string>
+  <string name="setup_stalker_auth_auto_title">Automatsko otkrivanje</string>
+  <string name="setup_stalker_auth_auto_description">Prvo pokušava najvjerojatniji tijek autentifikacije portala i ponavlja jednom ako bolje odgovara drugi Stalker način.</string>
+  <string name="setup_stalker_auth_mac_only_title">Samo MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Koristi MAC autentifikaciju u MAG stilu bez prijave računom portala.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + vjerodajnice</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Zadržava MAG identitet i dodaje vjerodajnice računa portala za strože portale.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Samo vjerodajnice</string>
+  <string name="setup_stalker_auth_credentials_only_description">Koristi vjerodajnice računa portala čak i ako je MAC adresa neobavezna ili se zanemaruje.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Korisničko ime portala (neobavezno)</string>
+  <string name="setup_stalker_username_placeholder">Korisničko ime portala</string>
+  <string name="setup_stalker_password_optional_placeholder">Lozinka portala (neobavezno)</string>
+  <string name="setup_stalker_password_placeholder">Lozinka portala</string>
+  <string name="setup_stalker_mag_type_placeholder">MAG tip (neobavezno)</string>
+  <string name="setup_stalker_timezone_placeholder">Vremenska zona (neobavezno)</string>
+  <string name="setup_stalker_locale_placeholder">Lokalizacija (neobavezno)</string>
+  <string name="setup_stalker_serial_placeholder">Serijski broj (neobavezno)</string>
+  <string name="setup_stalker_device_id_placeholder">ID uređaja (neobavezno)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (neobavezno)</string>
+  <string name="setup_stalker_signature_placeholder">Potpis (neobavezno)</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker kompatibilnost</string>
+  <string name="setup_stalker_compat_section_helper">Postavke za pojedine portale s tvrdoglavim MAG/Stalker poslužiteljima. Ostavite polja praznima osim ako ih poslužitelj traži.</string>
+  <string name="setup_stalker_hw_version_placeholder">Nadjačavanje hw_version (neobavezno)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, neobavezno)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (player, neobavezno)</string>
+  <string name="setup_stalker_player_headers_placeholder">Zaglavlja (player, neobavezno, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent veza</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Koristi HTTP proxy</string>
+  <string name="setup_stalker_proxy_helper">Odnosi se samo na Stalker API i reprodukciju.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxy host</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxy port</string>
+
+  <string name="setup_stalker_selector_title">Kompatibilnost</string>
+  <string name="setup_stalker_protocol_button">Protokol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">Klasični MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Model: %1$s</string>
+  <string name="setup_stalker_model_automatic">Automatski</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperimentalno)</string>
+  <string name="setup_stalker_experimental_note">Eksperimentalni profili zahtijevaju snimljena ili ručno unesena identifikacijska polja i izuzeti su iz automatskog otkrivanja.</string>
+  <string name="setup_stalker_profile_custom">Prilagođeni profil</string>
+
+  <string name="setup_stalker_rules_title">Pravila zahtjeva</string>
+  <string name="setup_stalker_rules_helper">Podudarajte po radnji, blokirajte pozive ili nadjačajte parametre. Prazne vrijednosti uklanjaju parametre.</string>
+  <string name="setup_stalker_rules_add">Dodaj pravilo</string>
+  <string name="setup_stalker_rule_number">Pravilo %1$d</string>
+  <string name="setup_stalker_rule_delete">Izbriši</string>
+  <string name="setup_stalker_rule_action_placeholder">Radnja, npr. get_profile</string>
+  <string name="setup_stalker_rule_block">Blokiraj ovaj zahtjev</string>
+  <string name="setup_stalker_rule_block_warning">Upozorenje: blokiranje %1$s može spriječiti prijavu.</string>
+  <string name="setup_stalker_rule_params_placeholder">Nadjačavanje parametara: name=value | remove_me=</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Припрема ваше библиотеке…</string>
+    <string name="startup_failed_title">StreamVault није могао да отвори вашу библиотеку</string>
+    <string name="startup_failed_message">Локална база података није могла бити надограђена. Ваши подаци нису избрисани.</string>
+    <string name="startup_failed_error_type">Грешка: %1$s</string>
+    <string name="startup_retry">Покушај поново</string>
+    <string name="startup_share_report">Подели извештај</string>
+</resources>

@@ -213,13 +213,8 @@ internal fun AdvancedProviderOptionsSection(
                 focusedContainerColor = Primary.copy(alpha = 0.24f)
             ),
             border = ClickableSurfaceDefaults.border(
-                border = Border(
-                    BorderStroke(
-                        1.dp,
-                        if (showAdvancedOptions) Primary.copy(alpha = 0.45f) else SurfaceHighlight
-                    )
-                ),
-                focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                border = Border.None,
+                focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
             ),
             scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
         ) {
@@ -269,13 +264,8 @@ internal fun AdvancedProviderOptionsSection(
                             focusedContainerColor = Primary.copy(alpha = 0.22f)
                         ),
                         border = ClickableSurfaceDefaults.border(
-                            border = Border(
-                                BorderStroke(
-                                    1.dp,
-                                    if (uiState.m3uVodClassificationEnabled) Primary.copy(alpha = 0.4f) else SurfaceHighlight
-                                )
-                            ),
-                            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                            border = Border.None,
+                            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
                         ),
                         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                     ) {
@@ -308,7 +298,7 @@ internal fun AdvancedProviderOptionsSection(
                     ProviderTextField(
                         value = httpUserAgent,
                         onValueChange = onHttpUserAgentChange,
-                        placeholder = "User-Agent override (optional)",
+                        placeholder = stringResource(R.string.setup_adv_user_agent_override_placeholder),
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
                             autoCorrectEnabled = false,
@@ -323,9 +313,9 @@ internal fun AdvancedProviderOptionsSection(
                         value = httpHeaders,
                         onValueChange = onHttpHeadersChange,
                         placeholder = if (sourceType == SourceType.STALKER) {
-                            "Headers (API, optional, Header: Value | HeaderToRemove:)"
+                            stringResource(R.string.setup_adv_headers_stalker_placeholder)
                         } else {
-                            "Custom headers (optional, Header: Value | Header2: Value)"
+                            stringResource(R.string.setup_adv_headers_custom_placeholder)
                         },
                         keyboardOptions = KeyboardOptions(
                             capitalization = KeyboardCapitalization.None,
@@ -375,12 +365,12 @@ internal fun AdvancedProviderOptionsSection(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Guide source",
+                            text = stringResource(R.string.setup_guide_source_title),
                             style = MaterialTheme.typography.titleSmall,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Choose whether this provider uses its supplier guide, your assigned external XMLTV sources, or no guide at all.",
+                            text = stringResource(R.string.setup_guide_source_helper),
                             style = MaterialTheme.typography.bodySmall,
                             color = OnSurfaceDim
                         )
@@ -402,12 +392,12 @@ internal fun AdvancedProviderOptionsSection(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Channel logos",
+                            text = stringResource(R.string.setup_logo_source_title),
                             style = MaterialTheme.typography.titleSmall,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Pick whether channel logos come from the supplier, the matched EPG channel icon, or a strict single source.",
+                            text = stringResource(R.string.setup_logo_source_helper),
                             style = MaterialTheme.typography.bodySmall,
                             color = OnSurfaceDim
                         )
@@ -520,12 +510,12 @@ internal fun AdvancedProviderOptionsSection(
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Text(
-                            text = "Stalker auth mode",
+                            text = stringResource(R.string.setup_stalker_auth_title),
                             style = MaterialTheme.typography.titleSmall,
                             color = TextPrimary
                         )
                         Text(
-                            text = "Auto-detect is the default. Override it only when the portal needs credentials or a mixed MAG + account login flow.",
+                            text = stringResource(R.string.setup_stalker_auth_helper),
                             style = MaterialTheme.typography.bodySmall,
                             color = OnSurfaceDim
                         )
@@ -542,9 +532,9 @@ internal fun AdvancedProviderOptionsSection(
                             value = username,
                             onValueChange = onUsernameChange,
                             placeholder = if (stalkerAuthMode == StalkerAuthMode.AUTO) {
-                                "Portal username (optional)"
+                                stringResource(R.string.setup_stalker_username_optional_placeholder)
                             } else {
-                                "Portal username"
+                                stringResource(R.string.setup_stalker_username_placeholder)
                             },
                             keyboardOptions = KeyboardOptions(
                                 capitalization = KeyboardCapitalization.None,
@@ -557,9 +547,9 @@ internal fun AdvancedProviderOptionsSection(
                             value = password,
                             onValueChange = onPasswordChange,
                             placeholder = if (stalkerAuthMode == StalkerAuthMode.AUTO) {
-                                "Portal password (optional)"
+                                stringResource(R.string.setup_stalker_password_optional_placeholder)
                             } else {
-                                "Portal password"
+                                stringResource(R.string.setup_stalker_password_placeholder)
                             },
                             isPassword = true,
                             keyboardOptions = KeyboardOptions(
@@ -573,106 +563,102 @@ internal fun AdvancedProviderOptionsSection(
                     ProviderTextField(
                         value = stalkerDeviceProfile,
                         onValueChange = onStalkerDeviceProfileChange,
-                        placeholder = "MAG Type (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_mag_type_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerDeviceTimezone,
                         onValueChange = onStalkerDeviceTimezoneChange,
-                        placeholder = "Timezone (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_timezone_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerDeviceLocale,
                         onValueChange = onStalkerDeviceLocaleChange,
-                        placeholder = "Locale (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_locale_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerSerialNumber,
                         onValueChange = onStalkerSerialNumberChange,
-                        placeholder = "Serial number (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_serial_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerDeviceId,
                         onValueChange = onStalkerDeviceIdChange,
-                        placeholder = "Device ID (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_device_id_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerDeviceId2,
                         onValueChange = onStalkerDeviceId2Change,
-                        placeholder = "Device ID2 (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_device_id2_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerSignature,
                         onValueChange = onStalkerSignatureChange,
-                        placeholder = "Signature (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_signature_placeholder)
                     )
                     HorizontalDivider(color = SurfaceHighlight.copy(alpha = 0.45f))
                     Text(
-                        text = "Stalker compatibility",
+                        text = stringResource(R.string.setup_stalker_compat_section_title),
                         style = MaterialTheme.typography.titleSmall,
                         color = TextPrimary
                     )
                     Text(
-                        text = "Portal-specific overrides for stubborn MAG/Stalker servers. Leave fields empty unless a server needs them.",
+                        text = stringResource(R.string.setup_stalker_compat_section_helper),
                         style = MaterialTheme.typography.bodySmall,
                         color = OnSurfaceDim
                     )
                     ProviderTextField(
                         value = stalkerHwVersion,
                         onValueChange = onStalkerHwVersionChange,
-                        placeholder = "hw_version override (optional)"
+                        placeholder = stringResource(R.string.setup_stalker_hw_version_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerApiUserAgent,
                         onValueChange = onStalkerApiUserAgentChange,
-                        placeholder = "User-Agent (API, optional)"
+                        placeholder = stringResource(R.string.setup_stalker_api_user_agent_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerPlayerUserAgent,
                         onValueChange = onStalkerPlayerUserAgentChange,
-                        placeholder = "User-Agent (Player, optional)"
+                        placeholder = stringResource(R.string.setup_stalker_player_user_agent_placeholder)
                     )
                     ProviderTextField(
                         value = stalkerPlayerHeaders,
                         onValueChange = onStalkerPlayerHeadersChange,
-                        placeholder = "Headers (Player, optional, Header: Value | HeaderToRemove:)"
+                        placeholder = stringResource(R.string.setup_stalker_player_headers_placeholder)
                     )
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "X-User-Agent Link",
+                            text = stringResource(R.string.setup_stalker_x_user_agent_link),
                             style = MaterialTheme.typography.bodyMedium,
                             color = TextPrimary
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             StalkerLinkOptionButton(
-                                text = ProviderStalkerAdvancedOptions.LINK_ETHERNET,
+                                text = stringResource(R.string.setup_stalker_link_ethernet),
                                 selected = stalkerXUserAgentLink == ProviderStalkerAdvancedOptions.LINK_ETHERNET,
                                 onClick = { onStalkerXUserAgentLinkChange(ProviderStalkerAdvancedOptions.LINK_ETHERNET) }
                             )
                             StalkerLinkOptionButton(
-                                text = ProviderStalkerAdvancedOptions.LINK_WIFI,
+                                text = stringResource(R.string.setup_stalker_link_wifi),
                                 selected = stalkerXUserAgentLink == ProviderStalkerAdvancedOptions.LINK_WIFI,
                                 onClick = { onStalkerXUserAgentLinkChange(ProviderStalkerAdvancedOptions.LINK_WIFI) }
                             )
                         }
                     }
+                    val proxyTitle = stringResource(R.string.setup_stalker_proxy_title)
                     TvClickableSurface(
                         onClick = { onStalkerProxyEnabledChange(!stalkerProxyEnabled) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .semantics { contentDescription = "Use HTTP proxy" },
+                            .semantics { contentDescription = proxyTitle },
                         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Artwork),
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = if (stalkerProxyEnabled) Primary.copy(alpha = 0.1f) else Surface,
                             focusedContainerColor = Primary.copy(alpha = 0.22f)
                         ),
                         border = ClickableSurfaceDefaults.border(
-                            border = Border(
-                                BorderStroke(
-                                    1.dp,
-                                    if (stalkerProxyEnabled) Primary.copy(alpha = 0.4f) else SurfaceHighlight
-                                )
-                            ),
-                            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+                            border = Border.None,
+                            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
                         ),
                         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                     ) {
@@ -683,12 +669,12 @@ internal fun AdvancedProviderOptionsSection(
                         ) {
                             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                                 Text(
-                                    text = "Use HTTP proxy",
+                                    text = proxyTitle,
                                     style = MaterialTheme.typography.titleSmall,
                                     color = TextPrimary
                                 )
                                 Text(
-                                    text = "Applies to Stalker API and playback only.",
+                                    text = stringResource(R.string.setup_stalker_proxy_helper),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = OnSurfaceDim
                                 )
@@ -704,12 +690,12 @@ internal fun AdvancedProviderOptionsSection(
                             ProviderTextField(
                                 value = stalkerProxyHost,
                                 onValueChange = onStalkerProxyHostChange,
-                                placeholder = "Proxy host"
+                                placeholder = stringResource(R.string.setup_stalker_proxy_host_placeholder)
                             )
                             ProviderTextField(
                                 value = stalkerProxyPort,
                                 onValueChange = onStalkerProxyPortChange,
-                                placeholder = "Proxy port",
+                                placeholder = stringResource(R.string.setup_stalker_proxy_port_placeholder),
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                             )
                         }

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL ng Portal</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfin media server</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Override ng User-Agent (opsyonal)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Mga header (API, opsyonal, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Mga custom na header (opsyonal, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Pinagmulan ng guide</string>
+  <string name="setup_guide_source_helper">Piliin kung gagamitin ng provider na ito ang guide ng supplier, ang mga nakatalagang external na XMLTV source, o walang guide.</string>
+  <string name="setup_guide_policy_auto_title">Auto</string>
+  <string name="setup_guide_policy_auto_description">Panatilihin ang kasalukuyang halo-halong gawi: maaaring i-override ng external na XMLTV ang guide data ng supplier, at maaari pa ring gumamit ng fallback ng supplier ang mga channel na walang katugma.</string>
+  <string name="setup_guide_policy_external_title">External EPG lang ang gamitin</string>
+  <string name="setup_guide_policy_external_description">Mga nakatalagang external na XMLTV source lang ang gagamitin. Mananatiling walang guide data ang mga channel na walang katugma.</string>
+  <string name="setup_guide_policy_provider_title">Supplier EPG lang ang gamitin</string>
+  <string name="setup_guide_policy_provider_description">Huwag pansinin ang mga nakatalagang external na XMLTV source para sa provider na ito at ang mga guide path lang ng supplier ang gamitin.</string>
+  <string name="setup_guide_policy_disabled_title">I-disable ang guide data</string>
+  <string name="setup_guide_policy_disabled_description">Huwag mag-import o mag-match ng guide data para sa provider na ito.</string>
+
+  <string name="setup_logo_source_title">Mga logo ng channel</string>
+  <string name="setup_logo_source_helper">Piliin kung manggagaling ang mga logo ng channel sa supplier, sa katugmang icon ng EPG channel, o sa iisang mahigpit na source.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Mga logo ng supplier muna</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Gamitin ang logo ng supplier kung mayroon, saka bumalik sa katugmang icon ng EPG.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Unahin ang mga logo ng EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Gamitin muna ang katugmang icon ng EPG, saka bumalik sa logo ng supplier.</string>
+  <string name="setup_logo_policy_supplier_only_title">Mga logo ng supplier lang</string>
+  <string name="setup_logo_policy_supplier_only_description">Palaging gamitin ang mga logo ng supplier para sa provider na ito.</string>
+  <string name="setup_logo_policy_epg_only_title">Mga logo ng EPG lang</string>
+  <string name="setup_logo_policy_epg_only_description">Palaging gamitin ang katugmang icon ng EPG para sa provider na ito.</string>
+
+  <string name="setup_stalker_auth_title">Auth mode ng Stalker</string>
+  <string name="setup_stalker_auth_helper">Auto-detect ang default. I-override lang ito kung kailangan ng portal ng mga kredensyal o ng halo-halong MAG + account na login flow.</string>
+  <string name="setup_stalker_auth_auto_title">Auto-detect</string>
+  <string name="setup_stalker_auth_auto_description">Subukan muna ang malamang na auth flow ng portal at sumubok ulit nang isang beses kung mas babagay ang ibang Stalker mode.</string>
+  <string name="setup_stalker_auth_mac_only_title">MAC lang</string>
+  <string name="setup_stalker_auth_mac_only_description">Gamitin ang MAG-style na MAC authentication nang walang account login sa portal.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + mga kredensyal</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Panatilihin ang MAG identity at magdagdag ng mga kredensyal ng account sa portal para sa mas mahigpit na portal.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Mga kredensyal lang</string>
+  <string name="setup_stalker_auth_credentials_only_description">Gamitin ang mga kredensyal ng account sa portal kahit opsyonal o binabalewala ang MAC address.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Username ng portal (opsyonal)</string>
+  <string name="setup_stalker_username_placeholder">Username ng portal</string>
+  <string name="setup_stalker_password_optional_placeholder">Password ng portal (opsyonal)</string>
+  <string name="setup_stalker_password_placeholder">Password ng portal</string>
+  <string name="setup_stalker_mag_type_placeholder">Uri ng MAG (opsyonal)</string>
+  <string name="setup_stalker_timezone_placeholder">Timezone (opsyonal)</string>
+  <string name="setup_stalker_locale_placeholder">Locale (opsyonal)</string>
+  <string name="setup_stalker_serial_placeholder">Serial number (opsyonal)</string>
+  <string name="setup_stalker_device_id_placeholder">Device ID (opsyonal)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (opsyonal)</string>
+  <string name="setup_stalker_signature_placeholder">Signature (opsyonal)</string>
+
+  <string name="setup_stalker_compat_section_title">Compatibility ng Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Mga override na partikular sa portal para sa matitigas na MAG/Stalker server. Iwanang walang laman ang mga field maliban kung kailangan ng server.</string>
+  <string name="setup_stalker_hw_version_placeholder">Override ng hw_version (opsyonal)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, opsyonal)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (Player, opsyonal)</string>
+  <string name="setup_stalker_player_headers_placeholder">Mga header (Player, opsyonal, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agent Link</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Gumamit ng HTTP proxy</string>
+  <string name="setup_stalker_proxy_helper">Para lang sa Stalker API at playback.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Proxy host</string>
+  <string name="setup_stalker_proxy_port_placeholder">Proxy port</string>
+
+  <string name="setup_stalker_selector_title">Compatibility</string>
+  <string name="setup_stalker_protocol_button">Protocol: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Auto</string>
+  <string name="setup_stalker_protocol_classic_mag">Classic MAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Modelo: %1$s</string>
+  <string name="setup_stalker_model_automatic">Awtomatiko</string>
+  <string name="setup_stalker_profile_experimental">%1$s (eksperimental)</string>
+  <string name="setup_stalker_experimental_note">Kailangan ng mga eksperimental na profile ng na-capture o manu-manong identity field at hindi sila kasama sa awtomatikong discovery.</string>
+  <string name="setup_stalker_profile_custom">Custom na profile</string>
+
+  <string name="setup_stalker_rules_title">Mga panuntunan sa request</string>
+  <string name="setup_stalker_rules_helper">Mag-match ayon sa action, mag-block ng mga call, o mag-override ng mga param. Inaalis ng mga blangkong value ang mga param.</string>
+  <string name="setup_stalker_rules_add">Magdagdag ng panuntunan</string>
+  <string name="setup_stalker_rule_number">Panuntunan %1$d</string>
+  <string name="setup_stalker_rule_delete">Burahin</string>
+  <string name="setup_stalker_rule_action_placeholder">Action, hal. get_profile</string>
+  <string name="setup_stalker_rule_block">I-block ang request na ito</string>
+  <string name="setup_stalker_rule_block_warning">Babala: maaaring pigilan ng pag-block sa %1$s ang pag-login.</string>
+  <string name="setup_stalker_rule_params_placeholder">Mga override ng param: name=value | remove_me=</string>
+</resources>

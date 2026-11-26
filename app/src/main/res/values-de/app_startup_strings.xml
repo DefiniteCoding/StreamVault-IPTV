@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Bibliothek wird vorbereitet…</string>
+    <string name="startup_failed_title">StreamVault konnte deine Bibliothek nicht öffnen</string>
+    <string name="startup_failed_message">Die lokale Datenbank konnte nicht aktualisiert werden. Deine Daten wurden nicht gelöscht.</string>
+    <string name="startup_failed_error_type">Fehler: %1$s</string>
+    <string name="startup_retry">Erneut versuchen</string>
+    <string name="startup_share_report">Bericht teilen</string>
+</resources>

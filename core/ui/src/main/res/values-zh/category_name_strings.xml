@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">收藏</string>
+    <string name="category_name_recent">最近</string>
+    <string name="category_name_all_channels">所有频道</string>
+    <string name="category_name_placeholder">分类 %1$s</string>
+</resources>

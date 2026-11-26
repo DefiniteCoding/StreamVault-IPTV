@@ -1,6 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
     <string name="app_name">StreamVault</string>
+    <string name="brand_wordmark" translatable="false">StreamVault</string>
 
     
     <string name="nav_home">Home</string>
@@ -10,7 +11,6 @@
     <string name="nav_epg">Guide</string>
     <string name="nav_settings">Settings</string>
     <string name="nav_extensions">Extensions</string>
-    <string name="nav_close_app">Close app</string>
 
     
     <string name="welcome_enter_app">Enter App</string>
@@ -346,4 +346,6 @@
     <string name="nav_sports">Sports</string>
     <string name="stremio_new_episode_channel">New episode notifications</string>
     <string name="stremio_new_episode_count">New episodes: %1$d</string>
+    <string name="tv_channel_favorites_title">Favorites</string>
+    <string name="tv_channel_favorites_description">Your favorite channels, movies, and series</string>
 </resources>

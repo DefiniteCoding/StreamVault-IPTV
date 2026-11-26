@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">أدخل رابط APK المباشر. سيقوم StreamVault بتنزيله وفتح أداة التثبيت.</string>
+  <string name="plugins_install_url_label">رابط APK للملحق</string>
+  <string name="plugins_installing">جارٍ التثبيت…</string>
+  <string name="plugins_download_install">تنزيل وتثبيت</string>
+</resources>

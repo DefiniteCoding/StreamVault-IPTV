@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Favoritter</string>
+    <string name="category_name_recent">Seneste</string>
+    <string name="category_name_all_channels">Alle kanaler</string>
+    <string name="category_name_placeholder">Kategori %1$s</string>
+</resources>

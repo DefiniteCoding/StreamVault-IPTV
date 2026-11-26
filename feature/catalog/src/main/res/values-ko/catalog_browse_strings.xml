@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">전체</string>
+  <string name="library_chip_favorites">즐겨찾기</string>
+  <string name="library_chip_resume">이어서 재생</string>
+  <string name="library_chip_unwatched">시청하지 않음</string>
+  <string name="library_chip_recent">최근</string>
+  <string name="library_chip_updated">업데이트됨</string>
+  <string name="library_chip_top_rated">평점 높은 순</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">라이브러리 순서</string>
+  <string name="library_chip_sort_title">가나다순</string>
+  <string name="library_chip_sort_newest">최신순</string>
+  <string name="library_chip_sort_recently_updated">최근 업데이트</string>
+  <string name="library_chip_sort_updated_short">업데이트됨</string>
+  <string name="library_chip_sort_rating">평점</string>
+  <string name="library_chip_sort_recent_activity">최근 활동</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">그룹 %d개</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">항목 %d개</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">추천 %d개</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">저장된 항목 %d개</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">영화를 불러오지 못했습니다</string>
+  <string name="series_error_load_failed">시리즈를 불러오지 못했습니다</string>
+  <string name="movie_detail_error_load_failed">영화 상세 정보를 불러오지 못했습니다</string>
+  <string name="series_detail_error_load_failed">시리즈 상세 정보를 불러오지 못했습니다</string>
+  <string name="catalog_error_no_active_provider">활성 제공업체가 없습니다</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\'을(를) 라이브 TV로 되돌렸습니다</string>
+  <string name="catalog_message_group_created">그룹 %1$s을(를) 만들었습니다</string>
+  <string name="catalog_message_group_created_and_added">그룹 %1$s을(를) 만들고 %2$s을(를) 추가했습니다</string>
+  <string name="catalog_message_category_hidden">%1$s 카테고리를 숨겼습니다</string>
+  <string name="catalog_message_category_pinned">%1$s을(를) 고정했습니다</string>
+  <string name="catalog_message_category_unpinned">%1$s 고정을 해제했습니다</string>
+  <string name="catalog_message_group_renamed">그룹 이름을 %1$s(으)로 변경했습니다</string>
+  <string name="catalog_message_group_deleted">그룹 %1$s을(를) 삭제했습니다</string>
+  <string name="catalog_error_group_name_required">그룹 이름을 입력하세요</string>
+  <string name="catalog_error_group_name_reserved">\'즐겨찾기\'는 예약된 이름입니다</string>
+  <string name="movies_error_group_name_duplicate">같은 이름의 영화 그룹이 이미 있습니다</string>
+  <string name="series_error_group_name_duplicate">같은 이름의 시리즈 그룹이 이미 있습니다</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">저장된 이 보기에서 %1$s을(를) 제거했습니다.</string>
+  <string name="favorites_message_moved_to_group">%1$s을(를) 선택한 그룹으로 이동했습니다.</string>
+  <string name="favorites_message_group_deleted">그룹 %1$s을(를) 삭제했습니다.</string>
+  <string name="favorites_error_move_failed">%1$s을(를) 이동할 수 없습니다: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s을(를) 병합할 수 없습니다: %2$s</string>
+  <string name="favorites_error_reorder_failed">순서 변경을 저장할 수 없습니다: %1$s</string>
+  <string name="favorites_error_unknown">알 수 없는 오류</string>
+  <string name="favorites_subtitle_channel_number">채널 %1$d</string>
+  <string name="favorites_group_subtitle">%1$s 그룹</string>
+  <string name="favorites_content_type_movie">영화</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

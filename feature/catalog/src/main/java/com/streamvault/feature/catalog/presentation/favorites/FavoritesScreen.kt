@@ -1,5 +1,8 @@
 package com.streamvault.feature.catalog.presentation.favorites
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.BrowseShapes
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -48,6 +51,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -102,6 +106,8 @@ fun FavoritesScreen(
     val reducedMotionEnabled = rememberReducedMotionEnabled()
     val homeShelfGlobalTitle = stringResource(R.string.saved_preset_home_shelf_global_title)
     val homeShelfGlobalSubtitle = stringResource(R.string.saved_preset_home_shelf_global_subtitle)
+    val resources = LocalResources.current
+    val configuration = LocalConfiguration.current
     val providerScopedSections = remember(
         uiState.sections,
         uiState.selectedPreset,
@@ -109,7 +115,8 @@ fun FavoritesScreen(
         uiState.activeProviderId,
         uiState.managedGroups,
         homeShelfGlobalTitle,
-        homeShelfGlobalSubtitle
+        homeShelfGlobalSubtitle,
+        configuration
     ) {
         val presetSections = when (uiState.selectedPreset) {
             SavedLibraryPreset.ALL_SAVED,
@@ -149,7 +156,7 @@ fun FavoritesScreen(
                     null
                 } else {
                     section.copy(
-                        subtitle = "${scopedItems.size} saved items",
+                        subtitle = resources.getQuantityString(R.plurals.library_count_saved_items, scopedItems.size, scopedItems.size),
                         items = scopedItems,
                         reorderable = section.reorderable && scopedItems.size > 1
                     )
@@ -188,7 +195,7 @@ fun FavoritesScreen(
             }
         }
     }
-    val filteredSections = remember(providerScopedSections, uiState.selectedFilter, uiState.selectedSort, uiState.isReorderMode) {
+    val filteredSections = remember(providerScopedSections, uiState.selectedFilter, uiState.selectedSort, uiState.isReorderMode, configuration) {
         providerScopedSections
             .mapNotNull { section ->
                 val filteredItems = when (uiState.selectedFilter) {
@@ -210,7 +217,7 @@ fun FavoritesScreen(
                         }
                     }
                     section.copy(
-                        subtitle = "${sortedItems.size} saved items",
+                        subtitle = resources.getQuantityString(R.plurals.library_count_saved_items, sortedItems.size, sortedItems.size),
                         items = sortedItems,
                         reorderable = section.reorderable && filteredItems.size > 1
                     )
@@ -804,9 +811,11 @@ private fun SavedHistoryRow(
             style = MaterialTheme.typography.bodySmall,
             color = OnSurfaceDim
         )
-        androidx.compose.foundation.lazy.LazyRow(
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp)
+            contentPadding = PaddingValues(vertical = 4.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(items, key = { "${it.history.contentType}:${it.history.contentId}" }) { item ->
                 TvClickableSurface(
@@ -868,9 +877,11 @@ private fun SavedGroupManagementRow(
             style = MaterialTheme.typography.bodySmall,
             color = OnSurfaceDim
         )
-        androidx.compose.foundation.lazy.LazyRow(
+        FocusSafeLazyRow(
             horizontalArrangement = Arrangement.spacedBy(10.dp),
-            contentPadding = PaddingValues(vertical = 4.dp)
+            contentPadding = PaddingValues(vertical = 4.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(groups, key = { "group-manage:${it.group.id}" }) { group ->
                 TvClickableSurface(

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Фильтры -->
+  <string name="library_chip_all">Все</string>
+  <string name="library_chip_favorites">Избранное</string>
+  <string name="library_chip_resume">Продолжить</string>
+  <string name="library_chip_unwatched">Не просмотрено</string>
+  <string name="library_chip_recent">Недавние</string>
+  <string name="library_chip_updated">Обновлённые</string>
+  <string name="library_chip_top_rated">Лучшие по рейтингу</string>
+
+  <!-- Сортировка -->
+  <string name="library_chip_sort_library_order">Порядок в библиотеке</string>
+  <string name="library_chip_sort_title">А-Я</string>
+  <string name="library_chip_sort_newest">Сначала новые</string>
+  <string name="library_chip_sort_recently_updated">Недавно обновлённые</string>
+  <string name="library_chip_sort_updated_short">Обновлённые</string>
+  <string name="library_chip_sort_rating">Рейтинг</string>
+  <string name="library_chip_sort_recent_activity">Последняя активность</string>
+
+  <!-- Счётчики под плитками и в сохранённых разделах -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d группа</item>
+    <item quantity="few">%d группы</item>
+    <item quantity="many">%d групп</item>
+    <item quantity="other">%d группы</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d элемент</item>
+    <item quantity="few">%d элемента</item>
+    <item quantity="many">%d элементов</item>
+    <item quantity="other">%d элемента</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d подборка</item>
+    <item quantity="few">%d подборки</item>
+    <item quantity="many">%d подборок</item>
+    <item quantity="other">%d подборки</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d сохранённый элемент</item>
+    <item quantity="few">%d сохранённых элемента</item>
+    <item quantity="many">%d сохранённых элементов</item>
+    <item quantity="other">%d сохранённого элемента</item>
+  </plurals>
+
+  <!-- Сообщения о фильмах, сериалах и управлении группами -->
+  <string name="movies_error_load_failed">Не удалось загрузить фильмы</string>
+  <string name="series_error_load_failed">Не удалось загрузить сериалы</string>
+  <string name="movie_detail_error_load_failed">Не удалось загрузить сведения о фильме</string>
+  <string name="series_detail_error_load_failed">Не удалось загрузить сведения о сериале</string>
+  <string name="catalog_error_no_active_provider">Нет активного провайдера</string>
+  <string name="catalog_message_moved_back_to_live">«%1$s» возвращён в прямой эфир</string>
+  <string name="catalog_message_group_created">Создана группа %1$s</string>
+  <string name="catalog_message_group_created_and_added">Создана группа %1$s, добавлено: %2$s</string>
+  <string name="catalog_message_category_hidden">Категория %1$s скрыта</string>
+  <string name="catalog_message_category_pinned">Закреплено: %1$s</string>
+  <string name="catalog_message_category_unpinned">Откреплено: %1$s</string>
+  <string name="catalog_message_group_renamed">Группа переименована в %1$s</string>
+  <string name="catalog_message_group_deleted">Группа %1$s удалена</string>
+  <string name="catalog_error_group_name_required">Введите название группы</string>
+  <string name="catalog_error_group_name_reserved">Название «Избранное» зарезервировано</string>
+  <string name="movies_error_group_name_duplicate">Группа фильмов с таким названием уже существует</string>
+  <string name="series_error_group_name_duplicate">Группа сериалов с таким названием уже существует</string>
+
+  <!-- Сообщения и подписи сохранённой библиотеки -->
+  <string name="favorites_message_removed_from_view">%1$s удалено из этого сохранённого вида.</string>
+  <string name="favorites_message_moved_to_group">%1$s перемещено в выбранную группу.</string>
+  <string name="favorites_message_group_deleted">Группа %1$s удалена.</string>
+  <string name="favorites_error_move_failed">Не удалось переместить %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Не удалось объединить %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Не удалось сохранить порядок: %1$s</string>
+  <string name="favorites_error_unknown">Неизвестная ошибка</string>
+  <string name="favorites_subtitle_channel_number">Канал %1$d</string>
+  <string name="favorites_group_subtitle">Группа: %1$s</string>
+  <string name="favorites_content_type_movie">Фильм</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

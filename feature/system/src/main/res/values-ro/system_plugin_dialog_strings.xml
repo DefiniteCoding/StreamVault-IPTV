@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Introdu adresa URL directă a APK-ului. StreamVault o va descărca și va deschide programul de instalare.</string>
+  <string name="plugins_install_url_label">URL APK plugin</string>
+  <string name="plugins_installing">Se instalează…</string>
+  <string name="plugins_download_install">Descarcă și instalează</string>
+</resources>

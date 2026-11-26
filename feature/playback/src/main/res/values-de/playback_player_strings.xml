@@ -133,6 +133,7 @@
     <string name="player_more_controls">Mehr Kontrollen</string>
     <string name="player_multiview_short">Multiview</string>
     <string name="player_mute">Stumm</string>
+    <string name="player_more">Mehr</string>
     <string name="player_muted_badge">Stummgeschaltet</string>
     <string name="player_next_label">Weiter:</string>
     <string name="player_no_guide_data">Keine Leitdaten</string>
@@ -236,8 +237,8 @@
     <string name="player_close_chapters">Kapitel schließen</string>
     <string name="player_previous_chapter">Vorheriges Kapitel</string>
     <string name="player_next_chapter">Nächstes Kapitel</string>
-    <string name="player_rewind_10_seconds">10 Sekunden zurückspulen</string>
-    <string name="player_forward_10_seconds">10 Sekunden vorspulen</string>
+    <string name="player_rewind_10_seconds">10 s zurück</string>
+    <string name="player_forward_10_seconds">10 s vor</string>
     <string name="player_vod_timeline">VOD-Zeitleiste</string>
     <string name="player_close_controls">Steuerung schließen</string>
     <string name="player_back_to_menu">Zurück zum Menü</string>
@@ -307,4 +308,15 @@
 <string name="player_trakt_sent">An Trakt gesendet</string>
     <string name="player_trakt_badge">TRAKT</string>
     <string name="player_schedule_by_time">Nach Zeit planen</string>     <string name="player_schedule_by_time_title">Aufnahme planen</string>     <string name="player_schedule_by_time_start">Start</string>     <string name="player_schedule_by_time_duration">Dauer</string>     <string name="player_schedule_by_time_repeat">Wiederholen</string>     <string name="player_schedule_by_time_once">Einmal</string>     <string name="player_schedule_by_time_daily">TÃ¤glich</string>     <string name="player_schedule_by_time_weekly">WÃ¶chentlich</string>     <string name="player_schedule_by_time_confirm">Planen</string>     <string name="player_schedule_by_time_cancel">Abbrechen</string>     <string name="player_schedule_by_time_duration_hm">%1$d Std. %2$d Min.</string>     <string name="player_schedule_by_time_duration_h">%1$d Std.</string>     <string name="player_schedule_by_time_duration_m">%1$d Min.</string>     <string name="player_recording_needs_live_channel">FÃ¼r die Aufnahme wird ein Live-Sender benÃ¶tigt.</string>     <string name="player_recording_started_notice">Aufnahme fÃ¼r %1$s gestartet.</string>     <string name="player_recording_scheduled_notice">%1$s geplant.</string>     <string name="player_recording_scheduled_daily_notice">%1$s tÃ¤glich geplant.</string>     <string name="player_recording_scheduled_weekly_notice">%1$s wÃ¶chentlich geplant.</string>     <string name="player_recording_failed_notice">Die Aufnahme konnte nicht geplant werden.</string>     <string name="player_recording_stopped_notice">Aufnahme gestoppt.</string>
+    <string name="player_track_no_audio_tracks">Keine Audiospuren</string>
+    <string name="player_stremio_subtitles_heading">Stremio-Untertitel</string>
+    <string name="player_stremio_subtitles_loading">Add-on-Untertitel werden geladen…</string>
+    <string name="player_stremio_subtitles_empty">Keine Add-on-Untertitel verfügbar</string>
+    <string name="player_stremio_subtitles_retry">Add-on-Untertitel erneut laden</string>
+    <string name="player_season_label">Staffel %1$d</string>
+    <string name="player_episode_label">Episode %1$d</string>
+    <string name="player_vod_ends_at">Endet um %1$s</string>
+    <string name="player_aspect_fit">Einpassen</string>
+    <string name="player_aspect_stretch">Strecken</string>
+    <string name="player_aspect_zoom">Zoom</string>
 </resources>

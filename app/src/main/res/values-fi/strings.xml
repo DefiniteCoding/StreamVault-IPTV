@@ -284,7 +284,6 @@
     <string name="downloads_empty">Ei vielä latauksia</string>
     <string name="downloads_delete_confirm">Poistetaanko tämä lataus?</string>
     <string name="download_play_local">Toista</string>
-    <string name="nav_close_app">Sulje sovellus</string>
     <string name="nav_vod">VOD</string>
     <string name="torrent_playback_start_failed">Torrentin toistoa ei voitu käynnistää. Yritä uudelleen.</string>
     <string name="torrent_cache_capacity_reached">Torrentin toisto saavutti väliaikaisen tallennustilan rajan. Tyhjennä välimuisti tai vapauta tilaa ja yritä uudelleen.</string>
@@ -293,4 +292,6 @@
     <string name="nav_sports">Urheilu</string>
     <string name="stremio_new_episode_channel">Uusien jaksojen ilmoitukset</string>
     <string name="stremio_new_episode_count">Uudet jaksot: %1$d</string>
+    <string name="tv_channel_favorites_title">Suosikit</string>
+    <string name="tv_channel_favorites_description">Suosikkikanavasi, -elokuvasi ja -sarjasi</string>
 </resources>

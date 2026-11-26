@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Chip dei filtri -->
+  <string name="library_chip_all">Tutti</string>
+  <string name="library_chip_favorites">Preferiti</string>
+  <string name="library_chip_resume">Riprendi</string>
+  <string name="library_chip_unwatched">Non visti</string>
+  <string name="library_chip_recent">Recenti</string>
+  <string name="library_chip_updated">Aggiornati</string>
+  <string name="library_chip_top_rated">Più votati</string>
+
+  <!-- Chip di ordinamento -->
+  <string name="library_chip_sort_library_order">Ordine libreria</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Più recenti</string>
+  <string name="library_chip_sort_recently_updated">Aggiornati di recente</string>
+  <string name="library_chip_sort_updated_short">Aggiornati</string>
+  <string name="library_chip_sort_rating">Valutazione</string>
+  <string name="library_chip_sort_recent_activity">Attività recente</string>
+
+  <!-- Conteggi sotto i riquadri iniziali e nelle sezioni salvate -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d gruppo</item>
+    <item quantity="other">%d gruppi</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d elemento</item>
+    <item quantity="other">%d elementi</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d selezione</item>
+    <item quantity="other">%d selezioni</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d elemento salvato</item>
+    <item quantity="other">%d elementi salvati</item>
+  </plurals>
+
+  <!-- Messaggi su film, serie e gestione dei gruppi -->
+  <string name="movies_error_load_failed">Impossibile caricare i film</string>
+  <string name="series_error_load_failed">Impossibile caricare le serie</string>
+  <string name="movie_detail_error_load_failed">Impossibile caricare i dettagli del film</string>
+  <string name="series_detail_error_load_failed">Impossibile caricare i dettagli della serie</string>
+  <string name="catalog_error_no_active_provider">Nessun provider attivo</string>
+  <string name="catalog_message_moved_back_to_live">«%1$s» riportato nella TV in diretta</string>
+  <string name="catalog_message_group_created">Gruppo %1$s creato</string>
+  <string name="catalog_message_group_created_and_added">Gruppo %1$s creato e %2$s aggiunto</string>
+  <string name="catalog_message_category_hidden">Categoria %1$s nascosta</string>
+  <string name="catalog_message_category_pinned">%1$s fissato</string>
+  <string name="catalog_message_category_unpinned">%1$s sbloccato</string>
+  <string name="catalog_message_group_renamed">Gruppo rinominato in %1$s</string>
+  <string name="catalog_message_group_deleted">Gruppo %1$s eliminato</string>
+  <string name="catalog_error_group_name_required">Inserisci un nome per il gruppo</string>
+  <string name="catalog_error_group_name_reserved">«Preferiti» è un nome riservato</string>
+  <string name="movies_error_group_name_duplicate">Esiste già un gruppo di film con questo nome</string>
+  <string name="series_error_group_name_duplicate">Esiste già un gruppo di serie con questo nome</string>
+
+  <!-- Messaggi ed etichette della libreria salvata -->
+  <string name="favorites_message_removed_from_view">%1$s rimosso da questa vista salvata.</string>
+  <string name="favorites_message_moved_to_group">%1$s spostato nel gruppo selezionato.</string>
+  <string name="favorites_message_group_deleted">Gruppo %1$s eliminato.</string>
+  <string name="favorites_error_move_failed">Impossibile spostare %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Impossibile unire %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Impossibile salvare il nuovo ordine: %1$s</string>
+  <string name="favorites_error_unknown">Errore sconosciuto</string>
+  <string name="favorites_subtitle_channel_number">Canale %1$d</string>
+  <string name="favorites_group_subtitle">Gruppo %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

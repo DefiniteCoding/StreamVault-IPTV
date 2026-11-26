@@ -9,7 +9,6 @@
     <string name="nav_series">ซีรีส์</string>
     <string name="nav_epg">ผังรายการ</string>
     <string name="nav_settings">ตั้งค่า</string>
-    <string name="nav_close_app">ปิดแอป</string>
 
 
     <string name="welcome_enter_app">เข้าใช้งานแอป</string>
@@ -346,4 +345,6 @@
     <string name="nav_sports">กีฬา</string>
     <string name="stremio_new_episode_channel">การแจ้งเตือนตอนใหม่</string>
     <string name="stremio_new_episode_count">ตอนใหม่: %1$d</string>
+    <string name="tv_channel_favorites_title">รายการโปรด</string>
+    <string name="tv_channel_favorites_description">ช่อง ภาพยนตร์ และซีรีส์โปรดของคุณ</string>
 </resources>

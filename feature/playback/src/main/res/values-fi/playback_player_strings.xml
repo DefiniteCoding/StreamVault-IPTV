@@ -133,6 +133,7 @@
     <string name="player_more_controls">Lisää säätimiä</string>
     <string name="player_multiview_short">Moninäkymä</string>
     <string name="player_mute">Mykistä</string>
+    <string name="player_more">Lisää</string>
     <string name="player_muted_badge">Mykistetty</string>
     <string name="player_next_label">Seuraavaksi:</string>
     <string name="player_no_guide_data">Ei ohjetietoja</string>
@@ -237,7 +238,7 @@
     <string name="player_subtitle_delay_current">Nykyinen viive: %1$+d ms</string>
     <string name="player_subtitle_load_from_device">Lataa SRT laitteesta</string>
     <string name="player_subtitle_search_languages_hint">Valitse kieli ja sitten versio.</string>
-    <string name="player_rewind_10_seconds">Kelaa taaksepäin 10 sekuntia</string>
+    <string name="player_rewind_10_seconds">Taakse 10 s</string>
     <string name="player_vod_timeline">VOD-aikajana</string>
     <string name="player_chapter_count">%1$d lukua</string>
     <string name="player_playback_settings">Toistoasetukset</string>
@@ -246,7 +247,7 @@
     <string name="player_close_playback_settings">Sulje toistoasetukset</string>
     <string name="player_diagnostics_frame_rate">Kuvataajuus</string>
     <string name="player_subtitle_search_signed_out">Voit hakea kirjautumatta, jos anonyymi käyttö on käytössä. Kirjaudu sisään käyttääksesi tilisi latauskiintiötä.</string>
-    <string name="player_forward_10_seconds">Kelaa eteenpäin 10 sekuntia</string>
+    <string name="player_forward_10_seconds">Eteen 10 s</string>
     <string name="player_subtitle_search_open_settings">Yhdistä tili (valinnainen)</string>
     <string name="player_chapters">Luvut</string>
     <string name="epg_catchup_available_unknown">Kiinniotto saatavilla</string>
@@ -307,4 +308,15 @@
 <string name="player_trakt_sent">Lähetetty Traktiin</string>
     <string name="player_trakt_badge">TRAKT</string>
     <string name="player_schedule_by_time">Ajoita ajan mukaan</string>     <string name="player_schedule_by_time_title">Ajoita tallennus</string>     <string name="player_schedule_by_time_start">Alku</string>     <string name="player_schedule_by_time_duration">Kesto</string>     <string name="player_schedule_by_time_repeat">Toista</string>     <string name="player_schedule_by_time_once">Kerran</string>     <string name="player_schedule_by_time_daily">PÃ¤ivittÃ¤in</string>     <string name="player_schedule_by_time_weekly">Viikoittain</string>     <string name="player_schedule_by_time_confirm">Ajoita</string>     <string name="player_schedule_by_time_cancel">Peruuta</string>     <string name="player_schedule_by_time_duration_hm">%1$d t %2$d min</string>     <string name="player_schedule_by_time_duration_h">%1$d t</string>     <string name="player_schedule_by_time_duration_m">%1$d min</string>     <string name="player_recording_needs_live_channel">Tallennus vaatii suorakanavan.</string>     <string name="player_recording_started_notice">Tallennus aloitettu kanavalle %1$s.</string>     <string name="player_recording_scheduled_notice">%1$s ajastettu.</string>     <string name="player_recording_scheduled_daily_notice">%1$s ajastettu pÃ¤ivittÃ¤in.</string>     <string name="player_recording_scheduled_weekly_notice">%1$s ajastettu viikoittain.</string>     <string name="player_recording_failed_notice">Tallennusta ei voitu ajastaa.</string>     <string name="player_recording_stopped_notice">Tallennus pysÃ¤ytetty.</string>
+    <string name="player_track_no_audio_tracks">Ei ääniraitoja</string>
+    <string name="player_stremio_subtitles_heading">Stremio-tekstitykset</string>
+    <string name="player_stremio_subtitles_loading">Ladataan lisäosan tekstityksiä…</string>
+    <string name="player_stremio_subtitles_empty">Lisäosan tekstityksiä ei ole saatavilla</string>
+    <string name="player_stremio_subtitles_retry">Lataa lisäosan tekstitykset uudelleen</string>
+    <string name="player_season_label">Kausi %1$d</string>
+    <string name="player_episode_label">Jakso %1$d</string>
+    <string name="player_vod_ends_at">Päättyy klo %1$s</string>
+    <string name="player_aspect_fit">Sovita</string>
+    <string name="player_aspect_stretch">Venytä</string>
+    <string name="player_aspect_zoom">Zoomaa</string>
 </resources>

@@ -1,26 +1,38 @@
 package com.streamvault.core.ui.design
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor as TouchContentColor
+import androidx.compose.material3.MaterialTheme as TouchMaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.drawOutline
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.dp
-import androidx.tv.material3.MaterialTheme
+import androidx.compose.ui.unit.sp
+import androidx.tv.material3.Border
 import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.LocalContentColor as TvContentColor
-import androidx.compose.material3.LocalContentColor as TouchContentColor
-import androidx.compose.material3.MaterialTheme as TouchMaterialTheme
+import androidx.tv.material3.MaterialTheme
+import com.streamvault.core.ui.accessibility.LocalReducedEffects
 
 /** Browsing surfaces deliberately do not change the settings or VOD player palette. */
 internal fun AppPalette.forBrowsing(): AppPalette = copy(
@@ -32,7 +44,6 @@ internal fun AppPalette.forBrowsing(): AppPalette = copy(
     textTertiary = if (isLight) lerp(textSecondary, textTertiary, 0.15f)
         else lerp(textTertiary, textSecondary, 0.35f),
     onPrimary = contentOnColor(brand),
-    focus = brandStrong,
     outline = textPrimary.copy(alpha = if (isLight) 0.12f else 0.09f),
     heroBottom = if (isLight) heroBottom else lerp(heroBottom, Color.Black, 0.24f),
 )
@@ -44,8 +55,66 @@ fun contentOnColor(color: Color): Color = if (color.luminance() > 0.179f) Color.
 fun browsePrimaryButtonColors() = ButtonDefaults.colors(
     containerColor = BrowseColors.Brand,
     contentColor = BrowseColors.OnPrimary,
-    focusedContainerColor = BrowseColors.BrandStrong,
-    focusedContentColor = contentOnColor(BrowseColors.BrandStrong),
+    focusedContainerColor = BrowseColors.Brand,
+    focusedContentColor = BrowseColors.OnPrimary,
+    // Disabled keeps the secondary fill so the button stays visible instead of vanishing into the surface.
+    disabledContainerColor = BrowseColors.ControlContainer,
+    disabledContentColor = BrowseColors.TextTertiary,
+)
+
+/**
+ * Fills for a selectable nav or list item. Selected is an opaque tonal fill (no stroke, no alpha over
+ * artwork). Focus on an unselected item brightens the fill; a selected item keeps its fill because the
+ * label contrast margin is thin in some themes, so the ring and scale carry the focus change.
+ */
+@Composable
+fun selectableSurfaceColors(selected: Boolean) = ClickableSurfaceDefaults.colors(
+    containerColor = if (selected) BrowseColors.SelectedContainer else Color.Transparent,
+    contentColor = if (selected) BrowseColors.OnSelectedContainer else BrowseColors.TextSecondary,
+    focusedContainerColor = if (selected) BrowseColors.SelectedContainer else BrowseColors.SurfaceAccent,
+    focusedContentColor = if (selected) BrowseColors.OnSelectedContainer else BrowseColors.TextPrimary,
+)
+
+/**
+ * Secondary button: the theme-tinted control fill with no stroke, the same fill inputs and chips rest on. It is the one
+ * secondary fill (rule 13); surfaceElevated is too close to the surface to read as a button, and surfaceAccent swings
+ * from 1.29:1 to 1.94:1 across themes. The focus ring and scale carry the focus state.
+ */
+@Composable
+fun secondaryButtonColors() = ButtonDefaults.colors(
+    containerColor = BrowseColors.ControlContainer,
+    contentColor = BrowseColors.TextPrimary,
+    focusedContainerColor = BrowseColors.ControlContainer,
+    focusedContentColor = BrowseColors.TextPrimary,
+    disabledContainerColor = BrowseColors.ControlContainer,
+    disabledContentColor = BrowseColors.TextTertiary,
+)
+
+/** Secondary clickable surface: same look as [secondaryButtonColors] for Surface-based controls. */
+@Composable
+fun secondarySurfaceColors() = ClickableSurfaceDefaults.colors(
+    containerColor = BrowseColors.ControlContainer,
+    contentColor = BrowseColors.TextPrimary,
+    focusedContainerColor = BrowseColors.ControlContainer,
+    focusedContentColor = BrowseColors.TextPrimary,
+)
+
+/** Buttons get no stroke at rest; the focus ring is the only stroke. */
+@Composable
+fun focusRingButtonBorder(shape: RoundedCornerShape) = ButtonDefaults.border(
+    focusedBorder = Border(
+        border = BorderStroke(BrowseFocusSpec.SelectableRingWidth, BrowseColors.Focus),
+        shape = shape,
+    ),
+)
+
+/** The only stroke an interactive item gets: the focus ring. */
+@Composable
+fun selectableFocusBorder(shape: RoundedCornerShape) = ClickableSurfaceDefaults.border(
+    focusedBorder = Border(
+        border = BorderStroke(BrowseFocusSpec.SelectableRingWidth, BrowseColors.Focus),
+        shape = shape,
+    ),
 )
 
 /** Theme-derived colors, also available to non-composable drawing helpers. */
@@ -67,6 +136,9 @@ object BrowseColors {
     val SurfaceElevated get() = current.surfaceElevated
     val SurfaceEmphasis get() = current.surfaceEmphasis
     val SurfaceAccent get() = current.surfaceAccent
+    val ControlContainer get() = current.controlContainer
+    val SelectedContainer get() = current.selectedContainer
+    val OnSelectedContainer get() = current.onSelectedContainer
     val Brand get() = current.brand
     val BrandMuted get() = current.brandMuted
     val BrandStrong get() = current.brandStrong
@@ -86,6 +158,20 @@ object BrowseColors {
     val Outline get() = current.outline
     val HeroTop get() = current.heroTop
     val HeroBottom get() = current.heroBottom
+    val GlassBase get() = current.glassBase
+    val GlassBar get() = current.glassBar
+    val GlassPanel get() = current.glassPanel
+    val GlassOverVideo get() = current.glassOverVideo
+    val GlassStroke get() = current.glassStroke
+    val GlassHighlight get() = current.glassHighlight
+    val GlassSheen get() = current.glassSheen
+    val NavSelected get() = current.navSelected
+    val OnNavSelected get() = current.onNavSelected
+    val OnFocus get() = current.onFocus
+    val FocusOverVideo get() = current.focusOverVideo
+    val OnFocusOverVideo get() = current.onFocusOverVideo
+    val OnGlassOverVideo get() = current.onGlassOverVideo
+    val AccentSoft get() = current.accentSoft
 }
 
 object BrowseShapes {
@@ -100,6 +186,12 @@ object BrowseFocusSpec {
     const val PressedScale = 0.98f
     val BorderWidth = 2.dp
     val CardBorderWidth = 2.dp
+    val SelectableRingWidth = 3.dp
+    // Nav pills are small, so they scale further than cards to stay identifiable at TV distance (rule 15).
+    const val NavFocusedScale = 1.06f
+    val NavRingWidth = 2.dp
+    // The ring stands off the pill so the bar shows between them, matching the approved halo look without a glow.
+    val NavRingGap = 3.dp
 }
 
 val LocalBrowseVisuals = staticCompositionLocalOf { false }
@@ -169,3 +261,80 @@ fun Modifier.browsePanel(shape: RoundedCornerShape = BrowseShapes.Panel): Modifi
     clip(shape)
         .background(Brush.verticalGradient(listOf(BrowseColors.SurfaceElevated, BrowseColors.Surface)))
         .border(1.dp, BrowseColors.Outline, shape)
+
+enum class GlassTier { Bar, Panel, OverVideo }
+
+/** What one glass surface draws, already resolved for the theme, tier and reduced-effects setting. */
+@Immutable
+internal data class GlassLayers(
+    val fill: Color,
+    val sheen: Color?,
+    val stroke: Color,
+    val highlight: Color,
+)
+
+// The dark tier looks the same in every theme, so its edge lines are fixed rather than taken from light palettes,
+// whose dark stroke and bright highlight are meant for light glass. Over video only (rule 2).
+private val OverVideoStroke = Color(0x1AFFFFFF)
+private val OverVideoHighlight = Color(0x29FFFFFF)
+
+private const val SHEEN_EXTENT = 0.4f
+private val GlassLineWidth = 1.dp
+
+internal fun glassLayersFor(palette: AppPalette, tier: GlassTier, reducedEffects: Boolean): GlassLayers {
+    val translucentFill = when (tier) {
+        // An opaque base is folded into the fill here, so the base costs no extra draw over the same pixels.
+        GlassTier.Bar -> palette.glassBar.compositeOver(palette.glassBase)
+        GlassTier.Panel -> palette.glassPanel.compositeOver(palette.glassBase)
+        GlassTier.OverVideo -> palette.glassOverVideo
+    }
+    val overVideo = tier == GlassTier.OverVideo
+    return GlassLayers(
+        fill = if (reducedEffects) translucentFill.copy(alpha = 1f) else translucentFill,
+        // A sheen on the dark tier lets bright artwork push the selected pill under 3:1 (GlassPaletteContrastTest).
+        sheen = palette.glassSheen.takeUnless { reducedEffects || overVideo },
+        stroke = if (overVideo) OverVideoStroke else palette.glassStroke,
+        highlight = if (overVideo) OverVideoHighlight else palette.glassHighlight,
+    )
+}
+
+/**
+ * Layered glass in one draw pass behind the content: tier fill, a sheen over the top 40%, a 1dp hairline and a 1dp
+ * highlight fading down from the top edge. No blur, no graphicsLayer, no offscreen alpha (P3).
+ */
+@Composable
+fun Modifier.glassSurface(tier: GlassTier, shape: Shape): Modifier {
+    val reducedEffects = LocalReducedEffects.current
+    return drawWithCache {
+        val layers = glassLayersFor(BrowseColors.current, tier, reducedEffects)
+        val outline = shape.createOutline(size, layoutDirection, this)
+        val lineWidth = GlassLineWidth.toPx()
+        // Strokes straddle their path, so inset the outline by half a line to keep the lines inside the bounds.
+        val lineOutline = shape.createOutline(
+            Size(size.width - lineWidth, size.height - lineWidth),
+            layoutDirection,
+            this,
+        )
+        val lineStroke = Stroke(width = lineWidth)
+        val sheenBottom = size.height * SHEEN_EXTENT
+        val sheenBrush = layers.sheen?.let {
+            Brush.verticalGradient(listOf(it, it.copy(alpha = 0f)), startY = 0f, endY = sheenBottom)
+        }
+        val highlightBrush = Brush.verticalGradient(
+            listOf(layers.highlight, layers.highlight.copy(alpha = 0f)),
+            startY = 0f,
+            endY = size.height / 2f,
+        )
+        onDrawBehind {
+            drawOutline(outline, layers.fill)
+            if (sheenBrush != null) {
+                // Scissor to the sheen band so the transparent part of the gradient is never rasterised.
+                clipRect(bottom = sheenBottom) { drawOutline(outline, sheenBrush) }
+            }
+            translate(lineWidth / 2f, lineWidth / 2f) {
+                drawOutline(lineOutline, layers.stroke, style = lineStroke)
+                clipRect(bottom = size.height / 2f) { drawOutline(lineOutline, highlightBrush, style = lineStroke) }
+            }
+        }
+    }
+}

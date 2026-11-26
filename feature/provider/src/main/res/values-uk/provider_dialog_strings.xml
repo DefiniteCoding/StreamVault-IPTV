@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Скасувати</string>
+  <string name="setup_completion_saved_sync_pending">Провайдера збережено. Синхронізація продовжиться у фоновому режимі.</string>
+  <string name="setup_combined_attach_title">Додати плейлист до комбінованого M3U?</string>
+  <string name="setup_combined_attach_message">Додати %1$s у %2$s і залишити це комбіноване джерело активним для Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">цей плейлист</string>
+  <string name="setup_combined_attach_fallback_source">активне комбіноване джерело</string>
+  <string name="setup_combined_attach_skip">Не зараз</string>
+  <string name="setup_combined_attach_confirm">Додати до комбінованого</string>
+</resources>

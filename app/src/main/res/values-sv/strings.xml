@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">Ingen app kunde ta emot säkerhetskopieringsfilen.</string>
     <string name="settings_catalog_count_pending">Väntar</string>
     <string name="settings_live_timeshift_backend_value">Automatisk</string>
-    <string name="nav_close_app">Stäng appen</string>
     <string name="nav_downloads">Nedladdningar</string>
     <string name="nav_vod">VOD</string>
     <string name="hidden_categories_dialog_title">Dolda kategorier</string>
@@ -294,4 +293,6 @@
     <string name="nav_sports">Sport</string>
     <string name="stremio_new_episode_channel">Aviseringar om nya avsnitt</string>
     <string name="stremio_new_episode_count">Nya avsnitt: %1$d</string>
+    <string name="tv_channel_favorites_title">Favoriter</string>
+    <string name="tv_channel_favorites_description">Dina favoritkanaler, filmer och serier</string>
 </resources>

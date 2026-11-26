@@ -23,6 +23,8 @@ import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface as TvSurface
 import androidx.tv.material3.Text
 import com.streamvault.core.ui.interaction.TvClickableSurface
+import androidx.compose.ui.res.stringResource
+import com.streamvault.feature.provider.R
 import com.streamvault.core.ui.interaction.mouseClickable
 import com.streamvault.core.ui.design.browse.*
 import kotlinx.coroutines.delay
@@ -38,17 +40,17 @@ internal fun StalkerLinkOptionButton(
         modifier = Modifier.mouseClickable(onClick = onClick),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) Primary.copy(alpha = 0.18f) else Surface,
+            containerColor = if (selected) Primary.copy(alpha = 0.18f) else com.streamvault.core.ui.design.BrowseColors.ControlContainer,
             focusedContainerColor = Primary.copy(alpha = 0.28f)
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(BorderStroke(1.dp, if (selected) Primary else SurfaceHighlight)),
-            focusedBorder = Border(BorderStroke(3.dp, PrimaryLight))
+            border = Border.None,
+            focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Text(
-            text = text,
+            text = if (selected) "\u2713 $text" else text,
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
             style = MaterialTheme.typography.bodySmall,
             color = TextPrimary
@@ -88,14 +90,14 @@ internal fun StalkerRequestRulesEditor(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text("Request rules", style = MaterialTheme.typography.titleSmall, color = TextPrimary)
+                Text(stringResource(R.string.setup_stalker_rules_title), style = MaterialTheme.typography.titleSmall, color = TextPrimary)
                 Text(
-                    "Match by action, block calls, or override params. Blank values remove params.",
+                    stringResource(R.string.setup_stalker_rules_helper),
                     style = MaterialTheme.typography.bodySmall,
                     color = OnSurfaceDim
                 )
             }
-            RequestRuleActionButton(text = "Add Rule", onClick = onAddRule)
+            RequestRuleActionButton(text = stringResource(R.string.setup_stalker_rules_add), onClick = onAddRule)
         }
         rules.forEachIndexed { index, rule ->
             Column(
@@ -117,9 +119,9 @@ internal fun StalkerRequestRulesEditor(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Rule ${index + 1}", style = MaterialTheme.typography.bodyMedium, color = TextPrimary)
+                    Text(stringResource(R.string.setup_stalker_rule_number, index + 1), style = MaterialTheme.typography.bodyMedium, color = TextPrimary)
                     RequestRuleActionButton(
-                        text = "Delete",
+                        text = stringResource(R.string.setup_stalker_rule_delete),
                         onClick = { onRemoveRule(index) },
                         compact = true
                     )
@@ -127,14 +129,14 @@ internal fun StalkerRequestRulesEditor(
                 ProviderTextField(
                     value = rule.action,
                     onValueChange = { onUpdateRule(index, rule.copy(action = it.trim())) },
-                    placeholder = "action, e.g. get_profile"
+                    placeholder = stringResource(R.string.setup_stalker_rule_action_placeholder)
                 )
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Block this request", style = MaterialTheme.typography.bodySmall, color = TextPrimary)
+                    Text(stringResource(R.string.setup_stalker_rule_block), style = MaterialTheme.typography.bodySmall, color = TextPrimary)
                     Switch(
                         checked = rule.blockRequest,
                         onCheckedChange = { onUpdateRule(index, rule.copy(blockRequest = it)) }
@@ -142,7 +144,7 @@ internal fun StalkerRequestRulesEditor(
                 }
                 if (rule.blockRequest && rule.action.trim() in setOf("handshake", "get_profile")) {
                     Text(
-                        text = "Warning: blocking ${rule.action.trim()} can prevent login.",
+                        text = stringResource(R.string.setup_stalker_rule_block_warning, rule.action.trim()),
                         style = MaterialTheme.typography.bodySmall,
                         color = AccentAmber
                     )
@@ -150,7 +152,7 @@ internal fun StalkerRequestRulesEditor(
                 ProviderTextField(
                     value = rule.paramsText,
                     onValueChange = { onUpdateRule(index, rule.copy(paramsText = it)) },
-                    placeholder = "Param overrides: name=value | remove_me="
+                    placeholder = stringResource(R.string.setup_stalker_rule_params_placeholder)
                 )
             }
         }
@@ -172,18 +174,13 @@ internal fun RequestRuleActionButton(
             .semantics { contentDescription = text },
         shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (compact) SurfaceHighlight.copy(alpha = 0.9f) else Primary,
-            focusedContainerColor = if (compact) SurfaceHighlight else PrimaryLight
+            containerColor = com.streamvault.core.ui.design.BrowseColors.SurfaceAccent,
+            focusedContainerColor = SurfaceHighlight
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
         glow = ClickableSurfaceDefaults.glow(focusedGlow = Glow.None),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                BorderStroke(
-                    1.dp,
-                    if (compact) SurfaceHighlight.copy(alpha = 0.8f) else PrimaryLight
-                )
-            ),
+            border = Border.None,
             focusedBorder = Border(BorderStroke(3.dp, FocusBorder))
         )
     ) {

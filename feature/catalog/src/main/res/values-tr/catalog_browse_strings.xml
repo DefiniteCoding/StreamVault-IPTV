@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">Tümü</string>
+  <string name="library_chip_favorites">Favoriler</string>
+  <string name="library_chip_resume">Devam Et</string>
+  <string name="library_chip_unwatched">İzlenmeyenler</string>
+  <string name="library_chip_recent">Son Kullanılanlar</string>
+  <string name="library_chip_updated">Güncellenen</string>
+  <string name="library_chip_top_rated">En Çok Oy Alan</string>
+
+  <string name="library_chip_sort_library_order">Kütüphane Sırası</string>
+  <string name="library_chip_sort_title">A\'dan Z\'ye</string>
+  <string name="library_chip_sort_newest">En Yeni</string>
+  <string name="library_chip_sort_recently_updated">Son Güncellenenler</string>
+  <string name="library_chip_sort_updated_short">Güncellenen</string>
+  <string name="library_chip_sort_rating">Puan</string>
+  <string name="library_chip_sort_recent_activity">Son Etkinlik</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="one">%d grup</item>
+    <item quantity="other">%d grup</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d öğe</item>
+    <item quantity="other">%d öğe</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d seçim</item>
+    <item quantity="other">%d seçim</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d kayıtlı öğe</item>
+    <item quantity="other">%d kayıtlı öğe</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">Filmler yüklenemedi</string>
+  <string name="series_error_load_failed">Diziler yüklenemedi</string>
+  <string name="movie_detail_error_load_failed">Film ayrıntıları yüklenemedi</string>
+  <string name="series_detail_error_load_failed">Dizi ayrıntıları yüklenemedi</string>
+  <string name="catalog_error_no_active_provider">Etkin sağlayıcı yok</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\' Canlı TV\'ye geri taşındı</string>
+  <string name="catalog_message_group_created">%1$s grubu oluşturuldu</string>
+  <string name="catalog_message_group_created_and_added">%1$s grubu oluşturuldu ve %2$s eklendi</string>
+  <string name="catalog_message_category_hidden">%1$s kategorisi gizlendi</string>
+  <string name="catalog_message_category_pinned">%1$s sabitlendi</string>
+  <string name="catalog_message_category_unpinned">%1$s sabitlemesi kaldırıldı</string>
+  <string name="catalog_message_group_renamed">Grup adı %1$s olarak değiştirildi</string>
+  <string name="catalog_message_group_deleted">%1$s grubu silindi</string>
+  <string name="catalog_error_group_name_required">Bir grup adı girin</string>
+  <string name="catalog_error_group_name_reserved">Favoriler adı ayrılmıştır</string>
+  <string name="movies_error_group_name_duplicate">Bu adda bir film grubu zaten var</string>
+  <string name="series_error_group_name_duplicate">Bu adda bir dizi grubu zaten var</string>
+
+  <string name="favorites_message_removed_from_view">%1$s bu kayıtlı görünümden kaldırıldı.</string>
+  <string name="favorites_message_moved_to_group">%1$s seçilen gruba taşındı.</string>
+  <string name="favorites_message_group_deleted">%1$s grubu silindi.</string>
+  <string name="favorites_error_move_failed">%1$s taşınamadı: %2$s</string>
+  <string name="favorites_error_merge_failed">%1$s birleştirilemedi: %2$s</string>
+  <string name="favorites_error_reorder_failed">Yeniden sıralama kaydedilemedi: %1$s</string>
+  <string name="favorites_error_unknown">Bilinmeyen hata</string>
+  <string name="favorites_subtitle_channel_number">Kanal %1$d</string>
+  <string name="favorites_group_subtitle">%1$s grubu</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

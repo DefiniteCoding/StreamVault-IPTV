@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Vakava</string>
     <string name="multiview_thermal_critical">Kriittinen</string>
     <string name="multiview_low_memory_warning">Muistin paine on korkea. Ylimääräiset paikat pysyvät valmiustilassa, kunnes toisto vakiintuu.</string>
+    <string name="multiview_search_categories">Hae kategorioita…</string>
+    <string name="multiview_search_channels">Hae kanavia…</string>
+    <string name="multiview_no_categories">Kategorioita ei löytynyt</string>
+    <string name="multiview_no_channels">Kanavia ei löytynyt</string>
+    <string name="multiview_picker_subtitle">Valitse kategoria ja sitten kanava</string>
 </resources>

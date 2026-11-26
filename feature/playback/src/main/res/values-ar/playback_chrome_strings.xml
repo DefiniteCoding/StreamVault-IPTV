@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">رجوع</string>
+    <string name="multiview_hud_title">عناصر تحكم الشاشة المقسمة</string>
+    <string name="multiview_hud_standby_active">وضع الاستعداد نشط</string>
+    <string name="multiview_hud_presets">الإعدادات المسبقة</string>
+    <string name="player_episode_picker_hint">اختر موسمًا، ثم انتقل إلى قائمة الحلقات.</string>
+    <string name="player_episode_picker_now_on">يُعرض الآن: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="zero">%1$d مواسم</item>
+        <item quantity="one">%1$d موسم</item>
+        <item quantity="two">%1$d موسمان</item>
+        <item quantity="few">%1$d مواسم</item>
+        <item quantity="many">%1$d موسمًا</item>
+        <item quantity="other">%1$d موسم</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="zero">%1$d حلقة</item>
+        <item quantity="one">%1$d حلقة</item>
+        <item quantity="two">%1$d حلقتان</item>
+        <item quantity="few">%1$d حلقات</item>
+        <item quantity="many">%1$d حلقة</item>
+        <item quantity="other">%1$d حلقة</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="zero">%1$d حلقة جاهزة للتشغيل</item>
+        <item quantity="one">%1$d حلقة جاهزة للتشغيل</item>
+        <item quantity="two">%1$d حلقتان جاهزتان للتشغيل</item>
+        <item quantity="few">%1$d حلقات جاهزة للتشغيل</item>
+        <item quantity="many">%1$d حلقة جاهزة للتشغيل</item>
+        <item quantity="other">%1$d حلقة جاهزة للتشغيل</item>
+    </plurals>
+</resources>

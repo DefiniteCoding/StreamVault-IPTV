@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">نشانی مستقیم APK را وارد کنید. StreamVault آن را دانلود می‌کند و نصب‌کننده را باز می‌کند.</string>
+  <string name="plugins_install_url_label">نشانی APK افزونه</string>
+  <string name="plugins_installing">در حال نصب…</string>
+  <string name="plugins_download_install">دانلود و نصب</string>
+</resources>

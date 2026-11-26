@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">आपकी लाइब्रेरी तैयार की जा रही है…</string>
+    <string name="startup_failed_title">StreamVault आपकी लाइब्रेरी नहीं खोल सका</string>
+    <string name="startup_failed_message">स्थानीय डेटाबेस अपग्रेड नहीं हो सका। आपका डेटा हटाया नहीं गया है।</string>
+    <string name="startup_failed_error_type">त्रुटि: %1$s</string>
+    <string name="startup_retry">फिर से प्रयास करें</string>
+    <string name="startup_share_report">रिपोर्ट साझा करें</string>
+</resources>

@@ -12,15 +12,13 @@
     <string name="setup_update_desc">IPTVプロバイダーの詳細を更新します</string>
     <string name="setup_add_desc">IPTVプロバイダーを追加します</string>
     <string name="setup_shell_eyebrow">プロバイダーのセットアップ</string>
-    <string name="setup_shell_subtitle">XtreamまたはM3Uを使用します。後で変更できます。</string>
+    <string name="setup_shell_subtitle">Xtream、Stalker、M3U、またはJellyfin。後で設定から編集または置き換えできます。</string>
     <string name="setup_form_subtitle">ソースを選び、詳細を入力して続行してください。後で設定から管理できます。</string>
     <string name="setup_source_type_label">ソースタイプ</string>
     <string name="setup_info_xtream_title">認証情報がある場合はXtreamを使用</string>
-    <string name="setup_info_xtream_body">サーバー、ユーザー名、パスワードがある場合に最適です。</string>
+    <string name="setup_info_xtream_body">サーバー、ユーザー名、パスワード向け。</string>
     <string name="setup_info_m3u_title">URLまたはファイルベースのプレイリストにはM3Uを使用</string>
     <string name="setup_info_m3u_body">プレイリストのリンクを使用するか、ローカルファイルをインポートします。</string>
-    <string name="setup_info_manage_title">プロバイダーは後で管理できます</string>
-    <string name="setup_info_manage_body">後で設定から更新、編集、または置き換えできます。</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">M3Uプレイリスト</string>
     <string name="setup_name_hint">プレイリスト名（任意）</string>

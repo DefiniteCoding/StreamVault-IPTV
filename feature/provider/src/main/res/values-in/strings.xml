@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Perbarui detail penyedia IPTV Anda</string>
     <string name="setup_add_desc">Tambahkan penyedia IPTV Anda</string>
     <string name="setup_shell_eyebrow">Orientasi Penyedia</string>
-    <string name="setup_shell_subtitle">Gunakan Xtream atau M3U. Anda dapat mengubahnya nanti.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U atau Jellyfin. Edit atau ganti nanti di Pengaturan.</string>
     <string name="setup_form_subtitle">Pilih sumber, masukkan detailnya, dan lanjutkan. Anda dapat mengelolanya nanti dari Pengaturan.</string>
     <string name="setup_source_type_label">Jenis Sumber</string>
     <string name="setup_info_xtream_title">Gunakan Xtream ketika kredensial tersedia</string>
-    <string name="setup_info_xtream_body">Paling baik bila Anda memiliki server, pengguna, dan kata sandi.</string>
+    <string name="setup_info_xtream_body">Terbaik untuk server, pengguna, kata sandi.</string>
     <string name="setup_info_m3u_title">Gunakan M3U untuk URL atau daftar putar berbasis file</string>
     <string name="setup_info_m3u_body">Gunakan tautan daftar putar atau impor file lokal.</string>
-    <string name="setup_info_manage_title">Anda dapat mengelola penyedia nanti</string>
-    <string name="setup_info_manage_body">Segarkan, edit, atau ganti nanti dari Pengaturan.</string>
     <string name="setup_xtream">Kode Xtream</string>
     <string name="setup_m3u">Daftar Putar M3U</string>
     <string name="setup_name_hint">Nama Daftar Putar (Opsional)</string>

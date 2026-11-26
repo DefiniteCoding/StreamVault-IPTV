@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -20,15 +21,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.streamvault.core.ui.components.SearchInput
 import com.streamvault.core.ui.components.shell.ContentMetadataStrip
+import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvIconButton
+import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.secondarySurfaceColors
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.feature.live.R
 import com.streamvault.core.ui.design.browse.OnBackground
 import com.streamvault.core.ui.design.browse.OnSurfaceDim
 
@@ -46,11 +54,11 @@ fun LiveChannelResultsHeader(
     onChannelSearchQueryChanged: (String) -> Unit,
     searchPlaceholder: String,
     channelSearchFocusRequester: FocusRequester,
-    channelSearchWidth: Dp,
     isReorderMode: Boolean,
     showCategoriesButton: Boolean = false,
     onShowCategories: () -> Unit = {},
     showCategoriesContentDescription: String = "",
+    onOptions: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -80,6 +88,12 @@ fun LiveChannelResultsHeader(
                         velocity = 24.dp
                     )
             )
+            if (onOptions != null) {
+                LiveCategoryOptionsButton(
+                    onClick = onOptions,
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+            }
             if (hasSplitChannels) {
                 CompactSplitLauncherButton(
                     slotCount = slotCount,
@@ -94,7 +108,8 @@ fun LiveChannelResultsHeader(
                 text = resultCountLabel,
                 style = MaterialTheme.typography.labelMedium,
                 color = OnSurfaceDim,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         } else {
             ContentMetadataStrip(values = metadataValues)
@@ -125,11 +140,45 @@ fun LiveChannelResultsHeader(
                 placeholder = searchPlaceholder,
                 onSearch = {},
                 focusRequester = channelSearchFocusRequester,
-                modifier = Modifier
-                    .weight(1f, fill = false)
-                    .widthIn(min = 0.dp, max = channelSearchWidth),
+                modifier = Modifier.weight(1f),
                 enabled = !isReorderMode
             )
         }
+    }
+}
+
+/**
+ * Visible entry to the category options dialog for Favourites and Recent, which have no list row to long-press.
+ * Reports zero height and is centred on the heading line, so showing it never changes the header height.
+ */
+@Composable
+private fun LiveCategoryOptionsButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TvClickableSurface(
+        onClick = onClick,
+        modifier = modifier
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                layout(placeable.width, 0) { placeable.place(0, -placeable.height / 2) }
+            }
+            .widthIn(min = 96.dp)
+            .height(28.dp),
+        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
+        colors = secondarySurfaceColors(),
+        border = selectableFocusBorder(BrowseShapes.Control),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+    ) {
+        Text(
+            text = stringResource(R.string.epg_options_short),
+            style = MaterialTheme.typography.titleSmall,
+            color = OnBackground,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 12.dp)
+        )
     }
 }

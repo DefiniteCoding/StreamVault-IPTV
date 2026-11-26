@@ -36,6 +36,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
+import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.TvInitialFocus
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.focus.focusProperties
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusEvent
@@ -347,8 +350,22 @@ fun ProviderSetupScreen(
         else -> SourceType.M3U_URL
     }
 
+    // Entry focus lands on the chosen source (rule 17); choosing a source then moves it to the first field of that form.
+    val sourceFocusRequester = remember { FocusRequester() }
+    val firstFieldFocusRequester = remember { FocusRequester() }
+    var pendingFirstFieldFocus by remember { mutableStateOf(false) }
+    TvInitialFocus(if (uiState.isEditing) firstFieldFocusRequester else sourceFocusRequester)
+    LaunchedEffect(pendingFirstFieldFocus) {
+        if (pendingFirstFieldFocus) {
+            withFrameNanos { }
+            firstFieldFocusRequester.requestFocusSafely(target = "Provider setup first field")
+            pendingFirstFieldFocus = false
+        }
+    }
+
     fun onSourceTypeSelected(type: SourceType) {
         if (uiState.isEditing) return
+        pendingFirstFieldFocus = true
         when (type) {
             SourceType.XTREAM  -> {
                 selectedTab = 0
@@ -436,10 +453,12 @@ fun ProviderSetupScreen(
                                       else androidx.compose.ui.res.stringResource(R.string.setup_provider_title),
                         onSelect = ::onSourceTypeSelected,
                         onImportClick = { showImportOptionsDialog = true },
-                        modifier = Modifier.width(200.dp).fillMaxHeight()
+                        modifier = Modifier.width(200.dp).fillMaxHeight(),
+                        selectedFocusRequester = sourceFocusRequester
                     )
                     ProviderFormContent(
                         sourceType = sourceType,
+                        firstFieldFocusRequester = firstFieldFocusRequester,
                         uiState = uiState,
                         pairingState = pairingState,
                         name = name, onNameChange = { name = ProviderInputSanitizer.sanitizeProviderNameForEditing(it) },
@@ -502,10 +521,12 @@ fun ProviderSetupScreen(
                         sourceType = sourceType,
                         isEditing = uiState.isEditing,
                         onSelect = ::onSourceTypeSelected,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        selectedFocusRequester = sourceFocusRequester
                     )
                     ProviderFormContent(
                         sourceType = sourceType,
+                        firstFieldFocusRequester = firstFieldFocusRequester,
                         uiState = uiState,
                         pairingState = pairingState,
                         name = name, onNameChange = { name = ProviderInputSanitizer.sanitizeProviderNameForEditing(it) },

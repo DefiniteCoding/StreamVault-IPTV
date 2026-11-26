@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Fut URL-në e drejtpërdrejtë të APK-së. StreamVault do ta shkarkojë dhe do të hapë instaluesin.</string>
+  <string name="plugins_install_url_label">URL-ja e APK-së së shtojcës</string>
+  <string name="plugins_installing">Po instalohet…</string>
+  <string name="plugins_download_install">Shkarko dhe instalo</string>
+</resources>

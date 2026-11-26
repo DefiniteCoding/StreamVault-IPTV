@@ -22,9 +22,11 @@ import com.streamvault.core.ui.components.shell.ContentMetadataStrip
 import com.streamvault.core.ui.components.shell.StatusPill
 import com.streamvault.core.ui.theme.StreamVaultTheme
 import com.streamvault.domain.model.Channel
+import com.streamvault.domain.model.Episode
 import com.streamvault.domain.model.Movie
 import com.streamvault.domain.model.Series
 import com.streamvault.feature.catalog.presentation.components.ChannelCard
+import com.streamvault.feature.catalog.presentation.components.EpisodeCard
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.feature.catalog.presentation.components.SeriesCard
 import com.streamvault.feature.catalog.test.assertAgainstGolden
@@ -73,6 +75,25 @@ class CatalogPresentationGoldenTest {
             AppHeroHeader(title = "Series Detail", subtitle = "Season browsing and progress-aware episodes.")
             AppSectionHeader(title = "Season 1", subtitle = "8 episodes available")
             SeriesCard(series = series(), onClick = {})
+        }
+    }
+
+    @Test
+    fun episode_card_row_matchesGolden() = captureGolden("series_episode_card_row") {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            EpisodeCard(
+                episode = Episode(
+                    id = 1L, title = "4K-AR - Fixture (2025) (GB) - S01E01 - Pilot", episodeNumber = 1,
+                    seasonNumber = 1, duration = "00:44:47", durationSeconds = 2687, watchProgress = 900_000L
+                ),
+                onClick = {},
+                onDownload = {}
+            )
+            EpisodeCard(
+                episode = Episode(id = 2L, title = "Second", episodeNumber = 2, seasonNumber = 1, duration = "00:47:37"),
+                onClick = {},
+                onDownload = {}
+            )
         }
     }
 

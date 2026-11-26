@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Đang chuẩn bị thư viện của bạn…</string>
+    <string name="startup_failed_title">StreamVault không thể mở thư viện của bạn</string>
+    <string name="startup_failed_message">Không thể nâng cấp cơ sở dữ liệu cục bộ. Dữ liệu của bạn không bị xóa.</string>
+    <string name="startup_failed_error_type">Lỗi: %1$s</string>
+    <string name="startup_retry">Thử lại</string>
+    <string name="startup_share_report">Chia sẻ báo cáo</string>
+</resources>

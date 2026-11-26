@@ -67,6 +67,16 @@ class PlayerInputPolicyTest {
     }
 
     @Test
+    fun `resume prompt keeps horizontal keys from seeking`() {
+        val state = liveState(contentType = "MOVIE", showResumePrompt = true)
+
+        assertThat(playerInputDecision(state, PlayerInputKey.DpadLeft).action)
+            .isEqualTo(PlayerInputAction.Pass)
+        assertThat(playerInputDecision(state, PlayerInputKey.DpadRight).action)
+            .isEqualTo(PlayerInputAction.Pass)
+    }
+
+    @Test
     fun `audio video offset Back dismisses preview and directional keys pass through`() {
         val state = liveState(showAudioVideoOffsetDialog = true)
 
@@ -136,6 +146,28 @@ class PlayerInputPolicyTest {
                 PlayerInputKey.Enter
             ).action
         ).isEqualTo(PlayerInputAction.CloseChannelInfo)
+    }
+
+    @Test
+    fun `center and info close the open channel info panel before the overlay`() {
+        val state = liveState(showChannelInfoOverlay = true, channelInfoSubPanelOpen = true)
+
+        assertThat(playerInputDecision(state, PlayerInputKey.DpadCenter).action)
+            .isEqualTo(PlayerInputAction.CloseChannelInfoPanel)
+        assertThat(playerInputDecision(state, PlayerInputKey.Enter).action)
+            .isEqualTo(PlayerInputAction.CloseChannelInfoPanel)
+        assertThat(playerInputDecision(state, PlayerInputKey.Info).action)
+            .isEqualTo(PlayerInputAction.CloseChannelInfoPanel)
+    }
+
+    @Test
+    fun `a stale subpanel flag does not swallow info or center`() {
+        val state = liveState(showChannelInfoOverlay = false, channelInfoSubPanelOpen = true)
+
+        assertThat(playerInputDecision(state, PlayerInputKey.Info).action)
+            .isEqualTo(PlayerInputAction.OpenChannelInfo)
+        assertThat(playerInputDecision(state, PlayerInputKey.DpadCenter).action)
+            .isEqualTo(PlayerInputAction.OpenChannelInfo)
     }
 
     @Test
@@ -275,7 +307,8 @@ class PlayerInputPolicyTest {
         showControls: Boolean = false,
         hasPendingNumericChannelInput: Boolean = false,
         canOpenEpisodePicker: Boolean = false,
-        showClosePlaybackConfirmation: Boolean = false
+        showClosePlaybackConfirmation: Boolean = false,
+        showResumePrompt: Boolean = false
     ) = PlayerInputState(
         contentType = contentType,
         isCatchUpPlayback = isCatchUpPlayback,
@@ -300,6 +333,7 @@ class PlayerInputPolicyTest {
         showControls = showControls,
         hasPendingNumericChannelInput = hasPendingNumericChannelInput,
         canOpenEpisodePicker = canOpenEpisodePicker,
-        showClosePlaybackConfirmation = showClosePlaybackConfirmation
+        showClosePlaybackConfirmation = showClosePlaybackConfirmation,
+        showResumePrompt = showResumePrompt
     )
 }

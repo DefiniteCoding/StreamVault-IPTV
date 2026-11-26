@@ -18,8 +18,6 @@ import com.streamvault.core.ui.components.SearchInput
 import com.streamvault.core.ui.design.browse.OnSurface
 import com.streamvault.domain.model.ActiveLiveSource
 import com.streamvault.domain.model.ActiveLiveSourceOption
-import com.streamvault.domain.model.LiveTvQuickFilterVisibilityMode
-import com.streamvault.feature.live.presentation.components.LiveQuickFiltersPanel
 import com.streamvault.feature.live.presentation.components.LiveSourceSwitcher
 
 @Composable
@@ -33,30 +31,10 @@ fun LiveCategorySidebarHeader(
     onCategorySearchQueryChanged: (String) -> Unit,
     categorySearchFocusRequester: FocusRequester,
     categorySearchPlaceholder: String,
-    quickFilterVisibilityMode: LiveTvQuickFilterVisibilityMode,
-    savedCategoryFilters: List<String>,
-    activeCategoryFilter: String?,
-    hiddenCategoriesButtonLabel: String?,
-    hiddenChannelsButtonLabel: String?,
-    quickFiltersButtonTitle: String,
-    quickFiltersTitle: String,
-    quickFiltersShowLabel: String,
-    quickFiltersHideLabel: String,
-    quickFiltersShowingAllLabel: String,
-    quickFiltersActiveLabel: String,
-    quickFiltersManualSearchLabel: String,
-    quickFiltersAllLabel: String,
-    quickFiltersEmptyLabel: String,
-    quickFiltersAddChipLabel: String,
     noSourceLabel: String,
     selectedLabel: String,
     unavailableLabel: String,
     isReorderMode: Boolean,
-    onShowHiddenCategories: () -> Unit,
-    onShowHiddenChannels: () -> Unit,
-    onAddFilter: () -> Unit,
-    onAllSelected: () -> Unit,
-    onSavedFilterSelected: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -99,39 +77,5 @@ fun LiveCategorySidebarHeader(
             modifier = Modifier.padding(bottom = 10.dp),
             enabled = !isReorderMode
         )
-
-        val shouldShowQuickFiltersControl = when (quickFilterVisibilityMode) {
-            LiveTvQuickFilterVisibilityMode.HIDE -> false
-            LiveTvQuickFilterVisibilityMode.SHOW_WHEN_FILTERS_AVAILABLE -> savedCategoryFilters.isNotEmpty()
-            LiveTvQuickFilterVisibilityMode.ALWAYS_VISIBLE -> true
-        }
-        if (shouldShowQuickFiltersControl) {
-            val filterSubtitle = when {
-                categorySearchQuery.isBlank() -> quickFiltersShowingAllLabel
-                activeCategoryFilter != null -> quickFiltersActiveLabel
-                else -> quickFiltersManualSearchLabel
-            }
-            LiveQuickFiltersPanel(
-                savedFilters = savedCategoryFilters,
-                categorySearchQuery = categorySearchQuery,
-                activeFilter = activeCategoryFilter,
-                hiddenCategoriesButtonLabel = hiddenCategoriesButtonLabel,
-                hiddenChannelsButtonLabel = hiddenChannelsButtonLabel,
-                buttonTitle = quickFiltersButtonTitle,
-                chipTitle = quickFiltersTitle,
-                showLabel = quickFiltersShowLabel,
-                hideLabel = quickFiltersHideLabel,
-                filterSubtitle = filterSubtitle,
-                allLabel = quickFiltersAllLabel,
-                emptyLabel = quickFiltersEmptyLabel,
-                addChipLabel = quickFiltersAddChipLabel,
-                isReorderMode = isReorderMode,
-                onShowHiddenCategories = onShowHiddenCategories,
-                onShowHiddenChannels = onShowHiddenChannels,
-                onAddFilter = onAddFilter,
-                onAllSelected = onAllSelected,
-                onSavedFilterSelected = onSavedFilterSelected
-            )
-        }
     }
 }

@@ -60,7 +60,9 @@ import com.streamvault.core.ui.image.ChannelLogoBadge
 import com.streamvault.core.ui.accessibility.rememberReducedMotionEnabled
 import com.streamvault.feature.catalog.presentation.components.MoviePosterCard
 import com.streamvault.feature.catalog.presentation.components.SeriesPosterCard
+import com.streamvault.core.ui.components.shell.ArtworkPillAlpha
 import com.streamvault.core.ui.components.shell.StatusPill
+import com.streamvault.core.ui.design.contentOnColor
 import com.streamvault.feature.catalog.presentation.components.formatVodRatingLabel
 import com.streamvault.domain.playback.archivePlaybackCapability
 import com.streamvault.core.ui.design.browse.AccentAmber
@@ -93,11 +95,12 @@ fun FocusableCard(
     isDragging: Boolean = false,
     semanticsDescription: String? = null,
     semanticsStateDescription: String? = null,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null,
     content: @Composable BoxScope.(Boolean) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
     val sounds = rememberTvInteractionSounds()
-    val focusRequester = remember { androidx.compose.ui.focus.FocusRequester() }
+    val focusRequester = focusRequester ?: remember { androidx.compose.ui.focus.FocusRequester() }
     val reducedMotionEnabled = rememberReducedMotionEnabled()
 
     val scale by animateFloatAsState(
@@ -182,7 +185,8 @@ fun ChannelCard(
     isReorderMode: Boolean = false,
     isDragging: Boolean = false,
     isRecording: Boolean = false,
-    isScheduledRecording: Boolean = false
+    isScheduledRecording: Boolean = false,
+    focusRequester: androidx.compose.ui.focus.FocusRequester? = null
 ) {
     val channelCardShape = LocalAppShapes.current.small
     val hasUsableArchive = channel.archivePlaybackCapability().canBuildReplayCandidate
@@ -216,7 +220,8 @@ fun ChannelCard(
         isReorderMode = isReorderMode,
         isDragging = isDragging,
         semanticsDescription = channelDescription,
-        semanticsStateDescription = if (isLocked) stringResource(R.string.a11y_locked) else null
+        semanticsStateDescription = if (isLocked) stringResource(R.string.a11y_locked) else null,
+        focusRequester = focusRequester
     ) { isFocused ->
         if (!isLocked) {
             ChannelLogoBadge(
@@ -305,7 +310,15 @@ fun ChannelCard(
                     StatusPill(label = stringResource(R.string.badge_error), containerColor = AccentRed, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
                 }
                 if (hasUsableArchive) {
-                    StatusPill(label = stringResource(R.string.badge_catch_up), containerColor = Primary, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
+                    StatusPill(
+                        label = stringResource(R.string.badge_catch_up),
+                        containerColor = Primary,
+                        contentColor = com.streamvault.core.ui.design.BrowseColors.OnPrimary,
+                        cornerRadius = 4.dp,
+                        horizontalPadding = 6.dp,
+                        verticalPadding = 2.dp,
+                        containerAlpha = ArtworkPillAlpha
+                    )
                 }
                 if (isRecording) {
                     StatusPill(label = stringResource(R.string.badge_recording), containerColor = AccentRed, cornerRadius = 4.dp, horizontalPadding = 6.dp, verticalPadding = 2.dp)
@@ -315,9 +328,11 @@ fun ChannelCard(
                 StatusPill(
                     label = stringResource(R.string.card_live_badge),
                     containerColor = AccentRed,
+                    contentColor = contentOnColor(AccentRed),
                     cornerRadius = 4.dp,
                     horizontalPadding = 6.dp,
-                    verticalPadding = 2.dp
+                    verticalPadding = 2.dp,
+                    containerAlpha = ArtworkPillAlpha
                 )
             }
         }

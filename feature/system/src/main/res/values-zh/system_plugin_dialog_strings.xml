@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">请输入 APK 直链。StreamVault 将下载并打开安装程序。</string>
+  <string name="plugins_install_url_label">插件 APK 网址</string>
+  <string name="plugins_installing">正在安装…</string>
+  <string name="plugins_download_install">下载并安装</string>
+</resources>

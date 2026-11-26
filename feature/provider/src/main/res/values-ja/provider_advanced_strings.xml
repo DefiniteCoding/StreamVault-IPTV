@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">ポータルURL</string>
+  <string name="setup_jellyfin_source_subtitle">Jellyfinメディアサーバー</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">User-Agentの上書き（任意）</string>
+  <string name="setup_adv_headers_stalker_placeholder">ヘッダー（API、任意、Header: Value | HeaderToRemove:）</string>
+  <string name="setup_adv_headers_custom_placeholder">カスタムヘッダー（任意、Header: Value | Header2: Value）</string>
+
+  <string name="setup_guide_source_title">番組表のソース</string>
+  <string name="setup_guide_source_helper">このプロバイダーで、プロバイダー提供の番組表、割り当てた外部XMLTVソース、番組表なしのどれを使うか選択します。</string>
+  <string name="setup_guide_policy_auto_title">自動</string>
+  <string name="setup_guide_policy_auto_description">現在の混在動作を維持します。外部XMLTVがプロバイダーの番組表データを上書きすることがあり、一致しないチャンネルはプロバイダーの番組表を代替として使う場合があります。</string>
+  <string name="setup_guide_policy_external_title">外部EPGのみ使用</string>
+  <string name="setup_guide_policy_external_description">割り当てた外部XMLTVソースのみ使用します。一致しないチャンネルには番組表データがありません。</string>
+  <string name="setup_guide_policy_provider_title">プロバイダーのEPGのみ使用</string>
+  <string name="setup_guide_policy_provider_description">このプロバイダーに割り当てた外部XMLTVソースを無視し、プロバイダーの番組表パスのみ使用します。</string>
+  <string name="setup_guide_policy_disabled_title">番組表データを無効にする</string>
+  <string name="setup_guide_policy_disabled_description">このプロバイダーの番組表データをインポートも照合もしません。</string>
+
+  <string name="setup_logo_source_title">チャンネルロゴ</string>
+  <string name="setup_logo_source_helper">チャンネルロゴを、プロバイダー、一致したEPGチャンネルのアイコン、または単一ソースのみのどれから取得するか選択します。</string>
+  <string name="setup_logo_policy_supplier_preferred_title">プロバイダーのロゴを優先</string>
+  <string name="setup_logo_policy_supplier_preferred_description">プロバイダーのロゴがあれば使用し、なければ一致したEPGアイコンを使用します。</string>
+  <string name="setup_logo_policy_epg_preferred_title">EPGのロゴを優先</string>
+  <string name="setup_logo_policy_epg_preferred_description">一致したEPGアイコンを先に使用し、なければプロバイダーのロゴを使用します。</string>
+  <string name="setup_logo_policy_supplier_only_title">プロバイダーのロゴのみ</string>
+  <string name="setup_logo_policy_supplier_only_description">このプロバイダーでは常にプロバイダーのロゴを使用します。</string>
+  <string name="setup_logo_policy_epg_only_title">EPGのロゴのみ</string>
+  <string name="setup_logo_policy_epg_only_description">このプロバイダーでは常に一致したEPGアイコンを使用します。</string>
+
+  <string name="setup_stalker_auth_title">Stalker認証モード</string>
+  <string name="setup_stalker_auth_helper">既定は自動検出です。ポータルが認証情報、またはMAG + アカウントの混在ログインを必要とする場合のみ変更してください。</string>
+  <string name="setup_stalker_auth_auto_title">自動検出</string>
+  <string name="setup_stalker_auth_auto_description">ポータルで最も可能性の高い認証フローを先に試し、別のStalkerモードが適している場合は一度だけ再試行します。</string>
+  <string name="setup_stalker_auth_mac_only_title">MACのみ</string>
+  <string name="setup_stalker_auth_mac_only_description">ポータルアカウントでログインせず、MAG方式のMAC認証を使用します。</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + 認証情報</string>
+  <string name="setup_stalker_auth_mac_credentials_description">MAGのIDを維持し、より厳格なポータル向けにポータルアカウントの認証情報を追加します。</string>
+  <string name="setup_stalker_auth_credentials_only_title">認証情報のみ</string>
+  <string name="setup_stalker_auth_credentials_only_description">MACアドレスが任意または無視される場合でも、ポータルアカウントの認証情報を使用します。</string>
+
+  <string name="setup_stalker_username_optional_placeholder">ポータルのユーザー名（任意）</string>
+  <string name="setup_stalker_username_placeholder">ポータルのユーザー名</string>
+  <string name="setup_stalker_password_optional_placeholder">ポータルのパスワード（任意）</string>
+  <string name="setup_stalker_password_placeholder">ポータルのパスワード</string>
+  <string name="setup_stalker_mag_type_placeholder">MAGタイプ（任意）</string>
+  <string name="setup_stalker_timezone_placeholder">タイムゾーン（任意）</string>
+  <string name="setup_stalker_locale_placeholder">ロケール（任意）</string>
+  <string name="setup_stalker_serial_placeholder">シリアル番号（任意）</string>
+  <string name="setup_stalker_device_id_placeholder">デバイスID（任意）</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2（任意）</string>
+  <string name="setup_stalker_signature_placeholder">署名（任意）</string>
+
+  <string name="setup_stalker_compat_section_title">Stalker互換性</string>
+  <string name="setup_stalker_compat_section_helper">扱いにくいMAG/Stalkerサーバー向けの、ポータル固有の上書き設定です。サーバーが必要とする場合を除き、空欄のままにしてください。</string>
+  <string name="setup_stalker_hw_version_placeholder">hw_versionの上書き（任意）</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent（API、任意）</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent（プレーヤー、任意）</string>
+  <string name="setup_stalker_player_headers_placeholder">ヘッダー（プレーヤー、任意、Header: Value | HeaderToRemove:）</string>
+  <string name="setup_stalker_x_user_agent_link">X-User-Agentリンク</string>
+  <string name="setup_stalker_link_ethernet">イーサネット</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">HTTPプロキシを使用</string>
+  <string name="setup_stalker_proxy_helper">Stalker APIと再生にのみ適用されます。</string>
+  <string name="setup_stalker_proxy_host_placeholder">プロキシホスト</string>
+  <string name="setup_stalker_proxy_port_placeholder">プロキシポート</string>
+
+  <string name="setup_stalker_selector_title">互換性</string>
+  <string name="setup_stalker_protocol_button">プロトコル: %1$s</string>
+  <string name="setup_stalker_protocol_auto">自動</string>
+  <string name="setup_stalker_protocol_classic_mag">クラシックMAG</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">モデル: %1$s</string>
+  <string name="setup_stalker_model_automatic">自動</string>
+  <string name="setup_stalker_profile_experimental">%1$s（試験的）</string>
+  <string name="setup_stalker_experimental_note">試験的プロファイルには、取得済みまたは手動入力のID項目が必要で、自動検出の対象外です。</string>
+  <string name="setup_stalker_profile_custom">カスタムプロファイル</string>
+
+  <string name="setup_stalker_rules_title">リクエストルール</string>
+  <string name="setup_stalker_rules_helper">アクションで照合し、呼び出しをブロックするか、パラメーターを上書きします。空の値はパラメーターを削除します。</string>
+  <string name="setup_stalker_rules_add">ルールを追加</string>
+  <string name="setup_stalker_rule_number">ルール %1$d</string>
+  <string name="setup_stalker_rule_delete">削除</string>
+  <string name="setup_stalker_rule_action_placeholder">アクション（例: get_profile）</string>
+  <string name="setup_stalker_rule_block">このリクエストをブロック</string>
+  <string name="setup_stalker_rule_block_warning">警告: %1$s をブロックするとログインできなくなる可能性があります。</string>
+  <string name="setup_stalker_rule_params_placeholder">パラメーターの上書き: name=value | remove_me=</string>
+</resources>

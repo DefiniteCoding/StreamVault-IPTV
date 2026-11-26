@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL ของพอร์ทัล</string>
+  <string name="setup_jellyfin_source_subtitle">เซิร์ฟเวอร์สื่อ Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">แทนที่ User-Agent (ไม่บังคับ)</string>
+  <string name="setup_adv_headers_stalker_placeholder">เฮดเดอร์ (API, ไม่บังคับ, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">เฮดเดอร์กำหนดเอง (ไม่บังคับ, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">แหล่งผังรายการ</string>
+  <string name="setup_guide_source_helper">เลือกว่าผู้ให้บริการนี้จะใช้ผังรายการของผู้ให้บริการเอง แหล่ง XMLTV ภายนอกที่คุณกำหนด หรือไม่ใช้ผังรายการเลย</string>
+  <string name="setup_guide_policy_auto_title">อัตโนมัติ</string>
+  <string name="setup_guide_policy_auto_description">คงพฤติกรรมแบบผสมปัจจุบัน: XMLTV ภายนอกอาจแทนที่ข้อมูลผังรายการของผู้ให้บริการ และช่องที่จับคู่ไม่ได้ยังอาจใช้ผังรายการของผู้ให้บริการสำรองได้</string>
+  <string name="setup_guide_policy_external_title">ใช้ EPG ภายนอกเท่านั้น</string>
+  <string name="setup_guide_policy_external_description">ใช้เฉพาะแหล่ง XMLTV ภายนอกที่กำหนดไว้ ช่องที่จับคู่ไม่ได้จะไม่มีข้อมูลผังรายการ</string>
+  <string name="setup_guide_policy_provider_title">ใช้ EPG ของผู้ให้บริการเท่านั้น</string>
+  <string name="setup_guide_policy_provider_description">ข้ามแหล่ง XMLTV ภายนอกที่กำหนดให้ผู้ให้บริการนี้ และใช้เฉพาะเส้นทางผังรายการของผู้ให้บริการ</string>
+  <string name="setup_guide_policy_disabled_title">ปิดข้อมูลผังรายการ</string>
+  <string name="setup_guide_policy_disabled_description">ไม่นำเข้าหรือจับคู่ข้อมูลผังรายการสำหรับผู้ให้บริการนี้</string>
+
+  <string name="setup_logo_source_title">โลโก้ช่อง</string>
+  <string name="setup_logo_source_helper">เลือกว่าโลโก้ช่องมาจากผู้ให้บริการ ไอคอนช่อง EPG ที่จับคู่ได้ หรือใช้แหล่งเดียวอย่างเคร่งครัด</string>
+  <string name="setup_logo_policy_supplier_preferred_title">ใช้โลโก้ผู้ให้บริการก่อน</string>
+  <string name="setup_logo_policy_supplier_preferred_description">ใช้โลโก้ของผู้ให้บริการหากมี ไม่เช่นนั้นใช้ไอคอน EPG ที่จับคู่ได้</string>
+  <string name="setup_logo_policy_epg_preferred_title">ใช้โลโก้ EPG ก่อน</string>
+  <string name="setup_logo_policy_epg_preferred_description">ใช้ไอคอน EPG ที่จับคู่ได้ก่อน ไม่เช่นนั้นใช้โลโก้ของผู้ให้บริการ</string>
+  <string name="setup_logo_policy_supplier_only_title">เฉพาะโลโก้ผู้ให้บริการ</string>
+  <string name="setup_logo_policy_supplier_only_description">ใช้โลโก้ของผู้ให้บริการเสมอสำหรับผู้ให้บริการนี้</string>
+  <string name="setup_logo_policy_epg_only_title">เฉพาะโลโก้ EPG</string>
+  <string name="setup_logo_policy_epg_only_description">ใช้ไอคอน EPG ที่จับคู่ได้เสมอสำหรับผู้ให้บริการนี้</string>
+
+  <string name="setup_stalker_auth_title">โหมดการยืนยันตัวตน Stalker</string>
+  <string name="setup_stalker_auth_helper">ค่าเริ่มต้นคือตรวจหาอัตโนมัติ เปลี่ยนเฉพาะเมื่อพอร์ทัลต้องใช้ข้อมูลเข้าสู่ระบบ หรือการเข้าสู่ระบบแบบผสม MAG + บัญชี</string>
+  <string name="setup_stalker_auth_auto_title">ตรวจหาอัตโนมัติ</string>
+  <string name="setup_stalker_auth_auto_description">ลองขั้นตอนยืนยันตัวตนที่พอร์ทัลน่าจะใช้ก่อน และลองใหม่อีกครั้งหากโหมด Stalker อื่นเหมาะกว่า</string>
+  <string name="setup_stalker_auth_mac_only_title">MAC เท่านั้น</string>
+  <string name="setup_stalker_auth_mac_only_description">ใช้การยืนยันตัวตน MAC แบบ MAG โดยไม่ต้องเข้าสู่ระบบบัญชีพอร์ทัล</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + ข้อมูลเข้าสู่ระบบ</string>
+  <string name="setup_stalker_auth_mac_credentials_description">คงตัวตน MAG และเพิ่มข้อมูลบัญชีพอร์ทัลสำหรับพอร์ทัลที่เข้มงวดกว่า</string>
+  <string name="setup_stalker_auth_credentials_only_title">ข้อมูลเข้าสู่ระบบเท่านั้น</string>
+  <string name="setup_stalker_auth_credentials_only_description">ใช้ข้อมูลบัญชีพอร์ทัลแม้ที่อยู่ MAC จะไม่บังคับหรือถูกละเว้น</string>
+
+  <string name="setup_stalker_username_optional_placeholder">ชื่อผู้ใช้พอร์ทัล (ไม่บังคับ)</string>
+  <string name="setup_stalker_username_placeholder">ชื่อผู้ใช้พอร์ทัล</string>
+  <string name="setup_stalker_password_optional_placeholder">รหัสผ่านพอร์ทัล (ไม่บังคับ)</string>
+  <string name="setup_stalker_password_placeholder">รหัสผ่านพอร์ทัล</string>
+  <string name="setup_stalker_mag_type_placeholder">ประเภท MAG (ไม่บังคับ)</string>
+  <string name="setup_stalker_timezone_placeholder">เขตเวลา (ไม่บังคับ)</string>
+  <string name="setup_stalker_locale_placeholder">ภาษาและภูมิภาค (ไม่บังคับ)</string>
+  <string name="setup_stalker_serial_placeholder">หมายเลขซีเรียล (ไม่บังคับ)</string>
+  <string name="setup_stalker_device_id_placeholder">รหัสอุปกรณ์ (ไม่บังคับ)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (ไม่บังคับ)</string>
+  <string name="setup_stalker_signature_placeholder">ลายเซ็น (ไม่บังคับ)</string>
+
+  <string name="setup_stalker_compat_section_title">ความเข้ากันได้ของ Stalker</string>
+  <string name="setup_stalker_compat_section_helper">การแทนที่เฉพาะพอร์ทัลสำหรับเซิร์ฟเวอร์ MAG/Stalker ที่เรื่องมาก เว้นช่องว่างไว้ เว้นแต่เซิร์ฟเวอร์ต้องการ</string>
+  <string name="setup_stalker_hw_version_placeholder">แทนที่ hw_version (ไม่บังคับ)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, ไม่บังคับ)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (เครื่องเล่น, ไม่บังคับ)</string>
+  <string name="setup_stalker_player_headers_placeholder">เฮดเดอร์ (เครื่องเล่น, ไม่บังคับ, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">ลิงก์ X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">อีเทอร์เน็ต</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">ใช้พร็อกซี HTTP</string>
+  <string name="setup_stalker_proxy_helper">ใช้กับ API ของ Stalker และการเล่นเท่านั้น</string>
+  <string name="setup_stalker_proxy_host_placeholder">โฮสต์พร็อกซี</string>
+  <string name="setup_stalker_proxy_port_placeholder">พอร์ตพร็อกซี</string>
+
+  <string name="setup_stalker_selector_title">ความเข้ากันได้</string>
+  <string name="setup_stalker_protocol_button">โปรโตคอล: %1$s</string>
+  <string name="setup_stalker_protocol_auto">อัตโนมัติ</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG คลาสสิก</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">รุ่น: %1$s</string>
+  <string name="setup_stalker_model_automatic">อัตโนมัติ</string>
+  <string name="setup_stalker_profile_experimental">%1$s (ทดลอง)</string>
+  <string name="setup_stalker_experimental_note">โปรไฟล์ทดลองต้องใช้ช่องข้อมูลตัวตนที่จับมาหรือกรอกเอง และไม่รวมอยู่ในการค้นหาอัตโนมัติ</string>
+  <string name="setup_stalker_profile_custom">โปรไฟล์กำหนดเอง</string>
+
+  <string name="setup_stalker_rules_title">กฎคำขอ</string>
+  <string name="setup_stalker_rules_helper">จับคู่ตามการกระทำ บล็อกการเรียก หรือแทนที่พารามิเตอร์ ค่าว่างจะลบพารามิเตอร์</string>
+  <string name="setup_stalker_rules_add">เพิ่มกฎ</string>
+  <string name="setup_stalker_rule_number">กฎ %1$d</string>
+  <string name="setup_stalker_rule_delete">ลบ</string>
+  <string name="setup_stalker_rule_action_placeholder">การกระทำ เช่น get_profile</string>
+  <string name="setup_stalker_rule_block">บล็อกคำขอนี้</string>
+  <string name="setup_stalker_rule_block_warning">คำเตือน: การบล็อก %1$s อาจทำให้เข้าสู่ระบบไม่ได้</string>
+  <string name="setup_stalker_rule_params_placeholder">แทนที่พารามิเตอร์: name=value | remove_me=</string>
+</resources>

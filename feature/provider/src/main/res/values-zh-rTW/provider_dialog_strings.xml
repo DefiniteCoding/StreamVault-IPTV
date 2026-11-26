@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">取消</string>
+  <string name="setup_completion_saved_sync_pending">供應商已儲存。同步將在背景繼續進行。</string>
+  <string name="setup_combined_attach_title">要將播放清單新增到合併 M3U 嗎？</string>
+  <string name="setup_combined_attach_message">要將%1$s新增到%2$s，並讓該合併來源在直播電視中保持啟用嗎？</string>
+  <string name="setup_combined_attach_fallback_playlist">此播放清單</string>
+  <string name="setup_combined_attach_fallback_source">目前啟用的合併來源</string>
+  <string name="setup_combined_attach_skip">暫不</string>
+  <string name="setup_combined_attach_confirm">新增到合併來源</string>
+</resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Menyediakan pustaka anda…</string>
+    <string name="startup_failed_title">StreamVault tidak dapat membuka pustaka anda</string>
+    <string name="startup_failed_message">Pangkalan data tempatan tidak dapat dinaik taraf. Data anda tidak dipadam.</string>
+    <string name="startup_failed_error_type">Ralat: %1$s</string>
+    <string name="startup_retry">Cuba semula</string>
+    <string name="startup_share_report">Kongsi laporan</string>
+</resources>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">All</string>
+  <string name="library_chip_favorites">Favorites</string>
+  <string name="library_chip_resume">Resume</string>
+  <string name="library_chip_unwatched">Unwatched</string>
+  <string name="library_chip_recent">Recent</string>
+  <string name="library_chip_updated">Updated</string>
+  <string name="library_chip_top_rated">Top Rated</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Library Order</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Newest</string>
+  <string name="library_chip_sort_recently_updated">Recently Updated</string>
+  <string name="library_chip_sort_updated_short">Updated</string>
+  <string name="library_chip_sort_rating">Rating</string>
+  <string name="library_chip_sort_recent_activity">Recent Activity</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d group</item>
+    <item quantity="other">%d groups</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d item</item>
+    <item quantity="other">%d items</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d pick</item>
+    <item quantity="other">%d picks</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d saved item</item>
+    <item quantity="other">%d saved items</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Failed to load movies</string>
+  <string name="series_error_load_failed">Failed to load series</string>
+  <string name="movie_detail_error_load_failed">Failed to load movie details</string>
+  <string name="series_detail_error_load_failed">Failed to load series details</string>
+  <string name="catalog_error_no_active_provider">No active provider</string>
+  <string name="catalog_message_moved_back_to_live">Moved \'%1$s\' back to Live TV</string>
+  <string name="catalog_message_group_created">Created group %1$s</string>
+  <string name="catalog_message_group_created_and_added">Created group %1$s and added %2$s</string>
+  <string name="catalog_message_category_hidden">Hidden category %1$s</string>
+  <string name="catalog_message_category_pinned">Pinned %1$s</string>
+  <string name="catalog_message_category_unpinned">Unpinned %1$s</string>
+  <string name="catalog_message_group_renamed">Renamed group to %1$s</string>
+  <string name="catalog_message_group_deleted">Deleted group %1$s</string>
+  <string name="catalog_error_group_name_required">Enter a group name</string>
+  <string name="catalog_error_group_name_reserved">Favorites is reserved</string>
+  <string name="movies_error_group_name_duplicate">A movie group with that name already exists</string>
+  <string name="series_error_group_name_duplicate">A series group with that name already exists</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">Removed %1$s from this saved view.</string>
+  <string name="favorites_message_moved_to_group">Moved %1$s to the selected group.</string>
+  <string name="favorites_message_group_deleted">Deleted group %1$s.</string>
+  <string name="favorites_error_move_failed">Unable to move %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Unable to merge %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Unable to save reorder: %1$s</string>
+  <string name="favorites_error_unknown">Unknown error</string>
+  <string name="favorites_subtitle_channel_number">Channel %1$d</string>
+  <string name="favorites_group_subtitle">%1$s group</string>
+  <string name="favorites_content_type_movie">Movie</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

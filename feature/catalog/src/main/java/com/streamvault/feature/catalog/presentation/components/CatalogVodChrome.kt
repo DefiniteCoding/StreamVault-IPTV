@@ -1,8 +1,37 @@
 ﻿package com.streamvault.feature.catalog.presentation.components
 
-import com.streamvault.core.ui.design.contentOnColor
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import androidx.compose.ui.unit.Dp
 import com.streamvault.core.ui.design.BrowseShapes
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.foundation.background
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
+import com.streamvault.domain.model.Movie
+import com.streamvault.domain.model.Series
+import com.streamvault.core.ui.design.LocalAppTypeTokens
+import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.selectableSurfaceColors
+import com.streamvault.core.ui.design.secondarySurfaceColors
+import com.streamvault.core.ui.image.rememberCrossfadeImageModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,8 +43,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import com.streamvault.core.ui.components.AppChipGroup
+import com.streamvault.core.ui.components.AppDropdownPill
+import com.streamvault.core.ui.components.AppFilterChip
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,22 +67,18 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.stringResource
 import com.streamvault.core.ui.device.rememberIsTelevisionDevice
-import androidx.tv.material3.Border
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.tv.material3.Icon
 import androidx.tv.material3.ClickableSurfaceDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
-import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.feature.catalog.presentation.components.ChipRowItem
 import com.streamvault.feature.catalog.presentation.components.ChipRowSection
-import com.streamvault.core.ui.design.BrowseColors.Brand as Primary
-import com.streamvault.core.ui.design.BrowseColors.Focus as FocusBorder
-import com.streamvault.core.ui.design.BrowseColors.SurfaceElevated as SurfaceElevated
-import com.streamvault.core.ui.design.BrowseColors.SurfaceEmphasis as SurfaceHighlight
 import com.streamvault.core.ui.design.BrowseColors.TextPrimary as TextPrimary
 import com.streamvault.core.ui.design.BrowseColors.TextTertiary as OnSurfaceDim
-import androidx.compose.foundation.BorderStroke
 import com.streamvault.feature.catalog.R
 import com.streamvault.core.ui.components.SearchInput
 import com.streamvault.domain.util.SearchTextNormalizer
@@ -59,23 +90,22 @@ import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvButton
 import com.streamvault.core.ui.interaction.TvIconButton
 import com.streamvault.core.ui.components.shell.AppSectionHeader
-import com.streamvault.core.ui.layout.AdaptiveRow
-import com.streamvault.core.ui.layout.isPortraitLayout
 
 @Composable
 fun VodSectionHeader(
     title: String,
     onSeeAll: (() -> Unit)? = null,
-    seeAllLabel: String = stringResource(R.string.action_see_all)
+    seeAllLabel: String = stringResource(R.string.action_see_all),
+    // A header inside a grid that already pads its content passes 0.dp so it lines up with the cards.
+    horizontalInset: Dp = 20.dp
 ) {
     AppSectionHeader(
         title = title,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp),
+            .padding(start = horizontalInset, end = horizontalInset, top = 14.dp, bottom = 8.dp),
         actionLabel = onSeeAll?.let { seeAllLabel },
-        onActionClick = onSeeAll,
-        actionContentColor = AppColors.TextSecondary
+        onActionClick = onSeeAll
     )
 }
 
@@ -84,7 +114,8 @@ fun VodSectionHeader(
 fun VodActionChipRow(
     actions: List<VodActionChip>,
     selectedKey: String? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    firstActionFocusRequester: FocusRequester? = null
 ) {
     ChipRowSection(
         chips = actions.map { action ->
@@ -101,72 +132,266 @@ fun VodActionChipRow(
         chipHorizontalPadding = 14,
         supportingTextStyle = MaterialTheme.typography.labelSmall,
         supportingTextMaxLines = 1,
-        focusedContainerBoostWhenSelected = true
+        firstItemFocusRequester = firstActionFocusRequester
     )
 }
 
+private val CategoryPillMaxWidth = 280.dp
+
+/**
+ * Filter row of a VOD grid: the screen's own actions, a Sort group (single choice), the category pill and a pill that
+ * opens the full filter dialog. Sort values not offered in [sortOptions] stay reachable through the dialog, so no
+ * selected chip is shown for them. The grid already pads its content, so the first chip lines up with the first card
+ * and [FocusSafeLazyRow] supplies the room for the focus ring.
+ */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun VodHeroStrip(
-    title: String,
-    subtitle: String,
-    actionLabel: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+fun VodFilterRow(
+    leadingActions: List<VodActionChip>,
+    sortLabel: String,
+    sortOptions: List<SelectionChip>,
+    selectedSortKey: String,
+    onSortSelected: (String) -> Unit,
+    categoryLabel: String,
+    categoryName: String,
+    onCategoryClick: () -> Unit,
+    moreLabel: String,
+    moreValue: String,
+    onMoreClick: () -> Unit,
+    trailingActions: List<VodActionChip>,
+    modifier: Modifier = Modifier,
+    firstActionFocusRequester: FocusRequester? = null,
+    // Horizontal padding the shell puts around the screen; the row grows into it so cards slide off the screen edge.
+    edgeGutter: Dp = LocalAppSpacing.current.shellHorizontalInset
 ) {
-    TvClickableSurface(
-        onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .then(if (isPortraitLayout()) Modifier else Modifier.height(132.dp)),
-        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Panel),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = SurfaceHighlight,
-            focusedContainerColor = Primary.copy(alpha = 0.22f)
-        ),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, FocusBorder),
-                shape = BrowseShapes.Panel
-            )
-        ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+    FocusSafeLazyRow(
+        modifier = modifier.fillMaxWidth().focusRestorer().suppressParentVerticalScroll(),
+        contentPadding = PaddingValues(vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        edgeGutterStart = edgeGutter,
+        edgeGutterEnd = edgeGutter
     ) {
-        AdaptiveRow(
+        itemsIndexed(leadingActions, key = { _, action -> action.key }) { index, action ->
+            AppFilterChip(
+                label = action.label,
+                selected = false,
+                onClick = action.onClick,
+                modifier = if (index == 0 && firstActionFocusRequester != null) {
+                    Modifier.focusRequester(firstActionFocusRequester)
+                } else {
+                    Modifier
+                }
+            )
+        }
+        item(key = "sort") {
+            AppChipGroup(label = sortLabel) {
+                sortOptions.forEach { option ->
+                    AppFilterChip(
+                        label = option.label,
+                        selected = option.key == selectedSortKey,
+                        onClick = { onSortSelected(option.key) }
+                    )
+                }
+            }
+        }
+        item(key = "category") {
+            // Provider category names can be long; the pill ellipsizes instead of pushing the other controls away.
+            AppDropdownPill(
+                label = categoryLabel,
+                value = categoryName,
+                onClick = onCategoryClick,
+                modifier = Modifier.widthIn(max = CategoryPillMaxWidth)
+            )
+        }
+        item(key = "more") {
+            AppDropdownPill(label = moreLabel, value = moreValue, onClick = onMoreClick)
+        }
+        items(trailingActions, key = { it.key }) { action ->
+            AppFilterChip(label = action.label, selected = false, onClick = action.onClick)
+        }
+    }
+}
+
+/** What the hero shows for one title. [metadata] is already formatted for the locale. */
+data class VodHeroModel(
+    val title: String,
+    val kicker: String,
+    val metadata: List<String>,
+    val plot: String,
+    val posterUrl: String?
+)
+
+// Provider genre fields are comma or slash separated lists; the hero shows the first.
+internal fun firstGenre(genre: String?): String? =
+    genre?.split(',', '/')?.firstOrNull()?.trim()?.takeIf { it.isNotEmpty() }
+
+private val YearPattern = Regex("""\d{4}""")
+
+internal fun releaseYear(releaseDate: String?): String? =
+    releaseDate?.let { YearPattern.find(it)?.value }
+
+internal fun heroMetadata(rating: Float, year: String?, genre: String?): List<String> = listOfNotNull(
+    formatVodRatingLabel(rating).takeIf { rating > 0f },
+    year?.takeIf { it.isNotBlank() },
+    firstGenre(genre)
+)
+
+// Parental levels 1 and 2 lock adult or protected titles until their category is unlocked. Level 3 hides them from
+// the category list instead, so nothing reaches a title-level check.
+internal fun isVodTitleLocked(
+    isAdult: Boolean,
+    isUserProtected: Boolean,
+    categoryId: Long?,
+    parentalControlLevel: Int,
+    unlockedCategoryIds: Set<Long>
+): Boolean =
+    (isAdult || isUserProtected) &&
+        parentalControlLevel in 1..2 &&
+        (categoryId == null || kotlin.math.abs(categoryId) !in unlockedCategoryIds)
+
+// A locked title never reaches the hero: its backdrop and plot would show what the lock hides.
+internal fun <T : Any> firstUnlockedHeroTitle(rows: List<List<T>>, isLocked: (T) -> Boolean): T? =
+    rows.firstNotNullOfOrNull { row -> row.firstOrNull { !isLocked(it) } }
+
+// The shelf rows load a slim projection with no backdrop and no plot, and the provider list API carries no backdrop
+// for movies, so the poster is the only artwork every title has.
+fun Movie.toVodHeroModel() = VodHeroModel(
+    title = name,
+    kicker = categoryName.orEmpty(),
+    metadata = heroMetadata(rating, year ?: releaseYear(releaseDate), genre),
+    plot = plot.orEmpty().trim(),
+    posterUrl = posterUrl?.takeIf { it.isNotBlank() }
+)
+
+fun Series.toVodHeroModel() = VodHeroModel(
+    title = name,
+    kicker = categoryName.orEmpty(),
+    metadata = heroMetadata(rating, releaseYear(releaseDate), genre),
+    plot = plot.orEmpty().trim(),
+    posterUrl = posterUrl?.takeIf { it.isNotBlank() }
+)
+
+private const val HeroFollowDebounceMs = 250L
+private val HeroHeight = 240.dp
+private val HeroPosterHeight = 208.dp
+private val HeroPosterWidth = 139.dp
+
+/**
+ * The item the hero shows: the last focused one, once focus has rested for [HeroFollowDebounceMs], so a fast D-pad
+ * run does not reload artwork per card. [fallback] shows until something has been focused. [focused] is read only
+ * here, so a focus move recomposes the hero and nothing above it.
+ */
+@OptIn(FlowPreview::class)
+@Composable
+fun <T : Any> rememberHeroItem(focused: State<T?>, fallback: T?): T? {
+    val shown = remember { mutableStateOf<T?>(null) }
+    LaunchedEffect(focused) {
+        snapshotFlow { focused.value }
+            .filterNotNull()
+            .debounce(HeroFollowDebounceMs)
+            .collect { shown.value = it }
+    }
+    return shown.value ?: fallback
+}
+
+/**
+ * [item] enriched by [resolve] (a local row lookup, possibly a provider call). Shows [item] at once and swaps in the
+ * resolved copy when it arrives; a new [item] cancels the pending resolve, which is what keeps fast browsing free of
+ * provider traffic.
+ */
+@Composable
+fun <T : Any> rememberHeroDetails(item: T?, resolve: suspend (T) -> T): T? =
+    produceState(initialValue = item, item) {
+        value = item
+        if (item != null) value = resolve(item)
+    }.value
+
+/** Opaque theme surface with the title on the start side and its poster on the end side: no scrim, no overdraw. */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun VodFocusHero(
+    model: VodHeroModel,
+    actionLabel: String,
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    actionFocusRequester: FocusRequester? = null
+) {
+    val type = LocalAppTypeTokens.current
+    // The hero is taller than its button, so the default focus scroll reveals only the button and leaves the top of
+    // the panel clipped. Asking for the whole hero (padding included) keeps it fully visible while its button is focused.
+    val heroInView = remember { BringIntoViewRequester() }
+    val scope = rememberCoroutineScope()
+    // The requester comes first so the caller's padding stays inside the area it reveals.
+    Box(modifier = Modifier.bringIntoViewRequester(heroInView).then(modifier)) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = 20.dp)
+                .height(HeroHeight)
+                .clip(BrowseShapes.Hero)
+                .background(AppColors.SurfaceElevated)
+                .padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = if (isPortraitLayout()) Modifier.fillMaxWidth() else Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
+                if (model.kicker.isNotBlank()) {
+                    Text(
+                        text = type.kicker(model.kicker),
+                        style = type.labelKicker,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = TextPrimary,
+                    text = model.title,
+                    style = MaterialTheme.typography.displaySmall,
+                    color = AppColors.TextPrimary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+                if (model.metadata.isNotEmpty()) {
+                    Text(
+                        text = model.metadata.joinToString("  \u00B7  "),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = AppColors.TextSecondary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                // Two lines are always reserved so the plot arriving later does not move the title or the button.
                 Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = OnSurfaceDim,
+                    text = model.plot,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = AppColors.TextSecondary,
+                    minLines = 2,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+                TvButton(
+                    onClick = onActionClick,
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .then(if (actionFocusRequester != null) Modifier.focusRequester(actionFocusRequester) else Modifier)
+                        .onFocusChanged { if (it.hasFocus) scope.launch { heroInView.bringIntoView() } },
+                    colors = browsePrimaryButtonColors()
+                ) {
+                    Text(text = actionLabel, style = MaterialTheme.typography.labelLarge)
+                }
             }
-            Surface(
-                shape = BrowseShapes.Control,
-                colors = SurfaceDefaults.colors(containerColor = Primary)
-            ) {
-                Text(
-                    text = actionLabel,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = contentOnColor(Primary),
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+            if (model.posterUrl != null) {
+                AsyncImage(
+                    model = rememberCrossfadeImageModel(model.posterUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(width = HeroPosterWidth, height = HeroPosterHeight)
+                        .clip(BrowseShapes.Artwork),
+                    contentScale = ContentScale.Crop
                 )
             }
         }
@@ -244,7 +469,7 @@ fun VodCategoryPickerDialog(
 
                     LazyColumn(
                         modifier = Modifier.height(listHeight),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs)
                     ) {
                         items(filteredCategories, key = { it.name }) { category ->
                             TvClickableSurface(
@@ -259,22 +484,15 @@ fun VodCategoryPickerDialog(
                                     }
                                 },
                                 shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                                colors = ClickableSurfaceDefaults.colors(
-                                    containerColor = SurfaceElevated,
-                                    focusedContainerColor = SurfaceHighlight
-                                ),
-                                border = ClickableSurfaceDefaults.border(
-                                    focusedBorder = Border(
-                                        border = BorderStroke(2.dp, FocusBorder),
-                                        shape = BrowseShapes.Control
-                                    )
-                                ),
+                                colors = secondarySurfaceColors(),
+                                border = selectableFocusBorder(BrowseShapes.Control),
                                 scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
                             ) {
+                                val spacing = LocalAppSpacing.current
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                                        .padding(horizontal = spacing.md, vertical = spacing.sm),
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
@@ -287,19 +505,19 @@ fun VodCategoryPickerDialog(
                                         modifier = Modifier.weight(1f)
                                     )
                                     if (category.isLocked) {
-                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Spacer(modifier = Modifier.width(spacing.xs))
                                         Text(
                                             text = stringResource(R.string.home_locked_short),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = Primary
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = AppColors.TextSecondary
                                         )
                                     }
                                     if (category.count > 0) {
-                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Spacer(modifier = Modifier.width(spacing.xs))
                                         Text(
                                             text = category.count.toString(),
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = OnSurfaceDim
+                                            style = MaterialTheme.typography.titleSmall,
+                                            color = AppColors.TextSecondary
                                         )
                                     }
                                 }
@@ -331,18 +549,22 @@ fun VodBrowseOptionsDialog(
     onSortSelected: (String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    // Explicit target so RTL lands on the selected chip, not whichever chip the layout puts first.
+    val initialFocus = remember { FocusRequester() }
     PremiumDialog(
         title = title,
         onDismissRequest = onDismiss,
         widthFraction = 0.6f,
         heightFraction = null,
-        bodyHeightFraction = 0.44f,
+        bodyHeightFraction = 0.6f,
+        initialBodyFocusRequester = initialFocus,
         content = {
             VodBrowseOptionsSection(
                 title = filterTitle,
                 chips = filterChips,
                 selectedKey = selectedFilterKey,
-                onChipSelected = onFilterSelected
+                onChipSelected = onFilterSelected,
+                initialFocusRequester = initialFocus
             )
             VodBrowseOptionsSection(
                 title = sortTitle,
@@ -365,8 +587,10 @@ private fun VodBrowseOptionsSection(
     title: String,
     chips: List<SelectionChip>,
     selectedKey: String,
-    onChipSelected: (String) -> Unit
+    onChipSelected: (String) -> Unit,
+    initialFocusRequester: FocusRequester? = null
 ) {
+    val focusKey = chips.firstOrNull { it.key == selectedKey }?.key ?: chips.firstOrNull()?.key
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -386,47 +610,59 @@ private fun VodBrowseOptionsSection(
                     label = chip.label,
                     supportingText = chip.supportingText,
                     selected = chip.key == selectedKey,
-                    onClick = { onChipSelected(chip.key) }
+                    onClick = { onChipSelected(chip.key) },
+                    modifier = if (initialFocusRequester != null && chip.key == focusKey) {
+                        Modifier.focusRequester(initialFocusRequester)
+                    } else {
+                        Modifier
+                    }
                 )
             }
         }
     }
 }
 
+private val OptionChipCheckSize = 18.dp
+
 @Composable
 private fun VodBrowseOptionChip(
     label: String,
     supportingText: String?,
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         onClick = onClick,
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (selected) Primary.copy(alpha = 0.18f) else SurfaceElevated,
-            focusedContainerColor = if (selected) Primary.copy(alpha = 0.28f) else SurfaceHighlight,
-            contentColor = if (selected) Primary else TextPrimary,
-            focusedContentColor = TextPrimary
-        ),
+        modifier = modifier,
+        colors = if (selected) selectableSurfaceColors(selected = true) else secondarySurfaceColors(),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, FocusBorder),
-                shape = BrowseShapes.Control
-            )
-        ),
+        border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 11.dp),
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(LocalAppSpacing.current.xs),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (selected) {
+                    // The check backs up the tonal fill so selection never rests on color alone.
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(OptionChipCheckSize)
+                    )
+                }
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             supportingText?.takeIf { it.isNotBlank() }?.let { detail ->
                 Text(
                     text = detail,

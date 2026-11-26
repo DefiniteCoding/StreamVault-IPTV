@@ -1,5 +1,8 @@
 package com.streamvault.feature.catalog.presentation.dashboard
 
+import com.streamvault.core.ui.design.shellHorizontalInset
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.layout.isPortraitLayout
 
 import com.streamvault.core.ui.design.BrowseShapes
@@ -20,12 +23,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +38,12 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.focus.focusRequester
+import kotlinx.coroutines.flow.first
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,12 +69,19 @@ import com.streamvault.core.ui.image.ChannelLogoBadge
 import com.streamvault.feature.catalog.presentation.components.CatalogChannelProgressTicker
 import com.streamvault.feature.catalog.presentation.components.CategoryRow
 import com.streamvault.feature.catalog.presentation.components.ChannelCard
+import com.streamvault.feature.catalog.presentation.components.ContinueWatchingMenuActions
 import com.streamvault.feature.catalog.presentation.components.ContinueWatchingRow
+import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMenuDialog
+import com.streamvault.feature.catalog.presentation.components.dialogs.ActionMenuEntry
 import com.streamvault.feature.catalog.presentation.components.MovieCard
 import com.streamvault.core.ui.image.rememberCrossfadeImageModel
 import com.streamvault.feature.catalog.presentation.components.SeriesCard
-import com.streamvault.core.ui.components.shell.AppHeroHeader
-import com.streamvault.core.ui.components.shell.StatusPill
+import com.streamvault.core.ui.components.AppDialogButton
+import com.streamvault.core.ui.components.shell.AppMessageState
+import com.streamvault.core.ui.components.shell.LocalTopBarContentInset
+import com.streamvault.core.ui.components.shell.LocalTopBarDownTarget
+import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.components.shell.AppSectionHeader
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.feature.catalog.presentation.time.LocalCatalogTimeFormat
 import com.streamvault.feature.catalog.presentation.time.createCatalogDateTimeFormat
@@ -96,6 +112,12 @@ import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.interaction.TvButton
 import com.streamvault.core.ui.interaction.TvIconButton
 
+private val ContinueWatchingShelves = setOf(
+    AppHomeDashboardShelf.CONTINUE_WATCHING,
+    AppHomeDashboardShelf.CONTINUE_WATCHING_MOVIES,
+    AppHomeDashboardShelf.CONTINUE_WATCHING_SERIES
+)
+
 @Composable
 fun DashboardScreen(
     onDestinationRequested: (AppDestination) -> Unit,
@@ -105,6 +127,7 @@ fun DashboardScreen(
     onMovieClick: (Movie) -> Unit,
     onSeriesClick: (Series) -> Unit,
     onPlaybackHistoryClick: (PlaybackHistory) -> Unit,
+    onOpenHistoryDetails: (PlaybackHistory) -> Unit,
     scaffold: CatalogScaffoldContent,
     dashboardShelfCustomizationContent: CatalogDashboardShelfCustomizationContent,
     stremioContent: @Composable () -> Boolean = { false },
@@ -117,6 +140,35 @@ fun DashboardScreen(
     val provider = uiState.provider
     val snackbarHostState = remember { SnackbarHostState() }
     var showHomeCustomizationDialog by remember { mutableStateOf(false) }
+    var channelMenuTarget by remember { mutableStateOf<Channel?>(null) }
+    val recentChannelRequesters = remember { HashMap<Long, FocusRequester>() }
+    var recentRemovalHandoff by remember { mutableStateOf<Pair<Long, Long?>?>(null) }
+    val initialFocusRequester = remember { FocusRequester() }
+    var initialTargetPlaced by remember { mutableStateOf(false) }
+    val initialFocusModifier = remember {
+        Modifier
+            .focusRequester(initialFocusRequester)
+            .onGloballyPositioned { initialTargetPlaced = true }
+    }
+
+    // One shot per screen entry: wait until the target card is placed, or the list scrolls to an unfinished rect.
+    LaunchedEffect(Unit) {
+        snapshotFlow { initialTargetPlaced }.first { it }
+        initialFocusRequester.requestFocusSafely(tag = "DashboardScreen", target = "Home initial card")
+    }
+
+    LaunchedEffect(uiState.recentChannels) {
+        recentChannelRequesters.keys.retainAll(uiState.recentChannels.mapTo(HashSet()) { it.id })
+        val (removedId, neighborId) = recentRemovalHandoff ?: return@LaunchedEffect
+        if (uiState.recentChannels.any { it.id == removedId }) return@LaunchedEffect
+        recentRemovalHandoff = null
+        // The menu window is still leaving; wait a frame so focus is not taken back from the card.
+        withFrameNanos { }
+        // The neighbour may have scrolled out of the lazy row, leaving a requester with no attached node.
+        neighborId?.let {
+            recentChannelRequesters[it]?.requestFocusSafely(tag = "DashboardScreen", target = "Neighbour recent channel")
+        }
+    }
 
     LaunchedEffect(uiState.userMessage) {
         uiState.userMessage?.let { message ->
@@ -130,13 +182,25 @@ fun DashboardScreen(
             AppDestination.Home,
             stringResource(R.string.nav_home),
             provider?.name,
-            CatalogNavigationChrome.TopBar,
+            CatalogNavigationChrome.TopBarOverlay,
             true,
             true,
             false
         ) {
+            val downTarget = LocalTopBarDownTarget.current
+            val hasProvider = provider != null
+            DisposableEffect(downTarget, hasProvider) {
+                // The empty state has nothing under the bar, so default focus search already works there.
+                downTarget.requester = initialFocusRequester.takeIf { hasProvider }
+                onDispose { downTarget.requester = null }
+            }
             if (provider == null) {
-                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(top = LocalTopBarContentInset.current)
+                        .verticalScroll(rememberScrollState())
+                ) {
                     val hasStremio = stremioContent()
                     if (!hasStremio) Box(Modifier.fillMaxWidth().height(380.dp)) {
                         EmptyDashboard(onAddProvider = onAddProvider,
@@ -146,9 +210,18 @@ fun DashboardScreen(
                 return@scaffold
             }
             val orderedSections = rememberDashboardSections(uiState)
-            val onContinueWatchingItemClick: (PlaybackHistory) -> Unit = { history ->
+            // Rule 17: the update notice's primary button, else the first Continue Watching card, else the first
+            // Recent Channels card. One requester serves one node, so a shelf only takes the role without a notice.
+            val noticeHoldsInitialFocus = uiState.updateNotice != null
+            val initialFocusShelf = if (noticeHoldsInitialFocus) {
+                null
+            } else {
+                orderedSections.firstOrNull { it in ContinueWatchingShelves }
+                    ?: AppHomeDashboardShelf.RECENT_CHANNELS.takeIf { it in orderedSections }
+            }
+            val presentedSeriesFor: (PlaybackHistory) -> Series? = { history ->
                 val rawSeriesId = history.seriesId ?: history.contentId
-                val presentedSeries = if (
+                if (
                     history.contentType == com.streamvault.domain.model.ContentType.SERIES ||
                     history.contentType == com.streamvault.domain.model.ContentType.SERIES_EPISODE
                 ) {
@@ -158,16 +231,22 @@ fun DashboardScreen(
                 } else {
                     null
                 }
-                if (presentedSeries != null) {
-                    onSeriesClick(presentedSeries)
-                } else {
-                    onPlaybackHistoryClick(history)
-                }
             }
+            val onContinueWatchingItemClick: (PlaybackHistory) -> Unit = { history ->
+                presentedSeriesFor(history)?.let(onSeriesClick) ?: onPlaybackHistoryClick(history)
+            }
+            val continueWatchingMenu = ContinueWatchingMenuActions(
+                onResume = onPlaybackHistoryClick,
+                onRemove = viewModel::onRemoveContinueWatching,
+                onOpenDetails = { history ->
+                    presentedSeriesFor(history)?.let(onSeriesClick) ?: onOpenHistoryDetails(history)
+                },
+                onMarkWatched = viewModel::onMarkContinueWatchingWatched
+            )
 
             androidx.compose.foundation.lazy.LazyColumn(
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 28.dp)
+                contentPadding = PaddingValues(top = LocalTopBarContentInset.current, bottom = 28.dp)
             ) {
                 item(key = "stremio_viewing") { stremioContent() }
                 if (uiState.isLoading && orderedSections.isEmpty()) {
@@ -194,6 +273,7 @@ fun DashboardScreen(
                     item(key = "update_notice") {
                         DashboardUpdateCard(
                             notice = updateNotice,
+                            primaryButtonModifier = initialFocusModifier,
                             onOpenSettings = { onDestinationRequested(AppDestination.Settings()) },
                             onInstallUpdate = viewModel::installDownloadedUpdate
                         )
@@ -236,13 +316,23 @@ fun DashboardScreen(
                             nowMs = nowMs,
                             isRecording = channel.id in recordingChannelIds,
                             isScheduledRecording = channel.id in scheduledChannelIds,
-                            onClick = { onRecentChannelClick(channel, uiState.currentCombinedProfileId) }
+                            onClick = { onRecentChannelClick(channel, uiState.currentCombinedProfileId) },
+                            onLongClick = { channelMenuTarget = channel },
+                            modifier = if (
+                                initialFocusShelf == AppHomeDashboardShelf.RECENT_CHANNELS &&
+                                channel.id == uiState.recentChannels.firstOrNull()?.id
+                            ) initialFocusModifier else Modifier,
+                            focusRequester = remember(channel.id) {
+                                recentChannelRequesters.getOrPut(channel.id) { FocusRequester() }
+                            }
                         )
                     }
 
                     AppHomeDashboardShelf.CONTINUE_WATCHING -> ContinueWatchingRow(
                         items = uiState.continueWatching,
-                        onItemClick = onContinueWatchingItemClick
+                        onItemClick = onContinueWatchingItemClick,
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.PINNED_CATEGORIES -> PinnedCategoriesSection(
@@ -324,13 +414,17 @@ fun DashboardScreen(
                     AppHomeDashboardShelf.CONTINUE_WATCHING_MOVIES -> ContinueWatchingRow(
                         title = stringResource(R.string.dashboard_continue_watching_movies),
                         items = uiState.continueWatchingMovies,
-                        onItemClick = onPlaybackHistoryClick
+                        onItemClick = onPlaybackHistoryClick,
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.CONTINUE_WATCHING_SERIES -> ContinueWatchingRow(
                         title = stringResource(R.string.dashboard_continue_watching_series),
                         items = uiState.continueWatchingSeriesItems,
-                        onItemClick = onContinueWatchingItemClick
+                        onItemClick = onContinueWatchingItemClick,
+                        menu = continueWatchingMenu,
+                        initialFocusModifier = initialFocusModifier.takeIf { initialFocusShelf == section } ?: Modifier
                     )
 
                     AppHomeDashboardShelf.TOP_RATED_MOVIES -> CategoryRow(
@@ -363,6 +457,31 @@ fun DashboardScreen(
         )
     }
 
+    channelMenuTarget?.let { channel ->
+        val openLabel = stringResource(R.string.channel_menu_open)
+        // The Recent shelf's channel rows do not re-emit when a favorite changes, so read the favorites shelf.
+        val isFavorite = uiState.favoriteChannels.any { it.id == channel.id && it.providerId == channel.providerId }
+        val favoriteLabel = stringResource(
+            if (isFavorite) R.string.add_group_remove_favorites else R.string.add_group_add_favorites
+        )
+        val removeLabel = stringResource(R.string.channel_options_remove_from_recent)
+        ActionMenuDialog(
+            title = channel.name,
+            entries = listOf(
+                ActionMenuEntry(openLabel) { onRecentChannelClick(channel, uiState.currentCombinedProfileId) },
+                ActionMenuEntry(favoriteLabel) { viewModel.onToggleChannelFavorite(channel, isFavorite) },
+                ActionMenuEntry(removeLabel) {
+                    val recent = uiState.recentChannels
+                    val index = recent.indexOfFirst { it.id == channel.id }
+                    val neighbor = recent.getOrNull(index + 1) ?: recent.getOrNull(index - 1)
+                    recentRemovalHandoff = channel.id to neighbor?.id
+                    viewModel.onRemoveRecentChannel(channel)
+                }
+            ),
+            onDismissRequest = { channelMenuTarget = null }
+        )
+    }
+
     if (showHomeCustomizationDialog) {
         dashboardShelfCustomizationContent(
             uiState.homeDashboardShelves,
@@ -375,123 +494,8 @@ fun DashboardScreen(
     }
 }
 
-@Composable
-private fun DashboardHero(
-    providerName: String,
-    feature: DashboardFeature,
-    stats: DashboardStats,
-    onOpenLiveTv: () -> Unit,
-    onOpenGuide: () -> Unit,
-    onOpenSearch: () -> Unit,
-    onOpenSavedLibrary: () -> Unit,
-    onFeatureAction: () -> Unit
-) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-    val isTelevisionDevice = rememberIsTelevisionDevice()
-    val heroHeight = when {
-        screenWidth < 700.dp -> 176.dp
-        !isTelevisionDevice && screenWidth < 1280.dp -> 196.dp
-        else -> 220.dp
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 8.dp)
-    ) {
-        if (!feature.artworkUrl.isNullOrBlank()) {
-            AsyncImage(
-                model = rememberCrossfadeImageModel(feature.artworkUrl),
-                contentDescription = feature.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(heroHeight)
-                    .clip(BrowseShapes.Hero)
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(heroHeight)
-                    .clip(BrowseShapes.Hero)
-                    .background(
-                        Brush.horizontalGradient(
-                            colors = listOf(
-                                Color.Black.copy(alpha = 0.88f),
-                                Color.Black.copy(alpha = 0.72f),
-                                Color.Black.copy(alpha = 0.34f)
-                            )
-                        )
-                    )
-            )
-        }
-
-        AppHeroHeader(
-            eyebrow = providerName,
-            title = feature.title.ifBlank { stringResource(R.string.dashboard_title) },
-            subtitle = feature.summary.ifBlank { stringResource(R.string.dashboard_subtitle, providerName) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .then(if (isPortraitLayout()) Modifier else Modifier.height(heroHeight)),
-            footer = {
-                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        StatusPill(label = stringResource(R.string.nav_live_tv), containerColor = AppColors.BrandMuted)
-                        StatusPill(label = stringResource(R.string.nav_epg), containerColor = AppColors.SurfaceEmphasis)
-                        StatusPill(label = stringResource(R.string.favorites_title), containerColor = AppColors.Warning, contentColor = Color.Black)
-                    }
-                    DashboardStatRow(stats = stats)
-                }
-            },
-            actions = {
-                DashboardActionButton(label = stringResource(R.string.nav_live_tv), onClick = onOpenLiveTv)
-                DashboardActionButton(label = stringResource(R.string.nav_epg), onClick = onOpenGuide)
-                DashboardActionButton(label = stringResource(R.string.dashboard_search_library), onClick = onOpenSearch)
-                DashboardActionButton(label = stringResource(R.string.favorites_title), onClick = onOpenSavedLibrary)
-                if (feature.actionLabel.isNotBlank()) {
-                    DashboardActionButton(
-                        label = feature.actionLabel,
-                        onClick = onFeatureAction
-                    )
-                }
-            }
-        )
-    }
-}
-
 private fun Series.rawSeriesIdsForNavigation(): List<Long> =
     variants.map { it.rawSeriesId }.ifEmpty { listOf(selectedVariantId ?: id) }
-
-@Composable
-private fun DashboardStatRow(
-    stats: DashboardStats
-) {
-    val statItems = listOf(
-        stringResource(R.string.dashboard_stat_live, stats.liveChannelCount),
-        stringResource(R.string.dashboard_stat_favorites, stats.favoriteChannelCount),
-        stringResource(R.string.dashboard_stat_recent, stats.recentChannelCount),
-        stringResource(R.string.dashboard_stat_resume, stats.continueWatchingCount),
-        stringResource(R.string.dashboard_stat_movies, stats.movieLibraryCount),
-        stringResource(R.string.dashboard_stat_series, stats.seriesLibraryCount)
-    )
-
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(statItems, key = { it }) { statLabel ->
-            Surface(
-                shape = BrowseShapes.Control,
-                colors = SurfaceDefaults.colors(
-                    containerColor = AppColors.Surface.copy(alpha = 0.64f)
-                )
-            ) {
-                Text(
-                    text = statLabel,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = TextPrimary,
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
-                )
-            }
-        }
-    }
-}
 
 @Composable
 private fun DashboardShortcutRow(
@@ -521,9 +525,11 @@ private fun DashboardShortcutRow(
             )
         }
 
-        LazyRow(
+        FocusSafeLazyRow(
             contentPadding = PaddingValues(horizontal = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(shortcuts, key = { "${it.type}:${it.categoryId}:${it.label}" }) { shortcut ->
                 DashboardShortcutCard(
@@ -548,9 +554,9 @@ private fun DashboardShortcutCard(
         else -> 170.dp
     }
     val accentColor = when (shortcut.type) {
-        DashboardShortcutType.FAVORITES -> Color(0xFFFFC857)
-        DashboardShortcutType.RECENT -> Color(0xFF4FD1C5)
-        DashboardShortcutType.LAST_GROUP -> Color(0xFF60A5FA)
+        DashboardShortcutType.FAVORITES -> AppColors.Warning
+        DashboardShortcutType.RECENT -> AppColors.Success
+        DashboardShortcutType.LAST_GROUP -> AppColors.Info
         DashboardShortcutType.CUSTOM_GROUP -> Primary
     }
 
@@ -564,11 +570,8 @@ private fun DashboardShortcutCard(
             containerColor = SurfaceElevated,
             focusedContainerColor = SurfaceHighlight
         ),
+        // No resting stroke (rule 14): the dot and label identify the card, the ring is the focus state only.
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, accentColor.copy(alpha = 0.28f)),
-                shape = BrowseShapes.Control
-            ),
             focusedBorder = Border(
                 border = BorderStroke(2.dp, FocusBorder),
                 shape = BrowseShapes.Control
@@ -611,155 +614,6 @@ private fun DashboardShortcutCard(
 }
 
 @Composable
-private fun DashboardActionButton(
-    label: String,
-    onClick: () -> Unit
-) {
-    TvButton(
-        onClick = onClick,
-        colors = ButtonDefaults.colors(
-            containerColor = Primary.copy(alpha = 0.18f),
-            focusedContainerColor = Primary.copy(alpha = 0.32f),
-            contentColor = TextPrimary
-        )
-    ) {
-        Text(text = label)
-    }
-}
-
-@Composable
-private fun DashboardProviderHealthCard(
-    providerName: String,
-    health: DashboardProviderHealth,
-    onOpenDiagnostics: () -> Unit
-) {
-    val appTimeFormat = LocalCatalogTimeFormat.current
-    val dateTimeFormat = remember(appTimeFormat) { appTimeFormat.createCatalogDateTimeFormat() }
-    val syncLabel = if (health.lastSyncedAt <= 0L) {
-        stringResource(R.string.dashboard_provider_no_sync)
-    } else {
-        stringResource(
-            R.string.dashboard_provider_synced_at,
-            dateTimeFormat.format(Date(health.lastSyncedAt))
-        )
-    }
-    val expiryLabel = health.expirationDate?.let {
-        val format = remember(it) { SimpleDateFormat("MMM d, yyyy", Locale.getDefault()) }
-        stringResource(R.string.dashboard_provider_expires_at, format.format(Date(it)))
-    } ?: stringResource(R.string.dashboard_provider_no_expiry)
-    val statusLabel = when (health.status) {
-        com.streamvault.domain.model.ProviderStatus.ACTIVE -> stringResource(R.string.settings_status_active)
-        com.streamvault.domain.model.ProviderStatus.PARTIAL -> stringResource(R.string.settings_status_partial)
-        com.streamvault.domain.model.ProviderStatus.ERROR -> stringResource(R.string.settings_status_error)
-        com.streamvault.domain.model.ProviderStatus.EXPIRED -> stringResource(R.string.settings_status_expired)
-        com.streamvault.domain.model.ProviderStatus.DISABLED -> stringResource(R.string.settings_status_disabled)
-        com.streamvault.domain.model.ProviderStatus.UNKNOWN -> stringResource(R.string.settings_status_unknown)
-    }
-    val sourceLabel = when (health.type) {
-        com.streamvault.domain.model.ProviderType.XTREAM_CODES -> stringResource(R.string.dashboard_provider_xtream)
-        com.streamvault.domain.model.ProviderType.M3U -> stringResource(R.string.dashboard_provider_m3u)
-        com.streamvault.domain.model.ProviderType.STALKER_PORTAL -> "Stalker/MAG Portal"
-        com.streamvault.domain.model.ProviderType.JELLYFIN -> "Jellyfin"
-    }
-
-    Surface(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 48.dp, vertical = 4.dp),
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = SurfaceHighlight)
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 18.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.dashboard_provider_health_title),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = TextPrimary
-                )
-                Text(
-                    text = providerName,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = OnSurfaceDim
-                )
-                Text(
-                    text = "$syncLabel | $expiryLabel",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = OnSurfaceDim
-                )
-            }
-
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                item {
-                    DashboardHealthPill(
-                        label = statusLabel,
-                        value = stringResource(R.string.dashboard_provider_status)
-                    )
-                }
-                item {
-                    DashboardHealthPill(
-                        label = sourceLabel,
-                        value = stringResource(R.string.dashboard_provider_source)
-                    )
-                }
-                item {
-                    DashboardHealthPill(
-                        label = health.maxConnections.toString(),
-                        value = stringResource(R.string.dashboard_provider_connections)
-                    )
-                }
-            }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 22.dp, vertical = 0.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            DashboardActionButton(
-                label = stringResource(R.string.dashboard_warning_review),
-                onClick = onOpenDiagnostics
-            )
-        }
-    }
-}
-
-@Composable
-private fun DashboardHealthPill(
-    label: String,
-    value: String
-) {
-    Surface(
-        shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = Color.White.copy(alpha = 0.08f))
-    ) {
-        Column(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.labelSmall,
-                color = OnSurfaceDim
-            )
-            Text(
-                text = label,
-                style = MaterialTheme.typography.labelLarge,
-                color = TextPrimary
-            )
-        }
-    }
-}
-
-@Composable
 private fun DashboardProviderWarningCard(
     warnings: List<String>,
     onOpenSettings: () -> Unit
@@ -778,7 +632,7 @@ private fun DashboardProviderWarningCard(
             Text(
                 text = stringResource(R.string.dashboard_warning_title),
                 style = MaterialTheme.typography.titleMedium,
-                color = Primary
+                color = TextPrimary
             )
             Text(
                 text = warnings.take(3).joinToString(" | "),
@@ -786,9 +640,10 @@ private fun DashboardProviderWarningCard(
                 color = OnSurfaceDim
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                DashboardActionButton(
-                    label = stringResource(R.string.dashboard_warning_review),
-                    onClick = onOpenSettings
+                AppDialogButton(
+                    text = stringResource(R.string.dashboard_warning_review),
+                    onClick = onOpenSettings,
+                    primary = false
                 )
             }
         }
@@ -799,15 +654,16 @@ private fun DashboardProviderWarningCard(
 private fun DashboardUpdateCard(
     notice: DashboardUpdateNotice,
     onOpenSettings: () -> Unit,
-    onInstallUpdate: () -> Unit
+    onInstallUpdate: () -> Unit,
+    modifier: Modifier = Modifier,
+    primaryButtonModifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 48.dp, vertical = 6.dp),
         shape = BrowseShapes.Panel,
-        colors = SurfaceDefaults.colors(containerColor = Primary.copy(alpha = 0.16f)),
-        border = Border(BorderStroke(1.dp, Primary.copy(alpha = 0.45f)))
+        colors = SurfaceDefaults.colors(containerColor = SurfaceElevated)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 22.dp, vertical = 18.dp),
@@ -832,8 +688,11 @@ private fun DashboardUpdateCard(
                 color = OnSurfaceDim
             )
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                DashboardActionButton(
-                    label = stringResource(
+                // The single primary on Home: an update is the one action that needs a decision.
+                AppDialogButton(
+                    primary = true,
+                    modifier = primaryButtonModifier,
+                    text = stringResource(
                         if (notice.installPermissionRequired) {
                             R.string.dashboard_update_allow_installs
                         } else if (notice.installReady) {
@@ -860,6 +719,12 @@ private fun EmptyDashboard(
     onAddProvider: () -> Unit,
     onOpenSettings: () -> Unit
 ) {
+    val addProviderFocus = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+        // The button is composed in this same pass, so one frame is enough for it to be attached.
+        withFrameNanos { }
+        addProviderFocus.requestFocusSafely(tag = "DashboardScreen", target = "Add provider")
+    }
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -873,45 +738,28 @@ private fun EmptyDashboard(
             Modifier.width(720.dp)
         }
 
-        Surface(
-            shape = BrowseShapes.Hero,
-            colors = SurfaceDefaults.colors(
-                containerColor = SurfaceHighlight
-            )
-        ) {
-            Column(
-                modifier = contentModifier
-                    .padding(horizontal = 32.dp, vertical = 28.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = stringResource(R.string.dashboard_empty_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = OnBackground
-                )
-                Text(
-                    text = stringResource(R.string.dashboard_empty_body),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = OnSurfaceDim
-                )
+        AppMessageState(
+            title = stringResource(R.string.dashboard_empty_title),
+            subtitle = stringResource(R.string.dashboard_empty_body),
+            modifier = contentModifier,
+            titleStyle = MaterialTheme.typography.headlineMedium,
+            subtitleStyle = MaterialTheme.typography.titleMedium,
+            action = {
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TvButton(onClick = onAddProvider) {
-                        Text(stringResource(R.string.settings_add_provider))
-                    }
-                    TvButton(
+                    AppDialogButton(
+                        text = stringResource(R.string.settings_add_provider),
+                        onClick = onAddProvider,
+                        primary = true,
+                        focusRequester = addProviderFocus
+                    )
+                    AppDialogButton(
+                        text = stringResource(R.string.nav_settings),
                         onClick = onOpenSettings,
-                        colors = ButtonDefaults.colors(
-                            containerColor = SurfaceElevated,
-                            focusedContainerColor = Primary.copy(alpha = 0.24f),
-                            contentColor = TextPrimary
-                        )
-                    ) {
-                        Text(stringResource(R.string.nav_settings))
-                    }
+                        primary = false
+                    )
                 }
             }
-        }
+        )
     }
 }
 
@@ -993,38 +841,20 @@ private fun FavoriteChannelsRow(
     onChannelClick: (Channel) -> Unit
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
+        AppSectionHeader(
+            title = title,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, end = 20.dp, top = 14.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-                color = TextPrimary
-            )
-            TvClickableSurface(
-                onClick = onSeeAll,
-                shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-                colors = ClickableSurfaceDefaults.colors(
-                    containerColor = Primary.copy(alpha = 0.12f),
-                    focusedContainerColor = Primary.copy(alpha = 0.22f),
-                    contentColor = TextTertiary
-                )
-            ) {
-                Text(
-                    text = stringResource(R.string.category_see_all),
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
-                )
-            }
-        }
+            actionLabel = stringResource(R.string.category_see_all),
+            onActionClick = onSeeAll
+        )
 
-        LazyRow(
+        FocusSafeLazyRow(
             contentPadding = PaddingValues(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = LocalAppSpacing.current.shellHorizontalInset,
+            edgeGutterEnd = LocalAppSpacing.current.shellHorizontalInset
         ) {
             items(channels, key = { it.id }) { channel ->
                 FavoriteChannelLogoCard(

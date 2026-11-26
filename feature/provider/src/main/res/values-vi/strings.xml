@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Cập nhật thông tin nhà cung cấp IPTV của bạn</string>
     <string name="setup_add_desc">Thêm nhà cung cấp IPTV của bạn</string>
     <string name="setup_shell_eyebrow">Thiết lập nhà cung cấp</string>
-    <string name="setup_shell_subtitle">Dùng Xtream hoặc M3U. Bạn có thể đổi sau.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U hoặc Jellyfin. Bạn có thể sửa sau trong Cài đặt.</string>
     <string name="setup_form_subtitle">Chọn nguồn, nhập thông tin và tiếp tục. Bạn có thể quản lý sau trong Cài đặt.</string>
     <string name="setup_source_type_label">Loại nguồn</string>
     <string name="setup_info_xtream_title">Dùng Xtream khi có thông tin đăng nhập</string>
-    <string name="setup_info_xtream_body">Tốt nhất khi bạn có máy chủ, tên người dùng và mật khẩu.</string>
+    <string name="setup_info_xtream_body">Hợp với máy chủ, tên người dùng, mật khẩu.</string>
     <string name="setup_info_m3u_title">Dùng M3U cho danh sách phát từ URL hoặc tệp</string>
     <string name="setup_info_m3u_body">Dùng liên kết danh sách phát hoặc nhập tệp cục bộ.</string>
-    <string name="setup_info_manage_title">Bạn có thể quản lý nhà cung cấp sau</string>
-    <string name="setup_info_manage_body">Làm mới, chỉnh sửa hoặc thay thế sau trong Cài đặt.</string>
     <string name="setup_xtream">Mã Xtream</string>
     <string name="setup_m3u">Danh sách phát M3U</string>
     <string name="setup_name_hint">Tên danh sách phát (Tùy chọn)</string>

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
@@ -31,6 +32,7 @@ import com.streamvault.feature.settings.R
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.components.dialogs.PremiumDialogFooterButton
 import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.AppPalette
 import com.streamvault.core.ui.interaction.TvClickableSurface
 
 /** A compact, shared shell for settings dialogs that choose one value from a list. */
@@ -67,7 +69,11 @@ internal fun SettingsSingleChoiceDialog(
     )
 }
 
-/** Focus is shown with a steady outline; selection is shown with a quiet theme tint and check. */
+/** Rows share the secondary button fill, so no resting stroke is needed to separate them from the dialog. */
+internal fun choiceOptionContainer(palette: AppPalette, selected: Boolean): Color =
+    if (selected) lerp(palette.surfaceAccent, palette.brand, 0.14f) else palette.surfaceAccent
+
+/** Focus is shown with a steady ring and a small scale (the fill is shared with rest); selection is a quiet theme tint and check. */
 @Composable
 internal fun SettingsChoiceOption(
     label: String,
@@ -79,8 +85,7 @@ internal fun SettingsChoiceOption(
 ) {
     val palette = AppColors.current
     val shape = RoundedCornerShape(14.dp)
-    val container = if (selected) lerp(palette.surfaceElevated, palette.brand, 0.14f)
-        else palette.surfaceElevated
+    val container = choiceOptionContainer(palette, selected)
 
     TvClickableSurface(
         onClick = onSelect,
@@ -101,16 +106,12 @@ internal fun SettingsChoiceOption(
             disabledContentColor = palette.textDisabled,
         ),
         border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, palette.outline.copy(alpha = 0.72f)),
-                shape = shape,
-            ),
             focusedBorder = Border(
                 border = BorderStroke(2.dp, palette.focus),
                 shape = shape,
             ),
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f),
     ) {
         Row(
             modifier = Modifier
@@ -132,12 +133,14 @@ internal fun SettingsChoiceOption(
                         MaterialTheme.typography.titleSmall
                     },
                     color = if (enabled) palette.textPrimary else palette.textDisabled,
+                    maxLines = 3, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                 )
                 if (!description.isNullOrBlank()) {
                     Text(
                         text = description,
                         style = MaterialTheme.typography.bodySmall,
                         color = if (enabled) palette.textSecondary else palette.textDisabled,
+                        maxLines = 4, overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
                     )
                 }
             }
@@ -145,7 +148,7 @@ internal fun SettingsChoiceOption(
                 Icon(
                     imageVector = Icons.Rounded.Check,
                     contentDescription = null,
-                    tint = palette.brand,
+                    tint = palette.textPrimary,
                     modifier = Modifier.size(22.dp),
                 )
             } else {

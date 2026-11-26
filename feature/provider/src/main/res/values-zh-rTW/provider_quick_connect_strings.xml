@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_jellyfin_quick_connect_subtitle">請在您的 Jellyfin 伺服器上輸入此代碼</string>
+  <string name="setup_jellyfin_quick_connect_qr_description">快速連線 QR 碼</string>
+</resources>

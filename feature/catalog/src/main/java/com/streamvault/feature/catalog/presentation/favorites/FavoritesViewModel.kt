@@ -265,7 +265,7 @@ class FavoritesViewModel @Inject constructor(
                                 FavoriteSectionUiModel(
                                     key = sectionKeyForGroup(group.id),
                                     title = group.name,
-                                    subtitle = "${group.contentType.displayName} group",
+                                    subtitle = appContext.getString(R.string.favorites_group_subtitle, group.contentType.displayName),
                                     items = items,
                                     reorderable = items.size > 1
                                 )
@@ -439,7 +439,7 @@ class FavoritesViewModel @Inject constructor(
                     userMessage = if (traktSyncFailed) {
                         appContext.getString(R.string.trakt_favorite_sync_failed)
                     } else {
-                        "Removed ${item.title} from this saved view."
+                        appContext.getString(R.string.favorites_message_removed_from_view, item.title)
                     }
                 )
             }
@@ -477,12 +477,12 @@ class FavoritesViewModel @Inject constructor(
                     it.copy(
                         itemDialogItem = null,
                         itemMoveTargets = emptyList(),
-                        userMessage = "Moved ${item.title} to the selected group."
+                        userMessage = appContext.getString(R.string.favorites_message_moved_to_group, item.title)
                     )
                 }
 
                 is Result.Error -> _uiState.update {
-                    it.copy(userMessage = "Unable to move ${item.title}: ${result.errorMessageOrNull() ?: "Unknown error"}")
+                    it.copy(userMessage = appContext.getString(R.string.favorites_error_move_failed, item.title, result.errorMessageOrNull() ?: appContext.getString(R.string.favorites_error_unknown)))
                 }
 
                 Result.Loading -> Unit
@@ -510,7 +510,7 @@ class FavoritesViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     managedGroupDialog = null,
-                    userMessage = "Deleted group ${group.group.name}."
+                    userMessage = appContext.getString(R.string.favorites_message_group_deleted, group.group.name)
                 )
             }
         }
@@ -571,7 +571,7 @@ class FavoritesViewModel @Inject constructor(
                 }
 
                 is Result.Error -> _uiState.update {
-                    it.copy(userMessage = "Unable to merge ${source.group.name}: ${result.errorMessageOrNull() ?: "Unknown error"}")
+                    it.copy(userMessage = appContext.getString(R.string.favorites_error_merge_failed, source.group.name, result.errorMessageOrNull() ?: appContext.getString(R.string.favorites_error_unknown)))
                 }
 
                 Result.Loading -> Unit
@@ -615,7 +615,7 @@ class FavoritesViewModel @Inject constructor(
             when (val result = favoriteRepository.reorderFavorites(section.items.map { it.favorite })) {
                 is Result.Success -> completeReorderMode()
                 is Result.Error -> _uiState.update {
-                    it.copy(userMessage = "Unable to save reorder: ${result.errorMessageOrNull() ?: "Unknown error"}")
+                    it.copy(userMessage = appContext.getString(R.string.favorites_error_reorder_failed, result.errorMessageOrNull() ?: appContext.getString(R.string.favorites_error_unknown)))
                 }
                 Result.Loading -> Unit
             }
@@ -651,7 +651,7 @@ class FavoritesViewModel @Inject constructor(
                             FavoriteUiModel(
                                 favorite = favorite,
                                 title = channel.name,
-                                subtitle = "Channel ${index + 1}",
+                                subtitle = appContext.getString(R.string.favorites_subtitle_channel_number, index + 1),
                                 lastWatchedAt = historyMap[Triple(favorite.contentType, favorite.contentId, channel.providerId)]?.lastWatchedAt ?: 0L,
                                 streamUrl = channel.streamUrl,
                                 providerId = channel.providerId,
@@ -666,7 +666,7 @@ class FavoritesViewModel @Inject constructor(
                             FavoriteUiModel(
                                 favorite = favorite,
                                 title = movie.name,
-                                subtitle = "Movie",
+                                subtitle = appContext.getString(R.string.favorites_content_type_movie),
                                 lastWatchedAt = historyMap[Triple(favorite.contentType, favorite.contentId, movie.providerId)]?.lastWatchedAt ?: 0L,
                                 streamUrl = movie.streamUrl,
                                 providerId = movie.providerId,
@@ -678,7 +678,7 @@ class FavoritesViewModel @Inject constructor(
                             FavoriteUiModel(
                                 favorite = favorite,
                                 title = seriesItem.name,
-                                subtitle = "Series",
+                                subtitle = appContext.getString(R.string.favorites_content_type_series),
                                 lastWatchedAt = historyMap[Triple(favorite.contentType, favorite.contentId, seriesItem.providerId)]?.lastWatchedAt ?: 0L,
                                 streamUrl = "",
                                 providerId = seriesItem.providerId
@@ -774,7 +774,7 @@ class FavoritesViewModel @Inject constructor(
                         SavedHistoryUiModel(
                             history = entry,
                             title = channel.name,
-                            subtitle = "Channel ${index + 1}",
+                            subtitle = appContext.getString(R.string.favorites_subtitle_channel_number, index + 1),
                             providerId = channel.providerId,
                             categoryId = channel.categoryId,
                             epgChannelId = channel.epgChannelId,
@@ -800,13 +800,15 @@ class FavoritesViewModel @Inject constructor(
     }
 
     private val ContentType.displayName: String
-        get() = when (this) {
-            ContentType.LIVE -> "Live"
-            ContentType.MOVIE -> "Movie"
-            ContentType.VOD -> "VOD"
-            ContentType.SERIES -> "Series"
-            ContentType.SERIES_EPISODE -> "Episode"
-        }
+        get() = appContext.getString(
+            when (this) {
+                ContentType.LIVE -> R.string.favorites_content_type_live
+                ContentType.MOVIE -> R.string.favorites_content_type_movie
+                ContentType.VOD -> R.string.favorites_content_type_vod
+                ContentType.SERIES -> R.string.favorites_content_type_series
+                ContentType.SERIES_EPISODE -> R.string.favorites_content_type_episode
+            }
+        )
 
     companion object {
         private const val GLOBAL_SECTION_KEY = "global"

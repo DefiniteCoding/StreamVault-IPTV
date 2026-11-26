@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="plugins_install_url_subtitle">Nhập URL APK trực tiếp. StreamVault sẽ tải xuống và mở trình cài đặt.</string>
+  <string name="plugins_install_url_label">URL APK của trình cắm</string>
+  <string name="plugins_installing">Đang cài đặt…</string>
+  <string name="plugins_download_install">Tải xuống và cài đặt</string>
+</resources>

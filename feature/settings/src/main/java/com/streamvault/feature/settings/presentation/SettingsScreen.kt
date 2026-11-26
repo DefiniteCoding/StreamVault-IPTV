@@ -62,6 +62,7 @@ public fun SettingsScreen(
     onNavigateToParentalControl: (Long) -> Unit = {},
     initialBackupImportUri: String? = null,
     openOpenSubtitlesSignIn: Boolean = false,
+    openTrakt: Boolean = false,
     onCloseApp: () -> Unit = {},
     viewModel: SettingsViewModel = hiltViewModel()
 ) {
@@ -92,22 +93,25 @@ public fun SettingsScreen(
         context = context,
         officialBuildStatus = platformHost.officialBuildStatus()
     )
-    val initialCategory = if (openOpenSubtitlesSignIn) {
-        SettingsCategory.PLAYBACK.legacyId
-    } else {
-        SettingsCategory.SOURCES.legacyId
+    val initialCategory = when {
+        openOpenSubtitlesSignIn -> SettingsCategory.PLAYBACK.legacyId
+        openTrakt -> SettingsCategory.TRAKT.legacyId
+        else -> SettingsCategory.SOURCES.legacyId
     }
     val dialogState = rememberSettingsScreenDialogState(initialCategory)
     val providerState = rememberSettingsProviderSectionState(dialogState)
     var compactPane by rememberSaveable {
         mutableStateOf(
-            if (openOpenSubtitlesSignIn) SettingsCompactPane.CONTENT else SettingsCompactPane.CATEGORIES
+            if (openOpenSubtitlesSignIn || openTrakt) SettingsCompactPane.CONTENT else SettingsCompactPane.CATEGORIES
         )
     }
     var searchVisible by rememberSaveable { mutableStateOf(false) }
     var settingsSearchQuery by rememberSaveable { mutableStateOf("") }
     var searchRequestId by rememberSaveable { mutableLongStateOf(0L) }
     var categorySelectionId by rememberSaveable { mutableLongStateOf(0L) }
+    var enterContentRequested by rememberSaveable { mutableStateOf(false) }
+    var railEntryFocusHandled by rememberSaveable { mutableStateOf(false) }
+    var contentHasFocus by remember { mutableStateOf(false) }
     var currentSettingsPage by remember { mutableStateOf<SettingsPage?>(null) }
     var openOpenSubtitlesSignInPending by rememberSaveable {
         mutableStateOf(openOpenSubtitlesSignIn)
@@ -619,9 +623,13 @@ public fun SettingsScreen(
                 SettingsNavigationRail(
                     selectedCategory = dialogState.selectedCategory,
                     focusRequester = settingsNavFocusRequester,
+                    requestEntryFocus = !railEntryFocusHandled,
+                    onEntryFocusRequested = { railEntryFocusHandled = true },
+                    contentHasFocus = contentHasFocus,
                     onCategorySelected = {
                         dialogState.selectedCategory = it
                         categorySelectionId += 1L
+                        enterContentRequested = true
                         if (compact) {
                             compactPane = SettingsCompactPane.CONTENT
                         }
@@ -722,6 +730,10 @@ public fun SettingsScreen(
                     restorePageRequestId = restorePageRequestId,
                     onPageChanged = { currentSettingsPage = it },
                     categorySelectionId = categorySelectionId,
+                    railFocusRequester = settingsNavFocusRequester,
+                    onContentFocusChanged = { contentHasFocus = it },
+                    enterContentRequested = enterContentRequested,
+                    onContentEntered = { enterContentRequested = false },
                 )
             }
         }

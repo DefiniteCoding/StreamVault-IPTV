@@ -1,5 +1,7 @@
 package com.streamvault.feature.playback.player
 
+import com.streamvault.core.navigation.PlaybackStartMode
+
 import android.view.KeyEvent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -73,6 +75,7 @@ import com.streamvault.feature.playback.R
 import com.streamvault.feature.playback.cast.CastConnectionState
 import com.streamvault.feature.playback.api.PlaybackPictureInPictureState
 import com.streamvault.feature.playback.api.PlaybackPlatformHost
+import com.streamvault.core.ui.design.LocalAppSpacing
 import com.streamvault.core.ui.design.requestFocusSafely
 import com.streamvault.core.ui.platform.rememberNotificationPermissionGate
 import com.streamvault.feature.playback.player.overlay.ChannelInfoOverlay
@@ -87,6 +90,7 @@ import com.streamvault.feature.playback.player.overlay.PlayerClosePlaybackConfir
 import com.streamvault.feature.playback.player.overlay.PlayerScheduleByTimeDialog
 import com.streamvault.feature.playback.player.overlay.PlayerScheduleByTimeLabels
 import com.streamvault.feature.playback.player.overlay.PlayerAspectRatioToast
+import com.streamvault.feature.playback.player.overlay.SeekFeedbackHost
 import com.streamvault.feature.playback.player.overlay.PlayerBackButton
 import com.streamvault.feature.playback.player.overlay.PlayerBackButtonPlacement
 import com.streamvault.feature.playback.player.overlay.playerBackButtonPlacement
@@ -128,24 +132,33 @@ fun PlayerScreen(
     episodeId: Long? = null,
     remoteContentId: String? = null,
     remoteSeriesId: String? = null,
+    startMode: PlaybackStartMode = PlaybackStartMode.PROMPT,
+    externalLaunchId: Long? = null,
     stremioPlaybackReference: StremioPlaybackReference? = null,
     stremioMediaRequestHeaders: Map<String, String> = emptyMap(),
     stremioInlineSubtitles: List<StremioSubtitlePlaybackSource> = emptyList(),
     returnDestination: AppDestination? = null,
     onBack: () -> Unit,
     onNavigate: ((AppDestination) -> Unit)? = null,
+    onPlaybackCompleted: () -> Unit = onBack,
     playbackPlatformHost: PlaybackPlatformHost? = null,
     splitScreenPlanner: @Composable (Channel, () -> Unit, () -> Unit) -> Unit = { _, _, _ -> },
     viewModel: PlayerViewModel = hiltViewModel()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
     val isTelevisionDevice = rememberIsTelevisionDevice()
+    val appSpacing = LocalAppSpacing.current
     val sideOverlayWidth = if (screenWidth < 700.dp) {
         (screenWidth * 0.62f).coerceIn(220.dp, 300.dp)
     } else if (!isTelevisionDevice && screenWidth < 1280.dp) {
         (screenWidth * 0.4f).coerceIn(320.dp, 420.dp)
     } else {
         350.dp
+    }
+    val channelListOverlayWidth = if (isTelevisionDevice) {
+        appSpacing.channelListOverlayWidth
+    } else {
+        sideOverlayWidth
     }
     val epgOverlayWidth = if (screenWidth < 700.dp) {
         (screenWidth * 0.68f).coerceIn(240.dp, 320.dp)
@@ -188,10 +201,12 @@ fun PlayerScreen(
     val displayChannelNumber by viewModel.displayChannelNumber.collectAsStateWithLifecycle()
     val showChannelInfoOverlay by viewModel.showChannelInfoOverlay.collectAsStateWithLifecycle()
     val aspectRatio by viewModel.aspectRatio.collectAsStateWithLifecycle()
+    val aspectRatioChangeLabels = remember(viewModel) { viewModel.aspectRatioChanges.map { it.modeName } }
     val showDiagnostics by viewModel.showDiagnostics.collectAsStateWithLifecycle()
     val playerNotice by viewModel.playerNotice.collectAsStateWithLifecycle()
     val preventStandbyDuringPlayback by viewModel.preventStandbyDuringPlayback.collectAsStateWithLifecycle()
     val sleepTimerExitEvent by viewModel.sleepTimerExitEvent.collectAsStateWithLifecycle()
+    val playbackCompleted by viewModel.playbackCompleted.collectAsStateWithLifecycle()
     val playerPreferences by viewModel.playerPreferencesUiState.collectAsStateWithLifecycle()
     val localSubtitlePicker = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
@@ -208,6 +223,8 @@ fun PlayerScreen(
 
     var modalState by remember { mutableStateOf(PlayerModalState()) }
     var channelInfoSubPanelOpen by remember { mutableStateOf(false) }
+    // Remote Back is consumed here before the overlay's BackHandler sees it, so panel closes are signalled down.
+    var channelInfoPanelCloseRequests by remember { mutableIntStateOf(0) }
     var showClosePlaybackConfirmation by rememberSaveable { mutableStateOf(false) }
     var showScheduleByTimeDialog by remember { mutableStateOf(false) }
     var closePlaybackConfirmationOpenedAtMs by remember { mutableStateOf(0L) }
@@ -224,6 +241,7 @@ fun PlayerScreen(
     val channelListFocusRequester = remember { FocusRequester() }
     val categoryListFocusRequester = remember { FocusRequester() }
     val playButtonFocusRequester = remember { FocusRequester() }
+    val vodPanelOpenerFocus = remember { VodPanelOpenerFocus() }
     val quickActionsFocusRequester = remember { FocusRequester() }
     val channelInfoFocusRequester = remember { FocusRequester() }
     val layoutDirection = LocalLayoutDirection.current
@@ -262,6 +280,13 @@ fun PlayerScreen(
                 pixelWidthHeightRatio = videoFormat.pixelWidthHeightRatio
             )
         )
+    }
+
+    LaunchedEffect(playbackCompleted) {
+        if (playbackCompleted) {
+            viewModel.consumePlaybackCompleted()
+            onPlaybackCompleted()
+        }
     }
 
     LaunchedEffect(sleepTimerExitEvent) {
@@ -382,7 +407,7 @@ fun PlayerScreen(
         stremioInlineSubtitles = stremioInlineSubtitles
     )
 
-    LaunchedEffect(prepareIdentity) {
+    LaunchedEffect(prepareIdentity, startMode, externalLaunchId) {
         viewModel.prepare(
             streamUrl = streamUrl,
             epgChannelId = epgChannelId,
@@ -404,6 +429,7 @@ fun PlayerScreen(
             episodeId = episodeId,
             remoteContentId = remoteContentId,
             remoteSeriesId = remoteSeriesId,
+            startMode = startMode,
             stremioPlaybackReference = stremioPlaybackReference,
             stremioMediaRequestHeaders = stremioMediaRequestHeaders,
             stremioInlineSubtitles = stremioInlineSubtitles
@@ -448,12 +474,15 @@ fun PlayerScreen(
                     tag = "PlayerScreen",
                     target = "Player quick actions after modal"
                 )
-            } else {
+            } else if (!vodPanelOpenerFocus.restore()) {
                 playButtonFocusRequester.requestFocusSafely(
                     tag = "PlayerScreen",
                     target = "Player transport after modal"
                 )
             }
+        } else if (modalState.active == null) {
+            // Controls hidden while the panel closed: the next show must start on play/pause, not a stale opener.
+            vodPanelOpenerFocus.forget()
         }
     }
 
@@ -517,6 +546,7 @@ fun PlayerScreen(
                     showVariantSelection = modalState.showVariantSelection,
                     showDiagnostics = showDiagnostics,
                     showChannelInfoOverlay = showChannelInfoOverlay,
+                    channelInfoSubPanelOpen = channelInfoSubPanelOpen,
                     showChannelListOverlay = showChannelListOverlay,
                     showCategoryListOverlay = showCategoryListOverlay,
                     showEpgOverlay = showEpgOverlay,
@@ -546,6 +576,7 @@ fun PlayerScreen(
                     modalState = modalState.dismiss()
                 }
                 PlayerBackAction.TOGGLE_DIAGNOSTICS -> viewModel.toggleDiagnostics()
+                PlayerBackAction.CLOSE_CHANNEL_INFO_PANEL -> channelInfoPanelCloseRequests++
                 PlayerBackAction.CLOSE_CHANNEL_INFO -> viewModel.closeChannelInfoOverlay()
                 PlayerBackAction.CLOSE_LIVE_OVERLAYS -> viewModel.closeOverlays()
                 PlayerBackAction.TOGGLE_CONTROLS -> viewModel.toggleControls()
@@ -592,7 +623,8 @@ fun PlayerScreen(
             canOpenEpisodePicker = contentType == "SERIES_EPISODE" &&
                 viewModel.currentSeries.value?.seasons.sanitizedForPlayer()
                     ?.any { it.episodes.isNotEmpty() } == true,
-            showClosePlaybackConfirmation = showClosePlaybackConfirmation
+            showClosePlaybackConfirmation = showClosePlaybackConfirmation,
+            showResumePrompt = resumePrompt.show
         )
     }
 
@@ -699,6 +731,10 @@ fun PlayerScreen(
                     }
                     PlayerInputAction.OpenChannelInfo -> {
                         viewModel.openChannelInfoOverlay()
+                        true
+                    }
+                    PlayerInputAction.CloseChannelInfoPanel -> {
+                        channelInfoPanelCloseRequests++
                         true
                     }
                     PlayerInputAction.CloseChannelInfo -> {
@@ -917,6 +953,7 @@ fun PlayerScreen(
             displayChannelNumber = displayChannelNumber,
             aspectRatioLabel = aspectRatio.modeName,
             playButtonFocusRequester = playButtonFocusRequester,
+            vodPanelOpenerFocus = vodPanelOpenerFocus,
             quickActionsFocusRequester = quickActionsFocusRequester,
             modifier = Modifier.fillMaxSize(),
             onOpenArchive = { modalState = modalState.open(PlayerModal.ProgramHistory) },
@@ -930,6 +967,7 @@ fun PlayerScreen(
             onOpenEpisodes = { modalState = modalState.open(PlayerModal.EpisodePicker) },
             onOpenChapters = { modalState = modalState.open(PlayerModal.ChapterSelection) },
             onOpenPlaybackSettings = { modalState = modalState.open(PlayerModal.PlaybackSettings) },
+            modalVisible = modalState.hasVisibleModal,
             showChapterSheet = modalState.showChapterSelection,
             showPlaybackSettingsSheet = modalState.showPlaybackSettings,
             onDismissVodSheet = { modalState = modalState.dismiss() },
@@ -951,22 +989,40 @@ fun PlayerScreen(
         )
 
         PlayerAspectRatioToast(
-            aspectRatioLabel = aspectRatio.modeName,
-            controlsVisible = showControls,
+            aspectRatioChanges = aspectRatioChangeLabels,
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 32.dp)
         )
 
-        PlayerResolutionBadgeHost(
-            viewModel = viewModel,
-            streamUrl = streamUrl,
-            videoFormat = videoFormat,
-            controlsVisible = showControls,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(32.dp)
+        SeekFeedbackHost(
+            events = viewModel.seekFeedback,
+            controlsVisible = showControls
         )
+
+        // VOD shows the same decoded-format chips as its overlay (flashed at start, then faded), so a
+        // second badge with a different label would contradict them. Live keeps its resolution badge.
+        if (isVodPlayback(contentType, isCatchUpPlayback)) {
+            val startBadges = remember(videoFormat) { vodStreamBadges(videoFormat) }
+            VodStartBadges(
+                badges = startBadges,
+                streamUrl = streamUrl,
+                isReady = playbackState == PlaybackState.READY,
+                frameRateKnown = videoFormat.frameRate > 0f,
+                controlsVisible = showControls,
+                modifier = Modifier.align(Alignment.TopEnd)
+            )
+        } else {
+            PlayerResolutionBadgeHost(
+                viewModel = viewModel,
+                streamUrl = streamUrl,
+                videoFormat = videoFormat,
+                controlsVisible = showControls,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(32.dp)
+            )
+        }
 
         PlayerSleepTimerWarningHost(
             viewModel = viewModel,
@@ -1072,7 +1128,6 @@ fun PlayerScreen(
             showAudioVideoOffsetDialog = modalState.showAudioVideoOffsetDialog,
             showSubtitleOffsetDialog = modalState.showSubtitleOffsetDialog,
             showEpisodePicker = modalState.showEpisodePicker,
-            fallbackTitle = title,
             fallbackEpisodeId = internalChannelId,
             fallbackSeasonNumber = seasonNumber,
             onOpenSubtitleSearch = { modalState = modalState.open(PlayerModal.SubtitleSearch) },
@@ -1096,6 +1151,7 @@ fun PlayerScreen(
                 viewModel = viewModel,
                 isRtl = isRtl,
                 sideOverlayWidth = sideOverlayWidth,
+                channelListOverlayWidth = channelListOverlayWidth,
                 epgOverlayWidth = epgOverlayWidth,
                 showChannelListOverlay = showChannelListOverlay,
                 showCategoryListOverlay = showCategoryListOverlay,
@@ -1114,11 +1170,13 @@ fun PlayerScreen(
                 showDiagnostics = showDiagnostics,
                 videoFormat = videoFormat,
                 onOpenModal = { modal -> modalState = modalState.open(modal) },
+                onPickLocalSubtitle = pickLocalSubtitle,
                 onEnterPictureInPicture = enterPictureInPicture,
                 onRunRecordingAction = notificationPermissionGate::runRecordingAction,
                 onOpenCastRouteChooser = { playbackPlatformHost?.openCastRouteChooser() },
                 onScheduleByTime = { showScheduleByTimeDialog = true },
-                onTransientPanelVisibilityChanged = { channelInfoSubPanelOpen = it }
+                onTransientPanelVisibilityChanged = { channelInfoSubPanelOpen = it },
+                channelInfoPanelCloseRequests = channelInfoPanelCloseRequests
             )
         }
         playbackQualityGate?.let { gate ->

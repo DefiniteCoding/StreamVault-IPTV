@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">لغو</string>
+  <string name="setup_completion_saved_sync_pending">ارائه‌دهنده ذخیره شد. همگام‌سازی در پس‌زمینه ادامه می‌یابد.</string>
+  <string name="setup_combined_attach_title">افزودن لیست پخش به M3U ترکیبی؟</string>
+  <string name="setup_combined_attach_message">%1$s را به %2$s اضافه کنید و آن منبع ترکیبی را برای پخش زنده فعال نگه دارید؟</string>
+  <string name="setup_combined_attach_fallback_playlist">این لیست پخش</string>
+  <string name="setup_combined_attach_fallback_source">منبع ترکیبی فعال</string>
+  <string name="setup_combined_attach_skip">حالا نه</string>
+  <string name="setup_combined_attach_confirm">افزودن به ترکیبی</string>
+</resources>

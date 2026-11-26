@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_portal_url_placeholder">URL cổng</string>
+  <string name="setup_jellyfin_source_subtitle">Máy chủ đa phương tiện Jellyfin</string>
+
+  <string name="setup_adv_user_agent_override_placeholder">Ghi đè User-Agent (không bắt buộc)</string>
+  <string name="setup_adv_headers_stalker_placeholder">Tiêu đề (API, không bắt buộc, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_adv_headers_custom_placeholder">Tiêu đề tùy chỉnh (không bắt buộc, Header: Value | Header2: Value)</string>
+
+  <string name="setup_guide_source_title">Nguồn hướng dẫn</string>
+  <string name="setup_guide_source_helper">Chọn nhà cung cấp này dùng hướng dẫn của chính nhà cung cấp, các nguồn XMLTV bên ngoài bạn đã gán, hay không dùng hướng dẫn nào.</string>
+  <string name="setup_guide_policy_auto_title">Tự động</string>
+  <string name="setup_guide_policy_auto_description">Giữ hành vi kết hợp hiện tại: XMLTV bên ngoài có thể ghi đè dữ liệu hướng dẫn của nhà cung cấp, và kênh không khớp vẫn có thể dùng hướng dẫn của nhà cung cấp làm dự phòng.</string>
+  <string name="setup_guide_policy_external_title">Chỉ dùng EPG bên ngoài</string>
+  <string name="setup_guide_policy_external_description">Chỉ dùng các nguồn XMLTV bên ngoài đã gán. Kênh không khớp sẽ không có dữ liệu hướng dẫn.</string>
+  <string name="setup_guide_policy_provider_title">Chỉ dùng EPG của nhà cung cấp</string>
+  <string name="setup_guide_policy_provider_description">Bỏ qua các nguồn XMLTV bên ngoài đã gán cho nhà cung cấp này và chỉ dùng đường dẫn hướng dẫn của nhà cung cấp.</string>
+  <string name="setup_guide_policy_disabled_title">Tắt dữ liệu hướng dẫn</string>
+  <string name="setup_guide_policy_disabled_description">Không nhập hoặc đối chiếu dữ liệu hướng dẫn cho nhà cung cấp này.</string>
+
+  <string name="setup_logo_source_title">Logo kênh</string>
+  <string name="setup_logo_source_helper">Chọn logo kênh lấy từ nhà cung cấp, biểu tượng kênh EPG khớp, hoặc chỉ một nguồn duy nhất.</string>
+  <string name="setup_logo_policy_supplier_preferred_title">Ưu tiên logo nhà cung cấp</string>
+  <string name="setup_logo_policy_supplier_preferred_description">Dùng logo của nhà cung cấp nếu có, nếu không thì dùng biểu tượng EPG khớp.</string>
+  <string name="setup_logo_policy_epg_preferred_title">Ưu tiên logo EPG</string>
+  <string name="setup_logo_policy_epg_preferred_description">Dùng biểu tượng EPG khớp trước, nếu không thì dùng logo của nhà cung cấp.</string>
+  <string name="setup_logo_policy_supplier_only_title">Chỉ logo nhà cung cấp</string>
+  <string name="setup_logo_policy_supplier_only_description">Luôn dùng logo của nhà cung cấp cho nhà cung cấp này.</string>
+  <string name="setup_logo_policy_epg_only_title">Chỉ logo EPG</string>
+  <string name="setup_logo_policy_epg_only_description">Luôn dùng biểu tượng EPG khớp cho nhà cung cấp này.</string>
+
+  <string name="setup_stalker_auth_title">Chế độ xác thực Stalker</string>
+  <string name="setup_stalker_auth_helper">Mặc định là tự động phát hiện. Chỉ đổi khi cổng yêu cầu thông tin đăng nhập hoặc kiểu đăng nhập kết hợp MAG + tài khoản.</string>
+  <string name="setup_stalker_auth_auto_title">Tự động phát hiện</string>
+  <string name="setup_stalker_auth_auto_description">Thử trước luồng xác thực có khả năng cao nhất của cổng và thử lại một lần nếu chế độ Stalker khác phù hợp hơn.</string>
+  <string name="setup_stalker_auth_mac_only_title">Chỉ MAC</string>
+  <string name="setup_stalker_auth_mac_only_description">Dùng xác thực MAC kiểu MAG, không đăng nhập tài khoản cổng.</string>
+  <string name="setup_stalker_auth_mac_credentials_title">MAC + thông tin đăng nhập</string>
+  <string name="setup_stalker_auth_mac_credentials_description">Giữ danh tính MAG và thêm thông tin tài khoản cổng cho các cổng khắt khe hơn.</string>
+  <string name="setup_stalker_auth_credentials_only_title">Chỉ thông tin đăng nhập</string>
+  <string name="setup_stalker_auth_credentials_only_description">Dùng thông tin tài khoản cổng ngay cả khi địa chỉ MAC là tùy chọn hoặc bị bỏ qua.</string>
+
+  <string name="setup_stalker_username_optional_placeholder">Tên người dùng cổng (không bắt buộc)</string>
+  <string name="setup_stalker_username_placeholder">Tên người dùng cổng</string>
+  <string name="setup_stalker_password_optional_placeholder">Mật khẩu cổng (không bắt buộc)</string>
+  <string name="setup_stalker_password_placeholder">Mật khẩu cổng</string>
+  <string name="setup_stalker_mag_type_placeholder">Loại MAG (không bắt buộc)</string>
+  <string name="setup_stalker_timezone_placeholder">Múi giờ (không bắt buộc)</string>
+  <string name="setup_stalker_locale_placeholder">Ngôn ngữ vùng (không bắt buộc)</string>
+  <string name="setup_stalker_serial_placeholder">Số sê-ri (không bắt buộc)</string>
+  <string name="setup_stalker_device_id_placeholder">ID thiết bị (không bắt buộc)</string>
+  <string name="setup_stalker_device_id2_placeholder">Device ID2 (không bắt buộc)</string>
+  <string name="setup_stalker_signature_placeholder">Chữ ký (không bắt buộc)</string>
+
+  <string name="setup_stalker_compat_section_title">Tương thích Stalker</string>
+  <string name="setup_stalker_compat_section_helper">Ghi đè riêng cho từng cổng, dành cho máy chủ MAG/Stalker khó tính. Để trống các trường trừ khi máy chủ cần.</string>
+  <string name="setup_stalker_hw_version_placeholder">Ghi đè hw_version (không bắt buộc)</string>
+  <string name="setup_stalker_api_user_agent_placeholder">User-Agent (API, không bắt buộc)</string>
+  <string name="setup_stalker_player_user_agent_placeholder">User-Agent (trình phát, không bắt buộc)</string>
+  <string name="setup_stalker_player_headers_placeholder">Tiêu đề (trình phát, không bắt buộc, Header: Value | HeaderToRemove:)</string>
+  <string name="setup_stalker_x_user_agent_link">Liên kết X-User-Agent</string>
+  <string name="setup_stalker_link_ethernet">Ethernet</string>
+  <string name="setup_stalker_link_wifi">Wi-Fi</string>
+  <string name="setup_stalker_proxy_title">Dùng proxy HTTP</string>
+  <string name="setup_stalker_proxy_helper">Chỉ áp dụng cho API Stalker và phát lại.</string>
+  <string name="setup_stalker_proxy_host_placeholder">Máy chủ proxy</string>
+  <string name="setup_stalker_proxy_port_placeholder">Cổng proxy</string>
+
+  <string name="setup_stalker_selector_title">Tương thích</string>
+  <string name="setup_stalker_protocol_button">Giao thức: %1$s</string>
+  <string name="setup_stalker_protocol_auto">Tự động</string>
+  <string name="setup_stalker_protocol_classic_mag">MAG cổ điển</string>
+  <string name="setup_stalker_protocol_ministra">Ministra API v3</string>
+  <string name="setup_stalker_model_button">Mẫu: %1$s</string>
+  <string name="setup_stalker_model_automatic">Tự động</string>
+  <string name="setup_stalker_profile_experimental">%1$s (thử nghiệm)</string>
+  <string name="setup_stalker_experimental_note">Hồ sơ thử nghiệm cần các trường danh tính đã thu thập hoặc nhập thủ công và bị loại khỏi tính năng tự động phát hiện.</string>
+  <string name="setup_stalker_profile_custom">Hồ sơ tùy chỉnh</string>
+
+  <string name="setup_stalker_rules_title">Quy tắc yêu cầu</string>
+  <string name="setup_stalker_rules_helper">Khớp theo hành động, chặn lệnh gọi hoặc ghi đè tham số. Giá trị trống sẽ xóa tham số.</string>
+  <string name="setup_stalker_rules_add">Thêm quy tắc</string>
+  <string name="setup_stalker_rule_number">Quy tắc %1$d</string>
+  <string name="setup_stalker_rule_delete">Xóa</string>
+  <string name="setup_stalker_rule_action_placeholder">Hành động, ví dụ get_profile</string>
+  <string name="setup_stalker_rule_block">Chặn yêu cầu này</string>
+  <string name="setup_stalker_rule_block_warning">Cảnh báo: chặn %1$s có thể khiến không đăng nhập được.</string>
+  <string name="setup_stalker_rule_params_placeholder">Ghi đè tham số: name=value | remove_me=</string>
+</resources>

@@ -3,6 +3,7 @@ package com.streamvault.feature.playback.player
 import android.net.Uri
 import android.os.SystemClock
 import com.streamvault.core.navigation.StremioPlaybackReference
+import com.streamvault.core.navigation.PlaybackStartMode
 import com.streamvault.core.navigation.StremioSubtitlePlaybackSource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,6 +63,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -101,13 +103,16 @@ class PlayerViewModel @Inject constructor(
     internal val downloadExternalSubtitleUseCase: DownloadExternalSubtitle,
     internal val getExternalSubtitleLanguagesUseCase: GetExternalSubtitleLanguages,
     internal val openSubtitlesAccountManager: OpenSubtitlesAccountManager,
+    internal val playbackWebhooks: com.streamvault.domain.playback.events.PlaybackWebhooks,
 ) : ViewModel() {
+    internal val webhookState = PlayerWebhookState()
     companion object {
         private const val MIN_WATCHED_FOR_AUTO_PLAY_MS = 5_000L
         private const val AUTO_PLAY_COUNTDOWN_SECONDS = 10
         private const val LOW_BANDWIDTH_THRESHOLD_BPS = 500_000L
         private const val LOW_BANDWIDTH_DURATION_SECONDS = 30
         internal val PLAYBACK_TIMER_PRESETS_MINUTES = setOf(0, 15, 30, 45, 60, 90, 120)
+        internal val PLAYBACK_SPEED_OPTIONS = listOf(0.5f, 0.75f, 1f, 1.25f, 1.5f, 2f)
         internal const val TIMER_TICK_MS = 1_000L
     }
 
@@ -217,6 +222,11 @@ class PlayerViewModel @Inject constructor(
     internal val audioVideoOffsetPreviewMs = MutableStateFlow<Int?>(null)
     internal val _audioVideoOffsetUiState = MutableStateFlow(PlayerAudioVideoOffsetUiState())
     val audioVideoOffsetUiState: StateFlow<PlayerAudioVideoOffsetUiState> = _audioVideoOffsetUiState.asStateFlow()
+    internal val seekTargetTracker = SeekTargetTracker()
+    internal val _seekFeedback = MutableSharedFlow<SeekFeedbackEvent>(extraBufferCapacity = 8, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val seekFeedback: SharedFlow<SeekFeedbackEvent> = _seekFeedback.asSharedFlow()
+    internal val _aspectRatioChanges = MutableSharedFlow<AspectRatio>(extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST)
+    val aspectRatioChanges: SharedFlow<AspectRatio> = _aspectRatioChanges.asSharedFlow()
     internal val _seekPreview = MutableStateFlow(SeekPreviewState())
     val seekPreview: StateFlow<SeekPreviewState> = _seekPreview.asStateFlow()
     private val _recordingItems = MutableStateFlow<List<RecordingItem>>(emptyList())
@@ -227,6 +237,8 @@ class PlayerViewModel @Inject constructor(
     val timeshiftUiState: StateFlow<PlayerTimeshiftUiState> = _timeshiftUiState.asStateFlow()
     internal val _sleepTimerUiState = MutableStateFlow(SleepTimerUiState())
     val sleepTimerUiState: StateFlow<SleepTimerUiState> = _sleepTimerUiState.asStateFlow()
+    internal val _playbackCompleted = MutableStateFlow(false)
+    val playbackCompleted: StateFlow<Boolean> = _playbackCompleted.asStateFlow()
     internal val _sleepTimerExitEvent = MutableStateFlow(0)
     val sleepTimerExitEvent: StateFlow<Int> = _sleepTimerExitEvent.asStateFlow()
     val remoteShortcutPreferences = playerPreferencesCoordinator.remoteShortcutPreferences
@@ -243,6 +255,8 @@ class PlayerViewModel @Inject constructor(
 
     internal var channelInfoHideJob: Job? = null
     internal var liveOverlayHideJob: Job? = null
+    /** True while a live overlay side sheet (More, Subs, Audio, Delay) is open: it closes only by hand, never by the idle timer. */
+    internal var liveOverlayAutoHidePaused = false
     internal var diagnosticsHideJob: Job? = null
     internal var numericInputCommitJob: Job? = null
     internal var numericInputFeedbackJob: Job? = null
@@ -305,9 +319,11 @@ class PlayerViewModel @Inject constructor(
         logRepositoryFailure = { operation, result -> logRepositoryFailure(operation, result) },
         fallbackToPreviousChannel = { reason -> fallbackToPreviousChannel(reason) },
         hasLastChannel = { hasLastChannel() },
+        onRecoveryExhausted = { finishWebhookPlayback(failed = true) },
         tryFallbackToAvcEpisodeVariant = { requestVersion, playbackUrl -> tryFallbackToAvcEpisodeVariant(requestVersion, playbackUrl) },
         handleEpisodeReplacementError = { error ->
             if (episodeSourceState.attempted && episodeSourceState.recoveryPending) {
+                finishWebhookPlayback(failed = true)
                 episodeSourceState.markFailed(episodeSourceState.token)
                 playerEngine.stop()
                 val type = classifyPlaybackError(error)
@@ -353,7 +369,7 @@ class PlayerViewModel @Inject constructor(
             rebuildChannelNumberIndex()
         }
     internal var playerControlsTimeoutMs: Long = 5_000L
-    internal var liveOverlayTimeoutMs: Long = 4_000L
+    internal var liveOverlayTimeoutMs: Long = 6_000L
     internal var playerNoticeTimeoutMs: Long = 6_000L
     internal var diagnosticsTimeoutMs: Long = 15_000L
     private var preferredAudioDecoderMode: DecoderMode = DecoderMode.AUTO
@@ -467,6 +483,8 @@ class PlayerViewModel @Inject constructor(
     internal var zapAutoRevertEnabled: Boolean = true
     internal var autoPlayNextEpisodeEnabled: Boolean = true
     internal var isAppInForeground: Boolean = true
+    internal var isLiveUsageScreenActive: Boolean = false
+    internal val liveUsageOwner = "primary:${java.util.UUID.randomUUID()}"
     internal var shouldResumeAfterForeground: Boolean = false
     internal var seekPreviewRequestVersion: Long = 0L
     internal var lastMuteToggleAtMs: Long = 0L
@@ -583,11 +601,16 @@ class PlayerViewModel @Inject constructor(
                     SystemClock.elapsedRealtime(), playerEngine.playbackSpeed.value
                 )
                 reportTraktPlayback()
+                reportWebhookPlayback()
+                reportLiveUsage()
                 delay(500)
             }
         }
         viewModelScope.launch {
-            currentChannelFlow.collect { refreshCurrentPlaybackQualityPreferenceScope() }
+            currentChannelFlow.collect {
+                refreshCurrentPlaybackQualityPreferenceScope()
+                reportLiveUsage()
+            }
         }
         viewModelScope.launch {
             _currentSeries.collect { refreshCurrentPlaybackQualityPreferenceScope() }
@@ -635,10 +658,18 @@ class PlayerViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
+            activePlayerEngineFlow.flatMapLatest { it.isPlaying }.collect {
+                reportLiveUsage()
+                reportWebhookPlayback()
+            }
+        }
+        viewModelScope.launch {
             activePlayerEngineFlow.flatMapLatest { it.playbackState }.collect { state ->
+                reportLiveUsage()
                 _playerDiagnostics.update { it.copy(playbackStateLabel = state.name.replace('_', ' ')) }
                 if (state == PlaybackState.ENDED && lastObservedPlaybackState != PlaybackState.ENDED) {
                     reportTraktPlayback(state)
+                    reportWebhookPlayback(state)
                     handlePlaybackEnded()
                 }
                 lastObservedPlaybackState = state
@@ -647,6 +678,7 @@ class PlayerViewModel @Inject constructor(
                     dismissRecoveredNoticeIfPresent()
                     if (currentContentType == ContentType.LIVE && !isCatchUpPlayback()) {
                         livePlaybackReadyForCurrentSession = true
+                        reportLiveUsage()
                         recordActiveLivePlayback()
                         currentChannelFlow.value?.sanitizedForPlayer()?.let { channel ->
                             if (channel.errorCount > 0) {
@@ -1140,7 +1172,12 @@ class PlayerViewModel @Inject constructor(
             .stateIn(viewModelScope, kotlinx.coroutines.flow.SharingStarted.WhileSubscribed(5000), true)
     }
 
+    fun consumePlaybackCompleted() {
+        _playbackCompleted.value = false
+    }
+
     internal fun beginPlaybackSession(): Long {
+        _playbackCompleted.value = false
         val sessionId = playbackSessionCoordinator.begin().id
         episodeSourceState.reset(sessionId)
         lastTriggeredCreditsChapterStartMs = null
@@ -1624,10 +1661,12 @@ class PlayerViewModel @Inject constructor(
         remoteContentId: String? = null,
         remoteSeriesId: String? = null,
         showResumePrompt: Boolean = true,
+        startMode: PlaybackStartMode = PlaybackStartMode.PROMPT,
         stremioPlaybackReference: StremioPlaybackReference? = null,
         stremioMediaRequestHeaders: Map<String, String> = emptyMap(),
         stremioInlineSubtitles: List<StremioSubtitlePlaybackSource> = emptyList()
     ) {
+        _resumePrompt.value = ResumePromptState()
         val hasArchiveRequest = hasArchivePlaybackIdentity(
             contentType = contentType,
             archiveStartMs = archiveStartMs,
@@ -1640,6 +1679,7 @@ class PlayerViewModel @Inject constructor(
         } else {
             PlaybackResolutionUiState.Resolving
         }
+        finishWebhookPlayback()
         val contentSwitchFlush = queueContentSwitchProgressFlush()
         if (
             currentStremioPlaybackReference != stremioPlaybackReference ||
@@ -1659,6 +1699,7 @@ class PlayerViewModel @Inject constructor(
             streamUrl = streamUrl,
             internalChannelId = internalChannelId,
             categoryId = categoryId,
+            isVirtual = isVirtual,
             providerId = providerId,
             combinedProfileId = combinedProfileId,
             combinedSourceFilterProviderId = combinedSourceFilterProviderId,
@@ -1786,7 +1827,7 @@ class PlayerViewModel @Inject constructor(
                 // Check for resume position after the player is fully prepared (VOD only).
                 // Doing this after preparePlayer ensures pause() acts on the live player instance,
                 // not a stale one that may have already been replaced by prepareInternal().
-                if (showResumePrompt && currentContentType != ContentType.LIVE) {
+                if (showResumePrompt && startMode != PlaybackStartMode.START_OVER && currentContentType != ContentType.LIVE) {
                     val reference = currentStremioPlaybackReference
                     val contentKey = reference?.let {
                         stremioPlaybackContentKey(
@@ -1814,23 +1855,26 @@ class PlayerViewModel @Inject constructor(
                     val resumePosition = stremioHistory?.takeUnless { it.watched }?.resumePositionMs
                         ?: providerHistory?.resumePositionMs
                     val resumeDuration = stremioHistory?.totalDurationMs ?: providerHistory?.totalDurationMs
-                    if (isActivePlaybackSession(requestVersion, playbackLogicalUrl) &&
-                        resumePosition != null && resumeDuration != null && resumePosition > 5000L &&
-                        !isPlaybackComplete(resumePosition, resumeDuration)
-                    ) {
-                        playerEngine.pause()
-                        _resumePrompt.value = ResumePromptState(
-                            show = true,
-                            positionMs = resumePosition,
-                            title = currentTitle
-                        )
+                    if (isActivePlaybackSession(requestVersion, playbackLogicalUrl)) {
+                        when (val action = playbackResumeAction(startMode, resumePosition, resumeDuration)) {
+                            PlaybackResumeAction.None -> Unit
+                            is PlaybackResumeAction.Seek -> playerEngine.seekTo(action.positionMs)
+                            is PlaybackResumeAction.Prompt -> {
+                                playerEngine.pause()
+                                _resumePrompt.value = ResumePromptState(
+                                    show = true,
+                                    positionMs = action.positionMs,
+                                    title = currentTitle
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
         
-        // Show context info on entry for both Live and VOD
-        openChannelInfoOverlay()
+        // Only LIVE auto-hides this overlay. For VOD the flag would stay set and block D-pad seeks.
+        if (currentContentType == ContentType.LIVE) openChannelInfoOverlay()
 
         if (providerId > 0) {
             playbackSessionScope(requestVersion)?.launch {
@@ -2064,6 +2108,8 @@ class PlayerViewModel @Inject constructor(
     )?.url
 
     override fun onCleared() {
+        finishWebhookPlayback()
+        reportLiveUsage(stop = true)
         stremioEventDispatcher.close()
         playerTraktCoordinator.close()
         playbackSessionCoordinator.invalidate()

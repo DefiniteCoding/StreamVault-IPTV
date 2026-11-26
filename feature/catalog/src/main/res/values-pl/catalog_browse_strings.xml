@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Wszystkie</string>
+  <string name="library_chip_favorites">Ulubione</string>
+  <string name="library_chip_resume">Wznów</string>
+  <string name="library_chip_unwatched">Nieobejrzane</string>
+  <string name="library_chip_recent">Ostatnie</string>
+  <string name="library_chip_updated">Zaktualizowane</string>
+  <string name="library_chip_top_rated">Najwyżej oceniane</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Kolejność biblioteki</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Najnowsze</string>
+  <string name="library_chip_sort_recently_updated">Ostatnio zaktualizowane</string>
+  <string name="library_chip_sort_updated_short">Zaktualizowane</string>
+  <string name="library_chip_sort_rating">Ocena</string>
+  <string name="library_chip_sort_recent_activity">Ostatnia aktywność</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d grupa</item>
+    <item quantity="few">%d grupy</item>
+    <item quantity="many">%d grup</item>
+    <item quantity="other">%d grupy</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d element</item>
+    <item quantity="few">%d elementy</item>
+    <item quantity="many">%d elementów</item>
+    <item quantity="other">%d elementu</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d propozycja</item>
+    <item quantity="few">%d propozycje</item>
+    <item quantity="many">%d propozycji</item>
+    <item quantity="other">%d propozycji</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d zapisany element</item>
+    <item quantity="few">%d zapisane elementy</item>
+    <item quantity="many">%d zapisanych elementów</item>
+    <item quantity="other">%d zapisanego elementu</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Nie udało się wczytać filmów</string>
+  <string name="series_error_load_failed">Nie udało się wczytać seriali</string>
+  <string name="movie_detail_error_load_failed">Nie udało się wczytać szczegółów filmu</string>
+  <string name="series_detail_error_load_failed">Nie udało się wczytać szczegółów serialu</string>
+  <string name="catalog_error_no_active_provider">Brak aktywnego dostawcy</string>
+  <string name="catalog_message_moved_back_to_live">Przeniesiono „%1$s” z powrotem do TV na żywo</string>
+  <string name="catalog_message_group_created">Utworzono grupę %1$s</string>
+  <string name="catalog_message_group_created_and_added">Utworzono grupę %1$s i dodano: %2$s</string>
+  <string name="catalog_message_category_hidden">Ukryto kategorię %1$s</string>
+  <string name="catalog_message_category_pinned">Przypięto: %1$s</string>
+  <string name="catalog_message_category_unpinned">Odpięto: %1$s</string>
+  <string name="catalog_message_group_renamed">Zmieniono nazwę grupy na %1$s</string>
+  <string name="catalog_message_group_deleted">Usunięto grupę %1$s</string>
+  <string name="catalog_error_group_name_required">Wpisz nazwę grupy</string>
+  <string name="catalog_error_group_name_reserved">Nazwa Ulubione jest zarezerwowana</string>
+  <string name="movies_error_group_name_duplicate">Grupa filmów o takiej nazwie już istnieje</string>
+  <string name="series_error_group_name_duplicate">Grupa seriali o takiej nazwie już istnieje</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">Usunięto %1$s z tego zapisanego widoku.</string>
+  <string name="favorites_message_moved_to_group">Przeniesiono %1$s do wybranej grupy.</string>
+  <string name="favorites_message_group_deleted">Usunięto grupę %1$s.</string>
+  <string name="favorites_error_move_failed">Nie można przenieść %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Nie można scalić %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Nie można zapisać nowej kolejności: %1$s</string>
+  <string name="favorites_error_unknown">Nieznany błąd</string>
+  <string name="favorites_subtitle_channel_number">Kanał %1$d</string>
+  <string name="favorites_group_subtitle">Grupa %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

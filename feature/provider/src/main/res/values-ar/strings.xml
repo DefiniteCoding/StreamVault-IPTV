@@ -12,15 +12,13 @@
     <string name="setup_update_desc">حدّث تفاصيل مزود IPTV الخاص بك</string>
     <string name="setup_add_desc">أضف مزود IPTV الخاص بك</string>
     <string name="setup_shell_eyebrow">إعداد المزود</string>
-    <string name="setup_shell_subtitle">استخدم Xtream أو M3U. يمكنك تغييره لاحقًا.</string>
+    <string name="setup_shell_subtitle">Xtream أو Stalker أو M3U أو Jellyfin. عدّله لاحقًا في الإعدادات.</string>
     <string name="setup_form_subtitle">اختر مصدرًا، أدخل التفاصيل، ثم تابع. يمكنك إدارته لاحقًا من الإعدادات.</string>
     <string name="setup_source_type_label">نوع المصدر</string>
     <string name="setup_info_xtream_title">استخدم Xtream عندما تتوفر بيانات الاعتماد</string>
-    <string name="setup_info_xtream_body">الأفضل عندما يكون لديك الخادم واسم المستخدم وكلمة المرور.</string>
+    <string name="setup_info_xtream_body">الأفضل للخادم واسم المستخدم وكلمة المرور.</string>
     <string name="setup_info_m3u_title">استخدم M3U لقوائم التشغيل عبر الرابط أو الملف</string>
     <string name="setup_info_m3u_body">استخدم رابط قائمة تشغيل أو استورد ملفًا محليًا.</string>
-    <string name="setup_info_manage_title">يمكنك إدارة المزوّدين لاحقًا</string>
-    <string name="setup_info_manage_body">يمكنك التحديث أو التعديل أو الاستبدال لاحقًا من الإعدادات.</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">قائمة تشغيل M3U</string>
     <string name="setup_name_hint">اسم قائمة التشغيل (اختياري)</string>

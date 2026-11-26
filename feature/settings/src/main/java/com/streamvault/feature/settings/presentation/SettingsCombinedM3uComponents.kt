@@ -1,6 +1,7 @@
 package com.streamvault.feature.settings.presentation
 
 import androidx.compose.foundation.BorderStroke
+import com.streamvault.core.ui.design.selectableFocusBorder
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +38,7 @@ import androidx.tv.material3.Text
 import com.streamvault.feature.settings.R
 import com.streamvault.core.ui.components.dialogs.PremiumDialog
 import com.streamvault.core.ui.components.dialogs.PremiumDialogFooterButton
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import com.streamvault.core.ui.design.FocusSpec
 import com.streamvault.core.ui.interaction.TvClickableSurface
 import com.streamvault.core.ui.theme.ErrorColor
@@ -77,7 +78,7 @@ public fun CombinedM3uProfilesCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(SettingsDesignTokens.space16),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Row(
@@ -103,7 +104,12 @@ public fun CombinedM3uProfilesCard(
             if (profiles.isEmpty()) {
             Text(stringResource(R.string.settings_combined_none), style = MaterialTheme.typography.bodySmall, color = OnSurfaceDim)
             } else {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                FocusSafeLazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    // The panel pads its content; the row grows into that padding so chips slide off the panel edge.
+                    edgeGutterStart = SettingsDesignTokens.space16,
+                    edgeGutterEnd = SettingsDesignTokens.space16
+                ) {
                     items(profiles, key = { it.id }) { profile ->
                         val isActive = (activeLiveSource as? ActiveLiveSource.CombinedM3uSource)?.profileId == profile.id
                         ProviderChip(
@@ -340,10 +346,12 @@ public fun CreateCombinedM3uDialog(
                             modifier = Modifier.fillMaxWidth(),
                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
                             colors = ClickableSurfaceDefaults.colors(
-                                containerColor = if (isSelected) Primary.copy(alpha = 0.16f) else com.streamvault.core.ui.theme.SurfaceElevated,
-                                focusedContainerColor = Primary.copy(alpha = 0.24f)
+                                containerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected),
+                                focusedContainerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected)
                             ),
-                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+                            // The Checkbox carries selection; the ring and scale carry focus.
+                            border = selectableFocusBorder(RoundedCornerShape(12.dp)),
+                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f)
                         ) {
                             Row(
                                 modifier = Modifier
@@ -435,23 +443,12 @@ public fun AddCombinedProviderDialog(
                             modifier = Modifier.fillMaxWidth(),
                             shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(12.dp)),
                             colors = ClickableSurfaceDefaults.colors(
-                                containerColor = if (isSelected) Primary.copy(alpha = 0.16f) else com.streamvault.core.ui.theme.SurfaceElevated,
-                                focusedContainerColor = Primary.copy(alpha = 0.22f)
+                                containerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected),
+                                focusedContainerColor = choiceOptionContainer(com.streamvault.core.ui.design.AppColors.current, isSelected)
                             ),
-                            border = ClickableSurfaceDefaults.border(
-                                border = Border(
-                                    border = BorderStroke(
-                                        1.dp,
-                                        if (isSelected) Primary.copy(alpha = 0.4f) else com.streamvault.core.ui.design.AppColors.Divider
-                                    ),
-                                    shape = RoundedCornerShape(12.dp)
-                                ),
-                                focusedBorder = Border(
-                                    border = BorderStroke(FocusSpec.BorderWidth, com.streamvault.core.ui.theme.FocusBorder),
-                                    shape = RoundedCornerShape(12.dp)
-                                )
-                            ),
-                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
+                            // No resting stroke (rule 14); the RadioButton carries selection, the ring and scale carry focus.
+                            border = selectableFocusBorder(RoundedCornerShape(12.dp)),
+                            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.02f)
                         ) {
                             Row(
                                 modifier = Modifier

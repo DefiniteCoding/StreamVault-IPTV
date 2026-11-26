@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Forbereder dit bibliotek…</string>
+    <string name="startup_failed_title">StreamVault kunne ikke åbne dit bibliotek</string>
+    <string name="startup_failed_message">Den lokale database kunne ikke opgraderes. Dine data blev ikke slettet.</string>
+    <string name="startup_failed_error_type">Fejl: %1$s</string>
+    <string name="startup_retry">Prøv igen</string>
+    <string name="startup_share_report">Del rapport</string>
+</resources>

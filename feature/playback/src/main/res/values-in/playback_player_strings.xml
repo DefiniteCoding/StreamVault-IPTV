@@ -133,6 +133,7 @@
     <string name="player_more_controls">Lebih banyak kontrol</string>
     <string name="player_multiview_short">Multitampilan</string>
     <string name="player_mute">Bisu</string>
+    <string name="player_more">Lainnya</string>
     <string name="player_muted_badge">Dibungkam</string>
     <string name="player_next_label">Berikutnya:</string>
     <string name="player_no_guide_data">Tidak ada data panduan</string>
@@ -237,7 +238,7 @@
     <string name="player_subtitle_delay_current">Penundaan saat ini: %1$+d ms</string>
     <string name="player_subtitle_load_from_device">Muat SRT dari perangkat</string>
     <string name="player_subtitle_search_languages_hint">Pilih bahasa, lalu pilih versi.</string>
-    <string name="player_rewind_10_seconds">Mundur 10 detik</string>
+    <string name="player_rewind_10_seconds">Mundur 10 dtk</string>
     <string name="player_vod_timeline">Timeline VOD</string>
     <string name="player_chapter_count">%1$d bab</string>
     <string name="player_playback_settings">Pengaturan pemutaran</string>
@@ -246,7 +247,7 @@
     <string name="player_close_playback_settings">Tutup pengaturan pemutaran</string>
     <string name="player_diagnostics_frame_rate">Laju Bingkai</string>
     <string name="player_subtitle_search_signed_out">Anda dapat mencari tanpa masuk jika akses anonim diaktifkan. Masuk untuk menggunakan kuota unduhan akun Anda.</string>
-    <string name="player_forward_10_seconds">Maju 10 detik</string>
+    <string name="player_forward_10_seconds">Maju 10 dtk</string>
     <string name="player_subtitle_search_open_settings">Hubungkan akun (opsional)</string>
     <string name="player_chapters">Bab</string>
     <string name="epg_catchup_available_unknown">Pengejaran tersedia</string>
@@ -307,4 +308,15 @@
 <string name="player_trakt_sent">Terkirim ke Trakt</string>
     <string name="player_trakt_badge">TRAKT</string>
     <string name="player_schedule_by_time">Jadwalkan berdasarkan waktu</string>     <string name="player_schedule_by_time_title">Jadwalkan perekaman</string>     <string name="player_schedule_by_time_start">Mulai</string>     <string name="player_schedule_by_time_duration">Durasi</string>     <string name="player_schedule_by_time_repeat">Ulangi</string>     <string name="player_schedule_by_time_once">Sekali</string>     <string name="player_schedule_by_time_daily">Harian</string>     <string name="player_schedule_by_time_weekly">Mingguan</string>     <string name="player_schedule_by_time_confirm">Jadwalkan</string>     <string name="player_schedule_by_time_cancel">Batal</string>     <string name="player_schedule_by_time_duration_hm">%1$d j %2$d mnt</string>     <string name="player_schedule_by_time_duration_h">%1$d j</string>     <string name="player_schedule_by_time_duration_m">%1$d mnt</string>     <string name="player_recording_needs_live_channel">Perekaman memerlukan saluran langsung.</string>     <string name="player_recording_started_notice">Perekaman dimulai untuk %1$s.</string>     <string name="player_recording_scheduled_notice">%1$s dijadwalkan.</string>     <string name="player_recording_scheduled_daily_notice">%1$s dijadwalkan harian.</string>     <string name="player_recording_scheduled_weekly_notice">%1$s dijadwalkan mingguan.</string>     <string name="player_recording_failed_notice">Tidak dapat menjadwalkan perekaman.</string>     <string name="player_recording_stopped_notice">Perekaman dihentikan.</string>
+    <string name="player_track_no_audio_tracks">Tidak ada trek audio</string>
+    <string name="player_stremio_subtitles_heading">Subtitle Stremio</string>
+    <string name="player_stremio_subtitles_loading">Memuat subtitle add-on…</string>
+    <string name="player_stremio_subtitles_empty">Subtitle add-on tidak tersedia</string>
+    <string name="player_stremio_subtitles_retry">Coba muat ulang subtitle add-on</string>
+    <string name="player_season_label">Musim %1$d</string>
+    <string name="player_episode_label">Episode %1$d</string>
+    <string name="player_vod_ends_at">Selesai pukul %1$s</string>
+    <string name="player_aspect_fit">Sesuaikan</string>
+    <string name="player_aspect_stretch">Regangkan</string>
+    <string name="player_aspect_zoom">Perbesar</string>
 </resources>

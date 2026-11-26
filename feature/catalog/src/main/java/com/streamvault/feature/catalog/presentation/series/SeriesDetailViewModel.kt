@@ -1,17 +1,9 @@
 package com.streamvault.feature.catalog.presentation.series
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.streamvault.feature.catalog.api.CatalogCastPlaybackEvent
-import com.streamvault.feature.catalog.api.CatalogCastPort
-import com.streamvault.feature.catalog.api.CatalogCastRequest
-import com.streamvault.feature.catalog.api.CatalogCastStartResult
-import com.streamvault.feature.catalog.api.CatalogDownloadStarter
-import com.streamvault.feature.catalog.api.CatalogMessage
-import com.streamvault.feature.catalog.api.CatalogStreamPreparer
-import com.streamvault.feature.catalog.api.CatalogUiEvent
-import com.streamvault.feature.catalog.navigation.CatalogRoutePatterns
 import com.streamvault.data.preferences.PreferencesRepository
 import com.streamvault.domain.model.ContentType
 import com.streamvault.domain.model.DownloadContentType
@@ -31,22 +23,34 @@ import com.streamvault.domain.repository.PlaybackHistoryRepository
 import com.streamvault.domain.repository.ProviderRepository
 import com.streamvault.domain.repository.SeriesDetailsUnavailableException
 import com.streamvault.domain.repository.SeriesRepository
+import com.streamvault.domain.trakt.TraktFavoriteActionResult
+import com.streamvault.domain.trakt.TraktFavoriteFailure
+import com.streamvault.domain.trakt.TraktFavoriteIdentity
+import com.streamvault.domain.trakt.TraktFavoriteType
+import com.streamvault.domain.trakt.TraktFavorites
+import com.streamvault.domain.trakt.TraktRatingActionResult
+import com.streamvault.domain.trakt.TraktRatingIdentity
+import com.streamvault.domain.trakt.TraktRatingType
+import com.streamvault.domain.trakt.TraktRatings
 import com.streamvault.domain.trakt.TraktWatchlist
 import com.streamvault.domain.trakt.TraktWatchlistActionResult
 import com.streamvault.domain.trakt.TraktWatchlistFailure
 import com.streamvault.domain.trakt.TraktWatchlistIdentity
 import com.streamvault.domain.trakt.TraktWatchlistType
-import com.streamvault.domain.trakt.TraktFavorites
-import com.streamvault.domain.trakt.TraktFavoriteActionResult
-import com.streamvault.domain.trakt.TraktFavoriteFailure
-import com.streamvault.domain.trakt.TraktFavoriteIdentity
-import com.streamvault.domain.trakt.TraktFavoriteType
-import com.streamvault.domain.trakt.TraktRatings
-import com.streamvault.domain.trakt.TraktRatingActionResult
-import com.streamvault.domain.trakt.TraktRatingIdentity
-import com.streamvault.domain.trakt.TraktRatingType
 import com.streamvault.domain.util.isPlaybackComplete
+import com.streamvault.feature.catalog.R
+import com.streamvault.feature.catalog.api.CatalogCastPlaybackEvent
+import com.streamvault.feature.catalog.api.CatalogCastPort
+import com.streamvault.feature.catalog.api.CatalogCastRequest
+import com.streamvault.feature.catalog.api.CatalogCastStartResult
+import com.streamvault.feature.catalog.api.CatalogDownloadStarter
+import com.streamvault.feature.catalog.api.CatalogMessage
+import com.streamvault.feature.catalog.api.CatalogStreamPreparer
+import com.streamvault.feature.catalog.api.CatalogUiEvent
+import com.streamvault.feature.catalog.navigation.CatalogRoutePatterns
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -58,10 +62,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SeriesDetailViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     private val seriesRepository: SeriesRepository,
     private val providerRepository: ProviderRepository,
@@ -107,7 +111,7 @@ class SeriesDetailViewModel @Inject constructor(
                 providerDetailJob?.cancel()
                 _uiState.value = SeriesDetailUiState(isLoading = true)
                 if (provider == null) {
-                    _uiState.update { it.copy(isLoading = false, error = "No active provider") }
+                    _uiState.update { it.copy(isLoading = false, error = appContext.getString(R.string.catalog_error_no_active_provider)) }
                     return@collect
                 }
                 providerDetailJob = launch {
@@ -233,11 +237,11 @@ class SeriesDetailViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to load series details",
+                    error = e.message ?: appContext.getString(R.string.series_detail_error_load_failed),
                     detailsUnavailable = true
                 )
             }
-            Result.error(e.message ?: "Failed to load series details", e)
+            Result.error(e.message ?: appContext.getString(R.string.series_detail_error_load_failed), e)
         }
     }
 

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">الكل</string>
+  <string name="library_chip_favorites">المفضلة</string>
+  <string name="library_chip_resume">استئناف</string>
+  <string name="library_chip_unwatched">لم تتم مشاهدته</string>
+  <string name="library_chip_recent">الأخيرة</string>
+  <string name="library_chip_updated">المحدّثة</string>
+  <string name="library_chip_top_rated">الأعلى تقييماً</string>
+
+  <string name="library_chip_sort_library_order">ترتيب المكتبة</string>
+  <string name="library_chip_sort_title">أ-ي</string>
+  <string name="library_chip_sort_newest">الأحدث</string>
+  <string name="library_chip_sort_recently_updated">تم التحديث مؤخراً</string>
+  <string name="library_chip_sort_updated_short">المحدّثة</string>
+  <string name="library_chip_sort_rating">التقييم</string>
+  <string name="library_chip_sort_recent_activity">النشاط الأخير</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="zero">%d مجموعة</item>
+    <item quantity="one">%d مجموعة</item>
+    <item quantity="two">%d مجموعتان</item>
+    <item quantity="few">%d مجموعات</item>
+    <item quantity="many">%d مجموعة</item>
+    <item quantity="other">%d مجموعة</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="zero">%d عنصر</item>
+    <item quantity="one">%d عنصر</item>
+    <item quantity="two">%d عنصران</item>
+    <item quantity="few">%d عناصر</item>
+    <item quantity="many">%d عنصرًا</item>
+    <item quantity="other">%d عنصر</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="zero">%d اختيار</item>
+    <item quantity="one">%d اختيار</item>
+    <item quantity="two">%d اختياران</item>
+    <item quantity="few">%d اختيارات</item>
+    <item quantity="many">%d اختيارًا</item>
+    <item quantity="other">%d اختيار</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="zero">%d عنصر محفوظ</item>
+    <item quantity="one">%d عنصر محفوظ</item>
+    <item quantity="two">%d عنصران محفوظان</item>
+    <item quantity="few">%d عناصر محفوظة</item>
+    <item quantity="many">%d عنصرًا محفوظًا</item>
+    <item quantity="other">%d عنصر محفوظ</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">تعذّر تحميل الأفلام</string>
+  <string name="series_error_load_failed">تعذّر تحميل المسلسلات</string>
+  <string name="movie_detail_error_load_failed">تعذّر تحميل تفاصيل الفيلم</string>
+  <string name="series_detail_error_load_failed">تعذّر تحميل تفاصيل المسلسل</string>
+  <string name="catalog_error_no_active_provider">لا يوجد مزوّد نشط</string>
+  <string name="catalog_message_moved_back_to_live">تمت إعادة «%1$s» إلى البث المباشر</string>
+  <string name="catalog_message_group_created">تم إنشاء المجموعة %1$s</string>
+  <string name="catalog_message_group_created_and_added">تم إنشاء المجموعة %1$s وإضافة %2$s</string>
+  <string name="catalog_message_category_hidden">تم إخفاء الفئة %1$s</string>
+  <string name="catalog_message_category_pinned">تم تثبيت %1$s</string>
+  <string name="catalog_message_category_unpinned">تم إلغاء تثبيت %1$s</string>
+  <string name="catalog_message_group_renamed">تمت إعادة تسمية المجموعة إلى %1$s</string>
+  <string name="catalog_message_group_deleted">تم حذف المجموعة %1$s</string>
+  <string name="catalog_error_group_name_required">أدخل اسم المجموعة</string>
+  <string name="catalog_error_group_name_reserved">اسم «المفضلة» محجوز</string>
+  <string name="movies_error_group_name_duplicate">توجد مجموعة أفلام بهذا الاسم بالفعل</string>
+  <string name="series_error_group_name_duplicate">توجد مجموعة مسلسلات بهذا الاسم بالفعل</string>
+
+  <string name="favorites_message_removed_from_view">تمت إزالة %1$s من هذا العرض المحفوظ.</string>
+  <string name="favorites_message_moved_to_group">تم نقل %1$s إلى المجموعة المحددة.</string>
+  <string name="favorites_message_group_deleted">تم حذف المجموعة %1$s.</string>
+  <string name="favorites_error_move_failed">تعذّر نقل %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">تعذّر دمج %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">تعذّر حفظ الترتيب الجديد: %1$s</string>
+  <string name="favorites_error_unknown">خطأ غير معروف</string>
+  <string name="favorites_subtitle_channel_number">القناة %1$d</string>
+  <string name="favorites_group_subtitle">مجموعة %1$s</string>
+  <string name="favorites_content_type_movie">فيلم</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

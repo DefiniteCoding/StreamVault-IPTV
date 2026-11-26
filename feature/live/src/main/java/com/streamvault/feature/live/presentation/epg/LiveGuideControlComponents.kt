@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.ui.platform.LocalLayoutDirection
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -108,6 +111,9 @@ data class LiveGuideControlLabels(
     val favorites: LiveGuideFavoritesLabels
 )
 
+// Padding the options panel puts around the view-options row; its chips slide off the panel edge past it.
+private val ViewOptionsHorizontalPadding = 24.dp
+
 @Composable
 fun LiveGuideDensityRow(
     selectedDensity: GuideDensity,
@@ -169,7 +175,11 @@ fun LiveGuideTimeControlsRow(
             Text(text = labels.section, style = MaterialTheme.typography.labelMedium, color = OnSurfaceDim)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+            edgeGutterEnd = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+        ) {
             item { LiveGuideShortcutChip(modifier = firstChipFocusRequester?.let { Modifier.focusRequester(it) } ?: Modifier, label = labels.previousDay, onClick = onJumpToPreviousDay) }
             item { LiveGuideShortcutChip(label = labels.pageBack, onClick = onPageBackward) }
             item { LiveGuideShortcutChip(label = labels.jumpBackHalfHour, onClick = onJumpBackwardHalfHour) }
@@ -200,7 +210,11 @@ fun LiveGuideDayRow(
             Text(text = labels.section, style = MaterialTheme.typography.labelMedium, color = OnSurfaceDim)
             Spacer(modifier = Modifier.height(8.dp))
         }
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+            edgeGutterEnd = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+        ) {
             items(dayAnchors, key = { it }) { dayStart ->
                 val isSelected = dayStart == selectedDayStart
                 TvClickableSurface(
@@ -235,10 +249,14 @@ fun LiveGuideViewOptionsRow(
     labels: LiveGuideViewOptionsLabels,
     onToggleScheduledOnly: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 4.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = ViewOptionsHorizontalPadding, vertical = 4.dp)) {
         Text(text = labels.title, style = MaterialTheme.typography.labelMedium, color = OnSurfaceDim)
         Spacer(modifier = Modifier.height(8.dp))
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        FocusSafeLazyRow(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            edgeGutterStart = ViewOptionsHorizontalPadding,
+            edgeGutterEnd = ViewOptionsHorizontalPadding
+        ) {
             item {
                 TvClickableSurface(
                     onClick = onToggleScheduledOnly,

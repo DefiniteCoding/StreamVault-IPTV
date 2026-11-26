@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
+import com.streamvault.core.ui.design.FocusSafeLazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,6 +73,7 @@ public fun LazyListScope.providerSection(
             CompactSettingsActionChip(
                 label = stringResource(R.string.settings_add_provider),
                 accent = Primary,
+                tone = SettingsChipTone.Secondary,
                 onClick = onAddProvider,
                 modifier = if (targetItemId == "sources.add") targetFocusModifier else Modifier,
             )
@@ -123,9 +124,12 @@ public fun LazyListScope.providerSection(
                     color = OnSurfaceDim,
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
-                LazyRow(
+                FocusSafeLazyRow(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    contentPadding = PaddingValues(bottom = 14.dp)
+                    contentPadding = PaddingValues(bottom = 14.dp),
+                    // The content pane pads its start and end (TV layout); the tabs slide off the pane edge past it.
+                    edgeGutterStart = SettingsDesignTokens.space24,
+                    edgeGutterEnd = SettingsDesignTokens.tvHorizontalInset
                 ) {
                     items(uiState.providers, key = { it.id }) { provider ->
                         ProviderSelectorTab(

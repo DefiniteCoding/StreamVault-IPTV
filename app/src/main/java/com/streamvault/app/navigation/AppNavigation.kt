@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.streamvault.app.playback.rememberPlaybackPlatformHost
-import com.streamvault.app.ui.components.shell.LocalAppCloseAction
 import com.streamvault.app.ui.components.shell.LocalAppDestinationItems
 import com.streamvault.app.ui.components.shell.rememberAppDestinationItems
 import com.streamvault.core.navigation.AppDestination
@@ -55,8 +54,7 @@ fun AppNavigation(
     )
 
     CompositionLocalProvider(
-        LocalAppDestinationItems provides navigationDestinations,
-        LocalAppCloseAction provides onCloseApp
+        LocalAppDestinationItems provides navigationDestinations
     ) {
         val route = currentBackStackEntry?.destination?.route.orEmpty()
         BrowseVisualStyle(enabled = !route.startsWith(AppRoutePatterns.SETTINGS) &&

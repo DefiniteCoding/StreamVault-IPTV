@@ -43,4 +43,9 @@
     <string name="multiview_thermal_severe">Parah</string>
     <string name="multiview_thermal_critical">Kritis</string>
     <string name="multiview_low_memory_warning">Tekanan memori tinggi. Slot ekstra tetap dalam keadaan siaga hingga pemutaran stabil.</string>
+    <string name="multiview_search_categories">Cari kategori…</string>
+    <string name="multiview_search_channels">Cari saluran…</string>
+    <string name="multiview_no_categories">Kategori tidak ditemukan</string>
+    <string name="multiview_no_channels">Saluran tidak ditemukan</string>
+    <string name="multiview_picker_subtitle">Pilih kategori, lalu pilih saluran</string>
 </resources>

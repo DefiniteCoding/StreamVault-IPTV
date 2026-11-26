@@ -240,7 +240,6 @@
     <string name="settings_backup_share_failed">אף אפליקציה לא יכלה לקבל את קובץ הגיבוי.</string>
     <string name="settings_catalog_count_pending">ממתין</string>
     <string name="settings_live_timeshift_backend_value">אוטומטי</string>
-    <string name="nav_close_app">סגור אפליקציה</string>
     <string name="nav_vod">VOD</string>
     <string name="nav_downloads">הורדות</string>
     <string name="hidden_categories_dialog_title">קטגוריות מוסתרות</string>
@@ -293,4 +292,6 @@
     <string name="nav_sports">ספורט</string>
     <string name="stremio_new_episode_channel">התראות על פרקים חדשים</string>
     <string name="stremio_new_episode_count">פרקים חדשים: %1$d</string>
+    <string name="tv_channel_favorites_title">מועדפים</string>
+    <string name="tv_channel_favorites_description">הערוצים, הסרטים והסדרות המועדפים שלך</string>
 </resources>

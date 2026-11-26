@@ -12,15 +12,13 @@
     <string name="setup_update_desc">Обновите данные вашего IPTV-провайдера</string>
     <string name="setup_add_desc">Добавьте вашего IPTV-провайдера</string>
     <string name="setup_shell_eyebrow">Подключение провайдера</string>
-    <string name="setup_shell_subtitle">Используйте Xtream или M3U. Позже можно изменить.</string>
+    <string name="setup_shell_subtitle">Xtream, Stalker, M3U или Jellyfin. Позже измените в Настройках.</string>
     <string name="setup_form_subtitle">Выберите источник, введите данные и продолжите. Позже можно управлять в настройках.</string>
     <string name="setup_source_type_label">Тип источника</string>
     <string name="setup_info_xtream_title">Используйте Xtream, если есть данные для входа</string>
-    <string name="setup_info_xtream_body">Лучше всего, если у вас есть сервер, имя пользователя и пароль.</string>
+    <string name="setup_info_xtream_body">Для сервера, имени пользователя и пароля.</string>
     <string name="setup_info_m3u_title">Используйте M3U для плейлистов по URL или из файла</string>
     <string name="setup_info_m3u_body">Используйте ссылку на плейлист или импортируйте локальный файл.</string>
-    <string name="setup_info_manage_title">Позже можно управлять провайдерами</string>
-    <string name="setup_info_manage_body">Позже можно обновить, изменить или заменить в настройках.</string>
     <string name="setup_xtream">Xtream Codes</string>
     <string name="setup_m3u">Плейлист M3U</string>
     <string name="setup_name_hint">Название плейлиста (необязательно)</string>

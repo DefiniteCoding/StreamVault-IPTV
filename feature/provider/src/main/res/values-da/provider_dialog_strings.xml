@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Annuller</string>
+  <string name="setup_completion_saved_sync_pending">Udbyder gemt. Synkroniseringen genoptages i baggrunden.</string>
+  <string name="setup_combined_attach_title">Føj afspilningsliste til kombineret M3U?</string>
+  <string name="setup_combined_attach_message">Føj %1$s til %2$s, og behold den kombinerede kilde aktiv til Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">denne afspilningsliste</string>
+  <string name="setup_combined_attach_fallback_source">den aktive kombinerede kilde</string>
+  <string name="setup_combined_attach_skip">Ikke nu</string>
+  <string name="setup_combined_attach_confirm">Føj til kombineret</string>
+</resources>

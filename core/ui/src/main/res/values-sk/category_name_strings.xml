@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Obľúbené</string>
+    <string name="category_name_recent">Nedávne</string>
+    <string name="category_name_all_channels">Všetky kanály</string>
+    <string name="category_name_placeholder">Kategória %1$s</string>
+</resources>

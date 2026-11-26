@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Фільтри -->
+  <string name="library_chip_all">Усі</string>
+  <string name="library_chip_favorites">Улюблені</string>
+  <string name="library_chip_resume">Продовжити</string>
+  <string name="library_chip_unwatched">Не переглянуто</string>
+  <string name="library_chip_recent">Нещодавні</string>
+  <string name="library_chip_updated">Оновлені</string>
+  <string name="library_chip_top_rated">Найвищий рейтинг</string>
+
+  <!-- Сортування -->
+  <string name="library_chip_sort_library_order">Порядок бібліотеки</string>
+  <string name="library_chip_sort_title">А-Я</string>
+  <string name="library_chip_sort_newest">Найновіші</string>
+  <string name="library_chip_sort_recently_updated">Нещодавно оновлено</string>
+  <string name="library_chip_sort_updated_short">Оновлені</string>
+  <string name="library_chip_sort_rating">Рейтинг</string>
+  <string name="library_chip_sort_recent_activity">Остання активність</string>
+
+  <!-- Лічильники під плитками та в збережених розділах -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d група</item>
+    <item quantity="few">%d групи</item>
+    <item quantity="many">%d груп</item>
+    <item quantity="other">%d групи</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d елемент</item>
+    <item quantity="few">%d елементи</item>
+    <item quantity="many">%d елементів</item>
+    <item quantity="other">%d елемента</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d добірка</item>
+    <item quantity="few">%d добірки</item>
+    <item quantity="many">%d добірок</item>
+    <item quantity="other">%d добірки</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d збережений елемент</item>
+    <item quantity="few">%d збережені елементи</item>
+    <item quantity="many">%d збережених елементів</item>
+    <item quantity="other">%d збереженого елемента</item>
+  </plurals>
+
+  <!-- Повідомлення про фільми, серіали та керування групами -->
+  <string name="movies_error_load_failed">Не вдалося завантажити фільми</string>
+  <string name="series_error_load_failed">Не вдалося завантажити серіали</string>
+  <string name="movie_detail_error_load_failed">Не вдалося завантажити відомості про фільм</string>
+  <string name="series_detail_error_load_failed">Не вдалося завантажити відомості про серіал</string>
+  <string name="catalog_error_no_active_provider">Немає активного провайдера</string>
+  <string name="catalog_message_moved_back_to_live">«%1$s» повернуто в прямий ефір</string>
+  <string name="catalog_message_group_created">Створено групу %1$s</string>
+  <string name="catalog_message_group_created_and_added">Створено групу %1$s і додано: %2$s</string>
+  <string name="catalog_message_category_hidden">Категорію %1$s приховано</string>
+  <string name="catalog_message_category_pinned">Закріплено: %1$s</string>
+  <string name="catalog_message_category_unpinned">Відкріплено: %1$s</string>
+  <string name="catalog_message_group_renamed">Групу перейменовано на %1$s</string>
+  <string name="catalog_message_group_deleted">Групу %1$s видалено</string>
+  <string name="catalog_error_group_name_required">Введіть назву групи</string>
+  <string name="catalog_error_group_name_reserved">Назва «Улюблені» зарезервована</string>
+  <string name="movies_error_group_name_duplicate">Група фільмів із такою назвою вже існує</string>
+  <string name="series_error_group_name_duplicate">Група серіалів із такою назвою вже існує</string>
+
+  <!-- Повідомлення та підписи збереженої бібліотеки -->
+  <string name="favorites_message_removed_from_view">%1$s вилучено з цього збереженого перегляду.</string>
+  <string name="favorites_message_moved_to_group">%1$s переміщено до вибраної групи.</string>
+  <string name="favorites_message_group_deleted">Групу %1$s видалено.</string>
+  <string name="favorites_error_move_failed">Не вдалося перемістити %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Не вдалося об’єднати %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Не вдалося зберегти порядок: %1$s</string>
+  <string name="favorites_error_unknown">Невідома помилка</string>
+  <string name="favorites_subtitle_channel_number">Канал %1$d</string>
+  <string name="favorites_group_subtitle">Група: %1$s</string>
+  <string name="favorites_content_type_movie">Фільм</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

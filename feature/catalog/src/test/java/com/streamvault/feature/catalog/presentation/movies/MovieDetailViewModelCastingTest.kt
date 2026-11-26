@@ -280,6 +280,7 @@ class MovieDetailViewModelCastingTest {
             .thenReturn(Result.success(ExternalRatings.unavailable()))
 
         return MovieDetailViewModel(
+            appContext = mock(),
             savedStateHandle = SavedStateHandle(mapOf("movieId" to movie.id)),
             movieRepository = movieRepository,
             providerRepository = providerRepository,

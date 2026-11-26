@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">İptal</string>
+  <string name="setup_completion_saved_sync_pending">Sağlayıcı kaydedildi. Senkronizasyon arka planda devam edecek.</string>
+  <string name="setup_combined_attach_title">Çalma Listesi Birleşik M3U\'ya Eklensin mi?</string>
+  <string name="setup_combined_attach_message">%1$s, %2$s içine eklensin ve bu birleşik kaynak Canlı TV için etkin kalsın mı?</string>
+  <string name="setup_combined_attach_fallback_playlist">Bu çalma listesi</string>
+  <string name="setup_combined_attach_fallback_source">etkin birleşik kaynak</string>
+  <string name="setup_combined_attach_skip">Şimdi Değil</string>
+  <string name="setup_combined_attach_confirm">Birleşik Kaynağa Ekle</string>
+</resources>

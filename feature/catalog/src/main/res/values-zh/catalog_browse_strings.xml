@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">全部</string>
+  <string name="library_chip_favorites">收藏</string>
+  <string name="library_chip_resume">继续</string>
+  <string name="library_chip_unwatched">未观看</string>
+  <string name="library_chip_recent">最近</string>
+  <string name="library_chip_updated">已更新</string>
+  <string name="library_chip_top_rated">高评分</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">媒体库顺序</string>
+  <string name="library_chip_sort_title">名称</string>
+  <string name="library_chip_sort_newest">最新</string>
+  <string name="library_chip_sort_recently_updated">最近更新</string>
+  <string name="library_chip_sort_updated_short">已更新</string>
+  <string name="library_chip_sort_rating">评分</string>
+  <string name="library_chip_sort_recent_activity">最近活动</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="other">%d 个分组</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d 个项目</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d 个精选</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d 个已保存项目</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">电影加载失败</string>
+  <string name="series_error_load_failed">剧集加载失败</string>
+  <string name="movie_detail_error_load_failed">电影详情加载失败</string>
+  <string name="series_detail_error_load_failed">剧集详情加载失败</string>
+  <string name="catalog_error_no_active_provider">没有可用的提供商</string>
+  <string name="catalog_message_moved_back_to_live">已将“%1$s”移回直播电视</string>
+  <string name="catalog_message_group_created">已创建分组 %1$s</string>
+  <string name="catalog_message_group_created_and_added">已创建分组 %1$s 并添加 %2$s</string>
+  <string name="catalog_message_category_hidden">已隐藏分类 %1$s</string>
+  <string name="catalog_message_category_pinned">已置顶 %1$s</string>
+  <string name="catalog_message_category_unpinned">已取消置顶 %1$s</string>
+  <string name="catalog_message_group_renamed">分组已重命名为 %1$s</string>
+  <string name="catalog_message_group_deleted">已删除分组 %1$s</string>
+  <string name="catalog_error_group_name_required">请输入分组名称</string>
+  <string name="catalog_error_group_name_reserved">“收藏”为保留名称</string>
+  <string name="movies_error_group_name_duplicate">已存在同名的电影分组</string>
+  <string name="series_error_group_name_duplicate">已存在同名的剧集分组</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">已从此已保存视图中移除 %1$s。</string>
+  <string name="favorites_message_moved_to_group">已将 %1$s 移至所选分组。</string>
+  <string name="favorites_message_group_deleted">已删除分组 %1$s。</string>
+  <string name="favorites_error_move_failed">无法移动 %1$s：%2$s</string>
+  <string name="favorites_error_merge_failed">无法合并 %1$s：%2$s</string>
+  <string name="favorites_error_reorder_failed">无法保存排序：%1$s</string>
+  <string name="favorites_error_unknown">未知错误</string>
+  <string name="favorites_subtitle_channel_number">频道 %1$d</string>
+  <string name="favorites_group_subtitle">%1$s 分组</string>
+  <string name="favorites_content_type_movie">电影</string>
+  <string name="favorites_content_type_vod">点播</string>
+</resources>

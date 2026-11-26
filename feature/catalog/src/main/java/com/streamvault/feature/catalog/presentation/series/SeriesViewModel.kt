@@ -42,6 +42,8 @@ import com.streamvault.domain.trakt.TraktDiscoveryState
 import com.streamvault.domain.usecase.ContinueWatchingResult
 import com.streamvault.domain.usecase.ContinueWatchingScope
 import com.streamvault.domain.usecase.GetContinueWatching
+import com.streamvault.domain.usecase.MarkAsWatched
+import com.streamvault.domain.usecase.RemoveContinueWatchingItem
 import com.streamvault.domain.usecase.GetCustomCategories
 import com.streamvault.feature.catalog.presentation.vod.createVodGroup
 import com.streamvault.feature.catalog.presentation.vod.incrementVodSelectedCategoryLoadLimit
@@ -103,6 +105,8 @@ class SeriesViewModel @Inject constructor(
     private val playbackHistoryRepository: PlaybackHistoryRepository,
     private val favoriteRepository: FavoriteRepository,
     private val getContinueWatching: GetContinueWatching,
+    private val removeContinueWatchingItem: RemoveContinueWatchingItem,
+    private val markAsWatched: MarkAsWatched,
     private val getCustomCategories: GetCustomCategories,
     private val parentalControlManager: ParentalControlManager,
     private val m3uClassificationRepository: M3uClassificationRepository,
@@ -142,7 +146,21 @@ class SeriesViewModel @Inject constructor(
         val hasMorePreviewRows: Boolean
     )
 
+    private var featuredObserver: kotlinx.coroutines.Job? = null
+
+    private fun observeFeaturedCard() {
+        featuredObserver?.cancel()
+        featuredObserver = viewModelScope.launch {
+            com.streamvault.feature.catalog.presentation.vod.observeVodFeatured(
+                series = true, preferences = preferencesRepository, providers = providerRepository,
+                movies = null, shows = seriesRepository, playback = playbackHistoryRepository, watchlist = traktWatchlist, account = traktAccount,
+            ).collectLatest { featured -> _uiState.update { it.copy(featured = featured) } }
+        }
+    }
+
     init {
+        observeFeaturedCard()
+
         viewModelScope.launch {
             providerRepository.getProviders().collectLatest { providers ->
                 _uiState.update {
@@ -404,7 +422,7 @@ class SeriesViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: "Failed to load series") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = e.message ?: appContext.getString(R.string.series_error_load_failed)) }
             }
         }
 
@@ -579,20 +597,27 @@ class SeriesViewModel @Inject constructor(
             providerRepository.getActiveProvider()
                 .filterNotNull()
                 .flatMapLatest { provider ->
-                    combine(
-                        favoriteRepository.getAllFavorites(provider.id, ContentType.SERIES),
-                        playbackHistoryRepository.getRecentlyWatchedByProvider(provider.id, limit = 24),
-                        seriesRepository.getTopRatedPreview(provider.id, VodBrowseDefaults.PREVIEW_ROW_LIMIT),
-                        seriesRepository.getFreshPreview(provider.id, VodBrowseDefaults.PREVIEW_ROW_LIMIT)
-                    ) { allFavorites, history, topRated, fresh ->
-                        SeriesLibraryLensDependencies(
-                            providerId = provider.id,
-                            allFavorites = allFavorites,
-                            history = history,
-                            topRated = topRated,
-                            fresh = fresh
-                        )
-                    }
+                    preferencesRepository.getHiddenCategoryIds(provider.id, ContentType.SERIES)
+                        .flatMapLatest { hiddenCategoryIds ->
+                            combine(
+                                favoriteRepository.getAllFavorites(provider.id, ContentType.SERIES),
+                                playbackHistoryRepository.getRecentlyWatchedByProvider(provider.id, limit = 24),
+                                seriesRepository.getTopRatedPreview(provider.id, VodBrowseDefaults.PREVIEW_ROW_LIMIT),
+                                seriesRepository.getFreshPreviewExcludingHiddenCategories(
+                                    provider.id,
+                                    hiddenCategoryIds,
+                                    VodBrowseDefaults.PREVIEW_ROW_LIMIT
+                                )
+                            ) { allFavorites, history, topRated, fresh ->
+                                SeriesLibraryLensDependencies(
+                                    providerId = provider.id,
+                                    allFavorites = allFavorites,
+                                    history = history,
+                                    topRated = topRated,
+                                    fresh = fresh
+                                )
+                            }
+                        }
                 }
                 .collectLatest { dependencies ->
                     val globalFavoriteIds = dependencies.allFavorites
@@ -806,6 +831,12 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
+    /**
+     * The hero's view of [series]: the full local row, which has the plot the shelf projection leaves out. Series
+     * details also pull every episode, so nothing is requested from the provider here.
+     */
+    suspend fun resolveHeroSeries(series: Series): Series = seriesRepository.getSeriesById(series.id) ?: series
+
     fun loadMorePreviewRows() {
         if (_uiState.value.hasMorePreviewRows && !_uiState.value.isLoadingPreviewRows) {
             _previewBatchSize.update { it + INITIAL_PREVIEW_BATCH_SIZE }
@@ -820,6 +851,7 @@ class SeriesViewModel @Inject constructor(
     }
 
     fun resetPreviewRowsForScreenEntry() {
+        if (_uiState.value.featured?.mode == com.streamvault.domain.model.VodFeaturedMode.RANDOM) observeFeaturedCard()
         _previewBatchSize.value = INITIAL_PREVIEW_BATCH_SIZE
         _uiState.update { state ->
             if (state.selectedCategory != null || state.searchQuery.isNotBlank()) {
@@ -866,15 +898,32 @@ class SeriesViewModel @Inject constructor(
             selectedCategoryLoadLimit = _selectedCategoryLoadLimit,
             uiState = _uiState,
             hasSelectedCategory = { it.selectedCategory != null }
-        ) { updatedSortBy, isLoadingSelectedCategory ->
+        ) { updatedSortBy, _ ->
+            // The current items stay on screen until the re-sorted snapshot replaces them: the full-library release
+            // sort takes a few hundred ms, and a blank grid for that long reads as a hang. Load-more is off meanwhile
+            // so the old list cannot trigger a page request against the new order.
             copy(
                 selectedLibrarySortBy = updatedSortBy,
-                selectedCategoryItems = emptyList(),
-                selectedCategoryLoadedCount = 0,
-                selectedCategoryTotalCount = 0,
-                canLoadMoreSelectedCategory = false,
-                isLoadingSelectedCategory = isLoadingSelectedCategory
+                canLoadMoreSelectedCategory = false
             )
+        }
+    }
+
+    fun playFeaturedHistory(
+        history: PlaybackHistory,
+        onPlay: (PlaybackHistory) -> Unit,
+        onOpenDetails: (Long) -> Unit,
+    ) {
+        if (history.streamUrl.isNotBlank()) {
+            onPlay(history)
+            return
+        }
+        viewModelScope.launch {
+            val episode = _uiState.value.featured?.episode?.takeIf { it.id == history.contentId }
+                ?: seriesRepository.getEpisodeById(history.contentId)
+            val stream = episode?.let { seriesRepository.getEpisodeStreamInfo(it).getOrNull() }
+            if (stream != null) onPlay(history.copy(streamUrl = stream.url))
+            else onOpenDetails(history.seriesId ?: history.contentId)
         }
     }
 
@@ -923,7 +972,7 @@ class SeriesViewModel @Inject constructor(
             when (val result = m3uClassificationRepository.moveSeriesBackToLive(provider.id, series.id)) {
                 is Result.Success -> {
                     onDismissDialog()
-                    _uiState.update { it.copy(userMessage = "Moved '${series.name}' back to Live TV") }
+                    _uiState.update { it.copy(userMessage = appContext.getString(R.string.catalog_message_moved_back_to_live, series.name)) }
                 }
                 is Result.Error -> _uiState.update { it.copy(userMessage = result.message) }
                 Result.Loading -> Unit
@@ -1025,9 +1074,9 @@ class SeriesViewModel @Inject constructor(
                         it.copy(
                             dialogGroupMemberships = memberships,
                             userMessage = if (selectedSeries != null) {
-                                "Created group $normalizedName and added ${selectedSeries.name}"
+                                appContext.getString(R.string.catalog_message_group_created_and_added, normalizedName, selectedSeries.name)
                             } else {
-                                "Created group $normalizedName"
+                                appContext.getString(R.string.catalog_message_group_created, normalizedName)
                             }
                         )
                     }
@@ -1083,7 +1132,7 @@ class SeriesViewModel @Inject constructor(
             } else {
                 dismissCategoryOptions()
             }
-            _uiState.update { it.copy(userMessage = "Hidden category ${category.name}") }
+            _uiState.update { it.copy(userMessage = appContext.getString(R.string.catalog_message_category_hidden, category.name)) }
         }
     }
 
@@ -1101,7 +1150,10 @@ class SeriesViewModel @Inject constructor(
             dismissCategoryOptions()
             _uiState.update {
                 it.copy(
-                    userMessage = if (shouldPin) "Pinned ${category.name}" else "Unpinned ${category.name}"
+                    userMessage = appContext.getString(
+                        if (shouldPin) R.string.catalog_message_category_pinned else R.string.catalog_message_category_unpinned,
+                        category.name
+                    )
                 )
             }
         }
@@ -1145,7 +1197,7 @@ class SeriesViewModel @Inject constructor(
                     showRenameGroupDialog = false,
                     groupToRename = null,
                     renameGroupError = null,
-                    userMessage = "Renamed group to $normalizedName"
+                    userMessage = appContext.getString(R.string.catalog_message_group_renamed, normalizedName)
                 )
             }
         }
@@ -1174,8 +1226,29 @@ class SeriesViewModel @Inject constructor(
                 it.copy(
                     showDeleteGroupDialog = false,
                     groupToDelete = null,
-                    userMessage = "Deleted group ${category.name}"
+                    userMessage = appContext.getString(R.string.catalog_message_group_deleted, category.name)
                 )
+            }
+        }
+    }
+
+    fun onRemoveContinueWatching(history: PlaybackHistory) {
+        viewModelScope.launch {
+            val message = if (removeContinueWatchingItem(history) is Result.Error) {
+                appContext.getString(R.string.continue_watching_remove_failed)
+            } else {
+                appContext.getString(R.string.continue_watching_removed, history.title)
+            }
+            _uiState.update { it.copy(userMessage = message) }
+        }
+    }
+
+    fun onMarkContinueWatchingWatched(history: PlaybackHistory) {
+        viewModelScope.launch {
+            if (markAsWatched(history) is Result.Error) {
+                _uiState.update {
+                    it.copy(userMessage = appContext.getString(R.string.continue_watching_mark_watched_failed))
+                }
             }
         }
     }
@@ -1521,13 +1594,13 @@ class SeriesViewModel @Inject constructor(
     }
 
     private fun validateGroupName(name: String, currentGroupId: Long? = null): String? {
-        if (name.isBlank()) return "Enter a group name"
-        if (name.equals("favorites", ignoreCase = true)) return "Favorites is reserved"
+        if (name.isBlank()) return appContext.getString(R.string.catalog_error_group_name_required)
+        if (name.equals("favorites", ignoreCase = true)) return appContext.getString(R.string.catalog_error_group_name_reserved)
 
         val duplicate = _uiState.value.categories.any { category ->
             category.id != currentGroupId && category.name.equals(name, ignoreCase = true)
         }
-        return if (duplicate) "A series group with that name already exists" else null
+        return if (duplicate) appContext.getString(R.string.series_error_group_name_duplicate) else null
     }
 
     private fun List<Series>.orderByIds(ids: List<Long>): List<Series> {
@@ -1715,6 +1788,7 @@ data class SeriesUiState(
     val searchQuery: String = "",
     val selectedLibraryFilterType: LibraryFilterType = LibraryFilterType.ALL,
     val selectedLibrarySortBy: LibrarySortBy = LibrarySortBy.LIBRARY,
+    val featured: com.streamvault.feature.catalog.presentation.vod.VodFeaturedSelection? = null,
     val vodViewMode: VodViewMode = VodViewMode.MODERN,
     val vodInfiniteScroll: Boolean = true,
     val continueWatching: List<PlaybackHistory> = emptyList(),

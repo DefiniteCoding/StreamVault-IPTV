@@ -47,7 +47,8 @@ internal data class PlayerInputState(
     val showControls: Boolean = false,
     val hasPendingNumericChannelInput: Boolean = false,
     val canOpenEpisodePicker: Boolean = false,
-    val showClosePlaybackConfirmation: Boolean = false
+    val showClosePlaybackConfirmation: Boolean = false,
+    val showResumePrompt: Boolean = false
 )
 
 /**
@@ -74,6 +75,7 @@ internal sealed interface PlayerInputAction {
     data object CloseStopIdleTimersAndTrackSelection : PlayerInputAction
     data object CommitNumericChannelInput : PlayerInputAction
     data object OpenChannelInfo : PlayerInputAction
+    data object CloseChannelInfoPanel : PlayerInputAction
     data object CloseChannelInfo : PlayerInputAction
     data object OpenChannelList : PlayerInputAction
     data object OpenCategoryList : PlayerInputAction
@@ -173,9 +175,12 @@ internal fun playerInputDecision(
             val action = when {
                 state.contentType == "LIVE" && !state.isCatchUpPlayback && state.hasPendingNumericChannelInput ->
                     PlayerInputAction.CommitNumericChannelInput
-                state.contentType == "LIVE" && !state.isCatchUpPlayback ->
-                    if (state.showChannelInfoOverlay) PlayerInputAction.CloseChannelInfo
-                    else PlayerInputAction.OpenChannelInfo
+                state.contentType == "LIVE" && !state.isCatchUpPlayback -> when {
+                    state.showChannelInfoOverlay && state.channelInfoSubPanelOpen ->
+                        PlayerInputAction.CloseChannelInfoPanel
+                    state.showChannelInfoOverlay -> PlayerInputAction.CloseChannelInfo
+                    else -> PlayerInputAction.OpenChannelInfo
+                }
                 state.showControls -> PlayerInputAction.Pass
                 else -> PlayerInputAction.ToggleControls
             }
@@ -209,8 +214,12 @@ internal fun playerInputDecision(
         }
         PlayerInputKey.Info -> PlayerInputDecision(
             action = if (state.contentType == "LIVE") {
-                if (state.showChannelInfoOverlay) PlayerInputAction.CloseChannelInfo
-                else PlayerInputAction.OpenChannelInfo
+                when {
+                    state.showChannelInfoOverlay && state.channelInfoSubPanelOpen ->
+                        PlayerInputAction.CloseChannelInfoPanel
+                    state.showChannelInfoOverlay -> PlayerInputAction.CloseChannelInfo
+                    else -> PlayerInputAction.OpenChannelInfo
+                }
             } else {
                 PlayerInputAction.ToggleControls
             },
@@ -273,7 +282,8 @@ private fun directionalInputDecision(
             state.showDiagnostics
     }
 
-    if (state.showControls) {
+    // The prompt's buttons own D-pad navigation; a seek here would move the video behind it.
+    if (state.showControls || state.showResumePrompt) {
         return PlayerInputDecision(PlayerInputAction.Pass, notifyInteraction)
     }
 

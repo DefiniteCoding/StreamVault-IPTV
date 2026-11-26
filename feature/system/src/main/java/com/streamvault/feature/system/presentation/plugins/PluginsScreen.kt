@@ -12,7 +12,6 @@ import com.streamvault.core.ui.design.browsePanel
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.text.KeyboardActions
@@ -49,10 +48,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreInterceptKeyBeforeSoftKeyboard
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -65,7 +72,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.tv.material3.Border
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
@@ -85,10 +91,10 @@ import com.streamvault.core.ui.components.shell.ExtensionsEmptyState
 import com.streamvault.core.ui.components.shell.ExtensionsSectionTabs
 import com.streamvault.core.ui.design.BrowseColors as AppColors
 import com.streamvault.core.ui.design.BrowseFocusSpec as FocusSpec
+import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.design.focusRingButtonBorder
+import com.streamvault.core.ui.design.secondaryButtonColors
 import com.streamvault.core.ui.interaction.TvButton
-import com.streamvault.core.ui.design.browse.FocusBorder
-import com.streamvault.core.ui.design.browse.OnSurface
-import com.streamvault.core.ui.design.browse.Primary
 
 @Composable
 fun PluginsScreen(
@@ -255,8 +261,7 @@ internal fun PluginsContent(
                                     AdaptiveRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                                         PluginButton(
                                             enabled = !uiState.isInstalling,
-                                            onClick = onShowInstallUrlDialog,
-                                            tone = PluginButtonTone.Primary
+                                            onClick = onShowInstallUrlDialog
                                         ) { Text(stringResource(R.string.plugins_install_url)) }
                                         PluginButton(
                                             enabled = !uiState.isInstalling,
@@ -379,22 +384,8 @@ private fun PluginButton(
 ) {
     val shape = RoundedCornerShape(8.dp)
     val colors = when (tone) {
-        PluginButtonTone.Primary -> ButtonDefaults.colors(
-            containerColor = Primary,
-            contentColor = AppColors.OnPrimary,
-            focusedContainerColor = Primary.copy(alpha = 0.88f),
-            focusedContentColor = AppColors.OnPrimary,
-            disabledContainerColor = AppColors.SurfaceEmphasis.copy(alpha = 0.56f),
-            disabledContentColor = AppColors.TextDisabled
-        )
-        PluginButtonTone.Secondary -> ButtonDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-            contentColor = OnSurface,
-            focusedContainerColor = MaterialTheme.colorScheme.surface,
-            focusedContentColor = OnSurface,
-            disabledContainerColor = AppColors.SurfaceEmphasis.copy(alpha = 0.56f),
-            disabledContentColor = AppColors.TextDisabled
-        )
+        PluginButtonTone.Primary -> browsePrimaryButtonColors()
+        PluginButtonTone.Secondary -> secondaryButtonColors()
     }
 
     TvButton(
@@ -403,12 +394,7 @@ private fun PluginButton(
         enabled = enabled,
         shape = ButtonDefaults.shape(shape),
         colors = colors,
-        border = ButtonDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(FocusSpec.BorderWidth, FocusBorder),
-                shape = shape
-            )
-        ),
+        border = focusRingButtonBorder(shape),
         scale = ButtonDefaults.scale(focusedScale = FocusSpec.FocusedScale),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(
             horizontal = 20.dp,
@@ -418,6 +404,7 @@ private fun PluginButton(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PluginInstallUrlDialog(
     installUrl: String,
@@ -443,8 +430,8 @@ private fun PluginInstallUrlDialog(
     }
 
     PremiumDialog(
-        title = "Install plugin from URL",
-        subtitle = "Enter the direct APK URL. StreamVault will download it and open the installer.",
+        title = stringResource(R.string.plugins_install_url),
+        subtitle = stringResource(R.string.plugins_install_url_subtitle),
         onDismissRequest = {
             keyboardController?.hide()
             if (!isInstalling) onDismiss()
@@ -452,15 +439,27 @@ private fun PluginInstallUrlDialog(
         widthFraction = 0.5f,
         heightFraction = null,
         content = {
+            // Read inside the dialog: a focus manager from outside it drives the page behind the window.
+            val focusManager = LocalFocusManager.current
             OutlinedTextField(
                 value = installUrl,
                 onValueChange = onInstallUrlChange,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .focusRequester(focusRequester)
+                    // The soft keyboard consumes D-pad Down before normal key handling, even when hidden,
+                    // which left the footer buttons unreachable. Intercept it ahead of the keyboard.
+                    .onPreInterceptKeyBeforeSoftKeyboard { event ->
+                        val isDown = event.type == KeyEventType.KeyDown && event.key == Key.DirectionDown
+                        if (isDown) {
+                            keyboardController?.hide()
+                            focusManager.moveFocus(FocusDirection.Down)
+                        }
+                        isDown
+                    },
                 enabled = !isInstalling,
                 singleLine = true,
-                label = { androidx.compose.material3.Text("Plugin APK URL") },
+                label = { androidx.compose.material3.Text(stringResource(R.string.plugins_install_url_label)) },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Uri,
                     imeAction = ImeAction.Done
@@ -470,10 +469,13 @@ private fun PluginInstallUrlDialog(
                     focusedTextColor = AppColors.TextPrimary,
                     unfocusedTextColor = AppColors.TextPrimary,
                     disabledTextColor = AppColors.TextSecondary,
-                    focusedBorderColor = AppColors.Brand,
-                    unfocusedBorderColor = AppColors.Outline,
-                    disabledBorderColor = AppColors.Outline.copy(alpha = 0.4f),
-                    focusedLabelColor = AppColors.Brand,
+                    focusedContainerColor = AppColors.ControlContainer,
+                    unfocusedContainerColor = AppColors.ControlContainer,
+                    disabledContainerColor = AppColors.ControlContainer,
+                    focusedBorderColor = AppColors.Focus,
+                    unfocusedBorderColor = Color.Transparent,
+                    disabledBorderColor = Color.Transparent,
+                    focusedLabelColor = AppColors.TextSecondary,
                     unfocusedLabelColor = AppColors.TextSecondary,
                     disabledLabelColor = AppColors.TextTertiary,
                     cursorColor = AppColors.Brand
@@ -482,7 +484,7 @@ private fun PluginInstallUrlDialog(
         },
         footer = {
             PremiumDialogFooterButton(
-                label = "Cancel",
+                label = stringResource(R.string.settings_cancel),
                 onClick = {
                     keyboardController?.hide()
                     onDismiss()
@@ -490,7 +492,9 @@ private fun PluginInstallUrlDialog(
                 enabled = !isInstalling
             )
             PremiumDialogFooterButton(
-                label = if (isInstalling) "Installing..." else "Download and install",
+                label = stringResource(
+                    if (isInstalling) R.string.plugins_installing else R.string.plugins_download_install
+                ),
                 onClick = ::submitUrl,
                 enabled = !isInstalling && normalizedUrl.isNotBlank(),
                 emphasized = true
@@ -705,7 +709,7 @@ private fun PluginConfigurationHeader(
         }
         if (configuration.validationErrors.isNotEmpty()) {
             Text(
-                text = "Some plugin settings need attention before saving.",
+                text = stringResource(R.string.plugins_settings_need_attention),
                 style = MaterialTheme.typography.bodySmall,
                 color = AppColors.Live
             )
@@ -923,11 +927,15 @@ private fun PluginConfigurationTextField(
             focusedTextColor = AppColors.TextPrimary,
             unfocusedTextColor = AppColors.TextPrimary,
             disabledTextColor = AppColors.TextSecondary,
-            focusedBorderColor = AppColors.Brand,
-            unfocusedBorderColor = AppColors.Outline,
-            disabledBorderColor = AppColors.Outline.copy(alpha = 0.4f),
+            focusedContainerColor = AppColors.ControlContainer,
+            unfocusedContainerColor = AppColors.ControlContainer,
+            disabledContainerColor = AppColors.ControlContainer,
+            errorContainerColor = AppColors.ControlContainer,
+            focusedBorderColor = AppColors.Focus,
+            unfocusedBorderColor = Color.Transparent,
+            disabledBorderColor = Color.Transparent,
             errorBorderColor = AppColors.Live,
-            focusedLabelColor = AppColors.Brand,
+            focusedLabelColor = AppColors.TextSecondary,
             unfocusedLabelColor = AppColors.TextSecondary,
             disabledLabelColor = AppColors.TextTertiary,
             cursorColor = AppColors.Brand
@@ -950,7 +958,7 @@ private fun PluginConfigurationActions(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            text = "Actions",
+            text = stringResource(R.string.plugins_actions),
             style = MaterialTheme.typography.titleSmall,
             color = AppColors.TextPrimary
         )

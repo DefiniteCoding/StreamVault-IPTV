@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">ライブラリを準備しています…</string>
+    <string name="startup_failed_title">StreamVault でライブラリを開けませんでした</string>
+    <string name="startup_failed_message">ローカルデータベースをアップグレードできませんでした。データは削除されていません。</string>
+    <string name="startup_failed_error_type">エラー: %1$s</string>
+    <string name="startup_retry">再試行</string>
+    <string name="startup_share_report">レポートを共有</string>
+</resources>

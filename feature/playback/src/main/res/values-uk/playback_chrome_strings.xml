@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">Назад</string>
+    <string name="multiview_hud_title">Керування розділеним екраном</string>
+    <string name="multiview_hud_standby_active">Режим очікування активний</string>
+    <string name="multiview_hud_presets">Пресети</string>
+    <string name="player_episode_picker_hint">Виберіть сезон, потім перейдіть праворуч до епізодів.</string>
+    <string name="player_episode_picker_now_on">Зараз: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d сезон</item>
+        <item quantity="few">%1$d сезони</item>
+        <item quantity="many">%1$d сезонів</item>
+        <item quantity="other">%1$d сезону</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d епізод</item>
+        <item quantity="few">%1$d епізоди</item>
+        <item quantity="many">%1$d епізодів</item>
+        <item quantity="other">%1$d епізоду</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d епізод готовий до відтворення</item>
+        <item quantity="few">%1$d епізоди готові до відтворення</item>
+        <item quantity="many">%1$d епізодів готові до відтворення</item>
+        <item quantity="other">%1$d епізоду готово до відтворення</item>
+    </plurals>
+</resources>

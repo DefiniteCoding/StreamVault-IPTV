@@ -1,7 +1,14 @@
 package com.streamvault.feature.live.home
 
+import com.streamvault.core.ui.components.shell.BadgeScrimAlpha
+import com.streamvault.core.ui.design.secondarySurfaceColors
 import com.streamvault.core.ui.design.browsePrimaryButtonColors
+import com.streamvault.core.ui.design.BrowseFocusSpec
 import com.streamvault.core.ui.design.BrowseShapes
+import com.streamvault.core.ui.design.LocalAppSpacing
+import com.streamvault.core.ui.design.LocalAppTypeTokens
+import com.streamvault.core.ui.design.selectableFocusBorder
+import com.streamvault.core.ui.design.selectableSurfaceColors
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -22,6 +29,13 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.streamvault.core.ui.image.ChannelLogoBadge
+import com.streamvault.core.ui.design.AppColors
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -40,6 +54,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -47,6 +62,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ClickableSurfaceDefaults
+import androidx.tv.material3.LocalContentColor
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Surface
 import androidx.tv.material3.SurfaceDefaults
@@ -88,16 +104,8 @@ fun CompactSplitLauncherButton(
             .widthIn(min = 112.dp)
             .height(34.dp),
         shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = Primary.copy(alpha = 0.18f),
-            focusedContainerColor = Primary.copy(alpha = 0.3f),
-            contentColor = OnBackground
-        ),
-        border = ClickableSurfaceDefaults.border(
-            border = Border(
-                border = BorderStroke(1.dp, Primary.copy(alpha = 0.55f))
-            )
-        ),
+        colors = secondarySurfaceColors(),
+        border = selectableFocusBorder(BrowseShapes.Control),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f)
     ) {
         Row(
@@ -187,40 +195,14 @@ fun LivePreviewPane(
                 }
 
                 if (isLoading && channel != null) {
-                    Row(
-                        modifier = Modifier
-                            .background(Color.Black.copy(alpha = 0.62f), BrowseShapes.Artwork)
-                            .padding(horizontal = 14.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        CircularProgressIndicator(
-                            color = Primary,
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Text(
-                            text = stringResource(R.string.live_preview_loading),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White
-                        )
-                    }
+                    PreviewTuningCaption(modifier = Modifier.align(Alignment.BottomStart).padding(LocalAppSpacing.current.xs))
                 }
             }
 
             if (channel != null) {
-                Text(
-                    text = channel.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = OnBackground
-                )
+                PreviewNowOnAirStrip(channel = channel)
                 channel.currentProgram?.let { program ->
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        Text(
-                            text = program.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = OnBackground
-                        )
                         val appTimeFormat = LocalLiveTimeFormat.current
                         val timeFormat = remember(appTimeFormat) { appTimeFormat.createLiveTimeFormat() }
                         Text(
@@ -245,7 +227,7 @@ fun LivePreviewPane(
                                 text = program.description,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = OnSurface,
-                                maxLines = 4,
+                                maxLines = 3,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
@@ -260,6 +242,89 @@ fun LivePreviewPane(
                     text = stringResource(R.string.live_preview_open_hint),
                     style = MaterialTheme.typography.labelMedium,
                     color = Primary
+                )
+            }
+        }
+    }
+}
+
+/** Caption over the video corner while the stream tunes. The dot is a shape, so state does not rely on colour alone. */
+@Composable
+private fun PreviewTuningCaption(modifier: Modifier = Modifier) {
+    val spacing = LocalAppSpacing.current
+    Row(
+        modifier = modifier
+            .background(Color.Black.copy(alpha = BadgeScrimAlpha), BrowseShapes.Control)
+            .padding(horizontal = spacing.sm, vertical = spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(8.dp)
+                .background(AppColors.Live, CircleShape)
+        )
+        Text(
+            text = stringResource(R.string.live_preview_tuning),
+            style = MaterialTheme.typography.labelMedium,
+            color = Color.White,
+            maxLines = 1
+        )
+    }
+}
+
+/** Kicker, logo and programme for the focused channel, sitting under the video and never behind it. */
+@Composable
+private fun PreviewNowOnAirStrip(channel: Channel) {
+    val spacing = LocalAppSpacing.current
+    val program = channel.currentProgram
+    val accent = AppColors.AccentSoft
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(BrowseShapes.Control)
+            .drawWithCache {
+                val brush = Brush.radialGradient(
+                    colors = listOf(accent, Color.Transparent),
+                    center = Offset.Zero,
+                    radius = size.width
+                )
+                onDrawBehind { drawRect(brush) }
+            }
+            .padding(horizontal = spacing.sm, vertical = spacing.xs),
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        ChannelLogoBadge(
+            channelName = channel.name,
+            logoUrl = channel.logoUrl,
+            modifier = Modifier.size(40.dp),
+            textStyle = MaterialTheme.typography.labelMedium
+        )
+        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            if (program != null) {
+                Text(
+                    text = stringResource(R.string.live_now_on_air),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = AppColors.TextSecondary,
+                    maxLines = 1
+                )
+            }
+            // The strip always describes the one channel in view, so its title scrolls without needing focus.
+            LiveFocusedMarqueeText(
+                text = program?.title ?: channel.name,
+                isFocused = true,
+                style = MaterialTheme.typography.titleMedium,
+                color = OnBackground,
+                modifier = Modifier.fillMaxWidth()
+            )
+            if (program != null) {
+                Text(
+                    text = channel.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = OnSurfaceDim,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -281,13 +346,15 @@ fun CategoryItem(
     onFocusChanged: (Boolean) -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
+    val spacing = LocalAppSpacing.current
 
     TvClickableSurface(
         onClick = onClick,
         onLongClick = onLongClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 2.dp)
+            // Inset by the ring width so the focus ring is not clipped by the list bounds.
+            .padding(horizontal = BrowseFocusSpec.SelectableRingWidth, vertical = 2.dp)
             .focusRequester(focusRequester)
             .onFocusChanged {
                 isFocused = it.isFocused
@@ -304,18 +371,9 @@ fun CategoryItem(
                 } else false
             },
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
-        shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(10.dp)),
-        colors = ClickableSurfaceDefaults.colors(
-            containerColor = if (isSelected) Primary.copy(alpha = 0.15f) else Color.Transparent,
-            focusedContainerColor = SurfaceHighlight.copy(alpha = 0.82f),
-            contentColor = if (isSelected) Primary else OnSurface
-        ),
-        border = ClickableSurfaceDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(2.dp, Primary.copy(alpha = 0.85f)),
-                shape = RoundedCornerShape(10.dp)
-            )
-        )
+        shape = ClickableSurfaceDefaults.shape(BrowseShapes.Control),
+        colors = selectableSurfaceColors(isSelected),
+        border = selectableFocusBorder(BrowseShapes.Control)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -324,32 +382,30 @@ fun CategoryItem(
         ) {
             if (isPinned) {
                 PinnedCategoryGlyph(
-                    tint = if (isFocused) OnBackground else if (isSelected) Primary else OnSurfaceDim,
+                    tint = LocalContentColor.current,
                     modifier = Modifier.padding(end = 8.dp)
                 )
             }
             LiveFocusedMarqueeText(
-                text = category.name,
+                text = category.localizedName(),
                 isFocused = isFocused,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
-                color = if (isFocused) OnBackground else if (isSelected) Primary else OnSurface,
+                fontWeight = if (isSelected) FontWeight.SemiBold else null,
                 modifier = Modifier.weight(1f)
             )
 
             Text(
                 text = category.count.toString(),
-                style = MaterialTheme.typography.labelMedium,
-                color = if (isFocused) OnBackground else OnSurfaceDim,
-                modifier = Modifier.padding(start = 10.dp)
+                style = LocalAppTypeTokens.current.labelNumeric,
+                modifier = Modifier.padding(start = spacing.sm)
             )
 
             if (isLocked) {
                 Text(
                     text = stringResource(R.string.home_locked_short),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (isFocused) OnBackground else OnSurfaceDim,
-                    modifier = Modifier.padding(start = 8.dp)
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(start = spacing.xs)
                 )
             }
         }

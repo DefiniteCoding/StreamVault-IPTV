@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">กำลังเตรียมคลังของคุณ…</string>
+    <string name="startup_failed_title">StreamVault เปิดคลังของคุณไม่ได้</string>
+    <string name="startup_failed_message">อัปเกรดฐานข้อมูลในเครื่องไม่สำเร็จ ข้อมูลของคุณไม่ได้ถูกลบ</string>
+    <string name="startup_failed_error_type">ข้อผิดพลาด: %1$s</string>
+    <string name="startup_retry">ลองอีกครั้ง</string>
+    <string name="startup_share_report">แชร์รายงาน</string>
+</resources>

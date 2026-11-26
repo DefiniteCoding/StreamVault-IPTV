@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">Mga paborito</string>
+    <string name="category_name_recent">Kamakailan</string>
+    <string name="category_name_all_channels">Lahat ng Channel</string>
+    <string name="category_name_placeholder">Kategorya %1$s</string>
+</resources>

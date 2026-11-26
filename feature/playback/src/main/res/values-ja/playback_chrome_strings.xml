@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">戻る</string>
+    <string name="multiview_hud_title">分割画面コントロール</string>
+    <string name="multiview_hud_standby_active">スタンバイ中</string>
+    <string name="multiview_hud_presets">プリセット</string>
+    <string name="player_episode_picker_hint">シーズンを選び、右に移動してエピソードを表示します。</string>
+    <string name="player_episode_picker_now_on">再生中: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="other">%1$d シーズン</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="other">%1$d エピソード</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="other">%1$d エピソードを再生可能</item>
+    </plurals>
+</resources>

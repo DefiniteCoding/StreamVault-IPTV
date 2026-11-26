@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Peruuta</string>
+  <string name="setup_completion_saved_sync_pending">Palveluntarjoaja tallennettu. Synkronointi jatkuu taustalla.</string>
+  <string name="setup_combined_attach_title">Lisätäänkö soittolista yhdistettyyn M3U:hun?</string>
+  <string name="setup_combined_attach_message">Lisätäänkö %1$s kohteeseen: %2$s, ja pidetäänkö tämä yhdistetty lähde aktiivisena Live-TV:lle?</string>
+  <string name="setup_combined_attach_fallback_playlist">tämä soittolista</string>
+  <string name="setup_combined_attach_fallback_source">aktiivinen yhdistetty lähde</string>
+  <string name="setup_combined_attach_skip">Ei nyt</string>
+  <string name="setup_combined_attach_confirm">Lisää yhdistettyyn</string>
+</resources>

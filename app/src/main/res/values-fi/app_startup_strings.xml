@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="startup_preparing_library">Valmistellaan kirjastoa…</string>
+    <string name="startup_failed_title">StreamVault ei voinut avata kirjastoasi</string>
+    <string name="startup_failed_message">Paikallista tietokantaa ei voitu päivittää. Tietojasi ei poistettu.</string>
+    <string name="startup_failed_error_type">Virhe: %1$s</string>
+    <string name="startup_retry">Yritä uudelleen</string>
+    <string name="startup_share_report">Jaa raportti</string>
+</resources>

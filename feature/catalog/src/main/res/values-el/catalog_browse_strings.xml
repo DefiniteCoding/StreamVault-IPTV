@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filter chips -->
+  <string name="library_chip_all">Όλα</string>
+  <string name="library_chip_favorites">Αγαπημένα</string>
+  <string name="library_chip_resume">Συνέχεια</string>
+  <string name="library_chip_unwatched">Μη προβληθέντα</string>
+  <string name="library_chip_recent">Πρόσφατα</string>
+  <string name="library_chip_updated">Ενημερωμένα</string>
+  <string name="library_chip_top_rated">Κορυφαία αξιολόγηση</string>
+
+  <!-- Sort chips -->
+  <string name="library_chip_sort_library_order">Σειρά βιβλιοθήκης</string>
+  <string name="library_chip_sort_title">Α-Ω</string>
+  <string name="library_chip_sort_newest">Νεότερα</string>
+  <string name="library_chip_sort_recently_updated">Πρόσφατα ενημερωμένα</string>
+  <string name="library_chip_sort_updated_short">Ενημερωμένα</string>
+  <string name="library_chip_sort_rating">Βαθμολογία</string>
+  <string name="library_chip_sort_recent_activity">Πρόσφατη δραστηριότητα</string>
+
+  <!-- Counts under landing tiles and saved sections -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d ομάδα</item>
+    <item quantity="other">%d ομάδες</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d στοιχείο</item>
+    <item quantity="other">%d στοιχεία</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d επιλογή</item>
+    <item quantity="other">%d επιλογές</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d αποθηκευμένο στοιχείο</item>
+    <item quantity="other">%d αποθηκευμένα στοιχεία</item>
+  </plurals>
+
+  <!-- Movies, series and group management messages -->
+  <string name="movies_error_load_failed">Αποτυχία φόρτωσης ταινιών</string>
+  <string name="series_error_load_failed">Αποτυχία φόρτωσης σειρών</string>
+  <string name="movie_detail_error_load_failed">Αποτυχία φόρτωσης λεπτομερειών ταινίας</string>
+  <string name="series_detail_error_load_failed">Αποτυχία φόρτωσης λεπτομερειών σειράς</string>
+  <string name="catalog_error_no_active_provider">Δεν υπάρχει ενεργός πάροχος</string>
+  <string name="catalog_message_moved_back_to_live">Το «%1$s» μετακινήθηκε πίσω στη ζωντανή τηλεόραση</string>
+  <string name="catalog_message_group_created">Δημιουργήθηκε η ομάδα %1$s</string>
+  <string name="catalog_message_group_created_and_added">Δημιουργήθηκε η ομάδα %1$s και προστέθηκε το %2$s</string>
+  <string name="catalog_message_category_hidden">Η κατηγορία %1$s αποκρύφθηκε</string>
+  <string name="catalog_message_category_pinned">Καρφιτσώθηκε: %1$s</string>
+  <string name="catalog_message_category_unpinned">Ξεκαρφιτσώθηκε: %1$s</string>
+  <string name="catalog_message_group_renamed">Η ομάδα μετονομάστηκε σε %1$s</string>
+  <string name="catalog_message_group_deleted">Η ομάδα %1$s διαγράφηκε</string>
+  <string name="catalog_error_group_name_required">Εισαγάγετε όνομα ομάδας</string>
+  <string name="catalog_error_group_name_reserved">Το όνομα Αγαπημένα είναι δεσμευμένο</string>
+  <string name="movies_error_group_name_duplicate">Υπάρχει ήδη ομάδα ταινιών με αυτό το όνομα</string>
+  <string name="series_error_group_name_duplicate">Υπάρχει ήδη ομάδα σειρών με αυτό το όνομα</string>
+
+  <!-- Saved library messages and labels -->
+  <string name="favorites_message_removed_from_view">Το %1$s αφαιρέθηκε από αυτήν την αποθηκευμένη προβολή.</string>
+  <string name="favorites_message_moved_to_group">Το %1$s μετακινήθηκε στην επιλεγμένη ομάδα.</string>
+  <string name="favorites_message_group_deleted">Η ομάδα %1$s διαγράφηκε.</string>
+  <string name="favorites_error_move_failed">Αδυναμία μετακίνησης του %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Αδυναμία συγχώνευσης του %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Αδυναμία αποθήκευσης της νέας σειράς: %1$s</string>
+  <string name="favorites_error_unknown">Άγνωστο σφάλμα</string>
+  <string name="favorites_subtitle_channel_number">Κανάλι %1$d</string>
+  <string name="favorites_group_subtitle">Ομάδα %1$s</string>
+  <string name="favorites_content_type_movie">Ταινία</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

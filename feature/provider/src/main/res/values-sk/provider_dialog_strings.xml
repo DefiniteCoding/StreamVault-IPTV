@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Zrušiť</string>
+  <string name="setup_completion_saved_sync_pending">Poskytovateľ uložený. Synchronizácia bude pokračovať na pozadí.</string>
+  <string name="setup_combined_attach_title">Pridať playlist do kombinovaného M3U?</string>
+  <string name="setup_combined_attach_message">Pridať %1$s do %2$s a ponechať tento kombinovaný zdroj aktívny pre Živú TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">tento playlist</string>
+  <string name="setup_combined_attach_fallback_source">aktívneho kombinovaného zdroja</string>
+  <string name="setup_combined_attach_skip">Teraz nie</string>
+  <string name="setup_combined_attach_confirm">Pridať do kombinovaného</string>
+</resources>

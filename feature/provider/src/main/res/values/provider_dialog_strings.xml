@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="setup_sync_cancel">Cancel</string>
+  <string name="setup_completion_saved_sync_pending">Provider saved. Sync will resume in background.</string>
+  <string name="setup_combined_attach_title">Add Playlist To Combined M3U?</string>
+  <string name="setup_combined_attach_message">Add %1$s to %2$s and keep that combined source active for Live TV?</string>
+  <string name="setup_combined_attach_fallback_playlist">this playlist</string>
+  <string name="setup_combined_attach_fallback_source">the active combined source</string>
+  <string name="setup_combined_attach_skip">Not Now</string>
+  <string name="setup_combined_attach_confirm">Add To Combined</string>
+</resources>

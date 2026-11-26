@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="category_name_favorites">お気に入り</string>
+    <string name="category_name_recent">最近</string>
+    <string name="category_name_all_channels">すべてのチャンネル</string>
+    <string name="category_name_placeholder">カテゴリ %1$s</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="playback_back">वापस</string>
+    <string name="multiview_hud_title">स्प्लिट स्क्रीन नियंत्रण</string>
+    <string name="multiview_hud_standby_active">स्टैंडबाय सक्रिय</string>
+    <string name="multiview_hud_presets">प्रीसेट</string>
+    <string name="player_episode_picker_hint">कोई सीज़न चुनें, फिर एपिसोड के लिए दाईं ओर जाएँ।</string>
+    <string name="player_episode_picker_now_on">अभी चल रहा है: S%1$dE%2$d</string>
+    <plurals name="player_episode_picker_seasons_count">
+        <item quantity="one">%1$d सीज़न</item>
+        <item quantity="other">%1$d सीज़न</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_count">
+        <item quantity="one">%1$d एपिसोड</item>
+        <item quantity="other">%1$d एपिसोड</item>
+    </plurals>
+    <plurals name="player_episode_picker_episodes_ready">
+        <item quantity="one">%1$d एपिसोड चलाने के लिए तैयार</item>
+        <item quantity="other">%1$d एपिसोड चलाने के लिए तैयार</item>
+    </plurals>
+</resources>

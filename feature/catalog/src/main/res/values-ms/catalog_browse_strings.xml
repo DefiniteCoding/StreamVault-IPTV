@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="library_chip_all">Semua</string>
+  <string name="library_chip_favorites">Kegemaran</string>
+  <string name="library_chip_resume">Sambung</string>
+  <string name="library_chip_unwatched">Belum Ditonton</string>
+  <string name="library_chip_recent">Terkini</string>
+  <string name="library_chip_updated">Dikemas Kini</string>
+  <string name="library_chip_top_rated">Penilaian Tertinggi</string>
+
+  <string name="library_chip_sort_library_order">Susunan Pustaka</string>
+  <string name="library_chip_sort_title">A-Z</string>
+  <string name="library_chip_sort_newest">Terbaharu</string>
+  <string name="library_chip_sort_recently_updated">Baru Dikemas Kini</string>
+  <string name="library_chip_sort_updated_short">Dikemas Kini</string>
+  <string name="library_chip_sort_rating">Penilaian</string>
+  <string name="library_chip_sort_recent_activity">Aktiviti Terkini</string>
+
+  <plurals name="library_count_groups">
+    <item quantity="other">%d kumpulan</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="other">%d item</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="other">%d pilihan</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="other">%d item disimpan</item>
+  </plurals>
+
+  <string name="movies_error_load_failed">Gagal memuatkan filem</string>
+  <string name="series_error_load_failed">Gagal memuatkan siri</string>
+  <string name="movie_detail_error_load_failed">Gagal memuatkan butiran filem</string>
+  <string name="series_detail_error_load_failed">Gagal memuatkan butiran siri</string>
+  <string name="catalog_error_no_active_provider">Tiada penyedia aktif</string>
+  <string name="catalog_message_moved_back_to_live">\'%1$s\' dialihkan kembali ke TV Langsung</string>
+  <string name="catalog_message_group_created">Kumpulan %1$s dicipta</string>
+  <string name="catalog_message_group_created_and_added">Kumpulan %1$s dicipta dan %2$s ditambah</string>
+  <string name="catalog_message_category_hidden">Kategori %1$s disembunyikan</string>
+  <string name="catalog_message_category_pinned">%1$s disemat</string>
+  <string name="catalog_message_category_unpinned">Semat %1$s dibatalkan</string>
+  <string name="catalog_message_group_renamed">Kumpulan dinamakan semula kepada %1$s</string>
+  <string name="catalog_message_group_deleted">Kumpulan %1$s dipadam</string>
+  <string name="catalog_error_group_name_required">Masukkan nama kumpulan</string>
+  <string name="catalog_error_group_name_reserved">Kegemaran dikhaskan</string>
+  <string name="movies_error_group_name_duplicate">Kumpulan filem dengan nama itu sudah wujud</string>
+  <string name="series_error_group_name_duplicate">Kumpulan siri dengan nama itu sudah wujud</string>
+
+  <string name="favorites_message_removed_from_view">%1$s dikeluarkan daripada paparan tersimpan ini.</string>
+  <string name="favorites_message_moved_to_group">%1$s dialihkan ke kumpulan yang dipilih.</string>
+  <string name="favorites_message_group_deleted">Kumpulan %1$s dipadam.</string>
+  <string name="favorites_error_move_failed">Tidak dapat mengalihkan %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Tidak dapat menggabungkan %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Tidak dapat menyimpan susunan semula: %1$s</string>
+  <string name="favorites_error_unknown">Ralat tidak diketahui</string>
+  <string name="favorites_subtitle_channel_number">Saluran %1$d</string>
+  <string name="favorites_group_subtitle">Kumpulan %1$s</string>
+  <string name="favorites_content_type_movie">Filem</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

@@ -8,6 +8,8 @@ import com.streamvault.domain.model.AppHomeDashboardShelf
 enum class CatalogNavigationChrome {
     Rail,
     TopBar,
+    /** Top bar floats over the content, which pads its own top by `LocalTopBarContentInset`. */
+    TopBarOverlay,
 }
 
 typealias CatalogScaffoldContent = @Composable (

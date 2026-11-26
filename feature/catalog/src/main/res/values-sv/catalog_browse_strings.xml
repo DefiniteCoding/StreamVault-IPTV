@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Filterchips -->
+  <string name="library_chip_all">Alla</string>
+  <string name="library_chip_favorites">Favoriter</string>
+  <string name="library_chip_resume">Återuppta</string>
+  <string name="library_chip_unwatched">Inte sett</string>
+  <string name="library_chip_recent">Nyligen</string>
+  <string name="library_chip_updated">Uppdaterad</string>
+  <string name="library_chip_top_rated">Topprankad</string>
+
+  <!-- Sorteringschips -->
+  <string name="library_chip_sort_library_order">Biblioteksordning</string>
+  <string name="library_chip_sort_title">A-Ö</string>
+  <string name="library_chip_sort_newest">Nyaste</string>
+  <string name="library_chip_sort_recently_updated">Nyligen uppdaterad</string>
+  <string name="library_chip_sort_updated_short">Uppdaterad</string>
+  <string name="library_chip_sort_rating">Betyg</string>
+  <string name="library_chip_sort_recent_activity">Senaste aktivitet</string>
+
+  <!-- Antal under startrutorna och i sparade avsnitt -->
+  <plurals name="library_count_groups">
+    <item quantity="one">%d grupp</item>
+    <item quantity="other">%d grupper</item>
+  </plurals>
+  <plurals name="library_count_items">
+    <item quantity="one">%d objekt</item>
+    <item quantity="other">%d objekt</item>
+  </plurals>
+  <plurals name="library_count_picks">
+    <item quantity="one">%d tips</item>
+    <item quantity="other">%d tips</item>
+  </plurals>
+  <plurals name="library_count_saved_items">
+    <item quantity="one">%d sparat objekt</item>
+    <item quantity="other">%d sparade objekt</item>
+  </plurals>
+
+  <!-- Meddelanden om filmer, serier och grupphantering -->
+  <string name="movies_error_load_failed">Det gick inte att läsa in filmer</string>
+  <string name="series_error_load_failed">Det gick inte att läsa in serier</string>
+  <string name="movie_detail_error_load_failed">Det gick inte att läsa in filminformation</string>
+  <string name="series_detail_error_load_failed">Det gick inte att läsa in serieinformation</string>
+  <string name="catalog_error_no_active_provider">Ingen aktiv leverantör</string>
+  <string name="catalog_message_moved_back_to_live">”%1$s” flyttades tillbaka till Live-TV</string>
+  <string name="catalog_message_group_created">Gruppen %1$s skapades</string>
+  <string name="catalog_message_group_created_and_added">Gruppen %1$s skapades och %2$s lades till</string>
+  <string name="catalog_message_category_hidden">Kategorin %1$s har dolts</string>
+  <string name="catalog_message_category_pinned">%1$s fästes</string>
+  <string name="catalog_message_category_unpinned">%1$s lossades</string>
+  <string name="catalog_message_group_renamed">Gruppen döptes om till %1$s</string>
+  <string name="catalog_message_group_deleted">Gruppen %1$s togs bort</string>
+  <string name="catalog_error_group_name_required">Ange ett gruppnamn</string>
+  <string name="catalog_error_group_name_reserved">Favoriter är reserverat</string>
+  <string name="movies_error_group_name_duplicate">Det finns redan en filmgrupp med det namnet</string>
+  <string name="series_error_group_name_duplicate">Det finns redan en seriegrupp med det namnet</string>
+
+  <!-- Meddelanden och etiketter för det sparade biblioteket -->
+  <string name="favorites_message_removed_from_view">%1$s togs bort från den här sparade vyn.</string>
+  <string name="favorites_message_moved_to_group">%1$s flyttades till den valda gruppen.</string>
+  <string name="favorites_message_group_deleted">Gruppen %1$s togs bort.</string>
+  <string name="favorites_error_move_failed">Det gick inte att flytta %1$s: %2$s</string>
+  <string name="favorites_error_merge_failed">Det gick inte att slå ihop %1$s: %2$s</string>
+  <string name="favorites_error_reorder_failed">Det gick inte att spara ordningen: %1$s</string>
+  <string name="favorites_error_unknown">Okänt fel</string>
+  <string name="favorites_subtitle_channel_number">Kanal %1$d</string>
+  <string name="favorites_group_subtitle">Gruppen %1$s</string>
+  <string name="favorites_content_type_movie">Film</string>
+  <string name="favorites_content_type_vod">VOD</string>
+</resources>

@@ -150,7 +150,7 @@ internal fun AppNavHost(
             actions = actions,
             platformHost = settingsPlatformHost,
             navigationDestinations = navigationDestinations,
-            settingsContent = { backupUri, openOpenSubtitlesSignIn, platformHost, destinations, onBack ->
+            settingsContent = { backupUri, openOpenSubtitlesSignIn, openTrakt, platformHost, destinations, onBack ->
                 SettingsScreen(
                     onNavigate = { route ->
                         AppRouteCodec.decode(route)?.let(onTopLevelDestinationRequested)
@@ -176,6 +176,7 @@ internal fun AppNavHost(
                     },
                     initialBackupImportUri = backupUri,
                     openOpenSubtitlesSignIn = openOpenSubtitlesSignIn,
+                    openTrakt = openTrakt,
                     onCloseApp = onCloseApp
                 )
             },
@@ -187,6 +188,19 @@ internal fun AppNavHost(
                     },
                     onBack = onBack,
                     navigationDestinations = destinations,
+                    channelOrderContent = { providerId, category, openModePickerOnStart, dismiss ->
+                        com.streamvault.feature.live.home.ProviderChannelOrderEditor(
+                            providerId, category, dismiss, openModePickerOnStart
+                        )
+                    },
+                    channelOrderSummaryContent = { providerId, category, onChannelOrder, onReorderChannels ->
+                        com.streamvault.feature.live.home.ProviderCategoryChannelOrderControl(
+                            providerId, category, onChannelOrder, onReorderChannels
+                        )
+                    },
+                    categoryOrderContent = { providerId, dismiss ->
+                        com.streamvault.feature.live.home.ProviderCategoryOrderEditor(providerId, dismiss)
+                    },
                 )
             }
         )
@@ -234,8 +248,10 @@ private fun appCatalogScaffold(
         subtitle = subtitle,
         navigationChrome = when (chrome) {
             CatalogNavigationChrome.Rail -> AppNavigationChrome.Rail
-            CatalogNavigationChrome.TopBar -> AppNavigationChrome.TopBar
+            CatalogNavigationChrome.TopBar,
+            CatalogNavigationChrome.TopBarOverlay -> AppNavigationChrome.TopBar
         },
+        topBarOverlaysContent = chrome == CatalogNavigationChrome.TopBarOverlay,
         topBarVisible = topBarVisible,
         compactHeader = compactHeader,
         showScreenHeader = showScreenHeader,
