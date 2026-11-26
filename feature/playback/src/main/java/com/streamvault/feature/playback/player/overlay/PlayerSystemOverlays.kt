@@ -58,7 +58,10 @@ import androidx.tv.material3.SurfaceDefaults
 import androidx.tv.material3.Text
 import coil3.compose.AsyncImage
 import com.streamvault.feature.playback.R
+import com.streamvault.core.ui.design.AppColors
+import com.streamvault.core.ui.design.BrowseColors
 import com.streamvault.core.ui.design.requestFocusSafely
+import com.streamvault.core.ui.design.selectableFocusBorder
 import com.streamvault.feature.playback.player.PlayerNoticeAction
 import com.streamvault.feature.playback.player.PlayerNoticeState
 import com.streamvault.feature.playback.player.PlayerAudioVideoOffsetUiState
@@ -1432,6 +1435,32 @@ private fun TrackSelectionItem(
     }
 }
 
+private val resumePromptButtonShape = RoundedCornerShape(8.dp)
+
+/**
+ * One filled Brand primary. The label ink is derived from the brand fill (BrowseColors.OnPrimary): the
+ * raw palette onPrimary is only 2.4:1 on classic_blue. Focus keeps the fill; the ring and scale carry it.
+ */
+@Composable
+private fun resumePromptPrimaryColors() = ClickableSurfaceDefaults.colors(
+    containerColor = AppColors.Brand,
+    contentColor = BrowseColors.OnPrimary,
+    focusedContainerColor = AppColors.Brand,
+    focusedContentColor = BrowseColors.OnPrimary,
+    pressedContainerColor = AppColors.Brand,
+    pressedContentColor = BrowseColors.OnPrimary,
+)
+
+@Composable
+private fun resumePromptSecondaryColors() = ClickableSurfaceDefaults.colors(
+    containerColor = BrowseColors.ControlContainer,
+    contentColor = AppColors.TextPrimary,
+    focusedContainerColor = BrowseColors.ControlContainer,
+    focusedContentColor = AppColors.TextPrimary,
+    pressedContainerColor = BrowseColors.ControlContainer,
+    pressedContentColor = AppColors.TextPrimary,
+)
+
 @Composable
 fun PlayerResumePrompt(
     title: String,
@@ -1457,7 +1486,7 @@ fun PlayerResumePrompt(
         Column(
             modifier = Modifier
                 .widthIn(max = 500.dp)
-                .background(SurfaceElevated, RoundedCornerShape(12.dp))
+                .background(AppColors.CanvasElevated, RoundedCornerShape(12.dp))
                 .focusGroup()
                 .onPreviewKeyEvent { event ->
                     if (event.nativeKeyEvent.action != KeyEvent.ACTION_DOWN) return@onPreviewKeyEvent false
@@ -1473,24 +1502,23 @@ fun PlayerResumePrompt(
             Text(
                 text = stringResource(R.string.player_resume_title),
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color.White
+                color = AppColors.TextPrimary
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(R.string.player_resume_desc, title),
                 style = MaterialTheme.typography.bodyLarge,
-                color = TextSecondary,
+                color = AppColors.TextSecondary,
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(32.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 TvClickableSurface(
                     onClick = onStartOver,
-                    shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
-                    colors = ClickableSurfaceDefaults.colors(
-                        containerColor = SurfaceElevated,
-                        focusedContainerColor = SurfaceHighlight
-                    ),
+                    shape = ClickableSurfaceDefaults.shape(resumePromptButtonShape),
+                    colors = resumePromptSecondaryColors(),
+                    border = selectableFocusBorder(resumePromptButtonShape),
+                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1.035f),
                     modifier = Modifier
                         .weight(1f)
                         .focusRequester(startOverFocusRequester)
@@ -1504,17 +1532,16 @@ fun PlayerResumePrompt(
                             .padding(vertical = 12.dp)
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.White
+                        color = AppColors.TextPrimary
                     )
                 }
 
                 TvClickableSurface(
                     onClick = onResume,
-                    shape = ClickableSurfaceDefaults.shape(RoundedCornerShape(8.dp)),
-                    colors = ClickableSurfaceDefaults.colors(
-                        containerColor = Primary,
-                        focusedContainerColor = PrimaryLight
-                    ),
+                    shape = ClickableSurfaceDefaults.shape(resumePromptButtonShape),
+                    colors = resumePromptPrimaryColors(),
+                    border = selectableFocusBorder(resumePromptButtonShape),
+                    scale = ClickableSurfaceDefaults.scale(focusedScale = 1.035f),
                     modifier = Modifier
                         .weight(1f)
                         .focusRequester(resumeFocusRequester)
@@ -1528,7 +1555,7 @@ fun PlayerResumePrompt(
                             .padding(vertical = 12.dp)
                             .fillMaxWidth(),
                         textAlign = TextAlign.Center,
-                        color = Color.White,
+                        color = BrowseColors.OnPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 }
